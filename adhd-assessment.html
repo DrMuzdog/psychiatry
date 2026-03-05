@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVA-5 &amp; ASRS v1.1 — ADHD Assessment Suite</title>
+<style>
+:root {
+  --primary: #2c5282;
+  --primary-light: #ebf4ff;
+  --accent: #e53e3e;
+  --green: #38a169;
+  --orange: #dd6b20;
+  --teal: #319795;
+  --teal-light: #e6fffa;
+  --gray-50: #f7fafc;
+  --gray-100: #edf2f7;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e0;
+  --gray-600: #718096;
+  --gray-700: #4a5568;
+  --gray-800: #2d3748;
+  --gray-900: #1a202c;
+  --radius: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.6; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+h1 { color: var(--primary); font-size: 1.6rem; text-align: center; margin-bottom: 4px; }
+.subtitle { text-align: center; color: var(--gray-600); font-size: 0.9rem; margin-bottom: 24px; }
+.instrument-divider { text-align:center; margin:40px 0 24px; padding:16px; background:linear-gradient(135deg, var(--teal), #2b6cb0); border-radius:var(--radius); color:#fff; }
+.instrument-divider h2 { font-size:1.4rem; margin-bottom:4px; }
+.instrument-divider p { font-size:0.9rem; opacity:0.9; }
+.section { background: #fff; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden; }
+.section-header { background: var(--primary); color: #fff; padding: 12px 20px; font-size: 1.05rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.section-header:hover { background: #2b4c7e; }
+.section-header.teal { background: var(--teal); }
+.section-header.teal:hover { background: #2c7a7b; }
+.section-header .toggle { font-size: 1.2rem; transition: transform 0.2s; }
+.section-header .toggle.collapsed { transform: rotate(-90deg); }
+.section-body { padding: 20px; }
+.section-body.collapsed { display: none; }
+.patient-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.patient-info label { font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 4px; color: var(--gray-700); }
+.patient-info input, .patient-info select { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 0.95rem; }
+.symptom-block { border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.symptom-question { background: var(--primary-light); padding: 12px 16px; font-weight: 600; color: var(--primary); font-size: 0.95rem; border-bottom: 1px solid var(--gray-200); }
+.symptom-content { padding: 16px; }
+.period-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.period-col h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-600); margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid var(--gray-200); }
+.period-col h4.adult { border-color: var(--primary); }
+.period-col h4.child { border-color: var(--orange); }
+.example-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 0.88rem; }
+.example-item input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--primary); }
+.other-input { width: 100%; margin-top: 6px; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
+.other-input::placeholder { color: var(--gray-300); }
+.symptom-verdict { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200); }
+.verdict-group { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; min-width: 240px; }
+.verdict-group label { display: flex; align-items: center; gap: 4px; font-weight: 400; cursor: pointer; white-space: nowrap; }
+.verdict-group input[type="radio"] { accent-color: var(--primary); }
+.supplement-q { background: var(--gray-100); padding: 14px 16px; border-radius: var(--radius); margin-top: 8px; }
+.supplement-q p { font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
+.criteria-block { margin-bottom: 16px; }
+.criteria-block h3 { font-size: 1rem; color: var(--primary); margin-bottom: 8px; }
+.criteria-block p { font-size: 0.9rem; margin-bottom: 8px; color: var(--gray-700); }
+.radio-row { display: flex; gap: 16px; margin-bottom: 8px; }
+.radio-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.9rem; }
+.impairment-area { margin-bottom: 14px; }
+.impairment-area h4 { font-size: 0.9rem; color: var(--gray-700); margin-bottom: 6px; font-weight: 600; }
+.impairment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+.impairment-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; }
+.impairment-item input[type="checkbox"] { margin-top: 3px; accent-color: var(--primary); }
+.support-row { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 0.9rem; }
+.support-row select { padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; }
+.btn { display: inline-block; padding: 12px 28px; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: #2b4c7e; }
+.btn-teal { background: var(--teal); color: #fff; }
+.btn-teal:hover { background: #2c7a7b; }
+.btn-combined { background: linear-gradient(135deg, var(--primary), var(--teal)); color: #fff; font-size: 1.1rem; padding: 14px 36px; }
+.btn-combined:hover { opacity: 0.9; }
+.btn-secondary { background: var(--gray-200); color: var(--gray-700); margin-left: 10px; }
+.btn-secondary:hover { background: var(--gray-300); }
+.btn-row { text-align: center; margin: 24px 0; }
+.results-section { display: none; }
+.result-card { background: #fff; border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.12); padding: 24px; margin-bottom: 20px; }
+.result-card h2 { color: var(--primary); margin-bottom: 16px; font-size: 1.2rem; }
+.result-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.95rem; }
+.result-row:last-child { border-bottom: none; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
+.badge-met { background: #c6f6d5; color: #276749; }
+.badge-not { background: #fed7d7; color: #9b2c2c; }
+.badge-partial { background: #fefcbf; color: #975a16; }
+.diagnosis-box { text-align: center; padding: 20px; border-radius: var(--radius); margin: 16px 0; }
+.diagnosis-met { background: #c6f6d5; border: 2px solid var(--green); }
+.diagnosis-not { background: #fed7d7; border: 2px solid var(--accent); }
+.diagnosis-box h3 { font-size: 1.1rem; margin-bottom: 4px; }
+.diagnosis-box p { font-size: 0.95rem; }
+.report-output { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 20px; font-family: 'Courier New', monospace; font-size: 0.82rem; white-space: pre-wrap; line-height: 1.5; max-height: 600px; overflow-y: auto; }
+.copy-btn { margin-top: 10px; }
+.note { font-size: 0.82rem; color: var(--gray-600); font-style: italic; margin-top: 4px; }
+/* ASRS specific */
+.asrs-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.asrs-table th { background: var(--teal); color: #fff; padding: 8px 6px; font-size: 0.8rem; text-align: center; }
+.asrs-table th:first-child { text-align: left; width: 50%; }
+.asrs-table td { padding: 10px 6px; border-bottom: 1px solid var(--gray-200); font-size: 0.88rem; text-align: center; }
+.asrs-table td:first-child { text-align: left; }
+.asrs-table tr:hover { background: var(--teal-light); }
+.asrs-table input[type="radio"] { accent-color: var(--teal); transform: scale(1.1); }
+.asrs-part-label { background: var(--teal-light); padding: 8px 12px; font-weight: 700; color: var(--teal); border-bottom: 2px solid var(--teal); }
+.asrs-part-label td { font-weight: 700; color: var(--teal); text-align: left !important; }
+.asrs-subscale { font-size: 0.8rem; color: var(--gray-600); }
+@media (max-width: 700px) {
+  .patient-info { grid-template-columns: 1fr; }
+  .period-grid { grid-template-columns: 1fr; }
+  .impairment-grid { grid-template-columns: 1fr; }
+  .asrs-table th, .asrs-table td { padding: 6px 3px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>ADHD Assessment Suite</h1>
+<p class="subtitle">DIVA-5 Diagnostic Interview &amp; ASRS v1.1 Symptom Checklist<br><em>For clinician use only. Results must be interpreted by a qualified professional.</em></p>
+
+<!-- ============ PATIENT INFO ============ -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">Patient Information <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <div class="patient-info">
+      <div><label for="ptName">Name / Initials</label><input type="text" id="ptName" placeholder="e.g. J.S."></div>
+      <div><label for="ptAge">Age</label><input type="number" id="ptAge" min="5" max="120" placeholder="e.g. 34"></div>
+      <div><label for="ptDate">Date of Assessment</label><input type="date" id="ptDate"></div>
+      <div><label for="ptGender">Gender</label>
+        <select id="ptGender"><option value="">—</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Other</option><option>Prefer not to say</option></select>
+      </div>
+      <div><label for="ptAssessor">Clinician / Assessor</label><input type="text" id="ptAssessor" placeholder="e.g. Dr. Smith"></div>
+      <div><label for="ptReferrer">Referrer</label><input type="text" id="ptReferrer" placeholder="e.g. GP"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--                        DIVA-5 SECTION                        -->
+<!-- ============================================================ -->
+<div class="instrument-divider">
+  <h2>DIVA-5 — Diagnostic Interview for ADHD in Adults</h2>
+  <p>J.J.S. Kooij, M.H. Francken &amp; T.I. Bron (2019) &bull; Based on DSM-5 Criteria</p>
+</div>
+
+<!-- PART 1: ATTENTION DEFICIT -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">Part 1: Symptoms of Attention Deficit (Criterion A1) <span class="toggle">&#9660;</span></div>
+  <div class="section-body" id="part1Body"></div>
+</div>
+
+<!-- PART 2: HYPERACTIVITY-IMPULSIVITY -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">Part 2: Symptoms of Hyperactivity-Impulsivity (Criterion A2) <span class="toggle">&#9660;</span></div>
+  <div class="section-body" id="part2Body"></div>
+</div>
+
+<!-- PART 3: CRITERIA B-E -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">Part 3: Age of Onset, Impairment &amp; Differential (Criteria B–E) <span class="toggle">&#9660;</span></div>
+  <div class="section-body" id="part3Body"></div>
+</div>
+
+<!-- COLLATERAL SUPPORT -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">Collateral Support <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <div class="support-row"><span>Parent(s) / brother / sister / other</span><select id="support1"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some</option><option value="2">2 — Clear support</option></select></div>
+    <div class="support-row"><span>Partner / good friend / other</span><select id="support2"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some</option><option value="2">2 — Clear support</option></select></div>
+    <div class="support-row"><span>School reports</span><select id="support3"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some</option><option value="2">2 — Clear support</option></select></div>
+    <div style="margin-top:12px"><label for="supportNotes" style="font-weight:600;font-size:0.9rem;">Additional collateral notes</label><textarea id="supportNotes" rows="3" style="width:100%;margin-top:4px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Optional notes about informants, school reports, etc."></textarea></div>
+  </div>
+</div>
+
+<!-- DIVA CLINICIAN NOTES -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">DIVA-5 Clinician Notes <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <textarea id="divaNotes" rows="4" style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.9rem;" placeholder="Additional clinical observations for DIVA-5..."></textarea>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn btn-primary" onclick="calculateDIVA()">Calculate DIVA-5 Results</button>
+</div>
+
+<div id="divaResults" class="results-section">
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">DIVA-5 Results Summary <span class="toggle">&#9660;</span></div>
+    <div class="section-body"><div class="result-card" id="divaResultsSummary"></div></div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">DIVA-5 Report <span class="toggle">&#9660;</span></div>
+    <div class="section-body">
+      <button class="btn btn-primary copy-btn" onclick="copyText('divaReportOutput')">📋 Copy DIVA-5 Report</button>
+      <div class="report-output" id="divaReportOutput" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--                        ASRS SECTION                          -->
+<!-- ============================================================ -->
+<div class="instrument-divider">
+  <h2>ASRS v1.1 — Adult ADHD Self-Report Scale</h2>
+  <p>Kessler, Adler et al. (2005) &bull; WHO &bull; 18-Item Symptom Checklist</p>
+</div>
+
+<div class="section">
+  <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Instructions <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:8px;"><strong>Instructions:</strong> Rate each item based on how the patient has felt and conducted themselves <strong>over the past 6 months</strong>. Part A (Questions 1–6) is the screener — 4 or more shaded responses indicate symptoms highly consistent with ADHD. Part B (Questions 7–18) provides additional symptom information.</p>
+    <p style="font-size:0.85rem;color:var(--gray-600);"><strong>Subscales:</strong> Inattention = Q1–4, 7–11 &nbsp;|&nbsp; Hyperactivity-Impulsivity = Q5–6, 12–18</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Symptom Checklist <span class="toggle">&#9660;</span></div>
+  <div class="section-body" id="asrsBody"></div>
+</div>
+
+<div class="section">
+  <div class="section-header teal" onclick="toggleSection(this)">ASRS Clinician Notes <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <textarea id="asrsNotes" rows="4" style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.9rem;" placeholder="Additional observations regarding ASRS responses..."></textarea>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn btn-teal" onclick="calculateASRS()">Calculate ASRS Results</button>
+</div>
+
+<div id="asrsResults" class="results-section">
+  <div class="section">
+    <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Results Summary <span class="toggle">&#9660;</span></div>
+    <div class="section-body"><div class="result-card" id="asrsResultsSummary"></div></div>
+  </div>
+  <div class="section">
+    <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Report <span class="toggle">&#9660;</span></div>
+    <div class="section-body">
+      <button class="btn btn-teal copy-btn" onclick="copyText('asrsReportOutput')">📋 Copy ASRS Report</button>
+      <div class="report-output" id="asrsReportOutput" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--                    COMBINED REPORT                           -->
+<!-- ============================================================ -->
+<div style="margin-top:40px;padding-top:20px;border-top:3px solid var(--gray-300);">
+  <div class="btn-row">
+    <button class="btn btn-combined" onclick="generateCombinedReport()">📑 Generate Combined DIVA-5 + ASRS Report</button>
+    <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
+  </div>
+</div>
+
+<div id="combinedResults" class="results-section">
+  <div class="section">
+    <div class="section-header" style="background:linear-gradient(135deg, var(--primary), var(--teal));" onclick="toggleSection(this)">Combined Assessment Report <span class="toggle">&#9660;</span></div>
+    <div class="section-body">
+      <button class="btn btn-combined copy-btn" onclick="copyText('combinedReportOutput')" style="font-size:0.95rem;padding:10px 24px;">📋 Copy Combined Report to Clipboard</button>
+      <div class="report-output" id="combinedReportOutput" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ==================== DIVA-5 DATA ====================
+const attentionSymptoms = [
+  { id:"A1", code:"A1a", q:"Often fails to give close attention to details, or makes careless mistakes in work or during other activities.",
+    adultEx:["Makes careless mistakes","Works slowly to avoid mistakes","Work is inaccurate","Does not read instructions carefully","Too much time needed to complete detailed tasks","Overlooks or misses details","Gets easily bogged down by details","Works too quickly and therefore makes mistakes"],
+    childEx:["Careless mistakes in schoolwork","Mistakes made by not reading questions properly","Leaves questions unanswered by not reading them properly","Overlooks or misses details","Work is inaccurate","Others comment about careless work","Not checking the answers in homework","Too much time needed to complete detailed tasks"] },
+  { id:"A2", code:"A1b", q:"Often has difficulty sustaining attention in tasks or play activities.",
+    adultEx:["Not able to keep attention on tasks for long*","Quickly distracted by own thoughts or associations","Difficulty remaining focussed during lectures/conversations","Finds it difficult to watch a film or read a book*","Easily distracted by unrelated thoughts","Quickly becomes bored with things*","Asks about subjects already discussed"],
+    childEx:["Difficulty keeping attention on schoolwork","Difficulty keeping attention on play*","Difficulty remaining focussed during lectures/conversations","Easily distracted","Difficulty concentrating*","Needing structure to avoid becoming distracted","Quickly becoming bored of activities*"],
+    note:"*Unless the subject is found to be really interesting (e.g. computer or hobby)" },
+  { id:"A3", code:"A1c", q:"Often does not seem to listen when spoken to directly.",
+    adultEx:["Dreamy or preoccupied","Difficulty concentrating on a conversation","Afterwards, not knowing what conversation was about","Often changing the subject of conversation","Others say thoughts are somewhere else","Mind seems elsewhere, even without obvious distraction"],
+    childEx:["Not knowing what parents/teachers said","Dreamy or preoccupied","Only listening during eye contact or raised voice","Mind seems elsewhere, even without obvious distraction","Often having to be addressed again","Questions having to be repeated"] },
+  { id:"A4", code:"A1d", q:"Often does not follow through on instructions and fails to finish chores or duties in the workplace (or schoolwork).",
+    adultEx:["Does things muddled up together without completing them","Starts tasks but quickly loses focus and is easily sidetracked","Needing a time limit to complete tasks","Difficulty completing administrative tasks","Difficulty following instructions from a manual"],
+    childEx:["Difficulty following instructions","Difficulty with multi-step instructions","Not completing things","Not completing homework or handing it in","Needing a lot of structure to complete tasks"] },
+  { id:"A5", code:"A1e", q:"Often has difficulty organising tasks and activities.",
+    adultEx:["Difficulty planning activities of daily life","Difficulty managing sequential tasks","House/workplace disorganised","Works messy and disorganised","Non-efficient planning or double-booking","Arriving late","Fails to meet deadlines","Cannot use agenda consistently","Inflexible due to need for schedules","Poor sense and management of time","Creates schedules but doesn't use them","Needs others to structure things","Difficulty keeping materials/belongings in order"],
+    childEx:["Difficulty being ready on time","Messy room/desk and/or work","Difficulty playing alone","Difficulty planning tasks or homework","Fails to meet deadlines","Doing things in a muddled way","Arriving late","Poor sense of time","Difficulty keeping self entertained","Difficulty keeping materials/belongings in order"] },
+  { id:"A6", code:"A1f", q:"Often avoids, dislikes, or is reluctant to engage in tasks that require sustained mental effort.",
+    adultEx:["Does easiest/nicest things first","Often postpones boring or difficult tasks","Postpones tasks so deadlines are missed","Avoids monotonous work (e.g. administration)","Avoids preparing reports, completing forms, reviewing lengthy papers","Doesn't like reading due to mental effort","Avoidance of tasks requiring a lot of concentration"],
+    childEx:["Avoidance of homework or aversion to it","Reads few books due to mental effort","Avoidance of tasks requiring concentration","Aversion to school subjects requiring concentration","Often postpones boring or difficult tasks"] },
+  { id:"A7", code:"A1g", q:"Often loses things necessary for tasks or activities.",
+    adultEx:["Mislays tools, paperwork, glasses, phone, wallet, keys, agenda","Often leaves things behind","Loses papers for work","Loses a lot of time searching for things","Panics if others move things around","Stores things in wrong place","Loses notes, lists or phone numbers"],
+    childEx:["Loses school materials, pencils, books or other items","Mislays toys, clothing, or homework","Spends a lot of time searching for things","Panics if others move things around","Comments from parents/teachers about lost items"] },
+  { id:"A8", code:"A1h", q:"Often easily distracted by extraneous stimuli.",
+    adultEx:["Difficulty shutting off from external stimuli","Easily distracted by noises or events","After distraction, difficult to pick up thread again","Easily distracted by others' conversations","Difficulty filtering/selecting information"],
+    childEx:["In classroom, often looking outside","Easily distracted by noises or events","After distraction, difficulty picking up thread again"] },
+  { id:"A9", code:"A1i", q:"Often forgetful in daily activities.",
+    adultEx:["Forgets appointments or obligations","Forgets keys, agenda etc.","Needs frequent reminders","Forgets chores or errands","Forgets to pay bills or return calls","Returns home to fetch forgotten things","Rigid use of lists to avoid forgetting","Forgets to keep or look at daily agenda"],
+    childEx:["Forgets appointments or instructions","Forgets chores or errands","Has to be frequently reminded","Forgets to take things to school","Half-way through task, forgets what to do","Leaves things behind at school or friends' houses"] }
+];
+
+const hiSymptoms = [
+  { id:"HI1", code:"A2a", q:"Often fidgets with or taps hands or feet, or squirms in seat.",
+    adultEx:["Difficulty sitting still","Fidgets with the legs","Tapping with a pen or playing with something","Fiddling with hair or biting nails","Can control restlessness but feels stressed as a result"],
+    childEx:["Parents often said 'sit still' or similar","Fidgets with the legs","Tapping with a pen or playing with something","Fiddling with hair or biting nails","Can control restlessness but feels stressed"] },
+  { id:"HI2", code:"A2b", q:"Often leaves seat in situations where remaining seated is expected.",
+    adultEx:["Avoids symposiums, lectures, church etc.","Prefers to walk around rather than sit","Often leaves place in office/workplace","Never sits still for long, always moving","Stressed owing to difficulty sitting still","Makes excuses to walk around"],
+    childEx:["Often stands up while eating or in classroom","Very difficult to stay seated at school or meals","Being told to remain seated","Making excuses to walk around"] },
+  { id:"HI3", code:"A2c", q:"Often feels restless (adults) / runs about or climbs excessively (children).",
+    adultEx:["Feeling restless or agitated inside","Constantly feeling that you have to be doing something","Finding it hard to relax"],
+    childEx:["Always running around where inappropriate","Climbing on furniture or jumping on sofa","Climbing in trees","Feeling restless inside"] },
+  { id:"HI4", code:"A2d", q:"Often unable to engage in leisure activities quietly.",
+    adultEx:["Talks during activities when inappropriate","Becoming quickly too cocky in public","Being loud in all kinds of situations","Difficulty speaking softly"],
+    childEx:["Loud-spoken during play or in classroom","Unable to watch TV or films quietly","Asked to be quieter or calm down","Becoming quickly too cocky in public"] },
+  { id:"HI5", code:"A2e", q:'Often "on the go" or acts as if "driven by a motor".',
+    adultEx:["Always busy doing something","Too much energy, always on the move","Stepping over own boundaries","Difficult to let things go, excessively driven","Uncomfortable being still for extended time","Others find you restless or hard to keep up with"],
+    childEx:["Constantly busy","Others find you restless or hard to keep up with","Uncomfortable being still for extended time","Excessively active at school and home","Has lots of energy","Always on the go, excessively driven"] },
+  { id:"HI6", code:"A2f", q:"Often talks excessively.",
+    adultEx:["So busy talking others find it tiring","Known as an incessant talker","Finds it difficult to stop talking","Tendency to talk too much","Doesn't give others room to interject","Needs a lot of words to say something"],
+    childEx:["Known as a chatterbox","Teachers/parents often ask to be quiet","School report comments about talking too much","Punished for talking too much","Keeps others from doing schoolwork by talking","Doesn't give others room in conversation"] },
+  { id:"HI7", code:"A2g", q:"Often blurts out an answer before questions have been completed.",
+    adultEx:["Blabbermouth — says what you think","Says things without thinking first","Answers before others finish speaking","Completes other people's sentences","Being tactless","Difficulty waiting for turn in conversations"],
+    childEx:["Says things without thinking first","Wants to be first to answer at school","Blurts out answer even if wrong","Interrupts others before sentences finished","Comes across as tactless"] },
+  { id:"HI8", code:"A2h", q:"Often has difficulty awaiting turn.",
+    adultEx:["Difficulty waiting in a queue, jumping queue","Difficulty waiting in traffic/jams","Being impatient","Quickly starting/ending relationships or jobs due to impatience"],
+    childEx:["Difficulty waiting turn in group activities","Difficulty waiting turn in classroom","Always first to talk or act","Becomes quickly impatient","Crosses road without looking"] },
+  { id:"HI9", code:"A2i", q:"Often interrupts or intrudes on others.",
+    adultEx:["Quick to interfere with others","Intrudes on others","Disturbs others' activities or takes over their tasks","Interrupts conversations","Comments from others about interference","Difficulty respecting boundaries","Opinion about everything, expressed immediately","Starts using people's things without permission"],
+    childEx:["Interrupts games or activities of others","Interrupts conversations of others","Reacts to everything","Unable to wait"] }
+];
+
+const impairmentAreas = {
+  adultWork:{title:"Adulthood — Work/Education",items:["Did not complete education/training needed for work","Work below level of education","Tire quickly of a workplace","Pattern of many short-lasting jobs","Difficulty with administrative work/planning","Not achieving promotions","Under-performing at work","Left work following arguments or dismissal","Sickness benefits/disability benefit from symptoms","Limited impairment through compensation of high IQ","Limited impairment through compensation of external structure"]},
+  adultRel:{title:"Adulthood — Relationships/Family",items:["Tire quickly of relationships","Impulsively commencing/ending relationships","Unequal partner relationship owing to symptoms","Relationship problems, arguments, lack of intimacy","Divorced owing to symptoms","Problems with sexuality from symptoms","Problems with upbringing from symptoms","Difficulty with housekeeping/administration","Financial problems or gambling","Not daring to start a relationship"]},
+  adultSocial:{title:"Adulthood — Social Contacts",items:["Tire quickly of social contacts","Difficulty maintaining social contacts","Conflicts from communication problems","Difficulty initiating social contacts","Low self-assertiveness from negative experiences","Not being attentive (forget cards/calls/empathising)"]},
+  adultFree:{title:"Adulthood — Free Time/Hobby",items:["Unable to relax properly during free time","Having to play lots of sport to relax","Injuries from excessive sport","Unable to finish a book or watch a film","Continually busy, becoming overtired","Tire quickly of hobbies","Accidents/loss of licence from reckless driving","Sensation seeking / taking too many risks","Contact with police/courts","Binge eating"]},
+  adultSelf:{title:"Adulthood — Self-Confidence/Self-Image",items:["Uncertainty from negative comments of others","Negative self-image from experience of failure","Fear of failure starting new things","Excessive intense reaction to criticism","Perfectionism","Distressed by symptoms of ADHD"]},
+  childEdu:{title:"Childhood — Education",items:["Lower educational level than expected (IQ)","Repeating classes from concentration problems","Education not completed / rejected from school","Took much longer to complete education","Achieved education suited to IQ with a lot of effort","Difficulty doing homework","Followed special education on account of symptoms","Comments from teachers about behaviour/concentration","Limited impairment through compensation of high IQ","Limited impairment through compensation of external structure"]},
+  childFam:{title:"Childhood — Family",items:["Frequent arguments with siblings","Frequent punishment","Little contact with family from conflicts","Required parental structure longer than normal"]},
+  childSocial:{title:"Childhood — Social Contacts",items:["Difficulty maintaining social contacts","Conflicts from communication problems","Difficulty entering into social contacts","Low self-assertiveness from negative experiences","Few friends","Being teased","Shut out from groups","Being a bully"]},
+  childFree:{title:"Childhood — Free Time/Hobby",items:["Unable to relax properly during free time","Having to play lots of sport to relax","Injuries from excessive sport","Unable to finish a book or watch a film","Continually busy, becoming overtired","Tired quickly of hobbies","Sensation seeking / taking too many risks","Contact with police/courts","Increased number of accidents"]},
+  childSelf:{title:"Childhood — Self-Confidence/Self-Image",items:["Uncertainty from negative comments of others","Negative self-image from experiences of failure","Fear of failure starting new things","Excessive intense reaction to criticism","Perfectionism"]}
+};
+
+// ==================== ASRS DATA ====================
+const asrsQuestions = [
+  {num:1, part:"A", sub:"Inatt", q:"How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?", shade:[2,3,4]},
+  {num:2, part:"A", sub:"Inatt", q:"How often do you have difficulty getting things in order when you have to do a task that requires organization?", shade:[2,3,4]},
+  {num:3, part:"A", sub:"Inatt", q:"How often do you have problems remembering appointments or obligations?", shade:[2,3,4]},
+  {num:4, part:"A", sub:"Inatt", q:"When you have a task that requires a lot of thought, how often do you avoid or delay getting started?", shade:[3,4]},
+  {num:5, part:"A", sub:"H/I", q:"How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?", shade:[3,4]},
+  {num:6, part:"A", sub:"H/I", q:"How often do you feel overly active and compelled to do things, like you were driven by a motor?", shade:[3,4]},
+  {num:7, part:"B", sub:"Inatt", q:"How often do you make careless mistakes when you have to work on a boring or difficult project?", shade:[3,4]},
+  {num:8, part:"B", sub:"Inatt", q:"How often do you have difficulty keeping your attention when you are doing boring or repetitive work?", shade:[3,4]},
+  {num:9, part:"B", sub:"Inatt", q:"How often do you have difficulty concentrating on what people say to you, even when they are speaking to you directly?", shade:[2,3,4]},
+  {num:10, part:"B", sub:"Inatt", q:"How often do you misplace or have difficulty finding things at home or at work?", shade:[3,4]},
+  {num:11, part:"B", sub:"Inatt", q:"How often are you distracted by activity or noise around you?", shade:[3,4]},
+  {num:12, part:"B", sub:"H/I", q:"How often do you leave your seat in meetings or other situations in which you are expected to remain seated?", shade:[2,3,4]},
+  {num:13, part:"B", sub:"H/I", q:"How often do you feel restless or fidgety?", shade:[3,4]},
+  {num:14, part:"B", sub:"H/I", q:"How often do you have difficulty unwinding and relaxing when you have time to yourself?", shade:[3,4]},
+  {num:15, part:"B", sub:"H/I", q:"How often do you find yourself talking too much when you are in social situations?", shade:[3,4]},
+  {num:16, part:"B", sub:"H/I", q:"When you are in a conversation, how often do you find yourself finishing the sentences of the people you are talking to, before they can finish them themselves?", shade:[2,3,4]},
+  {num:17, part:"B", sub:"H/I", q:"How often do you have difficulty waiting your turn in situations when turn taking is required?", shade:[3,4]},
+  {num:18, part:"B", sub:"H/I", q:"How often do you interrupt others when they are busy?", shade:[3,4]}
+];
+const asrsLabels = ["Never","Rarely","Sometimes","Often","Very Often"];
+
+// ==================== BUILD UI ====================
+function buildSymptomBlock(s, prefix) {
+  let html = `<div class="symptom-block"><div class="symptom-question">${s.code}: ${s.q}</div><div class="symptom-content"><div class="period-grid">`;
+  html += `<div class="period-col"><h4 class="adult">Adulthood (past 6+ months)</h4>`;
+  s.adultEx.forEach((ex, i) => {
+    html += `<div class="example-item"><input type="checkbox" id="${prefix}_${s.id}_aEx${i}"><label for="${prefix}_${s.id}_aEx${i}">${ex}</label></div>`;
+  });
+  html += `<input type="text" class="other-input" id="${prefix}_${s.id}_aOther" placeholder="Other (specify)">`;
+  html += `</div>`;
+  html += `<div class="period-col"><h4 class="child">Childhood (age 5–12)</h4>`;
+  s.childEx.forEach((ex, i) => {
+    html += `<div class="example-item"><input type="checkbox" id="${prefix}_${s.id}_cEx${i}"><label for="${prefix}_${s.id}_cEx${i}">${ex}</label></div>`;
+  });
+  html += `<input type="text" class="other-input" id="${prefix}_${s.id}_cOther" placeholder="Other (specify)">`;
+  html += `</div></div>`;
+  if (s.note) html += `<p class="note">${s.note}</p>`;
+  html += `<div class="symptom-verdict">`;
+  html += `<div class="verdict-group"><strong>Adult:</strong>
+    <label><input type="radio" name="${prefix}_${s.id}_aVerdict" value="yes"> Yes</label>
+    <label><input type="radio" name="${prefix}_${s.id}_aVerdict" value="no"> No</label></div>`;
+  html += `<div class="verdict-group"><strong>Childhood:</strong>
+    <label><input type="radio" name="${prefix}_${s.id}_cVerdict" value="yes"> Yes</label>
+    <label><input type="radio" name="${prefix}_${s.id}_cVerdict" value="no"> No</label></div>`;
+  html += `</div></div></div>`;
+  return html;
+}
+
+function buildASRS() {
+  let html = '<table class="asrs-table"><thead><tr><th>Question</th>';
+  asrsLabels.forEach(l => html += `<th>${l}</th>`);
+  html += '</tr></thead><tbody>';
+  let lastPart = '';
+  asrsQuestions.forEach(q => {
+    if (q.part !== lastPart) {
+      html += `<tr class="asrs-part-label"><td colspan="6">Part ${q.part}${q.part==='A'?' — Screener (6 items)':' — Additional Symptoms (12 items)'}</td></tr>`;
+      lastPart = q.part;
+    }
+    html += `<tr><td>${q.num}. ${q.q} <span class="asrs-subscale">[${q.sub}]</span></td>`;
+    for (let v = 0; v < 5; v++) {
+      const shaded = q.shade.includes(v) ? 'background:#bee3f8;' : '';
+      html += `<td style="${shaded}"><input type="radio" name="asrs_${q.num}" value="${v}"></td>`;
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  html += '<p class="note">Darkly shaded cells in Part A indicate responses consistent with ADHD. If ≥4 shaded responses are marked in Part A, symptoms are highly consistent with ADHD and further evaluation is warranted.</p>';
+  return html;
+}
+
+function initForm() {
+  // Part 1
+  let p1 = '';
+  attentionSymptoms.forEach(s => p1 += buildSymptomBlock(s, 'att'));
+  p1 += `<div class="supplement-q"><p>Supplement — Do you have/did you have MORE of these attention deficit symptoms than other people your age?</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px 32px;"><div class="verdict-group"><strong>Adult:</strong>
+    <label><input type="radio" name="suppA_adult" value="yes"> Yes</label>
+    <label><input type="radio" name="suppA_adult" value="no"> No</label></div>
+    <div class="verdict-group"><strong>Childhood:</strong>
+    <label><input type="radio" name="suppA_child" value="yes"> Yes</label>
+    <label><input type="radio" name="suppA_child" value="no"> No</label></div></div></div>`;
+  document.getElementById('part1Body').innerHTML = p1;
+
+  // Part 2
+  let p2 = '';
+  hiSymptoms.forEach(s => p2 += buildSymptomBlock(s, 'hi'));
+  p2 += `<div class="supplement-q"><p>Supplement — Do you have/did you have MORE of these hyperactivity/impulsivity symptoms than other people your age?</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px 32px;"><div class="verdict-group"><strong>Adult:</strong>
+    <label><input type="radio" name="suppHI_adult" value="yes"> Yes</label>
+    <label><input type="radio" name="suppHI_adult" value="no"> No</label></div>
+    <div class="verdict-group"><strong>Childhood:</strong>
+    <label><input type="radio" name="suppHI_child" value="yes"> Yes</label>
+    <label><input type="radio" name="suppHI_child" value="no"> No</label></div></div></div>`;
+  document.getElementById('part2Body').innerHTML = p2;
+
+  // Part 3
+  let p3 = '';
+  p3 += `<div class="criteria-block"><h3>Criterion B — Age of Onset</h3>
+    <p>Were several inattentive or hyperactive-impulsive symptoms present before age 12?</p>
+    <div class="radio-row"><label><input type="radio" name="critB" value="yes"> Yes</label>
+    <label><input type="radio" name="critB" value="no"> No</label></div>
+    <p style="margin-top:4px;">If no, from what age? <input type="number" id="critB_age" min="1" max="99" style="width:60px;padding:4px 8px;border:1px solid var(--gray-300);border-radius:4px;"></p></div>`;
+  p3 += `<div class="criteria-block"><h3>Criterion C — Impairment in Two or More Settings</h3>
+    <p>Check all areas where the patient experiences impairment from ADHD symptoms:</p>`;
+  ['adultWork','adultRel','adultSocial','adultFree','adultSelf'].forEach(key => {
+    const area = impairmentAreas[key];
+    p3 += `<div class="impairment-area"><h4>${area.title}</h4><div class="impairment-grid">`;
+    area.items.forEach((item, i) => {
+      p3 += `<div class="impairment-item"><input type="checkbox" id="imp_${key}_${i}"><label for="imp_${key}_${i}">${item}</label></div>`;
+    });
+    p3 += `</div></div>`;
+  });
+  p3 += `<div class="radio-row" style="margin:8px 0 16px;"><strong style="margin-right:8px;">Adulthood — Impairment in ≥2 areas?</strong>
+    <label><input type="radio" name="critC_adult" value="yes"> Yes</label>
+    <label><input type="radio" name="critC_adult" value="no"> No</label></div>`;
+  ['childEdu','childFam','childSocial','childFree','childSelf'].forEach(key => {
+    const area = impairmentAreas[key];
+    p3 += `<div class="impairment-area"><h4>${area.title}</h4><div class="impairment-grid">`;
+    area.items.forEach((item, i) => {
+      p3 += `<div class="impairment-item"><input type="checkbox" id="imp_${key}_${i}"><label for="imp_${key}_${i}">${item}</label></div>`;
+    });
+    p3 += `</div></div>`;
+  });
+  p3 += `<div class="radio-row" style="margin:8px 0 16px;"><strong style="margin-right:8px;">Childhood — Impairment in ≥2 areas?</strong>
+    <label><input type="radio" name="critC_child" value="yes"> Yes</label>
+    <label><input type="radio" name="critC_child" value="no"> No</label></div>`;
+  p3 += `<div class="criteria-block"><h3>Criterion D — Clinical Significance</h3>
+    <p>Is there clear evidence that symptoms interfere with, or reduce the quality of, social, academic, or occupational functioning?</p>
+    <div class="radio-row"><label><input type="radio" name="critD" value="yes"> Yes</label>
+    <label><input type="radio" name="critD" value="no"> No</label></div></div>`;
+  p3 += `<div class="criteria-block"><h3>Criterion E — Exclusion / Differential</h3>
+    <p>Do the symptoms occur exclusively during psychosis, or are they better explained by another mental disorder?</p>
+    <div class="radio-row"><label><input type="radio" name="critE" value="no"> No (symptoms NOT better explained)</label>
+    <label><input type="radio" name="critE" value="yes"> Yes (symptoms ARE better explained)</label></div>
+    <p style="margin-top:6px;">If yes, specify: <input type="text" id="critE_specify" style="width:300px;padding:6px 10px;border:1px solid var(--gray-300);border-radius:4px;" placeholder="e.g. bipolar disorder"></p></div>`;
+  document.getElementById('part3Body').innerHTML = p3;
+
+  // ASRS
+  document.getElementById('asrsBody').innerHTML = buildASRS();
+
+  document.getElementById('ptDate').valueAsDate = new Date();
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.toggle');
+  body.classList.toggle('collapsed');
+  toggle.classList.toggle('collapsed');
+}
+
+// ==================== HELPERS ====================
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+function getPatientInfo() {
+  return {
+    name: document.getElementById('ptName').value.trim() || '(Not provided)',
+    age: document.getElementById('ptAge').value.trim() || '(Not provided)',
+    date: document.getElementById('ptDate').value || '(Not provided)',
+    gender: document.getElementById('ptGender').value || '(Not provided)',
+    assessor: document.getElementById('ptAssessor').value.trim() || '(Not provided)',
+    referrer: document.getElementById('ptReferrer').value.trim() || '(Not provided)',
+    ageNum: parseInt(document.getElementById('ptAge').value) || 18
+  };
+}
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    event.target.textContent = '✅ Copied!';
+    setTimeout(() => {
+      if (id.includes('combined')) event.target.textContent = '📋 Copy Combined Report to Clipboard';
+      else if (id.includes('diva')) event.target.textContent = '📋 Copy DIVA-5 Report';
+      else event.target.textContent = '📋 Copy ASRS Report';
+    }, 2000);
+  });
+}
+
+// ==================== DIVA-5 CALCULATION ====================
+function countSymptoms(symptoms, prefix) {
+  let adultCount = 0, childCount = 0, details = [];
+  symptoms.forEach(s => {
+    const aV = getRadio(`${prefix}_${s.id}_aVerdict`);
+    const cV = getRadio(`${prefix}_${s.id}_cVerdict`);
+    const aYes = aV === 'yes', cYes = cV === 'yes';
+    if (aYes) adultCount++;
+    if (cYes) childCount++;
+    let aChecked = [], cChecked = [];
+    s.adultEx.forEach((ex, i) => { if (document.getElementById(`${prefix}_${s.id}_aEx${i}`).checked) aChecked.push(ex); });
+    s.childEx.forEach((ex, i) => { if (document.getElementById(`${prefix}_${s.id}_cEx${i}`).checked) cChecked.push(ex); });
+    const aOther = document.getElementById(`${prefix}_${s.id}_aOther`).value.trim();
+    const cOther = document.getElementById(`${prefix}_${s.id}_cOther`).value.trim();
+    if (aOther) aChecked.push("Other: " + aOther);
+    if (cOther) cChecked.push("Other: " + cOther);
+    details.push({ code:s.code, q:s.q, adultYes:aYes, childYes:cYes, adultExamples:aChecked, childExamples:cChecked });
+  });
+  return { adultCount, childCount, details };
+}
+function getCheckedImpairment(key) {
+  const area = impairmentAreas[key];
+  let checked = [];
+  area.items.forEach((item, i) => { if (document.getElementById(`imp_${key}_${i}`).checked) checked.push(item); });
+  return checked;
+}
+
+function getDIVAData() {
+  const pt = getPatientInfo();
+  const threshold = pt.ageNum >= 17 ? 5 : 6;
+  const att = countSymptoms(attentionSymptoms, 'att');
+  const hi = countSymptoms(hiSymptoms, 'hi');
+  const critA_inattAdult = att.adultCount >= threshold;
+  const critA_hiAdult = hi.adultCount >= threshold;
+  const critA_met = critA_inattAdult || critA_hiAdult;
+  const critB = getRadio('critB'), critB_met = critB === 'yes';
+  const critC_adult = getRadio('critC_adult'), critC_child = getRadio('critC_child');
+  const critC_met = critC_adult === 'yes' || critC_child === 'yes';
+  const critD = getRadio('critD'), critD_met = critD === 'yes';
+  const critE = getRadio('critE'), critE_met = critE === 'no';
+  const allMet = critA_met && critB_met && critC_met && critD_met && critE_met;
+  let presentation = 'No ADHD';
+  if (allMet) {
+    if (critA_inattAdult && critA_hiAdult) presentation = '314.01 (F90.2) Combined Presentation';
+    else if (critA_inattAdult) presentation = '314.00 (F90.0) Predominantly Inattentive Presentation';
+    else if (critA_hiAdult) presentation = '314.01 (F90.1) Predominantly Hyperactive-Impulsive Presentation';
+  }
+  let impDetails = {};
+  Object.keys(impairmentAreas).forEach(key => { const c = getCheckedImpairment(key); if (c.length) impDetails[key] = c; });
+  return { pt, threshold, att, hi, critA_inattAdult, critA_hiAdult, critA_met, critB, critB_met, critC_adult, critC_child, critC_met, critD, critD_met, critE, critE_met, allMet, presentation, impDetails };
+}
+
+function buildDIVAResultsHTML(d) {
+  let h = `<h2>DIVA-5 Results — ${d.pt.name}</h2>`;
+  h += `<div class="result-row"><span>Age / Threshold</span><span>${d.pt.age} years (≥${d.threshold} per domain)</span></div>`;
+  h += `<div class="result-row"><span>Inattention — Adult</span><span>${d.att.adultCount}/9 <span class="badge ${d.att.adultCount>=d.threshold?'badge-met':'badge-not'}">${d.att.adultCount>=d.threshold?'Met':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>Inattention — Childhood</span><span>${d.att.childCount}/9 <span class="badge ${d.att.childCount>=6?'badge-met':'badge-not'}">${d.att.childCount>=6?'Met':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>H/I — Adult</span><span>${d.hi.adultCount}/9 <span class="badge ${d.hi.adultCount>=d.threshold?'badge-met':'badge-not'}">${d.hi.adultCount>=d.threshold?'Met':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>H/I — Childhood</span><span>${d.hi.childCount}/9 <span class="badge ${d.hi.childCount>=6?'badge-met':'badge-not'}">${d.hi.childCount>=6?'Met':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>Criterion A</span><span><span class="badge ${d.critA_met?'badge-met':'badge-not'}">${d.critA_met?'Met':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>Criterion B (Onset <12)</span><span><span class="badge ${d.critB_met?'badge-met':d.critB===null?'badge-partial':'badge-not'}">${d.critB_met?'Met':d.critB===null?'N/A':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>Criterion C (≥2 settings)</span><span><span class="badge ${d.critC_met?'badge-met':'badge-not'}">${d.critC_met?'Met':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>Criterion D (Significance)</span><span><span class="badge ${d.critD_met?'badge-met':d.critD===null?'badge-partial':'badge-not'}">${d.critD_met?'Met':d.critD===null?'N/A':'Not met'}</span></span></div>`;
+  h += `<div class="result-row"><span>Criterion E (Exclusion)</span><span><span class="badge ${d.critE_met?'badge-met':d.critE===null?'badge-partial':'badge-not'}">${d.critE_met?'Met':d.critE===null?'N/A':'Not met'}</span></span></div>`;
+  h += `<div class="diagnosis-box ${d.allMet?'diagnosis-met':'diagnosis-not'}"><h3>${d.allMet?'ADHD Criteria Met':'ADHD Criteria Not Met'}</h3><p>${d.allMet?'Presentation: '+d.presentation:'One or more DSM-5 criteria not satisfied.'}</p></div>`;
+  return h;
+}
+
+function buildDIVAReportText(d) {
+  const support1 = document.getElementById('support1').value;
+  const support2 = document.getElementById('support2').value;
+  const support3 = document.getElementById('support3').value;
+  const supportNotes = document.getElementById('supportNotes').value.trim();
+  const divaNotes = document.getElementById('divaNotes').value.trim();
+  let r = '';
+  r += '═══════════════════════════════════════════════════════\n';
+  r += '  DIVA-5 — DIAGNOSTIC INTERVIEW FOR ADHD IN ADULTS\n';
+  r += '  Based on DSM-5 Criteria (Kooij, Francken & Bron, 2019)\n';
+  r += '═══════════════════════════════════════════════════════\n\n';
+  r += `Patient:    ${d.pt.name}\nAge:        ${d.pt.age}\nGender:     ${d.pt.gender}\nDate:       ${d.pt.date}\nClinician:  ${d.pt.assessor}\nReferrer:   ${d.pt.referrer}\nThreshold:  ≥${d.threshold} symptoms per domain (age ${d.pt.ageNum>=17?'≥17':'<17'})\n`;
+  r += '\n───────────────────────────────────────────────────────\n  PART 1: ATTENTION DEFICIT SYMPTOMS (A1)\n───────────────────────────────────────────────────────\n\n';
+  d.att.details.forEach(x => {
+    r += `${x.code}: ${x.q}\n`;
+    r += `  Adult: ${x.adultYes?'YES':'NO'}${x.adultExamples.length?' — '+x.adultExamples.join('; '):''}\n`;
+    r += `  Child: ${x.childYes?'YES':'NO'}${x.childExamples.length?' — '+x.childExamples.join('; '):''}\n\n`;
+  });
+  r += `INATTENTION TOTAL — Adult: ${d.att.adultCount}/9 | Childhood: ${d.att.childCount}/9\n`;
+  r += '\n───────────────────────────────────────────────────────\n  PART 2: HYPERACTIVITY-IMPULSIVITY SYMPTOMS (A2)\n───────────────────────────────────────────────────────\n\n';
+  d.hi.details.forEach(x => {
+    r += `${x.code}: ${x.q}\n`;
+    r += `  Adult: ${x.adultYes?'YES':'NO'}${x.adultExamples.length?' — '+x.adultExamples.join('; '):''}\n`;
+    r += `  Child: ${x.childYes?'YES':'NO'}${x.childExamples.length?' — '+x.childExamples.join('; '):''}\n\n`;
+  });
+  r += `H/I TOTAL — Adult: ${d.hi.adultCount}/9 | Childhood: ${d.hi.childCount}/9\n`;
+  r += '\n───────────────────────────────────────────────────────\n  PART 3: CRITERIA B–E\n───────────────────────────────────────────────────────\n\n';
+  const critB_age = document.getElementById('critB_age').value;
+  r += `Criterion B (Onset < age 12): ${d.critB_met?'MET':'NOT MET'}${!d.critB_met&&critB_age?' (onset at age '+critB_age+')':''}\n`;
+  r += `Criterion C (≥2 settings): Adult ${d.critC_adult||'N/A'} | Child ${d.critC_child||'N/A'} — ${d.critC_met?'MET':'NOT MET'}\n`;
+  if (Object.keys(d.impDetails).length) {
+    r += '  Impairment areas endorsed:\n';
+    Object.keys(d.impDetails).forEach(key => {
+      r += `    ${impairmentAreas[key].title}:\n`;
+      d.impDetails[key].forEach(item => r += `      • ${item}\n`);
+    });
+  }
+  r += `Criterion D (Clinical significance): ${d.critD_met?'MET':'NOT MET'}\n`;
+  const critE_spec = document.getElementById('critE_specify').value.trim();
+  r += `Criterion E (Not better explained): ${d.critE_met?'MET':'NOT MET'}${!d.critE_met&&critE_spec?' — '+critE_spec:''}\n`;
+  r += '\n───────────────────────────────────────────────────────\n  COLLATERAL SUPPORT\n───────────────────────────────────────────────────────\n\n';
+  r += `Parent/sibling/other:   ${support1}\nPartner/friend/other:   ${support2}\nSchool reports:         ${support3}\n`;
+  if (supportNotes) r += `Notes: ${supportNotes}\n`;
+  r += '\n───────────────────────────────────────────────────────\n  DIAGNOSTIC OUTCOME\n───────────────────────────────────────────────────────\n\n';
+  r += `Criterion A (Symptoms):     ${d.critA_met?'MET':'NOT MET'} (Inatt Adult ${d.att.adultCount}/9, H/I Adult ${d.hi.adultCount}/9)\n`;
+  r += `Criterion B (Onset <12):    ${d.critB_met?'MET':'NOT MET'}\n`;
+  r += `Criterion C (≥2 settings):  ${d.critC_met?'MET':'NOT MET'}\n`;
+  r += `Criterion D (Significance): ${d.critD_met?'MET':'NOT MET'}\n`;
+  r += `Criterion E (Exclusion):    ${d.critE_met?'MET':'NOT MET'}\n\n`;
+  r += `>>> DIAGNOSIS: ${d.allMet ? d.presentation : 'ADHD criteria NOT met'} <<<\n`;
+  if (divaNotes) r += '\n  Clinician Notes: ' + divaNotes + '\n';
+  return r;
+}
+
+function calculateDIVA() {
+  const d = getDIVAData();
+  document.getElementById('divaResultsSummary').innerHTML = buildDIVAResultsHTML(d);
+  document.getElementById('divaReportOutput').textContent = buildDIVAReportText(d);
+  document.getElementById('divaResults').style.display = 'block';
+  document.getElementById('divaResults').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ==================== ASRS CALCULATION ====================
+function getASRSData() {
+  let partAShaded = 0, inattTotal = 0, hiTotal = 0, totalRaw = 0;
+  let details = [];
+  let allAnswered = true;
+  asrsQuestions.forEach(q => {
+    const v = getRadio(`asrs_${q.num}`);
+    const val = v !== null ? parseInt(v) : null;
+    if (val === null) allAnswered = false;
+    const isShaded = val !== null && q.shade.includes(val);
+    if (q.part === 'A' && isShaded) partAShaded++;
+    if (val !== null) {
+      totalRaw += val;
+      if (q.sub === 'Inatt') inattTotal += val; else hiTotal += val;
+    }
+    details.push({ num:q.num, part:q.part, sub:q.sub, q:q.q, value:val, label:val!==null?asrsLabels[val]:'(not answered)', isShaded });
+  });
+  const screenPositive = partAShaded >= 4;
+  return { partAShaded, inattTotal, hiTotal, totalRaw, details, screenPositive, allAnswered };
+}
+
+function buildASRSResultsHTML(a) {
+  const pt = getPatientInfo();
+  let h = `<h2>ASRS v1.1 Results — ${pt.name}</h2>`;
+  h += `<div class="result-row"><span>Part A Screener (shaded responses)</span><span>${a.partAShaded}/6 <span class="badge ${a.screenPositive?'badge-met':'badge-not'}">${a.screenPositive?'Screen Positive (≥4)':'Screen Negative (<4)'}</span></span></div>`;
+  h += `<div class="result-row"><span>Inattention Subscale (raw)</span><span>${a.inattTotal}/36</span></div>`;
+  h += `<div class="result-row"><span>Hyperactivity-Impulsivity Subscale (raw)</span><span>${a.hiTotal}/36</span></div>`;
+  h += `<div class="result-row"><span>Total Raw Score</span><span>${a.totalRaw}/72</span></div>`;
+  h += `<div class="diagnosis-box ${a.screenPositive?'diagnosis-met':'diagnosis-not'}"><h3>${a.screenPositive?'ASRS Screen Positive':'ASRS Screen Negative'}</h3><p>${a.screenPositive?'Symptoms highly consistent with ADHD — further evaluation warranted.':'Part A screener does not indicate high consistency with ADHD. Clinical judgement should prevail.'}</p></div>`;
+  return h;
+}
+
+function buildASRSReportText(a) {
+  const pt = getPatientInfo();
+  const asrsNotes = document.getElementById('asrsNotes').value.trim();
+  let r = '';
+  r += '═══════════════════════════════════════════════════════\n';
+  r += '  ASRS v1.1 — ADULT ADHD SELF-REPORT SCALE\n';
+  r += '  WHO / Kessler, Adler et al. (2005) — 18-Item Checklist\n';
+  r += '═══════════════════════════════════════════════════════\n\n';
+  r += `Patient:    ${pt.name}\nAge:        ${pt.age}\nGender:     ${pt.gender}\nDate:       ${pt.date}\nClinician:  ${pt.assessor}\n`;
+  r += '\n───────────────────────────────────────────────────────\n  PART A — SCREENER\n───────────────────────────────────────────────────────\n\n';
+  a.details.filter(d=>d.part==='A').forEach(d => {
+    r += `Q${d.num}. ${d.q}\n  Response: ${d.label}${d.isShaded?' [SHADED]':''}  [${d.sub}]\n\n`;
+  });
+  r += `Part A shaded count: ${a.partAShaded}/6 — ${a.screenPositive?'SCREEN POSITIVE':'Screen negative'}\n`;
+  r += '\n───────────────────────────────────────────────────────\n  PART B — ADDITIONAL SYMPTOMS\n───────────────────────────────────────────────────────\n\n';
+  a.details.filter(d=>d.part==='B').forEach(d => {
+    r += `Q${d.num}. ${d.q}\n  Response: ${d.label}${d.isShaded?' [SHADED]':''}  [${d.sub}]\n\n`;
+  });
+  r += '───────────────────────────────────────────────────────\n  SCORING SUMMARY\n───────────────────────────────────────────────────────\n\n';
+  r += `Part A Shaded:      ${a.partAShaded}/6 (${a.screenPositive?'≥4 — POSITIVE':'<4 — negative'})\n`;
+  r += `Inattention (raw):  ${a.inattTotal}/36\n`;
+  r += `H/I (raw):          ${a.hiTotal}/36\n`;
+  r += `Total (raw):        ${a.totalRaw}/72\n`;
+  if (asrsNotes) r += `\nClinician Notes: ${asrsNotes}\n`;
+  return r;
+}
+
+function calculateASRS() {
+  const a = getASRSData();
+  document.getElementById('asrsResultsSummary').innerHTML = buildASRSResultsHTML(a);
+  document.getElementById('asrsReportOutput').textContent = buildASRSReportText(a);
+  document.getElementById('asrsResults').style.display = 'block';
+  document.getElementById('asrsResults').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ==================== COMBINED REPORT ====================
+function generateCombinedReport() {
+  calculateDIVA();
+  calculateASRS();
+  const d = getDIVAData();
+  const a = getASRSData();
+  const pt = getPatientInfo();
+  let r = '';
+  r += '╔═══════════════════════════════════════════════════════╗\n';
+  r += '║     COMBINED ADHD ASSESSMENT REPORT                  ║\n';
+  r += '║     DIVA-5 + ASRS v1.1                               ║\n';
+  r += '╚═══════════════════════════════════════════════════════╝\n\n';
+  r += `Patient:    ${pt.name}\nAge:        ${pt.age}\nGender:     ${pt.gender}\nDate:       ${pt.date}\nClinician:  ${pt.assessor}\nReferrer:   ${pt.referrer}\n`;
+  r += '\n\n';
+  r += buildDIVAReportText(d);
+  r += '\n\n';
+  r += buildASRSReportText(a);
+  r += '\n\n';
+  r += '╔═══════════════════════════════════════════════════════╗\n';
+  r += '║     INTEGRATED SUMMARY                               ║\n';
+  r += '╚═══════════════════════════════════════════════════════╝\n\n';
+  r += `DIVA-5 Diagnosis:     ${d.allMet ? d.presentation : 'ADHD criteria NOT met'}\n`;
+  r += `  Inattention:        ${d.att.adultCount}/9 adult, ${d.att.childCount}/9 childhood\n`;
+  r += `  H/I:                ${d.hi.adultCount}/9 adult, ${d.hi.childCount}/9 childhood\n`;
+  r += `  Criteria B–E:       B:${d.critB_met?'Met':'Not met'} | C:${d.critC_met?'Met':'Not met'} | D:${d.critD_met?'Met':'Not met'} | E:${d.critE_met?'Met':'Not met'}\n\n`;
+  r += `ASRS v1.1 Screen:     ${a.screenPositive?'POSITIVE':'Negative'} (Part A: ${a.partAShaded}/6 shaded)\n`;
+  r += `  Inattention (raw):  ${a.inattTotal}/36\n`;
+  r += `  H/I (raw):          ${a.hiTotal}/36\n`;
+  r += `  Total (raw):        ${a.totalRaw}/72\n\n`;
+  // Concordance
+  if (d.allMet && a.screenPositive) r += 'CONCORDANCE: Both DIVA-5 and ASRS support a diagnosis of ADHD.\n';
+  else if (d.allMet && !a.screenPositive) r += 'NOTE: DIVA-5 criteria met but ASRS screener is negative. Consider clinical context.\n';
+  else if (!d.allMet && a.screenPositive) r += 'NOTE: ASRS screen positive but DIVA-5 criteria not fully met. Further evaluation recommended.\n';
+  else r += 'CONCORDANCE: Neither instrument supports a current ADHD diagnosis.\n';
+  const divaNotes = document.getElementById('divaNotes').value.trim();
+  const asrsNotes = document.getElementById('asrsNotes').value.trim();
+  if (divaNotes || asrsNotes) {
+    r += '\n───────────────────────────────────────────────────────\n  CLINICIAN NOTES\n───────────────────────────────────────────────────────\n\n';
+    if (divaNotes) r += `DIVA-5: ${divaNotes}\n`;
+    if (asrsNotes) r += `ASRS:   ${asrsNotes}\n`;
+  }
+  r += '\n═══════════════════════════════════════════════════════\n';
+  r += 'Generated by ADHD Assessment Suite | For clinician use only\n';
+  r += '═══════════════════════════════════════════════════════\n';
+  document.getElementById('combinedReportOutput').textContent = r;
+  document.getElementById('combinedResults').style.display = 'block';
+  document.getElementById('combinedResults').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetAll() {
+  if (!confirm('Reset ALL data across both instruments? This cannot be undone.')) return;
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('input[type="radio"]').forEach(rb => rb.checked = false);
+  document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(el => { if (el.id !== 'ptDate') el.value = ''; });
+  document.getElementById('ptDate').valueAsDate = new Date();
+  document.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
+  ['divaResults','asrsResults','combinedResults'].forEach(id => document.getElementById(id).style.display = 'none');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+initForm();
+</script>
+</body>
+</html>
