@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADHD Patient Guide Generator</title>
+<style>
+  :root {
+    --blue: #1F497D; --midblue: #2E74B5; --lightblue: #D9E2F3;
+    --altrow: #F4F7FC; --grey: #595959; --lightgrey: #AAAAAA;
+    --red: #C00000; --green: #375623; --amber: #E36C09;
+    --bg: #F7F9FC; --white: #ffffff;
+    --radius: 8px; --shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  button, [role="button"], .card-header, .output-tab, .med-tab, .preset-btn {
+    -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+    touch-action: manipulation;
+  }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: #222; font-size: 15px; }
+  header { background: var(--blue); color: white; padding: 22px 32px 16px; }
+  header h1 { font-size: 1.7em; font-weight: 700; letter-spacing: -0.5px; }
+  header p { margin-top: 4px; opacity: 0.85; font-size: 0.95em; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 28px; overflow: hidden; }
+  .card-header { background: var(--lightblue); padding: 13px 20px; font-weight: 700; font-size: 1.05em; color: var(--blue); display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .card-header .toggle { margin-left: auto; font-size: 0.85em; opacity: 0.7; transition: transform 0.2s; }
+  .card-body { padding: 18px 20px; }
+  .card-body.collapsed { display: none; }
+
+  /* Section checkboxes */
+  .section-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+  .section-item { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; border-radius: 6px; background: var(--altrow); }
+  .section-item input[type=checkbox] { margin-top: 2px; accent-color: var(--midblue); width: 16px; height: 16px; flex-shrink: 0; }
+  .section-item label { font-size: 0.93em; cursor: pointer; line-height: 1.4; }
+  .check-all-row { display: flex; gap: 10px; margin-bottom: 12px; }
+
+  /* Medication selector */
+  .med-tabs { display: flex; gap: 0; margin-bottom: 18px; border-radius: var(--radius); overflow: hidden; border: 1.5px solid var(--midblue); width: fit-content; }
+  .med-tab { padding: 9px 22px; cursor: pointer; font-weight: 600; font-size: 0.93em; background: white; color: var(--midblue); border: none; transition: background 0.15s, color 0.15s; }
+  .med-tab.active { background: var(--midblue); color: white; }
+  .med-tab:not(:last-child) { border-right: 1.5px solid var(--midblue); }
+  .med-panel { display: none; }
+  .med-panel.active { display: block; }
+
+  /* IR Table */
+  .ir-table-wrap { overflow-x: auto; }
+  table.tit { border-collapse: collapse; width: 100%; font-size: 0.9em; }
+  table.tit th { background: var(--lightblue); color: var(--blue); padding: 8px 10px; text-align: center; font-weight: 700; border: 1px solid #c8d8ee; }
+  table.tit th.left { text-align: left; }
+  table.tit td { padding: 6px 8px; border: 1px solid #dde6f2; text-align: center; vertical-align: middle; }
+  table.tit tr:nth-child(even) td { background: var(--altrow); }
+  table.tit td.day-cell { font-weight: 600; color: var(--blue); text-align: center; width: 60px; }
+  table.tit td.comment-cell input { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 3px 6px; font-size: 0.88em; }
+  .dose-cell { min-width: 110px; }
+  .dose-options { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+  .dose-options label { display: flex; align-items: center; gap: 5px; font-size: 0.87em; cursor: pointer; white-space: nowrap; }
+  .dose-options input[type=radio] { accent-color: var(--midblue); }
+  .phase-header td { background: var(--blue) !important; color: white !important; font-weight: 700; text-align: left; padding: 6px 10px; font-size: 0.88em; letter-spacing: 0.3px; }
+
+  /* Vyvanse builder */
+  .vv-builder { display: flex; flex-direction: column; gap: 14px; }
+  .vv-phase { background: var(--altrow); border-radius: 8px; padding: 14px 16px; border-left: 4px solid var(--midblue); position: relative; }
+  .vv-phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .vv-phase-title { font-weight: 700; color: var(--blue); font-size: 0.97em; }
+  .vv-phase-remove { margin-left: auto; background: none; border: none; color: var(--red); cursor: pointer; font-size: 1.1em; opacity: 0.7; }
+  .vv-phase-remove:hover { opacity: 1; }
+  .vv-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .vv-field { display: flex; flex-direction: column; gap: 4px; }
+  .vv-field label { font-size: 0.8em; font-weight: 600; color: var(--grey); text-transform: uppercase; letter-spacing: 0.4px; }
+  .vv-field select, .vv-field input[type=number], .vv-field input[type=text] {
+    border: 1.5px solid #c8d8ee; border-radius: 5px; padding: 6px 10px; font-size: 0.93em; background: white; color: #222; min-width: 80px;
+  }
+  .vv-caps { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .cap-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--midblue); color: white; border-radius: 20px; padding: 4px 12px; font-size: 0.85em; font-weight: 600; }
+  .cap-badge button { background: none; border: none; color: white; cursor: pointer; font-size: 1em; line-height: 1; padding: 0 0 0 4px; opacity: 0.8; }
+  .cap-badge button:hover { opacity: 1; }
+  .add-cap-row { display: flex; gap: 8px; align-items: center; }
+  .add-cap-row select { border: 1.5px solid #c8d8ee; border-radius: 5px; padding: 5px 8px; font-size: 0.9em; }
+  .add-phase-btn { display: flex; align-items: center; gap: 8px; background: none; border: 2px dashed var(--midblue); color: var(--midblue); border-radius: 8px; padding: 10px 18px; font-weight: 600; cursor: pointer; width: 100%; justify-content: center; font-size: 0.95em; margin-top: 4px; transition: background 0.15s; }
+  .add-phase-btn:hover { background: var(--lightblue); }
+  .vv-note { font-size: 0.83em; color: var(--grey); margin-top: 6px; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 0.93em; cursor: pointer; border: none; transition: opacity 0.15s, background 0.15s; }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-secondary { background: var(--midblue); color: white; }
+  .btn-outline { background: white; color: var(--blue); border: 2px solid var(--blue); }
+  .btn-green { background: var(--green); color: white; }
+  .preset-btn { font-size: 0.78em; padding: 4px 10px; border-radius: 12px; border: 1.5px solid var(--midblue); background: #f0f5ff; color: var(--midblue); cursor: pointer; font-weight: 600; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+  .preset-btn.active { background: var(--midblue); color: white; border-color: var(--blue); }
+  .preset-btn:hover { background: var(--midblue); color: white; }
+  .btn:hover { opacity: 0.88; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+  /* Output */
+  #output-area { display: none; }
+  #output-area.visible { display: block; }
+  .output-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .output-tabs { display: flex; border-bottom: 2px solid var(--lightblue); }
+  .output-tab { padding: 10px 22px; cursor: pointer; font-weight: 600; font-size: 0.92em; color: var(--grey); border: none; background: none; }
+  .output-tab.active { color: var(--blue); border-bottom: 3px solid var(--blue); margin-bottom: -2px; }
+  #output-rich { padding: 20px 28px; font-size: 0.92em; line-height: 1.4; }
+  #output-plain { padding: 20px; font-family: monospace; font-size: 0.87em; white-space: pre-wrap; background: #f8f8f8; min-height: 200px; }
+  #output-tit-only { padding: 28px 32px; overflow-x: auto; }
+  .copy-btn-row { display: flex; gap: 10px; padding: 12px 20px; background: var(--altrow); border-top: 1px solid var(--lightblue); flex-wrap: wrap; }
+
+  /* Rich output styles — 11pt body, compact */
+  .rich-h1 { font-size: 1.15em; font-weight: 800; color: var(--blue); margin: 16px 0 4px; border-bottom: 2px solid var(--lightblue); padding-bottom: 3px; }
+  .rich-h2 { font-size: 1.0em; font-weight: 700; color: var(--midblue); margin: 12px 0 3px; }
+  .rich-h3 { font-size: 0.93em; font-weight: 700; color: var(--blue); margin: 8px 0 3px; font-style: italic; }
+  .rich-p { margin-bottom: 6px; font-size: 0.92em; line-height: 1.4; }
+  .rich-ul { margin: 4px 0 8px 16px; }
+  .rich-ul li { margin-bottom: 3px; line-height: 1.4; font-size: 0.92em; }
+  .rich-cite { font-size: 0.76em; color: var(--grey); font-style: italic; margin-bottom: 6px; }
+  .rich-warn { color: var(--red); font-weight: 600; }
+  .rich-tit { border-collapse: collapse; width: 100%; font-size: 0.85em; margin: 8px 0; }
+  .rich-tit th { background: var(--lightblue); color: var(--blue); padding: 5px 8px; text-align: center; border: 1px solid #c8d8ee; font-weight: 700; }
+  .rich-tit td { padding: 4px 7px; border: 1px solid #dde6f2; text-align: center; vertical-align: middle; }
+  .rich-tit tr:nth-child(even) td { background: var(--altrow); }
+  .rich-tit td.phase-row { background: var(--blue) !important; color: white !important; font-weight: 700; text-align: left; }
+
+  /* Mobile responsiveness */
+  @media (max-width: 600px) {
+    header { padding: 16px 16px 12px; }
+    header h1 { font-size: 1.3em; }
+    .container { padding: 14px 10px 40px; }
+    .card-body { padding: 12px 12px; }
+    .card-header { padding: 14px 14px; font-size: 0.98em; min-height: 48px; }
+    .btn { min-height: 44px; font-size: 0.95em; }
+    .preset-btn { min-height: 36px; font-size: 0.82em; padding: 6px 12px; }
+    .output-tab { min-height: 40px; }
+    .med-tab { min-height: 40px; }
+    .vv-row { flex-direction: column; gap: 8px; }
+    .vv-field { width: 100%; }
+    .vv-field select, .vv-field input[type=number], .vv-field input[type=text] { width: 100%; }
+    .med-tabs { width: 100%; }
+    .med-tab { flex: 1; padding: 9px 8px; font-size: 0.85em; }
+    .btn-row { flex-direction: column; }
+    .btn-row .btn { width: 100%; justify-content: center; }
+    .output-tabs { flex-wrap: wrap; }
+    .output-tab { padding: 8px 12px; font-size: 0.82em; }
+    #output-rich, #output-tit-only { padding: 16px 12px; }
+    .rich-tit { font-size: 0.78em; }
+    .section-grid { grid-template-columns: 1fr; }
+    .patient-name-row { flex-direction: column; }
+    .patient-name-row input { min-width: unset; width: 100%; }
+    .add-phase-btn { font-size: 0.88em; padding: 10px 12px; }
+    .med-pill-row { flex-wrap: wrap; }
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+    .card { box-shadow: none; }
+  }
+
+  .patient-name-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .patient-name-row .field { display: flex; flex-direction: column; gap: 4px; }
+  .patient-name-row label { font-size: 0.82em; font-weight: 600; color: var(--grey); text-transform: uppercase; }
+  .patient-name-row input { border: 1.5px solid #c8d8ee; border-radius: 5px; padding: 7px 12px; font-size: 0.95em; min-width: 200px; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: white; padding: 12px 22px; border-radius: 8px; font-weight: 700; font-size: 0.95em; box-shadow: var(--shadow); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ADHD Patient Guide Generator</h1>
+  <p>Build a personalised patient handout with titration schedule</p>
+</header>
+<div class="container">
+
+<!-- Patient Details -->
+<div class="card">
+  <div class="card-header" role="button" onclick="toggleCard(this)">Patient Details <span class="toggle">&#9650;</span></div>
+  <div class="card-body">
+    <div class="patient-name-row">
+      <div class="field"><label>Patient Name</label><input type="text" id="patient-name" placeholder="e.g. Jane Smith"></div>
+      <div class="field"><label>Date</label><input type="date" id="patient-date"></div>
+      <div class="field"><label>Clinician</label><input type="text" id="clinician-name" placeholder="e.g. Dr Smith"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section Selector -->
+<div class="card">
+  <div class="card-header" role="button" onclick="toggleCard(this)">Education <span class="toggle">&#9650;</span></div>
+  <div class="card-body">
+    <div class="check-all-row">
+      <button class="btn btn-outline" onclick="setAllSections(false)">&#10003; Select All</button>
+      <button class="btn btn-outline" onclick="setAllSections(true)">&#10005; Exclude All</button>
+    </div>
+    <div style="margin:10px 0 4px;font-size:0.78em;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;">Quick Select</div>
+    <div id="preset-btn-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <button class="preset-btn" data-preset="brief"       onclick="togglePreset('brief',this)">+ Brief Explainer</button>
+      <button class="preset-btn" data-preset="detailed"    onclick="togglePreset('detailed',this)">+ Detailed Explainer</button>
+      <button class="preset-btn" data-preset="therapy"     onclick="togglePreset('therapy',this)">+ Therapy</button>
+      <button class="preset-btn" data-preset="selfhelp"    onclick="togglePreset('selfhelp',this)">+ Self-Help</button>
+      <button class="preset-btn" data-preset="comms"       onclick="togglePreset('comms',this)">+ Communication</button>
+      <button class="preset-btn" data-preset="disability"  onclick="togglePreset('disability',this)">+ Disability Support</button>
+      <button class="preset-btn" data-preset="dex"         onclick="togglePreset('dex',this)">+ Dexamphetamine</button>
+      <button class="preset-btn" data-preset="vyvanse"     onclick="togglePreset('vyvanse',this)">+ Vyvanse</button>
+      <button class="preset-btn" data-preset="methylph"    onclick="togglePreset('methylph',this)">+ Methylphenidate</button>
+      <button class="preset-btn" data-preset="strattera"   onclick="togglePreset('strattera',this)">+ Strattera</button>
+      <button class="preset-btn" data-preset="intuniv"     onclick="togglePreset('intuniv',this)">+ Intuniv</button>
+      <button class="preset-btn" data-preset="catapres"    onclick="togglePreset('catapres',this)">+ Catapres</button>
+    </div>
+    <div id="section-bubbles"></div>
+  </div>
+</div>
+
+<!-- Medication Plan Builder -->
+<div class="card">
+  <div class="card-header" role="button" onclick="toggleCard(this)">Medication Plan <span class="toggle">&#9650;</span></div>
+  <div class="card-body">
+
+    <!-- Top control row: mode + presets -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin-bottom:20px;">
+      <div class="vv-field">
+        <label>Plan Type</label>
+        <div class="med-tabs" style="margin-bottom:0;">
+          <button class="med-tab active" id="mode-btn-titration" onclick="setPlanMode('titration',this)">Titration Protocol</button>
+          <button class="med-tab" id="mode-btn-plan" onclick="setPlanMode('plan',this)">Medication Plan</button>
+        </div>
+      </div>
+      <div class="vv-field">
+        <label>Load Example</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-outline" style="padding:6px 12px;font-size:0.83em;" onclick="loadPreset('dexTitration')">Dex IR Titration</button>
+          <button class="btn btn-outline" style="padding:6px 12px;font-size:0.83em;" onclick="loadPreset('ritalinTitration')">Ritalin IR Titration</button>
+          <button class="btn btn-outline" style="padding:6px 12px;font-size:0.83em;" onclick="loadPreset('vyvanseTitration')">Vyvanse Titration</button>
+          <button class="btn btn-outline" style="padding:6px 12px;font-size:0.83em;color:var(--red);border-color:var(--red);" onclick="resetPlan()">&#10005; Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase builder -->
+    <div id="plan-phases"></div>
+
+    <button class="add-phase-btn" id="add-phase-btn" onclick="addPhase()">+ Add Phase</button>
+
+  </div>
+</div>
+
+<!-- Generate -->
+<div class="card no-print">
+  <div class="card-header" role="button" onclick="toggleCard(this)">Generate Output <span class="toggle">&#9650;</span></div>
+  <div class="card-body">
+    <p style="font-size:0.9em;color:var(--grey);margin-bottom:12px;">Choose what to generate. Use the output tabs to switch views after generating.</p>
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:0.9em;cursor:pointer;">
+      <input type="checkbox" id="show-tick-col" checked style="width:15px;height:15px;accent-color:var(--midblue);">
+      Include tick-off checkbox column in day-by-day table
+    </label>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateOutput()">&#9654; Generate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Output Area -->
+<div id="output-area">
+  <div class="card output-card">
+    <div class="output-tabs">
+      <button class="output-tab active" onclick="switchOutputTab('rich',this)">Full Guide</button>
+      <button class="output-tab" onclick="switchOutputTab('tit',this)">Plan (short)</button>
+      <button class="output-tab" onclick="switchOutputTab('long',this)">Plan (day-by-day)</button>
+      <button class="output-tab" onclick="switchOutputTab('script',this)">Script Text</button>
+      <button class="output-tab" onclick="switchOutputTab('plain',this)">Plain Text</button>
+    </div>
+    <div id="output-rich"></div>
+    <div id="output-tit-only" style="display:none;"></div>
+    <div id="output-long" style="display:none;padding:20px 28px;"></div>
+    <div id="output-script" style="display:none;padding:20px;font-family:monospace;font-size:0.9em;white-space:pre-wrap;background:#f8f8f8;"></div>
+    <div id="output-plain" style="display:none;"></div>
+    <div class="copy-btn-row no-print">
+      <button class="btn btn-outline" onclick="copyOutput()">&#128203; Copy (current tab)</button>
+      <button class="btn btn-outline" onclick="downloadWordDoc()">&#128462; Download .doc</button>
+      <button class="btn btn-outline" onclick="downloadPDF()">&#128196; Download PDF</button>
+      <button class="btn btn-green" onclick="printReport()">&#128424; Print Report</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+// ==================== SECTION DATA ====================
+const SECTIONS = [
+  { id:'s_what',    label:'What Is ADHD?' },
+  { id:'s_brain',   label:'What Is Happening in the Brain' },
+  { id:'s_core',    label:'Core Symptoms' },
+  { id:'s_down',    label:'What Else Does It Generate?' },
+  { id:'s_impact',  label:'The Real-World Impact (with stats)' },
+  { id:'s_treat',   label:'Treatment Is Lifesaving' },
+  { id:'s_feels',   label:'What Treatment Actually Feels Like' },
+  { id:'s_meds_dex',       label:'Medication: Dexamphetamine' },
+  { id:'s_meds_vyvanse',    label:'Medication: Vyvanse' },
+  { id:'s_meds_ritalinIR',  label:'Medication: Ritalin IR / Artige' },
+  { id:'s_meds_ritalinLA',  label:'Medication: Ritalin LA' },
+  { id:'s_meds_concerta',   label:'Medication: Concerta' },
+  { id:'s_meds_strattera',  label:'Medication: Strattera' },
+  { id:'s_meds_intuniv',    label:'Medication: Intuniv' },
+  { id:'s_meds_catapres',   label:'Medication: Catapres' },
+  { id:'s_monitor', label:'What to Monitor During Titration' },
+  { id:'s_safety',  label:'Important Safety Considerations' },
+  { id:'s_myths',   label:'Myths — What the Evidence Says' },
+  { id:'s_faq',     label:'Commonly Asked Questions' },
+  // Optional psychoeducation additions
+  { id:'s_supports', label:'Accessing Supports &amp; Services', excludedByDefault: true },
+  { id:'s_workplace', label:'Workplace Adjustments', excludedByDefault: true },
+  // Optional grief section (excluded by default — clinician discretion)
+  { id:'s_grief',   label:'Grief After Late Diagnosis', excludedByDefault: true },
+  // Treatment resources
+  { id:'s_resources_aus', label:'Australian ADHD Websites' },
+  { id:'s_resources_meds', label:'Medication Information Websites' },
+  { id:'s_nonpharm_cbt',       label:'Non-Pharm: CBT' },
+  { id:'s_nonpharm_coaching',  label:'Non-Pharm: ADHD Coaching' },
+  { id:'s_nonpharm_mindful',   label:'Non-Pharm: Mindfulness' },
+  { id:'s_nonpharm_dbt',       label:'Non-Pharm: DBT' },
+  { id:'s_nonpharm_exercise',  label:'Non-Pharm: Exercise' },
+  { id:'s_nonpharm_ot',        label:'Non-Pharm: Occupational Therapy' },
+  { id:'s_sh_braindump',     label:'Self-Help: Brain Dump' },
+  { id:'s_sh_phone',         label:'Self-Help: Phone &amp; Social Media' },
+  { id:'s_sh_timeblock',     label:'Self-Help: Time Blocking' },
+  { id:'s_sh_bodydouble',    label:'Self-Help: Body Doubling' },
+  { id:'s_sh_ifthen',        label:'Self-Help: If-Then Planning' },
+  { id:'s_sh_decisions',     label:'Self-Help: Decision Fatigue' },
+  { id:'s_sh_reward',        label:'Self-Help: Reward Pairing' },
+  { id:'s_sh_bingeeating',   label:'Self-Help: Binge Eating' },
+  { id:'s_sh_emotional',     label:'Self-Help: Emotional Dysregulation' },
+  { id:'s_sh_kids',          label:'Self-Help: Difficulty With Kids' },
+  { id:'s_sh_partner',       label:'Self-Help: Difficulty With Partner' },
+  { id:'s_sh_commsadult',    label:'Self-Help: Communicating With ADHD Adult' },
+  { id:'s_sh_commschild',    label:'Self-Help: Talking With ADHD Child' },
+  { id:'s_sh_exercise',      label:'Self-Help: Exercise for ADHD' },
+  { id:'s_sh_sleep',         label:'Self-Help: Managing Sleep' },
+  { id:'s_se_dex',       label:'Side Effects: Dexamphetamine' },
+  { id:'s_se_vyvanse',   label:'Side Effects: Vyvanse' },
+  { id:'s_se_ritalinIR', label:'Side Effects: Ritalin IR / Artige' },
+  { id:'s_se_ritalinLA', label:'Side Effects: Ritalin LA' },
+  { id:'s_se_concerta',  label:'Side Effects: Concerta' },
+  { id:'s_se_strattera', label:'Side Effects: Strattera' },
+  { id:'s_se_intuniv',   label:'Side Effects: Intuniv' },
+  { id:'s_se_catapres',  label:'Side Effects: Catapres' },
+];
+
+// Track which sections are excluded
+const sectionExcluded = {};
+
+function buildSectionBubbles() {
+  // Only initialise exclusions if not already set (so init block can pre-set them)
+  SECTIONS.forEach(s => {
+    if (sectionExcluded[s.id] === undefined) sectionExcluded[s.id] = !!s.excludedByDefault;
+  });
+
+  const container = document.getElementById('section-bubbles');
+  container.innerHTML = '';
+
+  const groups = [
+    { label: 'Core Sections', ids: ['s_what','s_brain','s_core','s_down','s_impact','s_treat','s_feels','s_monitor','s_safety','s_myths','s_faq'] },
+    { label: 'Dexamphetamine', ids: ['s_meds_dex','s_se_dex'] },
+    { label: 'Vyvanse (Lisdexamfetamine)', ids: ['s_meds_vyvanse','s_se_vyvanse'] },
+    { label: 'Ritalin IR / Artige (Methylphenidate)', ids: ['s_meds_ritalinIR','s_se_ritalinIR'] },
+    { label: 'Ritalin LA (Methylphenidate)', ids: ['s_meds_ritalinLA','s_se_ritalinLA'] },
+    { label: 'Concerta (Methylphenidate)', ids: ['s_meds_concerta','s_se_concerta'] },
+    { label: 'Strattera (Atomoxetine)', ids: ['s_meds_strattera','s_se_strattera'] },
+    { label: 'Intuniv (Guanfacine)', ids: ['s_meds_intuniv','s_se_intuniv'] },
+    { label: 'Catapres (Clonidine)', ids: ['s_meds_catapres','s_se_catapres'] },
+    { label: 'Psychoeducation Add-ons', ids: ['s_supports','s_workplace','s_grief'] },
+    { label: 'Treatment Resources', ids: ['s_resources_aus','s_resources_meds'] },
+    { label: 'Non-Pharmacological Therapies', ids: ['s_nonpharm_cbt','s_nonpharm_coaching','s_nonpharm_mindful','s_nonpharm_dbt','s_nonpharm_exercise','s_nonpharm_ot'] },
+    { label: 'Self-Help Techniques', ids: ['s_sh_braindump','s_sh_phone','s_sh_timeblock','s_sh_bodydouble','s_sh_ifthen','s_sh_decisions','s_sh_reward','s_sh_bingeeating','s_sh_emotional','s_sh_kids','s_sh_partner','s_sh_commsadult','s_sh_commschild','s_sh_exercise','s_sh_sleep'] },
+  ];
+
+  groups.forEach(grp => {
+    const grpHeading = document.createElement('div');
+    grpHeading.style.cssText = 'font-size:0.78em;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.5px;padding:10px 0 4px;margin-top:8px;';
+    grpHeading.textContent = grp.label;
+    container.appendChild(grpHeading);
+
+    grp.ids.forEach(id => {
+      const s = SECTIONS.find(x => x.id === id);
+      if (!s) return;
+      const bubble = document.createElement('div');
+      bubble.id = 'bubble-' + id;
+      bubble.style.cssText = 'position:relative;background:var(--altrow);border:1px solid #dde6f2;border-radius:8px;padding:10px 12px;margin-bottom:8px;transition:opacity 0.2s;';
+      if (sectionExcluded[id]) { bubble.style.opacity = '0.4'; }
+
+      const contentPreview = getSectionHTML(id);
+      bubble.innerHTML = `
+        <div style="display:flex;justify-content:flex-end;margin-bottom:4px;">
+          <button onclick="toggleSectionExclude('${id}')" id="excl-btn-${id}"
+            style="font-size:0.82em;padding:6px 12px;border-radius:10px;min-height:32px;border:1px solid ${sectionExcluded[id] ? '#888' : '#C00000'};background:${sectionExcluded[id] ? '#e8e8e8' : '#fff0f0'};color:${sectionExcluded[id] ? '#555' : '#C00000'};cursor:pointer;font-weight:600;pointer-events:auto;"
+          >${sectionExcluded[id] ? '&#8634; Include' : '&#10005; Exclude'}</button>
+        </div>
+        <div class="bubble-content" style="font-size:0.87em;line-height:1.5;pointer-events:none;">${contentPreview}</div>
+      `;
+      container.appendChild(bubble);
+    });
+  });
+}
+
+function toggleSectionExclude(id) {
+  setSectionExcluded(id, !sectionExcluded[id]);
+}
+
+function setAllSections(excludeAll) {
+  // Clear all active presets visually
+  document.querySelectorAll('.preset-btn.active').forEach(b => b.classList.remove('active'));
+  Object.keys(activePresets).forEach(k => { activePresets[k] = false; });
+  SECTIONS.forEach(s => setSectionExcluded(s.id, excludeAll));
+}
+
+function sectionOn(id) { return !sectionExcluded[id]; }
+
+// ==================== QUICK SELECT PRESETS ====================
+const PRESETS = {
+  brief:      ['s_what','s_faq'],
+  detailed:   ['s_what','s_brain','s_core','s_down','s_impact','s_treat','s_feels','s_myths','s_faq'],
+  therapy:    ['s_nonpharm_cbt','s_nonpharm_coaching','s_nonpharm_mindful','s_nonpharm_dbt','s_nonpharm_exercise','s_nonpharm_ot','s_grief'],
+  selfhelp:   ['s_sh_braindump','s_sh_phone','s_sh_timeblock','s_sh_bodydouble','s_sh_ifthen','s_sh_decisions','s_sh_reward','s_sh_bingeeating','s_sh_emotional','s_sh_exercise','s_sh_sleep'],
+  comms:      ['s_sh_kids','s_sh_partner','s_sh_commsadult','s_sh_commschild'],
+  disability: ['s_supports','s_workplace'],
+  dex:        ['s_meds_dex','s_se_dex','s_monitor','s_safety'],
+  vyvanse:    ['s_meds_vyvanse','s_se_vyvanse','s_monitor','s_safety'],
+  methylph:   ['s_meds_ritalinIR','s_se_ritalinIR','s_meds_ritalinLA','s_se_ritalinLA','s_meds_concerta','s_se_concerta','s_monitor','s_safety'],
+  strattera:  ['s_meds_strattera','s_se_strattera','s_monitor','s_safety'],
+  intuniv:    ['s_meds_intuniv','s_se_intuniv','s_monitor','s_safety'],
+  catapres:   ['s_meds_catapres','s_se_catapres','s_monitor','s_safety'],
+};
+
+// Track which presets are currently active
+const activePresets = {};
+
+function togglePreset(name, btn) {
+  const ids = PRESETS[name];
+  if (!ids) return;
+  const isActive = !!activePresets[name];
+
+  if (isActive) {
+    // Deactivate: re-exclude any section that isn't in another active preset
+    activePresets[name] = false;
+    btn.classList.remove('active');
+    ids.forEach(id => {
+      // Only re-exclude if no other active preset includes this id
+      const stillNeeded = Object.entries(activePresets).some(([pName, pActive]) =>
+        pActive && PRESETS[pName] && PRESETS[pName].includes(id)
+      );
+      if (!stillNeeded) setSectionExcluded(id, true);
+    });
+  } else {
+    // Activate: include all sections in this preset
+    activePresets[name] = true;
+    btn.classList.add('active');
+    ids.forEach(id => setSectionExcluded(id, false));
+  }
+}
+
+function setSectionExcluded(id, exclude) {
+  if (sectionExcluded[id] === exclude) return;
+  sectionExcluded[id] = exclude;
+  const bubble = document.getElementById('bubble-' + id);
+  const btn = document.getElementById('excl-btn-' + id);
+  const content = bubble ? bubble.querySelector('.bubble-content') : null;
+  if (!bubble || !btn) return;
+  if (exclude) {
+    bubble.style.opacity = '0.4';
+    // Never block pointer events on the bubble itself — iOS Safari ignores
+    // pointer-events:auto on child elements when parent has none.
+    // Instead disable only the content area, keep button always tappable.
+    if (content) content.style.pointerEvents = 'none';
+    btn.style.borderColor = '#888';
+    btn.style.background = '#e8e8e8';
+    btn.style.color = '#555';
+    btn.innerHTML = '&#8634; Include';
+  } else {
+    bubble.style.opacity = '1';
+    if (content) content.style.pointerEvents = 'none'; // content is always non-interactive
+    btn.style.borderColor = '#C00000';
+    btn.style.background = '#fff0f0';
+    btn.style.color = '#C00000';
+    btn.innerHTML = '&#10005; Exclude';
+  }
+}
+
+// ==================== CARD TOGGLE ====================
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  const tog = header.querySelector('.toggle');
+  body.classList.toggle('collapsed');
+  tog.style.transform = body.classList.contains('collapsed') ? 'rotate(180deg)' : '';
+}
+
+// ==================== MEDICATION DATA ====================
+const MEDS = {
+  dex: {
+    name: 'Dexamphetamine IR', brandName: 'Dexamphetamine', form: 'tablet', unit: 'mg',
+    strengths: [5], defaultStrength: 5,
+    doseOptions: [
+      { label: '½ tab (2.5 mg)', qty: 0.5, display: '½ tab (2.5 mg)' },
+      { label: '1 tab (5 mg)', qty: 1, display: '1 tab (5 mg)' },
+      { label: '1½ tabs (7.5 mg)', qty: 1.5, display: '1½ tabs (7.5 mg)' },
+      { label: '2 tabs (10 mg)', qty: 2, display: '2 tabs (10 mg)' },
+      { label: '3 tabs (15 mg)', qty: 3, display: '3 tabs (15 mg)' },
+      { label: '4 tabs (20 mg)', qty: 4, display: '4 tabs (20 mg)' },
+    ],
+    onset: '20 minutes', duration: '3–4 hours',
+    notes: 'IR short-acting. Contains gluten and lactose, no gelatin. Take at the times shown.',
+    gluten: true, lactose: true, gelatin: false, canSprinkle: false, mustSwallowWhole: false,
+    class: 'stimulant', scriptNote: 'Dexamphetamine 5mg tablets', multiCap: false, singleCap: false,
+  },
+  vyvanse: {
+    name: 'Vyvanse', brandName: 'Vyvanse (lisdexamfetamine)', form: 'capsule', unit: 'mg',
+    strengths: [20, 30, 40, 50, 60, 70], defaultStrength: 30, doseOptions: null,
+    onset: '60–90 minutes', duration: 'Up to 14 hours',
+    notes: 'Gradual onset, prolonged release. Take on waking. Capsule can be swallowed whole or opened and mixed into water or yoghurt. No gluten or lactose, contains gelatin.',
+    gluten: false, lactose: false, gelatin: true, canSprinkle: true, mustSwallowWhole: false,
+    class: 'stimulant', scriptNote: 'Vyvanse capsules', multiCap: true, singleCap: false,
+  },
+  ritalinIR: {
+    name: 'Ritalin IR', brandName: 'Ritalin (methylphenidate) 10mg', form: 'tablet', unit: 'mg',
+    strengths: [10], defaultStrength: 10,
+    doseOptions: [
+      { label: '½ tab (5 mg)', qty: 0.5, display: '½ tab (5 mg)' },
+      { label: '1 tab (10 mg)', qty: 1, display: '1 tab (10 mg)' },
+      { label: '1½ tabs (15 mg)', qty: 1.5, display: '1½ tabs (15 mg)' },
+      { label: '2 tabs (20 mg)', qty: 2, display: '2 tabs (20 mg)' },
+      { label: '3 tabs (30 mg)', qty: 3, display: '3 tabs (30 mg)' },
+    ],
+    onset: '20 minutes', duration: '3–4 hours',
+    notes: 'IR short-acting. Contains gluten, lactose and gelatin.',
+    gluten: true, lactose: true, gelatin: true, canSprinkle: false, mustSwallowWhole: false,
+    class: 'stimulant', scriptNote: 'Ritalin 10mg tablets', multiCap: false, singleCap: false,
+  },
+  ritalinLA: {
+    name: 'Ritalin LA', brandName: 'Ritalin LA (methylphenidate)', form: 'capsule', unit: 'mg',
+    strengths: [10, 20, 30, 40, 60], defaultStrength: 20, doseOptions: null,
+    onset: '20 minutes', duration: '8 hours (peaks at ~2 h and ~6 h)',
+    notes: 'Once-daily LA. Capsule can be swallowed whole or sprinkled onto soft food. No gluten or lactose, contains gelatin.',
+    gluten: false, lactose: false, gelatin: true, canSprinkle: true, mustSwallowWhole: false,
+    class: 'stimulant', scriptNote: 'Ritalin LA capsules', multiCap: false, singleCap: true,
+  },
+  concerta: {
+    name: 'Concerta', brandName: 'Concerta (methylphenidate)', form: 'capsule', unit: 'mg',
+    strengths: [18, 27, 36, 54], defaultStrength: 18, doseOptions: null,
+    onset: '20 minutes', duration: '12 hours (peaks at 1–2 h and 6–8 h)',
+    notes: 'Must be swallowed whole — do not crush or open. No gluten, contains lactose, no gelatin. PBS authority: diagnosis must have been made before age 18.',
+    gluten: false, lactose: true, gelatin: false, canSprinkle: false, mustSwallowWhole: true,
+    class: 'stimulant', scriptNote: 'Concerta capsules (Dx <18 yrs required)', multiCap: false, singleCap: true, mustDxUnder18: true,
+  },
+  strattera: {
+    name: 'Strattera', brandName: 'Strattera (atomoxetine)', form: 'capsule', unit: 'mg',
+    strengths: [10, 18, 25, 40, 60, 80], defaultStrength: 25, doseOptions: null,
+    onset: 'Delayed: 4–12 weeks for full therapeutic effect', duration: '24 hours',
+    notes: 'Non-stimulant SNRI. Must be swallowed whole. No gluten or lactose, contains gelatin. Full effect takes 4–12 weeks.',
+    gluten: false, lactose: false, gelatin: true, canSprinkle: false, mustSwallowWhole: true,
+    class: 'non-stimulant', scriptNote: 'Strattera (atomoxetine) capsules', multiCap: false, singleCap: true,
+  },
+  intuniv: {
+    name: 'Intuniv', brandName: 'Intuniv (guanfacine MR)', form: 'tablet', unit: 'mg',
+    strengths: [1, 2, 3, 4], defaultStrength: 1, doseOptions: null,
+    onset: 'Gradual', duration: '24 hours',
+    notes: 'Alpha-2A agonist. Modified release — must be swallowed whole, do not crush or chew. No gluten or gelatin, contains lactose.',
+    gluten: false, lactose: true, gelatin: false, canSprinkle: false, mustSwallowWhole: true,
+    class: 'non-stimulant', scriptNote: 'Intuniv (guanfacine MR) tablets', multiCap: false, singleCap: true,
+  },
+  catapres: {
+    name: 'Catapres', brandName: 'Catapres (clonidine)', form: 'tablet', unit: 'mcg',
+    strengths: [100, 150], defaultStrength: 100,
+    doseOptions: null, // free-text dosing
+    freeTextDose: true, // custom flag: render a text input instead of a dropdown
+    defaultDoseText: '\u00bd tab (50 mcg)',
+    onset: '20 minutes', duration: 'Up to 12 hours',
+    notes: 'Non-selective alpha-2 agonist. IR. Bottle of 100. No gluten or gelatin, contains lactose.',
+    gluten: false, lactose: true, gelatin: false, canSprinkle: false, mustSwallowWhole: false,
+    class: 'non-stimulant', scriptNote: 'Catapres (clonidine) tablets', multiCap: false, singleCap: false,
+  },
+};
+
+// Preset protocols
+const PLAN_PRESETS = {
+  dexTitration: {
+    label: 'Dex IR — Standard Titration', mode: 'titration',
+    phases: [
+      { label: 'Phase 1 — Initiation', duration: 2, unit: 'days', ongoing: false, note: 'Starting dose. Take morning dose immediately on waking.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'dex', strength: 5, doses: [{ time: 'morning', qty: 0.5, label: '½ tab (2.5 mg)' }, { time: 'midday', qty: 0.5, label: '½ tab (2.5 mg)' }], caps: [] }] },
+      { label: 'Phase 2', duration: 7, unit: 'days', ongoing: false, note: '', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'dex', strength: 5, doses: [{ time: 'morning', qty: 1, label: '1 tab (5 mg)' }, { time: 'midday', qty: 1, label: '1 tab (5 mg)' }], caps: [] }] },
+      { label: 'Phase 3', duration: 7, unit: 'days', ongoing: false, note: 'Good tolerability of Phase 2 required.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'dex', strength: 5, doses: [{ time: 'morning', qty: 2, label: '2 tabs (10 mg)' }, { time: 'midday', qty: 1, label: '1 tab (5 mg)' }], caps: [] }] },
+      { label: 'Phase 4', duration: 0, unit: 'days', ongoing: true, note: 'Continue until next review.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'dex', strength: 5, doses: [{ time: 'morning', qty: 2, label: '2 tabs (10 mg)' }, { time: 'midday', qty: 2, label: '2 tabs (10 mg)' }], caps: [] }] },
+    ]
+  },
+  ritalinTitration: {
+    label: 'Ritalin IR — Standard Titration', mode: 'titration',
+    phases: [
+      { label: 'Phase 1 — Initiation', duration: 2, unit: 'days', ongoing: false, note: 'Starting dose. Take morning dose immediately on waking.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'ritalinIR', strength: 10, doses: [{ time: 'morning', qty: 0.5, label: '½ tab (5 mg)' }, { time: 'midday', qty: 0.5, label: '½ tab (5 mg)' }], caps: [] }] },
+      { label: 'Phase 2', duration: 7, unit: 'days', ongoing: false, note: '', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'ritalinIR', strength: 10, doses: [{ time: 'morning', qty: 1, label: '1 tab (10 mg)' }, { time: 'midday', qty: 1, label: '1 tab (10 mg)' }], caps: [] }] },
+      { label: 'Phase 3', duration: 7, unit: 'days', ongoing: false, note: 'Good tolerability of Phase 2 required.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'ritalinIR', strength: 10, doses: [{ time: 'morning', qty: 2, label: '2 tabs (20 mg)' }, { time: 'midday', qty: 1, label: '1 tab (10 mg)' }], caps: [] }] },
+      { label: 'Phase 4', duration: 0, unit: 'days', ongoing: true, note: 'Continue until next review.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'ritalinIR', strength: 10, doses: [{ time: 'morning', qty: 2, label: '2 tabs (20 mg)' }, { time: 'midday', qty: 2, label: '2 tabs (20 mg)' }], caps: [] }] },
+    ]
+  },
+  vyvanseTitration: {
+    label: 'Vyvanse — Standard Titration', mode: 'titration',
+    phases: [
+      { label: 'Phase 1', duration: 7, unit: 'days', ongoing: false, note: 'Starting dose. Take on waking.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'vyvanse', strength: null, doses: [{ time: 'morning', caps: [30] }], caps: [30] }] },
+      { label: 'Phase 2', duration: 2, unit: 'weeks', ongoing: false, note: 'Good tolerability of Phase 1 required before proceeding.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'vyvanse', strength: null, doses: [{ time: 'morning', caps: [30, 20] }], caps: [30, 20] }] },
+      { label: 'Phase 3 (if needed)', duration: 1, unit: 'weeks', ongoing: false, note: 'Only if symptom control still insufficient. Contact psychiatrist before this step.', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        meds: [{ medId: 'vyvanse', strength: null, doses: [{ time: 'morning', caps: [30, 20, 20] }], caps: [30, 20, 20] }] },
+    ]
+  },
+};
+
+// ==================== PLAN STATE ====================
+let planMode = 'titration';
+let phases = [];
+
+function setPlanMode(mode, btn) {
+  planMode = mode;
+  document.querySelectorAll('.med-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPhases();
+  updateAddPhaseBtn();
+}
+
+function updateAddPhaseBtn() {
+  const btn = document.getElementById('add-phase-btn');
+  btn.textContent = planMode === 'titration' ? '+ Add Phase' : '+ Add Medication Group';
+}
+
+function resetPlan() {
+  phases = [];
+  renderPhases();
+}
+
+function loadPreset(key) {
+  const p = PLAN_PRESETS[key];
+  if (!p) return;
+  // Switch mode
+  planMode = p.mode;
+  document.getElementById('mode-btn-titration').classList.toggle('active', p.mode === 'titration');
+  document.getElementById('mode-btn-plan').classList.toggle('active', p.mode === 'plan');
+  // Deep clone phases
+  phases = JSON.parse(JSON.stringify(p.phases));
+  renderPhases();
+  updateAddPhaseBtn();
+}
+
+function addPhase() {
+  const newPhase = {
+    label: planMode === 'titration' ? 'Phase ' + (phases.length + 1) : 'Medications',
+    duration: 7, unit: 'days', ongoing: false, note: '',
+    meds: [],
+    days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  };
+  phases.push(newPhase);
+  renderPhases();
+  // Scroll to the new phase
+  setTimeout(() => {
+    const els = document.querySelectorAll('.vv-phase');
+    if (els.length) els[els.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function removePhase(idx) {
+  phases.splice(idx, 1);
+  renderPhases();
+}
+
+function updatePhaseDays(pi) {
+  const DOW_ALL = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const selected = DOW_ALL.filter(d => {
+    const el = document.getElementById(`dow-${pi}-${d.toLowerCase()}`);
+    return el && el.checked;
+  });
+  phases[pi].days = selected;
+  // No need to re-render — just update state
+}
+
+// ==================== RENDER PHASES ====================
+function renderPhases() {
+  const container = document.getElementById('plan-phases');
+  container.innerHTML = '';
+  if (phases.length === 0) {
+    container.innerHTML = `<div style="color:var(--grey);font-size:0.9em;padding:14px 0;font-style:italic;">No phases yet. Load an example or click Add Phase to start.</div>`;
+    return;
+  }
+  phases.forEach((ph, pi) => {
+    const div = document.createElement('div');
+    div.className = 'vv-phase';
+    div.style.marginBottom = '14px';
+    div.innerHTML = renderPhaseHTML(ph, pi);
+    container.appendChild(div);
+  });
+}
+
+function renderPhaseHTML(ph, pi) {
+  const isTitration = planMode === 'titration';
+  let medRows = ph.meds.map((med, mi) => renderMedRow(med, pi, mi)).join('');
+
+  let durationHTML = '';
+  if (isTitration) {
+    const ongoingChecked = ph.ongoing ? 'checked' : '';
+    durationHTML = `
+      <div class="vv-row" style="margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+        <div class="vv-field">
+          <label>Duration</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="number" min="1" max="365" value="${ph.ongoing ? '' : (ph.duration||7)}" style="width:64px;"
+              ${ph.ongoing ? 'disabled' : ''}
+              oninput="phases[${pi}].duration=parseInt(this.value)||1">
+            <select onchange="phases[${pi}].unit=this.value" ${ph.ongoing ? 'disabled' : ''}>
+              <option value="days" ${ph.unit==='days'?'selected':''}>days</option>
+              <option value="weeks" ${ph.unit==='weeks'?'selected':''}>weeks</option>
+            </select>
+          </div>
+        </div>
+        <div class="vv-field" style="justify-content:flex-end;">
+          <label style="white-space:nowrap;">Ongoing / Until Review</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" ${ongoingChecked} onchange="phases[${pi}].ongoing=this.checked;renderPhases();"
+              style="width:16px;height:16px;accent-color:var(--midblue);">
+            <span style="font-size:0.9em;">Ongoing / continue until next review</span>
+          </label>
+        </div>
+      </div>`;
+  }
+
+  // Days-of-week row for plan mode
+  const DOW_ALL = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const phDays = ph.days || DOW_ALL;
+  let dowHTML = '';
+  if (!isTitration) {
+    const dowCheckboxes = DOW_ALL.map(d => {
+      const checked = phDays.includes(d) ? 'checked' : '';
+      return `<label style="display:flex;align-items:center;gap:4px;font-size:0.88em;cursor:pointer;"><input type="checkbox" id="dow-${pi}-${d.toLowerCase()}" ${checked} style="accent-color:var(--midblue);" onchange="updatePhaseDays(${pi})"> ${d}</label>`;
+    }).join('');
+    dowHTML = `<div style="background:#edf2fb;border-radius:6px;padding:8px 12px;margin-bottom:10px;">
+      <div style="font-size:0.77em;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Days of week</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">${dowCheckboxes}</div>
+    </div>`;
+  }
+
+  return `
+    <div class="vv-phase-header">
+      <span class="vv-phase-title">${isTitration ? 'Phase ' + (pi+1) : 'Group ' + (pi+1)}</span>
+      <button class="vv-phase-remove" onclick="removePhase(${pi})" title="Remove">&#x2715;</button>
+    </div>
+    <div class="vv-row" style="margin-bottom:10px;">
+      <div class="vv-field" style="flex:1;min-width:200px;">
+        <label>Label</label>
+        <input type="text" value="${ph.label}" oninput="phases[${pi}].label=this.value" style="width:100%;">
+      </div>
+    </div>
+    ${dowHTML}
+    ${durationHTML}
+    <div id="med-rows-${pi}">${medRows}</div>
+    <div style="margin-top:10px;">
+      <div style="font-size:0.78em;font-weight:600;color:var(--grey);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Add medication</div>
+      <div class="med-pill-row" style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${Object.entries(MEDS).map(([k,m]) => `<button onclick="addMedDirectly(${pi},'${k}')" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--midblue);background:white;color:var(--midblue);font-size:0.83em;font-weight:600;cursor:pointer;" onmouseover="this.style.background='var(--lightblue)'" onmouseout="this.style.background='white'">+ ${m.name}</button>`).join('')}
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <div class="vv-field">
+        <label>Notes</label>
+        <input type="text" value="${ph.note}" oninput="phases[${pi}].note=this.value" style="width:100%;" placeholder="e.g. Good tolerability required before proceeding">
+      </div>
+    </div>`;
+}
+
+function renderMedRow(med, pi, mi) {
+  const medDef = MEDS[med.medId];
+  if (!medDef) return '';
+  const isMultiCap = medDef.multiCap;
+  const isSingleCap = medDef.singleCap;
+  const hasDoseOptions = !isMultiCap && !isSingleCap && medDef.doseOptions;
+
+  // Timing chips: each dose entry
+  let doseChips = med.doses.map((d, di) => renderDoseChip(d, pi, mi, di, medDef)).join('');
+
+  // Strength selector (for single-cap meds)
+  let strengthHTML = '';
+  if (isSingleCap || isMultiCap) {
+    const strOpts = medDef.strengths.map(s => `<option value="${s}" ${s===(med.strength||medDef.defaultStrength)?'selected':''}>${s} ${medDef.unit}</option>`).join('');
+    if (!isMultiCap) {
+      strengthHTML = `<div class="vv-field"><label>Strength</label>
+        <select onchange="const s=parseInt(this.value);phases[${pi}].meds[${mi}].strength=s;phases[${pi}].meds[${mi}].doses.forEach(d=>d.strength=s);renderPhases();">${strOpts}</select></div>`;
+    }
+  }
+
+  // For multi-cap (Vyvanse): show cap badges per dose slot
+  // For others: show dose picker per timing slot
+
+  let addTimingHTML = renderAddTimingRow(pi, mi, medDef);
+
+  return `
+    <div style="background:white;border:1.5px solid #c8d8ee;border-radius:7px;padding:12px 14px;margin-bottom:8px;position:relative;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <strong style="color:var(--blue);font-size:0.95em;">${medDef.name}</strong>
+        ${medDef.mustSwallowWhole ? '<span style="font-size:0.75em;background:#FFF3CD;color:#7A4000;padding:2px 7px;border-radius:10px;">Swallow whole</span>' : ''}
+        ${medDef.canSprinkle ? '<span style="font-size:0.75em;background:#E8F5E9;color:#2E7D32;padding:2px 7px;border-radius:10px;">Can sprinkle</span>' : ''}
+        ${medDef.mustDxUnder18 ? '<span style="font-size:0.75em;background:#FCE4EC;color:#880E4F;padding:2px 7px;border-radius:10px;">Dx &lt;18 yrs</span>' : ''}
+        <button onclick="removeMedFromPhase(${pi},${mi})" style="margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:1em;opacity:0.7;">&#x2715;</button>
+      </div>
+      ${strengthHTML}
+      <div style="margin-top:8px;">
+        <div style="font-size:0.78em;font-weight:600;color:var(--grey);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Dosing Schedule</div>
+        <div id="dose-chips-${pi}-${mi}" style="display:flex;flex-direction:column;gap:6px;">${doseChips}</div>
+        ${addTimingHTML}
+      </div>
+    </div>`;
+}
+
+function renderAddTimingRow(pi, mi, medDef) {
+  const timings = ['morning','midday','afternoon','evening','5am','7am','8am','9am','10am','12pm','1pm','2pm','3pm','4pm','6pm','8pm','10pm','custom'];
+  const tOpts = timings.map(t => `<option value="${t}">${t === 'custom' ? 'Custom time...' : t}</option>`).join('');
+  return `<div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;">
+    <select id="add-timing-sel-${pi}-${mi}" style="border:1.5px solid #c8d8ee;border-radius:5px;padding:5px 8px;font-size:0.87em;">${tOpts}</select>
+    <button class="btn btn-outline" style="padding:4px 10px;font-size:0.83em;" onclick="addDoseToMed(${pi},${mi})">+ Add Dose Time</button>
+  </div>`;
+}
+
+function renderDoseChip(dose, pi, mi, di, medDef) {
+  const isMultiCap = medDef.multiCap;
+  const isFreeText = medDef.freeTextDose;
+  const hasDoseOpts = medDef.doseOptions && !isMultiCap && !isFreeText;
+  let doseControl = '';
+
+  if (isFreeText) {
+    const val = dose.label || medDef.defaultDoseText || '';
+    doseControl = `<input type="text" value="${val.replace(/"/g,'&quot;')}" placeholder="e.g. ¼ tab, 2½ tabs"
+      style="border:1.5px solid #c8d8ee;border-radius:5px;padding:4px 8px;font-size:0.87em;width:100%;"
+      onchange="phases[${pi}].meds[${mi}].doses[${di}].label=this.value;">`;
+  } else if (isMultiCap) {
+    // Vyvanse-style: cap badges
+    const caps = dose.caps || [];
+    const capsHTML = caps.map((c, ci) =>
+      `<span class="cap-badge">${c} mg <button onclick="removeCapFromDose(${pi},${mi},${di},${ci})">&#x2715;</button></span>`
+    ).join('');
+    const capOpts = medDef.strengths.map(s => `<option value="${s}">${s} mg</option>`).join('');
+    doseControl = `<div class="vv-caps" style="gap:4px;">${capsHTML}</div>
+      <div class="add-cap-row" style="margin-top:4px;">
+        <select id="capsel-${pi}-${mi}-${di}" style="border:1.5px solid #c8d8ee;border-radius:5px;padding:4px 7px;font-size:0.85em;">${capOpts}</select>
+        <button class="btn btn-outline" style="padding:3px 9px;font-size:0.8em;" onclick="addCapToDose(${pi},${mi},${di})">+ Cap</button>
+      </div>`;
+    const total = caps.reduce((a, b) => a + b, 0);
+    doseControl += `<div style="font-size:0.8em;color:var(--grey);margin-top:3px;">Total: ${total} mg</div>`;
+  } else if (hasDoseOpts) {
+    const opts = medDef.doseOptions.map(o =>
+      `<option value="${o.qty}" data-label="${o.label}" ${o.qty === dose.qty ? 'selected' : ''}>${o.label}</option>`
+    ).join('');
+    doseControl = `<select style="border:1.5px solid #c8d8ee;border-radius:5px;padding:4px 8px;font-size:0.87em;"
+      onchange="phases[${pi}].meds[${mi}].doses[${di}].qty=parseFloat(this.value);phases[${pi}].meds[${mi}].doses[${di}].label=this.options[this.selectedIndex].dataset.label;">
+      ${opts}</select>`;
+  } else {
+    // Single cap strength-based
+    const str = medDef.strengths[0];
+    doseControl = `<span style="font-size:0.87em;color:var(--grey);">1 ${medDef.form} (${medDef.singleCap ? (dose.strength || medDef.defaultStrength) : str} ${medDef.unit})</span>`;
+  }
+
+  const timeLabel = dose.time || 'morning';
+  return `
+    <div style="display:flex;align-items:flex-start;gap:8px;background:var(--altrow);padding:6px 10px;border-radius:6px;">
+      <div style="min-width:90px;">
+        <div style="font-size:0.78em;font-weight:700;color:var(--midblue);text-transform:uppercase;">${timeLabel}</div>
+        ${isMultiCap ? '' : `<input type="text" value="${timeLabel}" style="width:100%;border:1px solid #c8d8ee;border-radius:4px;padding:2px 5px;font-size:0.82em;margin-top:2px;"
+          onchange="phases[${pi}].meds[${mi}].doses[${di}].time=this.value;" title="Edit timing">`}
+      </div>
+      <div style="flex:1;">${doseControl}</div>
+      <button onclick="removeDoseFromMed(${pi},${mi},${di})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.95em;opacity:0.6;margin-top:2px;">&#x2715;</button>
+    </div>`;
+}
+
+// ==================== MED/DOSE MUTATIONS ====================
+function addMedDirectly(pi, medId) {
+  addMedWithId(pi, medId);
+}
+function addMedToPhase(pi) {
+  const medId = document.getElementById('add-med-sel-' + pi)?.value;
+  if (!medId) return;
+  addMedWithId(pi, medId);
+}
+function addMedWithId(pi, medId) {
+  const medDef = MEDS[medId];
+  const newMed = {
+    medId,
+    strength: medDef.defaultStrength,
+    doses: [],
+    caps: medDef.multiCap ? [medDef.defaultStrength] : [],
+  };
+  // Add a default morning dose
+  if (medDef.multiCap) {
+    newMed.doses.push({ time: 'morning', caps: [medDef.defaultStrength] });
+  } else if (medDef.freeTextDose) {
+    newMed.doses.push({ time: 'morning', qty: 1, label: medDef.defaultDoseText || '1 tab' });
+  } else if (medDef.singleCap) {
+    newMed.doses.push({ time: 'morning', qty: 1, label: `1 ${medDef.form} (${medDef.defaultStrength} ${medDef.unit})`, strength: medDef.defaultStrength });
+  } else if (medDef.doseOptions) {
+    newMed.doses.push({ time: 'morning', qty: medDef.doseOptions[1]?.qty || 1, label: medDef.doseOptions[1]?.label || '1 tab' });
+  } else {
+    newMed.doses.push({ time: 'morning', qty: 1, label: `1 ${medDef.form}` });
+  }
+  phases[pi].meds.push(newMed);
+  renderPhases();
+}
+
+function removeMedFromPhase(pi, mi) {
+  phases[pi].meds.splice(mi, 1);
+  renderPhases();
+}
+
+function addDoseToMed(pi, mi) {
+  const sel = document.getElementById(`add-timing-sel-${pi}-${mi}`);
+  let time = sel.value;
+  if (time === 'custom') {
+    time = prompt('Enter custom time (e.g. "5am", "9:30am"):');
+    if (!time) return;
+  }
+  const medDef = MEDS[phases[pi].meds[mi].medId];
+  let newDose;
+  if (medDef.multiCap) {
+    newDose = { time, caps: [medDef.defaultStrength] };
+  } else if (medDef.freeTextDose) {
+    newDose = { time, qty: 1, label: medDef.defaultDoseText || '1 tab' };
+  } else if (medDef.singleCap) {
+    newDose = { time, qty: 1, label: `1 ${medDef.form} (${phases[pi].meds[mi].strength || medDef.defaultStrength} ${medDef.unit})`, strength: phases[pi].meds[mi].strength || medDef.defaultStrength };
+  } else if (medDef.doseOptions) {
+    newDose = { time, qty: medDef.doseOptions[0].qty, label: medDef.doseOptions[0].label };
+  } else {
+    newDose = { time, qty: 1, label: `1 ${medDef.form}` };
+  }
+  phases[pi].meds[mi].doses.push(newDose);
+  renderPhases();
+}
+
+function removeDoseFromMed(pi, mi, di) {
+  phases[pi].meds[mi].doses.splice(di, 1);
+  renderPhases();
+}
+
+function addCapToDose(pi, mi, di) {
+  const sel = document.getElementById(`capsel-${pi}-${mi}-${di}`);
+  const val = parseInt(sel.value);
+  phases[pi].meds[mi].doses[di].caps.push(val);
+  phases[pi].meds[mi].doses[di].caps.sort((a, b) => b - a);
+  renderPhases();
+}
+
+function removeCapFromDose(pi, mi, di, ci) {
+  phases[pi].meds[mi].doses[di].caps.splice(ci, 1);
+  renderPhases();
+}
+
+// ==================== OUTPUT GENERATION ====================
+// Helper: get dose display string for a dose object
+function getDoseDisplay(dose, medDef) {
+  if (!dose) return '--';
+  if (medDef.multiCap) {
+    const caps = dose.caps || [];
+    if (!caps.length) return '--';
+    return caps.map(c => c + ' mg').join(' + ') + ' (' + caps.reduce((a,b)=>a+b,0) + ' mg total)';
+  }
+  if (dose.label) return dose.label;
+  return dose.qty ? dose.qty + ' ' + medDef.form : '--';
+}
+
+// Helper: describe all meds in a phase for inline text
+function describePhaseMeds(ph) {
+  return ph.meds.map(med => {
+    const def = MEDS[med.medId];
+    if (!def) return '';
+    const doseStr = med.doses.map(d => {
+      const dText = getDoseDisplay(d, def);
+      return `${d.time}: ${dText}`;
+    }).join(', ');
+    return `${def.name} — ${doseStr}`;
+  }).join('; ');
+}
+
+// Build short plan table (one row per phase)
+function buildShortTableHTML() {
+  if (!phases.length) return '<p style="color:var(--grey);">No plan configured.</p>';
+  const isTitration = planMode === 'titration';
+  const title = isTitration ? 'Titration Protocol' : 'Medication Plan';
+
+  // Collect all unique timing labels
+  const allTimes = new Set();
+  phases.forEach(ph => ph.meds.forEach(med => med.doses.forEach(d => allTimes.add(d.time))));
+  const timeList = [...allTimes];
+
+  // For short table: rows = phases, columns = (phase label, duration, each med per timing, notes)
+  let h = `<div class="rich-h1">${title}</div>`;
+  if (isTitration) {
+    h += `<div style="background:#FFF3CD;border-left:4px solid #E36C09;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:0.92em;">
+      <strong style="color:#7A4000;">&#128197; Prescription reminder:</strong> <span style="color:#5C3000;">You can only obtain your next prescription a minimum of <strong>20 days</strong> after your current one was dispensed.</span>
+    </div>`;
+  }
+
+  const STH = 'style="border:1pt solid #b0c4de;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;background:#d6e4f7;color:#1a3a6b;font-weight:bold;text-align:left;"';
+  const STD = 'style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:left;vertical-align:top;"';
+  const STD_PHASE = 'style="border:1pt solid #1a3a6b;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;background:#1a3a6b;color:white;font-weight:bold;white-space:nowrap;"';
+
+  // Only show Notes column if at least one phase has a note
+  const hasNotes = phases.some(ph => ph.note && ph.note.trim());
+
+  h += `<table style="border-collapse:collapse;width:auto;max-width:100%;font-family:Arial,sans-serif;font-size:9pt;"><thead><tr>`;
+  if (isTitration) h += `<th ${STH}>Phase</th><th ${STH}>Duration</th>`;
+  else h += `<th ${STH}>Medications</th>`;
+  h += `<th ${STH}>Dosing</th>`;
+  if (isTitration || hasNotes) h += `<th ${STH}>Notes</th>`;
+  h += `</tr></thead><tbody>`;
+
+  phases.forEach((ph, pi) => {
+    const durationText = ph.ongoing ? 'Ongoing / until next review' :
+      ph.duration ? `${ph.duration} ${ph.unit}` : '';
+    const medLines = ph.meds.map(med => {
+      const def = MEDS[med.medId];
+      if (!def) return '';
+      const dStr = med.doses.map(d => {
+        const dText = getDoseDisplay(d, def);
+        return `<strong>${d.time}:</strong> ${dText}`;
+      }).join('<br>');
+      return `<div style="margin-bottom:5pt;font-family:Arial,sans-serif;"><em>${def.name}</em><br>${dStr}</div>`;
+    }).join('');
+    // For plan mode, add days note if not all 7
+    let daysNote = '';
+    if (!isTitration) {
+      const phDays = ph.days || ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      if (phDays.length < 7) {
+        daysNote = `<div style="font-size:9pt;color:#666;margin-top:3pt;">(${phDays.join('\u2013')})</div>`;
+      }
+    }
+    h += `<tr>`;
+    if (isTitration) {
+      h += `<td ${STD_PHASE}>${ph.label}</td>`;
+      h += `<td ${STD} style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:left;vertical-align:top;white-space:nowrap;">${durationText}</td>`;
+    } else {
+      h += `<td ${STD} style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:left;vertical-align:top;font-weight:700;color:#1a3a6b;">${ph.label}</td>`;
+    }
+    h += `<td ${STD}>${medLines}${daysNote}</td>`;
+    if (isTitration || hasNotes) h += `<td ${STD} style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:left;vertical-align:top;">${ph.note||''}</td>`;
+    h += `</tr>`;
+  });
+  h += `</tbody></table>`;
+
+  // Medication info footnotes
+  const usedMeds = new Set();
+  phases.forEach(ph => ph.meds.forEach(m => usedMeds.add(m.medId)));
+  if (usedMeds.size) {
+    h += `<div style="margin-top:16px;">`;
+    h += `<div class="rich-h2">Medication Notes</div>`;
+    [...usedMeds].forEach(id => {
+      const def = MEDS[id];
+      if (!def) return;
+      const badges = [];
+      if (def.gluten) badges.push('<span style="background:#FFF3CD;color:#7A4000;padding:1px 6px;border-radius:8px;font-size:0.8em;">contains gluten</span>');
+      if (def.lactose) badges.push('<span style="background:#FFF3CD;color:#7A4000;padding:1px 6px;border-radius:8px;font-size:0.8em;">contains lactose</span>');
+      if (def.gelatin) badges.push('<span style="background:#FFF3CD;color:#7A4000;padding:1px 6px;border-radius:8px;font-size:0.8em;">contains gelatin</span>');
+      if (def.mustSwallowWhole) badges.push('<span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:0.8em;">swallow whole</span>');
+      if (def.canSprinkle) badges.push('<span style="background:#E8F5E9;color:#2E7D32;padding:1px 6px;border-radius:8px;font-size:0.8em;">can sprinkle</span>');
+      // Side effect summary per medication
+      const seFrag = getSideEffectSummary(id);
+      h += `<p class="rich-p"><strong>${def.brandName}:</strong> Onset ${def.onset}. Duration ${def.duration}. ${def.notes} ${badges.join(' ')}</p>`;
+      if (seFrag) h += `<p class="rich-p" style="font-size:0.87em;color:var(--grey);margin-top:-6px;">${seFrag}</p>`;
+    });
+    h += `</div>`;
+  }
+  return h;
+}
+
+function getSideEffectSummary(medId) {
+  const summaries = {
+    dex: 'Common side effects: dry mouth, reduced appetite, insomnia, jitteriness, headache, irritability. Interactions: avoid with acidic drinks at same time; discuss with doctor before adding decongestants or antidepressants.',
+    vyvanse: 'Common side effects: dry mouth, reduced appetite, insomnia, jitteriness, headache, irritability. Interactions: avoid acidic drinks at same time; discuss with doctor before adding decongestants or antidepressants.',
+    ritalinIR: 'Common side effects: dry mouth, reduced appetite, insomnia, jitteriness, headache, irritability. Interactions: avoid acidic drinks at same time; discuss with doctor before adding decongestants or antidepressants.',
+    ritalinLA: 'Common side effects: dry mouth, reduced appetite, insomnia, jitteriness, headache, irritability. Interactions: avoid acidic drinks at same time; discuss with doctor before adding decongestants or antidepressants.',
+    concerta: 'Common side effects: dry mouth, reduced appetite, insomnia, jitteriness, headache, irritability. Interactions: avoid acidic drinks at same time; discuss with doctor before adding decongestants or antidepressants.',
+    strattera: 'Common side effects: constipation, dry mouth, nausea, dizziness, mood swings, insomnia. Takes 4–12 weeks for full effect. Avoid with fluoxetine, paroxetine, or bupropion.',
+    intuniv: 'Common side effects: drowsiness, low blood pressure, slow heart rate. Do not stop suddenly — taper with doctor guidance.',
+    catapres: 'Common side effects: dizziness, sedation, dry mouth, headache, fatigue. Alcohol increases sedation. Do not stop suddenly — taper with doctor guidance.',
+  };
+  return summaries[medId] || '';
+}
+
+// Build long plan table — SINGLE unified table, phases as spanning header rows
+function buildLongTableHTML() {
+  if (!phases.length) return '<p style="color:var(--grey);">No plan configured.</p>';
+  const isTitration = planMode === 'titration';
+  const showTick = document.getElementById('show-tick-col')?.checked !== false;
+  const DOW_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const title = isTitration ? 'Titration Protocol — Day-by-Day Schedule' : 'Medication Plan — Weekly Schedule';
+
+  // Calculate max columns across ALL phases so every phase uses same width
+  const maxDoseCols = phases.reduce((mx, ph) => {
+    const cols = ph.meds.reduce((acc, m) => acc + m.doses.length, 0);
+    return Math.max(mx, cols);
+  }, 0);
+  const spanCols = (showTick ? 2 : 1) + maxDoseCols;
+
+  // Inline styles for Word-paste compatibility
+  const TH = 'style="border:1pt solid #b0c4de;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;background:#d6e4f7;color:#1a3a6b;font-weight:bold;text-align:center;white-space:nowrap;"';
+  const TH_DAY = 'style="border:1pt solid #b0c4de;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;background:#d6e4f7;color:#1a3a6b;font-weight:bold;text-align:center;width:40pt;"';
+  const TH_TICK = 'style="border:1pt solid #b0c4de;padding:3pt 4pt;font-family:Arial,sans-serif;font-size:9pt;background:#d6e4f7;color:#1a3a6b;font-weight:bold;text-align:center;width:20pt;"';
+  const TD = 'style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:center;vertical-align:middle;"';
+  const TD_DAY = 'style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;font-weight:600;color:#1a3a6b;white-space:nowrap;text-align:left;"';
+  const TD_TICK = 'style="border:1pt solid #c8d8ee;padding:3pt 4pt;font-family:Arial,sans-serif;font-size:9pt;text-align:center;"';
+  const TD_PHASE = 'style="border:1pt solid #1a3a6b;padding:4pt 6pt;font-family:Arial,sans-serif;font-size:9pt;background:#1a3a6b;color:white;font-weight:bold;text-align:left;"';
+  const TD_NOTE = 'style="border:1pt solid #c8d8ee;padding:3pt 10pt;font-family:Arial,sans-serif;font-size:9pt;color:#7A4000;background:#FFF3CD;text-align:left;" colspan="' + spanCols + '"';
+  const TD_CONT = 'style="border:1pt solid #c8d8ee;padding:4pt 10pt;font-family:Arial,sans-serif;font-size:9pt;color:#888;font-style:italic;text-align:center;" colspan="' + spanCols + '"';
+  const TD_DAY20 = 'style="border:1pt solid #c8d8ee;padding:3pt 10pt;font-family:Arial,sans-serif;font-size:9pt;color:#7A4000;background:#FFF3CD;text-align:left;" colspan="' + spanCols + '"';
+
+  let h = `<div class="rich-h1">${title}</div>`;
+
+  if (isTitration) {
+    h += `<div style="background:#FFF3CD;border-left:4px solid #E36C09;border-radius:6px;padding:8pt 12pt;margin-bottom:10pt;font-family:Arial,sans-serif;font-size:10pt;">
+      <strong style="color:#7A4000;">&#128197; Prescription reminder:</strong> You can only obtain your next prescription a minimum of <strong>20 days</strong> after your current one was dispensed.
+    </div>`;
+  }
+
+  h += `<table style="border-collapse:collapse;width:auto;max-width:100%;font-family:Arial,sans-serif;font-size:9pt;"><tbody>`;
+
+  if (isTitration) {
+    let dayCount = 0;
+    phases.forEach((ph, pi) => {
+      const phaseLabel = ph.label || 'Phase ' + (pi+1);
+      let durationDays = ph.ongoing ? null : (ph.unit === 'weeks' ? (ph.duration||1)*7 : (ph.duration||1));
+      const phaseDoseCols = ph.meds.reduce((acc, m) => acc + m.doses.length, 0);
+      const padCols = maxDoseCols - phaseDoseCols; // padding columns for uniform width
+
+      // Phase header row
+      let phLabel = phaseLabel;
+      if (!ph.ongoing && durationDays) phLabel += ` — ${ph.duration} ${ph.unit}`;
+      if (ph.ongoing) phLabel += ` — ongoing / until next review`;
+      h += `<tr><td ${TD_PHASE} colspan="${spanCols}">${phLabel}`;
+      if (ph.note) h += `<span style="font-weight:400;font-size:9pt;opacity:0.85;margin-left:8pt;">${ph.note}</span>`;
+      h += `</td></tr>`;
+
+      // Column headers for this phase
+      const timingHeaders = ph.meds.map(med =>
+        med.doses.map(d => `<th ${TH}>${d.time}</th>`).join('')
+      ).join('');
+      const padHeaders = padCols > 0 ? `<th ${TH} colspan="${padCols}"></th>` : '';
+      h += `<tr>${showTick ? `<th ${TH_TICK}>&#10003;</th>` : ''}<th ${TH_DAY}>Day</th>${timingHeaders}${padHeaders}</tr>`;
+
+      // Day rows
+      const rowCount = ph.ongoing ? 7 : (durationDays || 7);
+      for (let d = 1; d <= rowCount; d++) {
+        dayCount++;
+        const isLast = ph.ongoing && d === rowCount;
+        const dayLabel = isLast ? `Day ${dayCount}+` : `Day ${dayCount}`;
+        const isDay20 = dayCount === 20;
+        const rowBg = isDay20 ? 'background:#FFF3CD;' : (d % 2 === 0 ? 'background:#f5f8ff;' : '');
+        const tdDayStyle = isDay20
+          ? 'style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;font-weight:600;color:#7A4000;white-space:nowrap;text-align:left;background:#FFF3CD;"'
+          : TD_DAY;
+        h += `<tr style="${rowBg}">`;
+        if (showTick) h += `<td ${TD_TICK}><input type="checkbox" style="width:14px;height:14px;"></td>`;
+        h += `<td ${tdDayStyle}>${dayLabel}${isDay20 ? ' &#128197;' : ''}</td>`;
+        ph.meds.forEach(med => {
+          const def = MEDS[med.medId];
+          med.doses.forEach(dose => {
+            const cellStyle = isDay20
+              ? 'style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:center;vertical-align:middle;background:#FFF3CD;"'
+              : TD;
+            h += `<td ${cellStyle}>${getDoseDisplay(dose, def)}</td>`;
+          });
+        });
+        if (padCols > 0) h += `<td ${TD} colspan="${padCols}"></td>`;
+        h += `</tr>`;
+        if (isDay20) {
+          h += `<tr><td ${TD_DAY20}>&#128197; Day 20: time to request your next script from the pharmacy.</td></tr>`;
+        }
+      }
+      if (ph.ongoing) {
+        h += `<tr><td ${TD_CONT}>Continue at this dose until next review with your psychiatrist</td></tr>`;
+      }
+    });
+  } else {
+    // MEDICATION PLAN MODE: rows = days, columns = unique time slots across all meds
+    // Find all unique time slots across ALL phases to keep a consistent column set
+    const allTimeSlotsSet = new Set();
+    phases.forEach(ph => ph.meds.forEach(med => med.doses.forEach(d => allTimeSlotsSet.add(d.time))));
+    // Order time slots by natural day order
+    const TIME_ORDER = ['morning','midday','afternoon','evening','night','bedtime','with breakfast','with lunch','with dinner'];
+    const allTimeSlots = [...allTimeSlotsSet].sort((a, b) => {
+      const ai = TIME_ORDER.indexOf(a.toLowerCase()), bi = TIME_ORDER.indexOf(b.toLowerCase());
+      if (ai === -1 && bi === -1) return a.localeCompare(b);
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+    const planSpanCols = (showTick ? 2 : 1) + allTimeSlots.length;
+
+    // TD_CELL: left-aligned, allows med name stacking
+    const TD_CELL = 'style="border:1pt solid #c8d8ee;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;text-align:left;vertical-align:top;"';
+
+    // Column headers row (once, at the top)
+    const timeHeaders = allTimeSlots.map(t => `<th ${TH}>${t}</th>`).join('');
+    h += `<tr>${showTick ? `<th ${TH_TICK}>&#10003;</th>` : ''}<th ${TH_DAY}>Day</th>${timeHeaders}</tr>`;
+
+    phases.forEach((ph, pi) => {
+      const phaseLabel = ph.label || 'Group ' + (pi+1);
+      const daysToShow = (ph.days && ph.days.length > 0) ? ph.days : DOW_NAMES;
+
+      // Group header row (spans full width)
+      h += `<tr><td ${TD_PHASE} colspan="${planSpanCols}">${phaseLabel}`;
+      if (ph.note) h += `<span style="font-weight:400;font-size:9pt;opacity:0.85;margin-left:8pt;">${ph.note}</span>`;
+      h += `</td></tr>`;
+
+      // Build a lookup: timeSlot -> list of "MedName: dose" strings for this group
+      const timeMap = {};
+      allTimeSlots.forEach(t => { timeMap[t] = []; });
+      ph.meds.forEach(med => {
+        const def = MEDS[med.medId];
+        if (!def) return;
+        med.doses.forEach(dose => {
+          if (timeMap[dose.time] !== undefined) {
+            const doseStr = getDoseDisplay(dose, def);
+            timeMap[dose.time].push(`<span style="font-style:italic;color:#555;">${def.name}:</span> ${doseStr}`);
+          }
+        });
+      });
+
+      daysToShow.forEach((day, di) => {
+        const rowBg = di % 2 === 0 ? '' : 'background:#f5f8ff;';
+        h += `<tr style="${rowBg}">`;
+        if (showTick) h += `<td ${TD_TICK}><input type="checkbox" style="width:14px;height:14px;"></td>`;
+        h += `<td ${TD_DAY}>${day}</td>`;
+        allTimeSlots.forEach(t => {
+          const entries = timeMap[t];
+          h += `<td ${TD_CELL}>${entries.length ? entries.join('<br>') : '<span style="color:#ccc;">—</span>'}</td>`;
+        });
+        h += `</tr>`;
+      });
+    });
+  }
+
+  h += `</tbody></table>`;
+  return h;
+}
+
+// Helpers to render a human-readable dose string for script text
+function qtyToWords(qty) {
+  if (qty === 0.25) return 'a quarter of a tab';
+  if (qty === 0.5) return 'half a tab';
+  if (qty === 0.75) return 'three-quarters of a tab';
+  if (qty === 1) return 'one tab';
+  if (qty === 1.5) return 'one and a half tabs';
+  if (qty === 2) return 'two tabs';
+  if (qty === 2.5) return 'two and a half tabs';
+  if (qty === 3) return 'three tabs';
+  if (qty === 4) return 'four tabs';
+  return qty + ' tab(s)';
+}
+
+function doseToScriptPhrase(dose, medDef) {
+  if (medDef.multiCap) {
+    const caps = dose.caps || [];
+    const total = caps.reduce((a,b)=>a+b,0);
+    return caps.length > 1 ? `${caps.join(' mg + ')} mg (${total} mg total)` : `${total} mg`;
+  }
+  if (medDef.freeTextDose) return dose.label || '(dose)';
+  if (dose.label) {
+    // Extract the human part before the bracket e.g. "1½ tabs" from "1½ tabs (15 mg)"
+    const m = dose.label.match(/^([^(]+)/);
+    return m ? m[1].trim() : dose.label;
+  }
+  if (dose.qty !== undefined) return qtyToWords(dose.qty);
+  return '(dose)';
+}
+
+// Build script text - plain, clean format for authority script
+function buildScriptText() {
+  if (!phases.length) return 'No plan configured.';
+  const isTitration = planMode === 'titration';
+  let txt = '';
+
+  if (isTitration) {
+    let dayCount = 0;
+    phases.forEach((ph) => {
+      const durationDays = ph.ongoing ? null : (ph.unit === 'weeks' ? (ph.duration||1)*7 : (ph.duration||1));
+      const startDay = dayCount + 1;
+      if (!ph.ongoing && durationDays) {
+        const endDay = dayCount + durationDays;
+        dayCount += durationDays;
+        const dayRange = startDay === endDay ? `Day ${startDay}` : `Days ${startDay}${endDay > startDay+1 ? '-' : ', '}${endDay}`;
+        ph.meds.forEach(med => {
+          const def = MEDS[med.medId];
+          if (!def) return;
+          const doseLines = med.doses.map(d => `${doseToScriptPhrase(d, def)} ${d.time}`).join(', ');
+          txt += `${dayRange}: ${def.name} — ${doseLines}\n`;
+        });
+      } else {
+        // ongoing
+        ph.meds.forEach(med => {
+          const def = MEDS[med.medId];
+          if (!def) return;
+          const doseLines = med.doses.map(d => `${doseToScriptPhrase(d, def)} ${d.time}`).join(', ');
+          txt += `Day ${startDay}+: ${def.name} — ${doseLines} (ongoing / until next review)\n`;
+        });
+      }
+    });
+  } else {
+    // Medication plan: list medications directly
+    phases.forEach((ph) => {
+      if (ph.label) txt += `${ph.label}:\n`;
+      ph.meds.forEach(med => {
+        const def = MEDS[med.medId];
+        if (!def) return;
+        const doseLines = med.doses.map(d => `${doseToScriptPhrase(d, def)} ${d.time}`).join(', ');
+        txt += `${def.name} — ${doseLines}\n`;
+      });
+      txt += '\n';
+    });
+  }
+
+  return txt.trim();
+}
+
+// All section content
+function getSectionHTML(id) {
+  const patientName = document.getElementById('patient-name').value || 'your patient';
+  const sections = {
+    s_what: `<div class="rich-h1">What Is ADHD?</div>
+<p class="rich-p">ADHD stands for attention deficit hyperactivity disorder. It is a condition that affects how your brain develops and functions — not your intelligence, effort, or character. It is one of the most common and well-studied brain conditions we have, affecting roughly 5% of children and around 3-4% of adults.</p>
+<p class="rich-p">For a long time ADHD was thought of as something children grew out of. That is not accurate. Around 60% of people with childhood ADHD continue to have significant symptoms as adults, and many adults are only diagnosed later in life after years of struggling without knowing why.</p>
+<p class="rich-p">ADHD is not laziness. It is not bad parenting. It is not the result of too much screen time or sugar. It is a well-documented neurological condition with a strong genetic basis — and it is very treatable.</p>`,
+
+    s_brain: `<div class="rich-h1">What Is Happening in the Brain</div>
+<p class="rich-p">The part of the brain most affected in ADHD is the prefrontal cortex — the area behind your forehead that handles planning, organising, attention, impulse control, and emotional regulation. In ADHD, this system is less active than it should be.</p>
+<p class="rich-p">The two main chemical messengers involved are dopamine and noradrenaline. Dopamine helps drive motivation and filter out distractions. Noradrenaline sharpens focus on what matters. In ADHD, both are in short supply in the circuits that run the prefrontal cortex.</p>
+<p class="rich-p">A simple way to picture it: imagine trying to listen to someone talk in a room where all the background noise is just as loud as their voice. That is what paying attention feels like in ADHD — not a lack of effort, but a brain that is struggling to filter what is important from what is not.</p>
+<p class="rich-p">One key feature is that the ADHD brain is interest-driven rather than priority-driven. When something is new, urgent, or genuinely interesting, the brain activates well. When something is important but boring, it does not. That is why someone with ADHD can spend hours hyperfocusing on something they enjoy, then struggle to start a five-minute task they have been putting off. It is not a choice. It is how the reward system is wired.</p>`,
+
+    s_core: `<div class="rich-h1">Core Symptoms</div>
+<p class="rich-p">The core symptom clusters are:</p>
+<ul class="rich-ul">
+  <li><strong>Inattention:</strong> difficulty sustaining attention, easily distracted, losing track in conversations or tasks</li>
+  <li><strong>Executive dysfunction:</strong> trouble organising, starting tasks, following through, managing time, and holding multiple things in working memory</li>
+  <li><strong>Impulsivity:</strong> acting before thinking, interrupting, difficulty waiting, impulsive decision-making</li>
+  <li><strong>Hyperactivity:</strong> fidgeting and restlessness — though in adults this often becomes an internal feeling of restlessness rather than visible overactivity</li>
+</ul>
+<p class="rich-p">These symptoms cause impairment across at least two settings — home, work, study, relationships — and they have to have been present since childhood, even if they were never recognised at the time.</p>`,
+
+    s_down: `<div class="rich-h1">What Else Does It Generate?</div>
+<p class="rich-p">Because the prefrontal cortex also regulates emotional responses, ADHD commonly produces a cluster of secondary symptoms that are not in the diagnostic criteria but are often the most disabling in daily life:</p>
+<ul class="rich-ul">
+  <li><strong>Emotional dysregulation:</strong> fast, intense emotional responses that are hard to modulate, sometimes described as rejection-sensitive dysphoria</li>
+  <li><strong>Low frustration tolerance:</strong> difficulty tolerating frustration, delay, or perceived unfairness — often disproportionate to the situation</li>
+  <li><strong>Binge eating and disordered eating:</strong> eating reactively in response to mood, boredom, stress, or emotional discomfort</li>
+  <li><strong>Cognitive rigidity and hyperfocus:</strong> difficulty shifting attention off something once engaged, even when you want to</li>
+  <li><strong>Internal restlessness:</strong> high levels of internal agitation and mental noise that are exhausting to live with, even when outward behaviour looks calm</li>
+  <li><strong>Low self-esteem and internalised shame:</strong> years of underperforming relative to ability, being labelled lazy or disruptive, and not understanding why</li>
+</ul>`,
+
+    s_impact: `<div class="rich-h1">The Real-World Impact</div>
+<p class="rich-p">This is not a mild inconvenience condition. The literature on functional outcomes in untreated ADHD is confronting.</p>
+<div class="rich-h2">Driving</div>
+<p class="rich-p">Untreated ADHD significantly increases crash risk. Newly licensed adolescent drivers with ADHD are 36-62% more likely to be involved in a crash in the first months of driving. Over the first four years of a licence, those with ADHD are 37% more likely to crash, twice as likely to drive while intoxicated, and 150% more likely to receive an alcohol, drug, or moving violation.<br><span class="rich-cite">Barkley RA et al. J Int Neuropsychol Soc. 1993.</span></p>
+<div class="rich-h2">Relationships</div>
+<p class="rich-p">Studies suggest divorce rates in couples affected by ADHD are up to twice that of the general population. 38% of people with ADHD report their marriage has come close to divorce, and relationship maladjustment rates are reported as high as 60%.<br><span class="rich-cite">Wymbs BT et al. J Consult Clin Psychol. 2008;76(5):735.</span></p>
+<div class="rich-h2">Obesity</div>
+<p class="rich-p">Obesity is the most common physical comorbidity in ADHD. Adults with ADHD are approximately 70% more likely to have obesity, and children face a 40% higher risk. ADHD is also associated with a roughly 4-fold increased risk of binge eating disorder.<br><span class="rich-cite">Cortese S, Tessari L. CNS Drugs. 2017;31(8):711.</span></p>
+<div class="rich-h2">Substance Use</div>
+<p class="rich-p">Children with ADHD are 2-3 times more likely to develop a substance use disorder. Much of this is self-medication — the ADHD brain will find something that temporarily normalises dopamine, whether that is caffeine, nicotine, alcohol, cannabis, or stimulant drugs.<br><span class="rich-cite">Charach A et al. J Child Psychol Psychiatry. 2011;52(5):485.</span></p>
+<div class="rich-h2">Mortality</div>
+<p class="rich-p">Adults with ADHD and two comorbid conditions have an 8-fold increase in premature mortality. Multiple large studies confirm that untreated ADHD is associated with significantly increased all-cause mortality, particularly from unnatural causes including accidents, overdose, and suicide.<br><span class="rich-cite">Meier SM et al. Lancet Psychiatry. 2021. | Sun S et al. JAMA Network Open. 2019.</span></p>`,
+
+    s_treat: `<div class="rich-h1">Treatment Is Lifesaving</div>
+<div class="rich-h2">Mortality</div>
+<p class="rich-p">A landmark 2024 cohort study published in JAMA followed 148,578 people diagnosed with ADHD in Sweden. It found that initiating ADHD medication was associated with a 21% reduction in all-cause mortality and a 25% reduction in unnatural-cause mortality — deaths from accidents, overdoses, and suicide — over two years. A separate Canadian population study of 217,000 individuals found stimulant use was associated with a 39% reduction in all-cause mortality.<br><span class="rich-cite">Sun S et al. JAMA. 2024;331(10):855.</span></p>
+<div class="rich-h2">Substance Use</div>
+<p class="rich-p">Treatment is protective against substance use disorders. Each additional year on stimulant medication is associated with approximately a 13% further reduction in risk. The medication does not create the substance use problem — untreated ADHD does.<br><span class="rich-cite">Chang Z et al. JAMA Psychiatry. 2014;71(6):651.</span></p>
+<div class="rich-h2">Quality of Life, Relationships, and Function</div>
+<p class="rich-p">A systematic review of 351 studies across nine outcome domains found treatment improved long-term outcomes in 72% of measured results — including academic performance, occupational functioning, social function, driving, and addictive behaviour. Untreated ADHD showed deterioration over time; treatment stabilised or improved trajectories across all domains.<br><span class="rich-cite">Hechtman L et al. J Am Acad Child Adolesc Psychiatry. 2016;55(11):945.</span></p>`,
+
+    s_feels: `<div class="rich-h1">What Treatment Actually Feels Like</div>
+<p class="rich-p">When medication is working well — at the right dose and the right formulation — the experience is not dramatic. It is usually subtle, and described more as a sense of calm clarity. Here is what people commonly report:</p>
+<ul class="rich-ul">
+  <li><strong>Focus becomes easier to direct:</strong> the ability to choose what to pay attention to, rather than having attention pulled by whatever is loudest or most interesting. Boring-but-important tasks become manageable.</li>
+  <li><strong>Internal agitation settles:</strong> that constant hum of restlessness, the feeling of never being fully settled — it reduces. People often describe this as the first time they have felt genuinely quiet in their own head.</li>
+  <li><strong>Hyperactivity reduces:</strong> physically and mentally. The need to be constantly moving, switching, or stimulating tends to decrease.</li>
+  <li><strong>Emotional reactivity improves:</strong> responses become more proportionate. There is more of a pause between feeling and reacting.</li>
+  <li><strong>Anxiety often improves:</strong> not because the medication is an anxiolytic, but because much of the anxiety in ADHD is generated by chronic underperformance, missed obligations, and accumulated consequences. When the ADHD is better managed, that secondary anxiety often lifts.</li>
+  <li><strong>Low mood often lifts:</strong> when you are no longer falling short of what you know you are capable of, the chronic demoralisation that has built up over years starts to ease.</li>
+</ul>
+<p class="rich-p">What it should <em>not</em> feel like: robotic, flat, zombie-like, or like a different person. If it feels that way, the dose is probably too high. That is a signal to adjust, not to tolerate.</p>
+<p class="rich-p">The response rate for stimulants is approximately 70-80% in children and 60-75% in adults. If one stimulant class does not work well, switching to the other produces a further response in a meaningful proportion of non-responders — so most people find something that works if we persist.</p>`,
+
+    s_meds_dex: `<div class="rich-h1">Medication: Dexamphetamine</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Dexamphetamine is a stimulant that acts on the dopamine and noradrenaline systems in the prefrontal cortex. It blocks the transporter proteins that normally clear these signals, directly triggers dopamine release from inside neurons, and reverses the transporter — actively pumping dopamine into the synapse. This triple mechanism produces a larger increase in dopamine and noradrenaline than methylphenidate-based medications, which is why head-to-head studies show a somewhat larger effect size.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Form:</strong> Short-acting tablet (IR). Effects begin within 30-45 minutes, last 4-6 hours.</li>
+  <li><strong>Dosing:</strong> Usually taken 2-3 times daily. The afternoon dose timing matters — too late can delay sleep onset.</li>
+  <li><strong>With or without food:</strong> Avoid acidic drinks (fruit juice, soft drink) at the same time as the tablet. Taking it after food reduces nausea.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Most people notice improved ability to start and sustain tasks, quieter internal restlessness, and better impulse control when the medication is working. Appetite suppression is common, especially at lunchtime. Rebound (a drop in mood or focus as the medication wears off) can occur with short-acting formulations — if this is significant, discuss it with your psychiatrist.</p>`,
+
+    s_meds_vyvanse: `<div class="rich-h1">Medication: Vyvanse</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Vyvanse (lisdexamfetamine) is a prodrug of dexamphetamine — dex chemically bound to an amino acid. After swallowing, the bond is cleaved in the bloodstream, releasing active dexamphetamine gradually. This means the onset is slower and the peak is smoother than dexamphetamine IR, and the medication cannot be meaningfully abused intranasally or intravenously. The mechanism of action is the same as dexamphetamine: blocking and reversing the dopamine transporter, increasing dopamine and noradrenaline in the prefrontal cortex.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Form:</strong> Capsule. Can be swallowed whole or opened and dissolved in water.</li>
+  <li><strong>Duration:</strong> Typically 12-14 hours — the longest-acting stimulant option available in Australia.</li>
+  <li><strong>Onset:</strong> Effects usually start within 1-2 hours of taking it.</li>
+  <li><strong>With or without food:</strong> Avoid acidic drinks at the same time. Food does not significantly affect absorption.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Vyvanse produces a smooth, consistent effect across the day with less pronounced peaks and troughs than shorter-acting medications. This makes it particularly useful for people who need sustained coverage into the evening, or who find the rebound from dex IR difficult. Appetite suppression is common.</p>`,
+
+    s_meds_ritalinIR: `<div class="rich-h1">Medication: Ritalin IR / Artige</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Ritalin IR and Artige are brand names for immediate-release methylphenidate. Ritalin (methylphenidate IR) works by blocking the dopamine and noradrenaline transporter proteins — like putting a stopper in the vacuum cleaner that normally clears these signals. The result is increased availability of dopamine and noradrenaline in the prefrontal cortex, improving focus and impulse control. Unlike dexamphetamine, it does not directly trigger dopamine release; the mechanism is purely reuptake inhibition, which generally means a milder effect profile.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Form:</strong> Short-acting tablet. Effects begin within 30-45 minutes, last 3-5 hours.</li>
+  <li><strong>Dosing:</strong> Usually taken 2-3 times daily. Timing the afternoon dose is important to avoid sleep interference.</li>
+  <li><strong>With or without food:</strong> Avoid acidic drinks at the same time. Taking after food can reduce nausea.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Ritalin IR tends to have a slightly milder side effect profile than dexamphetamine — less appetite suppression and fewer cardiovascular effects on average. The short duration means some people need a top-up dose in the afternoon. Rebound on wearing off is possible.</p>`,
+
+    s_meds_ritalinLA: `<div class="rich-h1">Medication: Ritalin LA</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Ritalin LA (methylphenidate long-acting) uses the same mechanism as Ritalin IR — reuptake inhibition of dopamine and noradrenaline transporters — but delivers 50% of the dose immediately and 50% over the following 4-6 hours, via a two-pulse SODAS delivery system. This gives a smooth onset and a longer coverage window than Ritalin IR.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Form:</strong> Capsule. Can be swallowed whole or opened and sprinkled on food (do not chew the beads).</li>
+  <li><strong>Duration:</strong> Approximately 8-10 hours from one morning dose.</li>
+  <li><strong>With or without food:</strong> Avoid acidic drinks. High-fat meals can delay the second pulse but this is usually not clinically significant.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Ritalin LA suits people who want once-daily morning dosing with reliable coverage through the school or work day without needing a lunchtime dose. Compared to Ritalin IR, transitions are smoother. Some people add a small Ritalin IR dose in the afternoon if they need extended coverage.</p>`,
+
+    s_meds_concerta: `<div class="rich-h1">Medication: Concerta</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Concerta (methylphenidate extended-release) uses the OROS (osmotic pump) delivery system: 22% of the dose is delivered immediately, and the remaining 78% is released gradually over 10-12 hours as water enters the osmotic pump. This creates a slowly ascending blood level across the day, mimicking the natural demand curve of the school or work day. The mechanism is the same as other methylphenidate medications — reuptake inhibition of dopamine and noradrenaline.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Form:</strong> Tablet. Must be swallowed whole — do not crush or chew. The empty shell may appear in the stool; this is normal.</li>
+  <li><strong>Duration:</strong> 10-12 hours from one morning dose.</li>
+  <li><strong>With or without food:</strong> Food does not significantly affect delivery. Avoid acidic drinks at the same time.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Concerta is a good once-daily option. The ascending delivery profile means the medication builds gradually rather than producing an early peak. Some people prefer this; others prefer the quicker onset of other formulations. The extended duration suits people who need coverage into the afternoon and evening.</p>`,
+
+    s_meds_strattera: `<div class="rich-h1">Medication: Strattera</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Strattera (atomoxetine) is not a stimulant. It is a selective noradrenaline reuptake inhibitor (SNRI) — it blocks the noradrenaline transporter, which in the prefrontal cortex also increases synaptic dopamine (because the noradrenaline transporter there handles both). It has no abuse potential and is not a controlled substance. The mechanism means it works differently to stimulants and is particularly useful when stimulants are not appropriate, not tolerated, or insufficient on their own.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Onset:</strong> Unlike stimulants, atomoxetine takes 4-12 weeks for full therapeutic effect. Some response may appear in 2-4 weeks, but the full benefit often takes longer.</li>
+  <li><strong>Dosing:</strong> Once or twice daily. Dose is typically titrated up slowly over several weeks.</li>
+  <li><strong>Duration:</strong> 24-hour coverage when at therapeutic dose.</li>
+  <li><strong>Important interaction:</strong> Avoid with fluoxetine (Prozac), paroxetine (Aropax), or bupropion — these can dramatically increase atomoxetine blood levels and side effects.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Strattera improves attention, impulse control, and emotional regulation, but the onset is slow. Initial side effects (nausea, fatigue) often settle within the first few weeks. It is a good option for people with anxiety, tic disorders, or a history of substance use, or as an add-on to stimulants.</p>`,
+
+    s_meds_intuniv: `<div class="rich-h1">Medication: Intuniv</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Intuniv (guanfacine extended-release) is a non-stimulant that works on alpha-2A adrenergic receptors in the prefrontal cortex. Activating these receptors strengthens the connections between prefrontal neurons that control attention and impulse regulation — essentially improving the signal quality in circuits that ADHD disrupts. It does not affect dopamine directly and has no abuse potential.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Dosing:</strong> Once daily, titrated slowly upward over weeks.</li>
+  <li><strong>Onset:</strong> Gradual — therapeutic effect develops over 4-8 weeks of dose titration.</li>
+  <li><strong>Do not stop suddenly:</strong> Stopping guanfacine abruptly can cause rebound hypertension and tachycardia. Always taper the dose under medical guidance.</li>
+  <li><strong>Timing:</strong> Take at the same time each day. Avoid high-fat meals as they increase absorption and can increase side effects.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Guanfacine is particularly helpful for emotional dysregulation, impulsivity, and hyperactivity. It is often used in combination with stimulants. Sedation is the most common side effect, especially in the first few weeks — this usually settles. Low blood pressure and slow heart rate are also common.</p>`,
+
+    s_meds_catapres: `<div class="rich-h1">Medication: Catapres</div>
+<div class="rich-h2">How It Works</div>
+<p class="rich-p">Catapres (clonidine) is a non-stimulant that acts on alpha-2 adrenergic receptors in the brain and peripheral nervous system. In ADHD, it helps regulate arousal, reduce impulsivity, and improve sleep-onset — the latter makes it particularly useful when taken in the evening. Like guanfacine, it has no abuse potential, but it has a broader pharmacological profile and requires careful management.</p>
+<div class="rich-h2">Practical Details</div>
+<ul class="rich-ul">
+  <li><strong>Dosing:</strong> Titrated slowly. Your psychiatrist will specify your exact dose and schedule.</li>
+  <li><strong>Do not stop suddenly:</strong> Stopping clonidine abruptly can cause a rebound rise in blood pressure and heart rate. Always taper the dose under medical guidance.</li>
+  <li><strong>Alcohol:</strong> Significantly increases sedation. Avoid or strictly limit alcohol while taking clonidine.</li>
+  <li><strong>Blood pressure medications:</strong> Effects can add up — let all your doctors know you are taking clonidine.</li>
+</ul>
+<div class="rich-h2">What to Expect</div>
+<p class="rich-p">Clonidine is useful for managing hyperarousal, impulsivity, and sleep difficulties associated with ADHD. Sedation is common, especially at first. Low blood pressure and dizziness (particularly on standing) are also common. These effects often diminish after the first few weeks at a stable dose.</p>`,
+
+    s_monitor: `<div class="rich-h1">What to Monitor During Titration</div>
+<div class="rich-h2">Positive Effects to Track</div>
+<ul class="rich-ul">
+  <li>Focus and concentration — is it easier to start and stay on tasks?</li>
+  <li>Internal restlessness — is the background agitation quieter?</li>
+  <li>Impulse control — more pause before reacting?</li>
+  <li>Mood and anxiety — is the baseline anxiety lower?</li>
+  <li>Energy and motivation — easier to get going?</li>
+  <li>Productivity — completing more of what you intend to each day?</li>
+</ul>
+<div class="rich-h2">Side Effects to Track</div>
+<ul class="rich-ul">
+  <li>Appetite — eating less, losing weight?</li>
+  <li>Sleep — harder to fall asleep or waking earlier?</li>
+  <li>Heart rate / chest — any palpitations or chest discomfort?</li>
+  <li>Blood pressure — check regularly if any cardiovascular history</li>
+  <li>Mood — any increase in anxiety, irritability, or flatness?</li>
+  <li>Headaches or nausea — particularly in first two weeks</li>
+  <li>Rebound — mood crash in late afternoon or evening?</li>
+</ul>
+<div class="rich-h2">When to Pause Titration</div>
+<ul class="rich-ul">
+  <li class="rich-warn">Heart rate persistently above 100 bpm at rest, or chest pain, palpitations, or shortness of breath</li>
+  <li class="rich-warn">Blood pressure consistently elevated above 140/90</li>
+  <li class="rich-warn">Significant increase in anxiety or panic that is not settling</li>
+  <li class="rich-warn">New or worsening psychotic symptoms — unusual thoughts, paranoia, perceptual disturbances</li>
+  <li class="rich-warn">Marked mood elevation, unusually high energy, or reduced need for sleep</li>
+  <li class="rich-warn">Significant insomnia not resolved by adjusting timing</li>
+  <li class="rich-warn">Severe appetite suppression with noticeable weight loss</li>
+  <li class="rich-warn">Emotional blunting at the current dose — reduce dose, do not increase</li>
+</ul>`,
+
+    s_safety: `<div class="rich-h1">Important Safety Considerations</div>
+<div class="rich-h2">When to Stop and Seek Urgent Help</div>
+<p class="rich-p rich-warn">Stop the medication and contact your doctor or emergency services immediately if you experience chest pain, irregular heartbeat, signs of hypertensive crisis (severe headache, visual changes, confusion), or any psychotic symptoms.</p>
+<div class="rich-h2">Cannabis</div>
+<p class="rich-p">Cannabis and stimulant medications are a genuinely poor combination. Cannabis impairs working memory, attentional control, and executive function — the exact same systems ADHD medication is trying to support. Regular cannabis use significantly reduces treatment effectiveness and can worsen ADHD symptoms. There is also increased cardiovascular stress with the combination.</p>
+<div class="rich-h2">Alcohol</div>
+<p class="rich-p">Stimulants can mask the sedating effects of alcohol, increasing the risk of drinking significantly more than intended. There is also increased cardiovascular load. Warrants awareness and restraint.</p>
+<div class="rich-h2">Drug Interactions</div>
+<ul class="rich-ul">
+  <li><strong class="rich-warn">MAOIs: absolute contraindication.</strong> Do not combine under any circumstances.</li>
+  <li><strong>Other stimulants / sympathomimetics:</strong> combining with other stimulant drugs significantly increases cardiovascular risk.</li>
+  <li><strong>Decongestants (pseudoephedrine):</strong> avoid combining without medical advice.</li>
+  <li><strong>Antidepressants:</strong> most SSRIs and SNRIs are compatible. Do not add or change other medications without disclosing to your psychiatrist.</li>
+</ul>
+<div class="rich-h2">Do Not Share Your Medication</div>
+<p class="rich-p">Stimulant medications are controlled substances in Australia. Sharing them is illegal, places the recipient at risk, and can affect your ability to continue receiving treatment.</p>
+<div class="rich-h2">Pregnancy and Breastfeeding</div>
+<p class="rich-p">If you are pregnant, planning to become pregnant, or breastfeeding, speak with your psychiatrist before starting or continuing stimulant medication.</p>`,
+
+    s_myths: `<div class="rich-h1">Common Myths About ADHD</div>
+<div class="rich-h2">"Stimulants are addictive"</div>
+<p class="rich-p">This is probably the most common concern people have, and the evidence does not support it. Prescribed stimulant medication taken orally at therapeutic doses does not cause addiction. In fact, research consistently shows that treating ADHD with medication <em>reduces</em> the risk of developing substance use problems, not the other way around.</p>
+<div class="rich-h2">"If the medication works, that proves you have ADHD"</div>
+<p class="rich-p">Not quite. Stimulants increase dopamine in everyone's brain. The difference is that without ADHD, you tend to just get side effects — increased heart rate, anxiety, reduced appetite — without much cognitive benefit. The medication response is useful information, but it is not a diagnostic test on its own.</p>
+<div class="rich-h2">"ADHD medication stunts growth in children"</div>
+<p class="rich-p">Stimulants can slightly reduce appetite, which may slow growth rate temporarily in some children. There is no convincing evidence that they affect final adult height. This is something that gets monitored, but it is not a reason to avoid treatment when it is needed.</p>
+<div class="rich-h2">"Everyone feels like this — it's just normal"</div>
+<p class="rich-p">Everyone gets distracted sometimes. ADHD is not about occasional inattention. It is about a consistent, pervasive pattern of impairment that has been present since childhood and affects multiple areas of life — work, relationships, daily functioning. The brain differences in ADHD are measurable on neuroimaging. It is a real, well-documented condition.</p>
+<div class="rich-h2">"ADHD only affects children"</div>
+<p class="rich-p">ADHD continues into adulthood in around 60% of cases. In adults it often looks different — less obvious hyperactivity, more internal restlessness, chronic underperformance, and difficulty with organisation and follow-through. Many adults are only diagnosed after years of wondering why things feel so much harder for them than for others.</p>
+<div class="rich-h2">"People with ADHD just need to try harder"</div>
+<p class="rich-p">People with ADHD are often trying extremely hard already. The problem is not effort — it is a brain that does not regulate attention and motivation the same way other brains do. Telling someone with ADHD to try harder is like telling someone with poor eyesight to look harder. The answer is the right tool, not more willpower.</p>
+<div class="rich-h2">"ADHD is overdiagnosed / made up"</div>
+<p class="rich-p">ADHD is one of the most researched psychiatric conditions in existence. It has consistent genetic findings, reproducible neuroimaging differences, and decades of clinical trial data. Whether it is overdiagnosed in some contexts is a fair debate. Whether it exists is not.</p>
+<div class="rich-h2">"You can't have ADHD if you can focus on things you enjoy"</div>
+<p class="rich-p">This is a very common misconception. The ADHD brain does not have a focus problem across the board — it has a <em>regulation</em> problem. When something is interesting, novel, or urgent, the brain can hyperfocus intensely. When something is dull or feels low-stakes, focus evaporates. That inconsistency is part of what makes ADHD confusing and why it goes unrecognised for so long.</p>`,
+
+    s_faq: `<div class="rich-h1">Commonly Asked Questions</div>
+<div class="rich-h2">How quickly will I notice a difference?</div>
+<p class="rich-p">With stimulants, you usually notice an effect on the same day — sometimes on the very first dose. That is one of the distinguishing features of ADHD pharmacotherapy. That said, finding the right dose and formulation takes time. The first dose tells you the medication is working, not that you have found the optimal dose yet.</p>
+<div class="rich-h2">Do I have to take it every day?</div>
+<p class="rich-p">Generally, yes — the recommendation is to take your medication every day. ADHD does not take weekends off, and consistency helps with titration and makes it easier to track how the medication is working. That said, some people choose to reduce or skip stimulants on weekends or during periods of intense physical exercise. This is an individual decision to discuss with your psychiatrist.</p>
+<div class="rich-h2">Will I need to take it forever?</div>
+<p class="rich-p">ADHD is a lifelong condition for most people, so the need for support tends to persist. That said, some people find their need changes as circumstances and coping strategies evolve. We review this periodically. It is a tool you use when it is useful.</p>
+<div class="rich-h2">Will it change my personality?</div>
+<p class="rich-p">No. Stimulants at therapeutic doses should make you feel more like yourself — more able to follow through on what you actually want to do. If it makes you feel flat or robotic, the dose is probably too high. That is a signal to adjust.</p>
+<div class="rich-h2">Is it safe long-term?</div>
+<p class="rich-p">Yes, with monitoring. Stimulants have been used clinically since the 1930s. The main considerations are cardiovascular — blood pressure and heart rate — which we monitor regularly. The risk-benefit balance is almost always strongly in favour of treatment.</p>
+<div class="rich-h2">Can I drink alcohol on it?</div>
+<p class="rich-p">It is not a great combination. Stimulants can mask the sedating effects of alcohol, increasing the risk of drinking more than intended. Warrants awareness.</p>
+<div class="rich-h2">What if it does not work or I cannot tolerate it?</div>
+<p class="rich-p">If one stimulant class does not work, we try the other. If stimulants are not tolerated or not suitable, non-stimulant options — atomoxetine and guanfacine — are effective alternatives for the right patient.</p>
+<div class="rich-h2">Can I drive while on it?</div>
+<p class="rich-p">Yes. Medication does not restrict you from driving. The evidence actually shows lower crash rates in people with ADHD when they are on medication compared to when they are not. There are no specific restrictions on driving in Australia for people taking ADHD medications as prescribed.</p>
+<div class="rich-h2">What happens if I miss a dose?</div>
+<p class="rich-p">Take it as soon as you remember, provided it is not too late in the day. If it is past early afternoon, skip the missed dose and continue normally the next morning. Do not double up.</p>`,
+
+    // ---- PSYCHOEDUCATION ADD-ONS (optional, unselected by default) ----
+
+    s_supports: `<div class="rich-h1">Accessing Supports &amp; Services</div>
+<p class="rich-p">Being diagnosed with ADHD opens up access to supports and services that may not have been available to you before. These are not charity — they are structured, evidence-based resources designed for people in exactly your situation.</p>
+<div class="rich-h2">NDIS (National Disability Insurance Scheme)</div>
+<p class="rich-p">ADHD may qualify you for NDIS funding, particularly if the condition causes significant functional impairment in daily life, work, or self-care. The key is demonstrating functional impact — not just having the diagnosis. A psychologist or occupational therapist (OT) can assist with a functional assessment if you choose to apply. An OT can also help implement practical supports at home and work. NDIS supports that may be relevant include:</p>
+<ul class="rich-ul">
+  <li>Capacity building for daily living and self-management</li>
+  <li>Support coordination</li>
+  <li>Assistive technology (apps, tools, organisational aids)</li>
+  <li>Therapeutic supports (psychology, OT)</li>
+</ul>
+<p class="rich-p">Note: ADHD alone does not guarantee NDIS approval. The focus is on functional impairment, not diagnosis. A strong application includes detailed evidence of how symptoms impact daily activities.</p>
+<div class="rich-h2">Medicare-Funded Psychology</div>
+<p class="rich-p">Under a Mental Health Treatment Plan from your GP, you can access up to 10 individual psychology sessions per calendar year at a Medicare rebate. This can be used for ADHD-focused Cognitive Behavioural Therapy (CBT), skills coaching, or support for comorbid anxiety or depression. Ask your GP to refer you to a psychologist with ADHD experience.</p>
+<div class="rich-h2">Disability Support at Work or Study</div>
+<p class="rich-p">If you are in employment or tertiary education, you have the right to request reasonable adjustments. At university and TAFE, disability services can provide extended time for exams, assignment extensions, and alternative assessment formats. In the workplace, reasonable adjustments are covered under the Disability Discrimination Act 1992 — your employer cannot legally discriminate based on a disability that is being appropriately managed. You do not have to disclose your specific diagnosis — you can request adjustments based on your functional needs.</p>
+<div class="rich-h2">Peer Support and Community</div>
+<ul class="rich-ul">
+  <li><strong>ADHD Australia:</strong> <a href="https://www.adhdaustralia.org.au" target="_blank">adhdaustralia.org.au</a> — peer support groups, webinars, and community forums</li>
+  <li><strong>ADHD Support Australia:</strong> online community and resources for adults and families</li>
+  <li><strong>Beyond Blue:</strong> for comorbid anxiety and depression support — <a href="https://www.beyondblue.org.au" target="_blank">beyondblue.org.au</a></li>
+</ul>`,
+
+    s_workplace: `<div class="rich-h1">Workplace Adjustments</div>
+<p class="rich-p">Most people with ADHD are highly capable — they often have creativity, drive, and the ability to hyperfocus on what they find engaging. The challenge is that standard workplace environments are often poorly matched to how ADHD brains work best. The good news is that targeted adjustments can make a significant difference.</p>
+<div class="rich-h2">What You Can Request</div>
+<p class="rich-p">Under Australian workplace law (Disability Discrimination Act 1992 and Fair Work Act 2009), employers are required to make reasonable adjustments for employees with disabilities, including ADHD, as long as these do not cause unjustifiable hardship. You are not required to disclose your diagnosis — you can frame requests around functional needs.</p>
+<ul class="rich-ul">
+  <li><strong>Flexible hours:</strong> ADHD brains often function better at particular times of day. If possible, aligning demanding work to your peak medication window (typically mid-morning) helps significantly.</li>
+  <li><strong>Reduced interruptions:</strong> access to a quieter space, noise-cancelling headphones, or permission to use focus-only periods (e.g., no meetings before 10am)</li>
+  <li><strong>Written instructions:</strong> requesting that key information, deadlines, and task changes be provided in writing rather than verbally</li>
+  <li><strong>Task chunking:</strong> breaking large projects into structured milestones with check-ins, rather than open-ended deadlines</li>
+  <li><strong>Extended time:</strong> for some roles and tasks, a slightly longer runway for completion improves quality without affecting output</li>
+  <li><strong>Remote or hybrid work:</strong> many people with ADHD work more efficiently in a controlled home environment with fewer social interruptions</li>
+</ul>
+<div class="rich-h2">Communicating With Your Manager</div>
+<p class="rich-p">You are not obliged to disclose your ADHD diagnosis. Many people find it effective to frame requests around performance optimisation rather than disability: "I do my best work when I have a block of uninterrupted time in the morning" is often better received than a formal disability disclosure, and is equally true. That said, formal disclosure may be appropriate if you need documented adjustments or if your performance has been formally managed — an HR conversation with appropriate documentation provides legal protection.</p>
+<div class="rich-h2">If You Are Self-Employed or Freelance</div>
+<p class="rich-p">Being your own boss removes some barriers but introduces others (no external accountability structure, inconsistent income triggers anxiety, admin tasks are painful). Practical strategies that work well for ADHD self-employed individuals:</p>
+<ul class="rich-ul">
+  <li>Set recurring calendar blocks for admin, invoicing, and correspondence</li>
+  <li>Use project management tools with notifications (Trello, Notion, Asana) rather than relying on memory</li>
+  <li>Body doubling — working alongside another person (even via video call) increases task initiation significantly</li>
+  <li>Consider an accountability partner or business coach familiar with ADHD</li>
+</ul>`,
+
+    // ---- GRIEF SECTION (optional, unselected by default) ----
+
+    s_grief: `<div class="rich-h1">Grief After Late Diagnosis</div>
+<p class="rich-p">For many people diagnosed with ADHD as an adult, relief is the first thing they feel — finally an explanation for a lifetime of experiences that never quite made sense. But relief is often followed by something harder to name: grief.</p>
+<p class="rich-p">Grief for the years spent struggling harder than you needed to. For the jobs that did not work out, the relationships that frayed under the strain, the exams you failed despite studying, the mornings you could not get started and blamed yourself for it. For the version of yourself that might have emerged earlier, with the right support.</p>
+<p class="rich-p">This is a real and legitimate grief. It deserves to be acknowledged, not bypassed. You were not lazy, disorganised, or difficult. You were managing a neurological condition without a diagnosis, without tools, and often without understanding from the people around you. That is genuinely hard, and it accumulated over years.</p>
+<p class="rich-p">It can also be disorienting to improve. When things start working — when the medication helps and you can actually follow through — there is sometimes a strange mourning that surfaces. "Why couldn't I do this before? What was all of that for?" These are not signs that something is wrong. They are the natural emotional processing of a significant life narrative shift.</p>
+<p class="rich-p">Some things worth sitting with:</p>
+<ul class="rich-ul">
+  <li>The diagnosis does not rewrite the past — but it does change the meaning of it. The failures were not character failures. They were the predictable outcomes of an unmanaged condition in environments that weren't built for you.</li>
+  <li>Anger is appropriate, and it belongs somewhere. At the systems that missed you, perhaps. At outdated ideas about what ADHD looks like. Not at yourself.</li>
+  <li>The future is not the same as the past. Having a diagnosis and a treatment plan genuinely changes the trajectory.</li>
+</ul>
+<p class="rich-p">If this grief feels heavy or persistent, talking to a psychologist — particularly one with experience in ADHD and identity — can be very worthwhile. This is not a detour from treatment; it is part of it.</p>`,
+
+    // ---- TREATMENT RESOURCES (optional, unselected by default) ----
+
+    s_resources_aus: `<div class="rich-h1">Australian ADHD Resources</div>
+<p class="rich-p">The following are reputable Australian sources for information, support, and advocacy.</p>
+<div class="rich-h2">Clinical and Professional Bodies</div>
+<ul class="rich-ul">
+  <li><strong>AADPA — Australian ADHD Professionals Association</strong><br>
+    <a href="https://www.aadpa.com.au" target="_blank">aadpa.com.au</a><br>
+    The peak professional body in Australia for clinicians working in ADHD. Their Clinical Practice Guidelines (2022) are the current standard of care. The website has patient-facing resources and a clinician finder.</li>
+  <li><strong>ADHD Australia</strong><br>
+    <a href="https://www.adhdaustralia.org.au" target="_blank">adhdaustralia.org.au</a><br>
+    Peer support, advocacy, community forums, webinars, and state-based support groups. One of the main consumer organisations in Australia. Useful for connecting with others who understand the lived experience.</li>
+  <li><strong>ADHD Foundation Australia</strong><br>
+    <a href="https://adhdfoundation.org.au" target="_blank">adhdfoundation.org.au</a><br>
+    Education and advocacy with a focus on children and young people, though increasingly relevant for adults. Provides resources for schools and workplaces.</li>
+  <li><strong>Healthy Minds Australia</strong><br>
+    <a href="https://www.healthymindsprogram.com.au" target="_blank">healthymindsprogram.com.au</a><br>
+    Evidence-based mental health education programs. ADHD modules are clinician-reviewed and provide accessible psychoeducation.</li>
+</ul>
+<div class="rich-h2">Government and Regulatory</div>
+<ul class="rich-ul">
+  <li><strong>TGA (Therapeutic Goods Administration) — Consumer Medicines Information</strong><br>
+    <a href="https://www.tga.gov.au" target="_blank">tga.gov.au</a><br>
+    Official Australian product information for all PBS-listed medications. Search for your specific medication for the CMI (Consumer Medicine Information) document.</li>
+  <li><strong>NPS MedicineWise</strong><br>
+    <a href="https://www.nps.org.au" target="_blank">nps.org.au</a><br>
+    Independent, evidence-based medication information for Australian consumers. Accessible and reliable.</li>
+  <li><strong>PBS (Pharmaceutical Benefits Scheme)</strong><br>
+    <a href="https://www.pbs.gov.au" target="_blank">pbs.gov.au</a><br>
+    Official PBS listings for ADHD medications, including subsidy status and authority prescription requirements.</li>
+</ul>
+<div class="rich-h2">Support and Mental Health</div>
+<ul class="rich-ul">
+  <li><strong>Beyond Blue</strong><br>
+    <a href="https://www.beyondblue.org.au" target="_blank">beyondblue.org.au</a> | Phone: 1300 22 4636<br>
+    For comorbid anxiety, depression, and general mental health support. 24/7 phone and online chat.</li>
+  <li><strong>Lifeline Australia</strong><br>
+    <a href="https://www.lifeline.org.au" target="_blank">lifeline.org.au</a> | Phone: 13 11 14<br>
+    Crisis support and suicide prevention. 24/7.</li>
+  <li><strong>Head to Health</strong><br>
+    <a href="https://www.headtohealth.gov.au" target="_blank">headtohealth.gov.au</a><br>
+    Australian Government mental health portal with links to digital mental health programs, many of which are free or low-cost.</li>
+</ul>`,
+
+    s_resources_meds: `<div class="rich-h1">Medication Information</div>
+<p class="rich-p">These sources provide reliable, evidence-based information about the specific medications used for ADHD in Australia.</p>
+<div class="rich-h2">Methylphenidate (Ritalin, Concerta)</div>
+<ul class="rich-ul">
+  <li><strong>Ritalin (Novartis) Consumer Medicine Information (TGA)</strong><br>
+    <a href="https://www.ebs.tga.gov.au" target="_blank">Search "Ritalin" at ebs.tga.gov.au</a><br>
+    Official Australian product information including all indications, dosing, interactions, and side effects.</li>
+  <li><strong>Concerta (Janssen) Consumer Medicine Information</strong><br>
+    <a href="https://www.ebs.tga.gov.au" target="_blank">Search "Concerta" at ebs.tga.gov.au</a><br>
+    Extended-release methylphenidate. 12-hour duration. Single morning dose.</li>
+  <li><strong>NPS MedicineWise — Methylphenidate</strong><br>
+    <a href="https://www.nps.org.au/consumers/methylphenidate" target="_blank">nps.org.au</a><br>
+    Consumer-friendly overview of how methylphenidate works, what to expect, and how to take it safely.</li>
+</ul>
+<div class="rich-h2">Dexamphetamine</div>
+<ul class="rich-ul">
+  <li><strong>Dexamphetamine (AFT Pharmaceuticals) CMI</strong><br>
+    <a href="https://www.ebs.tga.gov.au" target="_blank">Search "Dexamphetamine" at ebs.tga.gov.au</a><br>
+    Official product information for dexamphetamine sulfate 5 mg tablets.</li>
+  <li><strong>NPS MedicineWise — Dexamfetamine</strong><br>
+    <a href="https://www.nps.org.au" target="_blank">nps.org.au</a><br>
+    Patient information on dexamphetamine including common questions, side effects, and storage.</li>
+</ul>
+<div class="rich-h2">Lisdexamfetamine (Vyvanse)</div>
+<ul class="rich-ul">
+  <li><strong>Vyvanse (Takeda) Consumer Medicine Information</strong><br>
+    <a href="https://www.ebs.tga.gov.au" target="_blank">Search "Vyvanse" at ebs.tga.gov.au</a><br>
+    Full product information including prodrug mechanism, dosing, side effects, and contraindications.</li>
+  <li><strong>Takeda Australia — Vyvanse Patient Resources</strong><br>
+    <a href="https://www.vyvanse.com.au" target="_blank">vyvanse.com.au</a><br>
+    Manufacturer site with patient information, FAQs, and support resources specific to the Australian context.</li>
+  <li><strong>NPS MedicineWise — Lisdexamfetamine</strong><br>
+    <a href="https://www.nps.org.au" target="_blank">nps.org.au</a><br>
+    Evidence-based consumer information on Vyvanse, including comparison with other stimulants.</li>
+</ul>
+<div class="rich-h2">Non-Stimulant Options</div>
+<ul class="rich-ul">
+  <li><strong>Atomoxetine (Strattera)</strong><br>
+    <a href="https://www.ebs.tga.gov.au" target="_blank">Search "Strattera" at ebs.tga.gov.au</a><br>
+    A non-stimulant noradrenaline reuptake inhibitor. Takes 4-8 weeks for full effect. Useful when stimulants are not tolerated or when comorbid anxiety is significant.</li>
+  <li><strong>Guanfacine (Intuniv)</strong><br>
+    <a href="https://www.ebs.tga.gov.au" target="_blank">Search "Intuniv" at ebs.tga.gov.au</a><br>
+    Alpha-2A agonist. Primarily used in children but also effective in some adults, particularly for emotional dysregulation and hyperactivity. Not a first-line option but evidence-supported.</li>
+</ul>`,
+
+    s_nonpharm_cbt: `<div class="rich-h1">Non-Pharmacological Therapies</div>
+<p class="rich-p">Medication is the most effective single treatment for ADHD, but non-pharmacological approaches are an important part of comprehensive care. The strongest evidence is for approaches that directly train or scaffold executive function skills. These are not alternatives to medication — they work best alongside it.</p>
+<div class="rich-h2">1. Cognitive Behavioural Therapy (CBT) for ADHD</div>
+<p class="rich-p"><strong>Evidence: Strong. Highest level of evidence for psychological intervention in adult ADHD.</strong></p>
+<p class="rich-p">ADHD-focused CBT is distinct from general CBT. It targets the functional impairments of ADHD directly: time management, organisation, procrastination, emotional regulation, and the negative self-beliefs that accumulate after years of underperformance. It does not try to treat inattention directly — it builds compensatory strategies around it.</p>
+<ul class="rich-ul">
+  <li>Safren et al. (2005, 2010) demonstrated significant symptom and functional improvement in two RCTs of adults with ADHD on medication using ADHD-specific CBT, compared to medication alone. Effects were maintained at 12-month follow-up.<br><span class="rich-cite">Safren SA et al. J Consult Clin Psychol. 2010;78(4):491.</span></li>
+  <li>A Cochrane review found CBT for adult ADHD produced significant improvement in ADHD symptoms, depression, anxiety, and quality of life compared to control conditions.<br><span class="rich-cite">Lopez PL et al. Cochrane Database Syst Rev. 2018.</span></li>
+  <li>Sessions typically focus on: building planning and scheduling systems, breaking tasks into steps, managing procrastination cycles, reducing avoidance, and challenging all-or-nothing thinking about performance.</li>
+</ul>
+<p class="rich-p">Look for a psychologist with specific ADHD experience. General CBT without ADHD adaptation is less effective for this population.</p>`,
+
+    s_nonpharm_coaching: `<div class="rich-h1">Non-Pharmacological Therapies</div>
+<div class="rich-h2">ADHD Coaching</div>
+<p class="rich-p"><strong>Evidence: Moderate. Growing evidence base for goal attainment, executive function, and quality of life outcomes.</strong></p>
+<p class="rich-p">ADHD coaching is not therapy — it is skills-focused, present-oriented, and highly practical. A coach works with you on specific goals: building routines, managing time, completing projects, improving follow-through. Unlike therapy, it does not address underlying psychological patterns. It is best suited to people who are functionally stable but need structured accountability and skills scaffolding.</p>
+<ul class="rich-ul">
+  <li>Kubik (2010) found coached adults showed significant improvement in ADHD symptoms and quality of life measures compared to waitlist controls.<br><span class="rich-cite">Kubik JA. J Atten Disord. 2010;13(5):515.</span></li>
+  <li>A systematic review found coaching produced meaningful improvements in time management, organisation, and goal attainment in adults with ADHD, though study quality is variable.<br><span class="rich-cite">Ahmann E et al. J Atten Disord. 2018;22(1):3.</span></li>
+</ul>
+<p class="rich-p">ADHD Australia (adhdaustralia.org.au) maintains a directory of coaches. Look for coaches certified through the ICF (International Coaching Federation) with ADHD-specific training.</p>`,
+
+    s_nonpharm_mindful: `<div class="rich-h1">Non-Pharmacological Therapies</div>
+<div class="rich-h2">Mindfulness-Based Interventions</div>
+<p class="rich-p"><strong>Evidence: Moderate. Particularly effective for emotional dysregulation and attentional control.</strong></p>
+<p class="rich-p">Mindfulness training improves meta-cognitive awareness — the ability to notice when attention has wandered and redirect it. For ADHD, this is directly relevant. Mindfulness does not cure ADHD, but it builds a skill that compensates for one of its core deficits.</p>
+<ul class="rich-ul">
+  <li>Zylowska et al. (2008) published the first RCT of Mindfulness-Based Cognitive Training (MBCT) adapted for ADHD adults, showing significant improvement in self-reported ADHD symptoms, anxiety, and depression.<br><span class="rich-cite">Zylowska L et al. J Atten Disord. 2008;11(6):737.</span></li>
+  <li>A meta-analysis of 12 studies found medium effect sizes for mindfulness on inattention and small-to-medium effects on hyperactivity-impulsivity in adults with ADHD.<br><span class="rich-cite">Cairncross M &amp; Miller CJ. J Atten Disord. 2020;24(5):627.</span></li>
+  <li>Recommended formats: MBCT (Mindfulness-Based Cognitive Therapy) or MBSR (Mindfulness-Based Stress Reduction), delivered by a trained instructor over 8 weeks. Apps such as Headspace and Insight Timer can supplement but are not a substitute for structured training.</li>
+</ul>`,
+
+    s_nonpharm_dbt: `<div class="rich-h1">Non-Pharmacological Therapies</div>
+<div class="rich-h2">Dialectical Behaviour Therapy (DBT) Skills</div>
+<p class="rich-p"><strong>Evidence: Moderate to strong, particularly for emotional dysregulation.</strong></p>
+<p class="rich-p">DBT was originally developed for borderline personality disorder but its skills training component — distress tolerance, emotion regulation, interpersonal effectiveness, and mindfulness — maps very well onto the emotional dysregulation that is one of the most functionally impairing but least-discussed features of ADHD.</p>
+<ul class="rich-ul">
+  <li>Hesslinger et al. (2002) adapted DBT specifically for adult ADHD and showed significant improvement in ADHD symptoms, self-esteem, and depression in a pilot RCT.<br><span class="rich-cite">Hesslinger B et al. Eur Arch Psychiatry Clin Neurosci. 2002;252(4):177.</span></li>
+  <li>Particularly useful if emotional reactivity, impulsive outbursts, or relationship instability are prominent features.</li>
+</ul>`,
+
+    s_nonpharm_exercise: `<div class="rich-h1">Non-Pharmacological Therapies</div>
+<div class="rich-h2">Exercise</div>
+<p class="rich-p"><strong>Evidence: Strong, particularly for acute attentional improvement and mood regulation.</strong></p>
+<p class="rich-p">Aerobic exercise acutely increases dopamine and noradrenaline in the prefrontal cortex — the same systems that ADHD medication targets. The effect is shorter-lived than medication but clinically significant.</p>
+<ul class="rich-ul">
+  <li>A meta-analysis of 17 studies found acute aerobic exercise significantly improved executive function, attention, working memory, and inhibitory control in individuals with ADHD. Effect sizes were moderate to large.<br><span class="rich-cite">Mehren A et al. Neurosci Biobehav Rev. 2020;118:1.</span></li>
+  <li>Recommended: 20-30 minutes of moderate-to-vigorous aerobic exercise (enough to raise heart rate significantly) in the morning, before or alongside medication. Cycling, running, and swimming all qualify. Consistency matters more than intensity.</li>
+  <li>Exercise also improves sleep quality, which is commonly disrupted in ADHD and itself worsens executive function.</li>
+</ul>`,
+
+    s_nonpharm_ot: `<div class="rich-h1">Non-Pharmacological Therapies</div>
+<div class="rich-h2">Occupational Therapy (OT)</div>
+<p class="rich-p"><strong>Evidence: Emerging, particularly strong for daily living skills and environmental modification.</strong></p>
+<p class="rich-p">An OT with ADHD experience can conduct a functional capacity assessment and implement practical interventions: home and workspace organisation, routine-building, assistive technology, and time management systems. OT is particularly valuable for people who need hands-on, individualised support with daily living rather than insight-based therapy. May be fundable through NDIS.</p>`,
+
+    s_sh_braindump: `<div class="rich-h1">Self-Help Techniques</div>
+<p class="rich-p">These are not generic productivity tips. Each one addresses a specific mechanism of ADHD — the interest-driven attention system, working memory deficits, difficulty initiating tasks, and the role of friction and reward in habit formation. Try one or two at a time rather than implementing everything at once.</p>
+
+<div class="rich-h2">1. The Brain Dump + Priority Matrix</div>
+<p class="rich-p">The ADHD brain cannot efficiently hold multiple open loops in working memory. When there are too many unresolved items floating around, the result is a persistent background anxiety and an inability to start any single thing. The solution is to get everything out of your head and onto a list — not a to-do list, a brain dump. Everything, regardless of size or urgency.</p>
+<p class="rich-p"><strong>How to do it:</strong> Open your phone notes or a journal. Write down everything on your mind — taxes, a message you need to reply to, that you need to make your bed, an overdue assignment, a bill, a conversation you are avoiding, groceries, anything. Do not filter or organise while you are dumping. Then, once the list is complete, rate each item using the following system:</p>
+<ul class="rich-ul">
+  <li><strong>A — Urgent AND causes anxiety.</strong> Example: an email you have been avoiding, a payment overdue, a form that has a deadline. These are creating the most cognitive load.</li>
+  <li><strong>B — Urgent but does NOT cause anxiety.</strong> Example: picking up a prescription, booking an appointment you actually want to go to. These need doing but are not emotionally charged.</li>
+  <li><strong>C — Causes anxiety but is NOT urgent.</strong> Example: a difficult conversation you are dreading that has no fixed deadline. Real, but not time-critical today.</li>
+  <li><strong>D — Neither urgent NOR anxiety-causing.</strong> Example: reorganising a drawer, watching a documentary. Fine, but do not let these crowd out A and B items.</li>
+</ul>
+<p class="rich-p"><strong>Where to start:</strong> Look at all the A and B items. Find the one that is quickest and easiest to resolve — not the most important, the quickest. A message to a friend about plans tomorrow might be category A and takes 90 seconds. Send it now. Cross it off. Then find the next quickest resolvable item. The goal is not to work hardest on the hardest things — it is to progressively free up working memory and reduce anxiety load so that the harder things become more approachable. You will often find that after clearing five quick items, you have mental space and momentum to tackle something bigger.</p>
+<p class="rich-p"><strong>When to do it:</strong> Whenever you feel overwhelmed, scattered, or paralysed by where to start. Also works well as a weekly reset on Sunday evening or Monday morning. Some people find a daily brain dump the single most useful ADHD management habit they have.</p>`,
+
+    s_sh_phone: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Reducing Phone and Social Media Use</div>
+<p class="rich-p">Smartphones are optimised to capture and hold attention — and for ADHD brains, which are already prone to distraction and seeking immediate stimulation, this is a particularly serious problem. The goal is not willpower. The goal is friction — making undesirable habits physically harder to do.</p>
+<p class="rich-p"><strong>Adding friction on iPhone:</strong></p>
+<ul class="rich-ul">
+  <li><strong>Hidden folders:</strong> Move Instagram, TikTok, and other high-dopamine apps into a folder within a folder on a back page of your home screen. You can still access them, but the extra steps break the automatic tap-and-open reflex. A surprising amount of mindless scrolling is prevented by this alone.</li>
+  <li><strong>Screen Time limits (Settings &gt; Screen Time):</strong> Set daily time limits for specific apps. When the limit is reached, the app greyes out and requires a passcode to continue. Have someone else set the passcode if you do not trust yourself to override it.</li>
+  <li><strong>Grayscale mode:</strong> Turn your screen to grayscale (Settings &gt; Accessibility &gt; Display &amp; Text Size &gt; Colour Filters). Colour is a key part of what makes apps visually compelling. Grayscale makes the phone less attractive and reduces impulsive use.</li>
+  <li><strong>Notifications off for all non-essential apps:</strong> Every notification is an interruption that fragments attention. Turn off all badge, banner, and sound notifications except calls and calendar. Check messages on your schedule, not theirs.</li>
+  <li><strong>Charge your phone outside the bedroom:</strong> Night-time scrolling disrupts sleep, which worsens ADHD the next day. An alarm clock costs $15 and removes the only reason most people keep a phone bedside.</li>
+</ul>
+<p class="rich-p"><strong>On Android:</strong> Digital Wellbeing (Settings &gt; Digital Wellbeing) provides app timers, focus mode (which locks selected apps for a set period), and Bedtime mode.</p>
+<p class="rich-p"><strong>Why friction works:</strong> Most problematic phone use is automatic and unconscious, not deliberate. The ADHD brain responds to availability — if the app is one tap away, the reflex fires. If it requires four steps, the reflex is often not strong enough to sustain. You are not fighting willpower; you are redesigning the environment.</p>`,
+
+    s_sh_timeblock: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Time Blocking and Visual Timers</div>
+<p class="rich-p">ADHD impairs time perception — time feels abstract and it is genuinely difficult to feel the passage of time or accurately predict how long things will take. "I have time" and "I am running out of time" can both feel the same until a deadline is imminent. The solution is to make time visible.</p>
+<ul class="rich-ul">
+  <li><strong>Time blocking:</strong> Allocate specific tasks to specific time slots in a calendar — not just a to-do list. A to-do list tells you what. A calendar tells you when. Time blocking converts intentions into commitments. Be realistic: ADHD tasks take longer than estimated. Add buffer time.</li>
+  <li><strong>The Time Timer:</strong> A visual countdown timer (available as an app or physical device) shows time as a shrinking red disc. This makes the passage of time concrete rather than abstract. Particularly useful for tasks you tend to underestimate or avoid. Search "Time Timer" on the App Store.</li>
+  <li><strong>The Pomodoro Technique:</strong> Work for 25 minutes, then take a mandatory 5-minute break. After four cycles, take a longer break. This creates structure, makes tasks feel finite, and exploits the fact that ADHD brains can often sustain focus for a defined short interval more reliably than open-ended sessions. Use a timer, not your phone clock.</li>
+</ul>`,
+
+    s_sh_bodydouble: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Body Doubling</div>
+<p class="rich-p">Body doubling is the practice of working in the presence of another person — physically or via video — without necessarily collaborating. Research and extensive self-report data from ADHD communities shows that many people with ADHD can initiate and sustain tasks dramatically better when someone else is simply present in the same space.</p>
+<p class="rich-p">The mechanism is not fully understood but likely relates to social attention modulation and mild external accountability. Even a video call where both people are working silently on separate tasks produces the effect for many people.</p>
+<ul class="rich-ul">
+  <li>Try working in a library, cafe, or co-working space rather than alone at home</li>
+  <li>Arrange "accountability calls" with a friend where you each say what you are working on, then check back in 30-60 minutes</li>
+  <li>Online body doubling communities: Focusmate (focusmate.com) matches you with a stranger for a 50-minute virtual co-working session — free for a limited number of sessions per week</li>
+</ul>
+
+<div class="rich-h2">5. "If-Then" Implementation Intentions</div>
+<p class="rich-p">The ADHD brain struggles with prospective memory — remembering to do things at the right time. "Implementation intentions" are a specific technique from psychological research: instead of setting a general intention ("I will exercise more"), you specify a trigger: "When I finish my morning coffee, I will put on my shoes and go for a walk."</p>
+<p class="rich-p">The research on this is substantial. Implementation intentions increase follow-through in the general population by 2-3 times. In people with executive dysfunction, the effect is even larger because the if-then structure offloads the initiation decision from working memory onto environmental cues.<br><span class="rich-cite">Gollwitzer PM &amp; Sheeran P. Adv Exp Soc Psychol. 2006;38:69.</span></p>
+<p class="rich-p"><strong>Examples:</strong></p>
+<ul class="rich-ul">
+  <li>"When my alarm goes off at 7am, I will take my medication before I look at my phone."</li>
+  <li>"When I sit down at my desk, I will open the document I need to work on before checking email."</li>
+  <li>"When I feel the urge to check social media while working, I will write down what I was working on and come back to it."</li>
+</ul>
+
+<div class="rich-h2">6. Reducing Decision Fatigue</div>
+<p class="rich-p">Every decision uses executive resources that ADHD brains have less of. The more decisions you make early in the day, the less capacity you have for the ones that matter. The solution is to systematically eliminate low-value decisions through routines.</p>
+<ul class="rich-ul">
+  <li>Prepare tomorrow's clothes, bag, and anything needed before bed the night before</li>
+  <li>Have a small rotation of default meals for weekday breakfasts and lunches — one fewer category of daily decisions</li>
+  <li>Create a "launch pad" near the front door where keys, wallet, bag, and medication always live — searching for these things is a daily executive function tax</li>
+  <li>Use recurring calendar events for regular tasks (gym, grocery shopping, calls) rather than deciding each week</li>
+</ul>`,
+
+    s_sh_reward: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Reward Pairing for Aversive Tasks</div>
+<p class="rich-p">The ADHD brain is under-stimulated by low-interest tasks. The trick is not to force motivation — it is to pair the aversive task with something that adds stimulation without replacing the task.</p>
+<ul class="rich-ul">
+  <li>Listen to music, podcasts, or audiobooks only while doing routine household tasks (cleaning, cooking, folding). This makes the task feel different and makes the audio reward contingent on the activity.</li>
+  <li>Work in a preferred environment — the coffee shop effect is real. A novel, mildly stimulating environment can sustain engagement longer than a familiar, quiet one for ADHD brains.</li>
+  <li>Use a specific playlist only for focused work. Over time, the music becomes a cue that activates the "working" state.</li>
+  <li>Set a small, concrete reward for completing a defined block of work — not "when I finish this project" (too remote) but "after I write this section, I will make a coffee." Concrete and proximate rewards activate the dopamine system more reliably than distant ones.</li>
+</ul>`,
+
+    s_sh_ifthen: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">If-Then Planning</div>
+<p class="rich-p">The ADHD brain struggles with initiating tasks — not because of laziness, but because the automatic link between "it is time to start" and actually starting is weaker. If-then planning (implementation intentions) builds that link explicitly.</p>
+<div class="rich-h3">How to use it</div>
+<p class="rich-p">Format: <strong>If [situation], then I will [action].</strong></p>
+<ul class="rich-ul">
+  <li>"If it is 9am and I sit at my desk, then I will open the document I need to work on first."</li>
+  <li>"If I finish eating dinner, then I will put my medication out for tomorrow morning immediately."</li>
+  <li>"If my phone buzzes while I am working, then I will place it face-down and return to what I was doing before checking it."</li>
+</ul>
+<p class="rich-p">The more specific the if-then, the more effective. Vague intentions ("I will try to start earlier") do not work for ADHD brains. Concrete, situation-specific triggers do. Write them down and place them somewhere visible.</p>`,
+
+    s_sh_decisions: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Managing Decision Fatigue</div>
+<p class="rich-p">Every decision — even trivial ones — draws on the same pool of executive function that ADHD already taxes. Reducing the number of decisions you have to make preserves mental energy for things that matter.</p>
+<div class="rich-h3">Practical strategies</div>
+<ul class="rich-ul">
+  <li><strong>Automate recurring decisions:</strong> Set a weekly meal structure, wear similar clothes, create default answers for common requests. "I don't schedule meetings before 10am" removes that negotiation every time.</li>
+  <li><strong>Batch similar decisions:</strong> Rather than deciding what to buy when you go shopping, use a standing shopping list you update throughout the week.</li>
+  <li><strong>Set decision rules in advance:</strong> "If I haven't used it in 12 months, I donate it" removes dozens of micro-decisions. Rules made in advance don't require executive function at the time.</li>
+  <li><strong>Limit choices:</strong> Having fewer options is genuinely easier. Curate your wardrobe, your apps, your commitments.</li>
+  <li><strong>Make hard decisions in the morning:</strong> Executive function is generally stronger earlier in the day. Schedule important decisions before fatigue compounds.</li>
+</ul>`,
+
+    s_sh_bingeeating: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Binge Eating and ADHD</div>
+<p class="rich-p">Binge eating is significantly more common in ADHD and is not simply about willpower or food. The ADHD brain seeks dopamine, and food — particularly highly palatable, calorie-dense food — provides a reliable and immediate dopamine hit. Impulsivity reduces the pause between urge and action. Inattention means meals are skipped or irregular, driving hunger that accelerates loss of control. Understanding this helps remove shame and directs effort toward what actually works.</p>
+<div class="rich-h3">What helps</div>
+<ul class="rich-ul">
+  <li><strong>Eat regularly:</strong> Skipping meals (especially when ADHD medication suppresses appetite at lunch) leads to significant hunger later, which makes eating regulation much harder. A small, scheduled lunch — even when not very hungry — reduces evening overconsumption.</li>
+  <li><strong>Reduce friction for regular eating, increase friction for bingeing:</strong> Keep easy, adequate food accessible; make high-stimulation binge foods harder to reach (don't buy them, store them out of sight, require preparation).</li>
+  <li><strong>Identify the emotional trigger:</strong> Binge urges often follow boredom, procrastination, frustration, or overwhelm in ADHD — not just physical hunger. Noticing "I am not hungry, I am avoiding something" is the first step to choosing a different response.</li>
+  <li><strong>Address the dopamine need directly:</strong> If binge eating is serving as a dopamine source, other dopamine-generating activities (movement, music, a brief engaging task) can reduce the urge without the eating.</li>
+  <li><strong>If binge eating is significantly impacting your life:</strong> This is worth raising with your psychiatrist. Medication changes and/or psychological support (particularly CBT-E or DBT) have good evidence.</li>
+</ul>`,
+
+    s_sh_emotional: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Emotional Dysregulation</div>
+<p class="rich-p">Emotional dysregulation is one of the most impairing and least discussed features of ADHD. Emotions arrive fast, feel intense, and are hard to modulate — not because of poor character, but because the prefrontal cortex circuits that regulate emotional responses are the same ones affected by ADHD. Frustration, rejection sensitivity, irritability, and sudden mood shifts are part of the condition.</p>
+<div class="rich-h3">What helps</div>
+<ul class="rich-ul">
+  <li><strong>Name it to tame it:</strong> Labelling an emotion — "I am feeling rejected" or "this is frustration, not a crisis" — activates the prefrontal cortex and reduces amygdala reactivity. It sounds simple and actually works.</li>
+  <li><strong>Buy time before responding:</strong> The ADHD brain's fast emotional reaction is often followed by regret. Inserting a delay — leaving the room, saying "I need five minutes," putting down the phone — gives the cortex time to catch up. The decision to delay must be made in advance, not in the moment.</li>
+  <li><strong>Physical regulation first:</strong> When emotionally dysregulated, physical activity (even a brisk 5-minute walk), cold water on the face, or controlled breathing reduces physiological arousal and improves the capacity to think clearly.</li>
+  <li><strong>Rejection-sensitive dysphoria (RSD):</strong> If you experience sudden, intense emotional pain in response to perceived rejection or criticism — even mild — this is RSD, a common ADHD feature. Knowing it has a name and a mechanism helps. Discuss it with your psychiatrist; some medications help significantly.</li>
+  <li><strong>DBT skills:</strong> Dialectical Behaviour Therapy was developed for emotion dysregulation and has strong evidence. A DBT therapist or self-help workbook can provide structured tools.</li>
+</ul>`,
+
+    s_sh_kids: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Parenting Difficulties with ADHD</div>
+<p class="rich-p">Parenting is hard. Parenting with ADHD is harder — and if you have a child who also has ADHD, the demands can be overwhelming. ADHD affects the very skills parenting requires most: consistency, patience, sustained attention, emotional regulation, and planning ahead. This is not a character failure; it is a brain-based challenge.</p>
+<div class="rich-h3">What helps</div>
+<ul class="rich-ul">
+  <li><strong>Reduce cognitive load:</strong> Simplify routines to the minimum viable version. Visual schedules on the wall that both you and your child can follow reduce the number of verbal reminders and arguments.</li>
+  <li><strong>Short, specific instructions:</strong> "Shoes on, bag by the door" rather than a chain of instructions. One step at a time works better for ADHD brains — yours and theirs.</li>
+  <li><strong>Repair quickly:</strong> ADHD parents often lose patience and say things they regret. A quick, genuine repair — "I got angry and that wasn't fair, I'm sorry" — matters more to long-term relationship quality than having never lost patience.</li>
+  <li><strong>Your own medication:</strong> If you are on ADHD medication, taking it consistently (including weekends) makes a measurable difference to parenting patience and follow-through.</li>
+  <li><strong>Structure for yourself:</strong> Use the same planning tools for parenting tasks that you use for work tasks — calendars, reminders, checklists. Externalise what you can't hold in working memory.</li>
+  <li><strong>Get support:</strong> Parent management training adapted for ADHD families (such as the Triple P or 1-2-3 Magic programmes) has good evidence. If you are struggling significantly, your psychiatrist can refer you.</li>
+</ul>`,
+
+    s_sh_partner: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Relationships and ADHD</div>
+<p class="rich-p">ADHD affects relationships in predictable, often painful ways: forgetfulness is misread as not caring, emotional dysregulation creates escalating conflicts, hyperfocus on a new relationship gives way to inattention once novelty fades, and the non-ADHD partner often becomes the default organiser, which breeds resentment over time.</p>
+<div class="rich-h3">What helps</div>
+<ul class="rich-ul">
+  <li><strong>Externalise memory:</strong> Shared digital calendars, to-do apps, and household management lists reduce the reliance on the ADHD brain's unreliable internal organisation — and make it visible to your partner that things are being tracked.</li>
+  <li><strong>Have a consistent check-in:</strong> A brief weekly conversation — "what's on this week, what do we each need from the other" — prevents the accumulation of unvoiced frustrations and missed commitments.</li>
+  <li><strong>Separate intent from impact:</strong> Forgetting your partner's important appointment is not the same as not caring about them. Acknowledging the impact without defensiveness, and problem-solving together (what system would help?), is more productive than the "I didn't mean to" / "but you always" loop.</li>
+  <li><strong>Discuss the diagnosis together:</strong> If your partner understands ADHD as a brain-based condition rather than selfishness or immaturity, it changes the frame. Many couples find couples therapy — particularly with a therapist familiar with ADHD — helpful.</li>
+  <li><strong>The ADHD partner's responsibility:</strong> Having ADHD explains your difficulties; it does not remove the responsibility to work on them. Partners need to see consistent effort, even when the effort looks different from neurotypical organisation.</li>
+</ul>`,
+
+    s_sh_commsadult: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Communicating Effectively with an Adult Who Has ADHD</div>
+<p class="rich-p">If you are reading this because someone in your life has ADHD — or because you want to share it with them — here are practical communication approaches that work with ADHD brains rather than against them.</p>
+<div class="rich-h3">What works</div>
+<ul class="rich-ul">
+  <li><strong>One thing at a time:</strong> A list of instructions — "can you pick up the kids, remember to call the plumber, and don't forget dinner is at 7" — will likely result in one item being remembered. Prioritise and communicate one request per conversation.</li>
+  <li><strong>Get attention first:</strong> Say their name and wait for eye contact before giving important information. Starting to speak while they are absorbed in something else means the message is not received.</li>
+  <li><strong>Write it down:</strong> Text a request after mentioning it verbally. This is not a slight; it is how ADHD working memory actually works.</li>
+  <li><strong>Short, direct, specific:</strong> "The appointment is Friday at 2pm, I've sent you a calendar invite" works. "I mentioned it last week and really hope you haven't forgotten again" doesn't.</li>
+  <li><strong>Timing matters:</strong> Raising an important topic when they are in the middle of a task, on the phone, or hyperfocused means it will not be properly heard. Ask "is now a good time?" for important conversations.</li>
+  <li><strong>Assume distraction, not disrespect:</strong> If something was forgotten or missed, a curious "did you get a chance to..." lands very differently to an accusatory "you never remember anything I ask."</li>
+</ul>`,
+
+    s_sh_commschild: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Talking With a Child Who Has ADHD</div>
+<p class="rich-p">Children with ADHD hear far more correction, criticism, and redirection than their peers — studies suggest up to 20,000 more negative interactions by age 10. The goal is to interrupt that pattern without removing necessary structure.</p>
+<div class="rich-h3">What works</div>
+<ul class="rich-ul">
+  <li><strong>Catch them being good:</strong> Describe the positive behaviour specifically when you see it — "I noticed you put your bag away without being asked, that's great." Vague praise ("good job") is less effective than named praise.</li>
+  <li><strong>Instructions: short, specific, one at a time:</strong> "Shoes on" rather than "get ready." "Sit at the table" rather than "stop running around and come and eat your dinner." Wait for compliance before giving the next instruction.</li>
+  <li><strong>Get physical proximity and eye contact first:</strong> Calling from another room rarely works. Move close, make eye contact (without demanding it aggressively), then speak.</li>
+  <li><strong>Explain the why, briefly:</strong> Children with ADHD respond better to reasons than to authority alone — "we need to leave now because the appointment is at 3 and we need to park" is more effective than "because I said so."</li>
+  <li><strong>Use visual supports:</strong> Morning routine charts, step-by-step checklists with pictures, and visible timers reduce the number of verbal prompts needed and give the child autonomy.</li>
+  <li><strong>Choose your battles:</strong> If everything is a battle, the currency of correction is devalued. Reserve firm limits for safety and non-negotiables; let minor things go.</li>
+  <li><strong>Avoid public correction where possible:</strong> ADHD children are often already hyperaware of being different. Quiet correction, away from peers, is more effective and less damaging to self-esteem.</li>
+</ul>`,
+
+    s_sh_exercise: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Exercise and ADHD</div>
+<p class="rich-p">Exercise is one of the most robustly evidence-based non-pharmacological interventions for ADHD. A single bout of aerobic exercise produces an immediate, measurable improvement in attention, working memory, and impulse control for 1-4 hours afterwards — comparable in magnitude to a low dose of stimulant medication. Regular exercise also improves baseline executive function, sleep quality, emotional regulation, and mood over time.</p>
+<div class="rich-h3">What the evidence supports</div>
+<ul class="rich-ul">
+  <li><strong>Aerobic exercise is the most studied:</strong> Running, cycling, swimming, rowing — anything that elevates heart rate for 20 minutes or more. The acute cognitive benefit appears with as little as 20 minutes.</li>
+  <li><strong>Timing matters:</strong> Exercise in the morning or before cognitively demanding tasks maximises the acute benefit. Some people find evening exercise delays sleep; others don't — pay attention to your own response.</li>
+  <li><strong>Consistency matters more than intensity:</strong> Three moderate sessions per week has better evidence for ADHD-specific benefits than occasional intense sessions.</li>
+  <li><strong>Novelty helps adherence:</strong> ADHD brains disengage from routine. Varying activities, training with others, joining a team, or using competitive elements (running apps, challenges) tends to sustain engagement better than the same routine every day.</li>
+</ul>
+<div class="rich-h3">Getting started when motivation is low</div>
+<p class="rich-p">The ADHD brain finds initiation hardest. Commit to the smallest viable version: 10 minutes walking. Pair it with something enjoyable (podcast, playlist). Keep your shoes by the door. Make it as easy to start as possible — the decision architecture matters more than the intention.</p>`,
+
+    s_sh_sleep: `<div class="rich-h1">Self-Help Techniques</div>
+<div class="rich-h2">Managing Sleep with ADHD</div>
+<p class="rich-p">Sleep problems are extremely common in ADHD — difficulty switching off at night, delayed sleep phase, and waking feeling unrefreshed are part of the disorder, not just bad habits. Managing sleep well makes everything else easier.</p>
+<div class="rich-h3">The ADHD-sleep connection</div>
+<ul class="rich-ul">
+  <li>The ADHD brain struggles to disengage — thoughts keep firing when you want to wind down</li>
+  <li>Delayed sleep phase (being a natural night owl) is more common in ADHD</li>
+  <li>Stimulant timing can affect sleep onset — if this is an issue, it is worth discussing with your psychiatrist</li>
+</ul>
+<div class="rich-h3">What actually helps</div>
+<ul class="rich-ul">
+  <li><strong>Consistent wake time:</strong> Getting up at the same time every day — even after a bad night — is the single most evidence-based sleep intervention; it anchors your circadian rhythm</li>
+  <li><strong>Wind-down buffer:</strong> The ADHD brain needs longer to decelerate — allow 45-60 minutes of low-stimulation activity before bed (no problem-solving, no high-stimulation screens)</li>
+  <li><strong>Cool room:</strong> Sleeping at around 18°C significantly improves sleep onset and quality</li>
+  <li><strong>Morning light:</strong> Bright outdoor light (or a light therapy lamp) in the morning helps anchor your body clock; dimming lights in the evening signals the brain to shift toward sleep</li>
+  <li><strong>Physical activity:</strong> Even a 20-minute walk improves sleep quality measurably in ADHD — timing is flexible, though very late intense exercise can delay sleep onset for some people</li>
+  <li><strong>Reducing evening stimulation:</strong> Phones, social media, and decision-heavy content activate the ADHD brain — creating a lower-stimulation wind-down environment helps</li>
+</ul>
+<div class="rich-h3">A note on sleep hygiene advice</div>
+<p class="rich-p">Standard sleep hygiene advice (strict bedtime routines, no screens, etc.) has surprisingly limited evidence for ADHD specifically. It is not harmful, but it is frequently presented as the whole solution when it is not. The higher-yield interventions are consistent wake time, morning light, and physical activity. If sleep remains a significant problem despite these, there are medication options worth discussing with your psychiatrist.</p>`,
+
+    s_titration: '', // handled separately
+
+    s_se_dex: `<div class="rich-h1">Side Effects: Dexamphetamine</div>
+<p class="rich-p">Knowing what to expect makes side effects easier to manage. Most are dose-dependent and settle within the first 1-2 weeks. If they do not, the dose may need adjusting rather than simply tolerating them.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Reduced appetite — most noticeable at lunchtime</li>
+  <li>Dry mouth</li>
+  <li>Insomnia if taken too late in the day</li>
+  <li>Increased heart rate</li>
+  <li>Headache (usually settles within 2-3 weeks)</li>
+  <li>Irritability or anxiety in a subset of people</li>
+  <li>Jaw clenching (bruxism)</li>
+  <li>Rebound: a drop in mood or focus as the medication wears off (more common with short-acting formulations)</li>
+</ul>
+<div class="rich-h2">Less common</div>
+<ul class="rich-ul">
+  <li>Elevated blood pressure — monitored at your appointments</li>
+  <li>Emotional blunting at higher doses (reduce dose if this occurs)</li>
+  <li>In people with bipolar disorder, stimulants can occasionally trigger mania — contact your doctor if you notice elevated mood, reduced sleep need, or rapid speech</li>
+</ul>
+<div class="rich-h2">Food and drug interactions</div>
+<ul class="rich-ul">
+  <li>Acidic drinks (fruit juice, vitamin C, soft drinks) reduce absorption — take your medication first, then have breakfast or wait 30 minutes</li>
+  <li>Decongestants (pseudoephedrine): discuss with your doctor before combining, as cardiovascular effects can add up</li>
+  <li>MAOIs: absolute contraindication — do not combine under any circumstances</li>
+</ul>`,
+
+    s_se_vyvanse: `<div class="rich-h1">Side Effects: Vyvanse</div>
+<p class="rich-p">Vyvanse's slow-release mechanism produces fewer peaks and troughs than short-acting dexamphetamine, which means side effects are often milder and more predictable. Most settle within 1-2 weeks.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Reduced appetite — noticeable at lunchtime; often improves after the first few weeks</li>
+  <li>Dry mouth</li>
+  <li>Insomnia if medication is taken later in the morning (given its 12-14 hour duration)</li>
+  <li>Headache</li>
+  <li>Irritability, usually as the medication starts to wear off in the evening</li>
+  <li>Increased heart rate</li>
+</ul>
+<div class="rich-h2">Less common</div>
+<ul class="rich-ul">
+  <li>Elevated blood pressure</li>
+  <li>Jaw clenching (bruxism)</li>
+  <li>In people with bipolar disorder, stimulants can occasionally trigger mania — contact your doctor if you notice elevated mood, reduced sleep need, or rapid speech</li>
+</ul>
+<div class="rich-h2">Food and drug interactions</div>
+<ul class="rich-ul">
+  <li>Acidic drinks reduce absorption — take medication before acidic food or drink</li>
+  <li>MAOIs: absolute contraindication</li>
+  <li>Decongestants: discuss with doctor before combining</li>
+</ul>`,
+
+    s_se_ritalinIR: `<div class="rich-h1">Side Effects: Ritalin IR / Artige</div>
+<p class="rich-p">Ritalin IR has a milder side effect profile than dexamphetamine on average, particularly for appetite suppression. The short duration of action means side effects typically wear off relatively quickly.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Reduced appetite at lunchtime</li>
+  <li>Headache (usually settles within 2-3 weeks)</li>
+  <li>Insomnia if the afternoon dose is taken too late</li>
+  <li>Increased heart rate</li>
+  <li>Jitteriness or anxiety in some people</li>
+  <li>Stomach discomfort — taking with food reduces this</li>
+</ul>
+<div class="rich-h2">Less common</div>
+<ul class="rich-ul">
+  <li>Elevated blood pressure</li>
+  <li>Rebound (drop in mood as medication wears off) — if significant, discuss adjusting timing or formulation</li>
+  <li>In people with bipolar disorder, stimulants can occasionally trigger mania</li>
+</ul>
+<div class="rich-h2">Food and drug interactions</div>
+<ul class="rich-ul">
+  <li>Acidic drinks reduce absorption — take medication before acidic food or drink</li>
+  <li>MAOIs: absolute contraindication</li>
+</ul>`,
+
+    s_se_ritalinLA: `<div class="rich-h1">Side Effects: Ritalin LA</div>
+<p class="rich-p">Ritalin LA delivers a two-pulse dose that smooths out the peaks and troughs of short-acting methylphenidate. The side effect profile is similar to Ritalin IR but the timing is shifted by the longer duration.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Reduced appetite — tends to be less pronounced than with short-acting formulations</li>
+  <li>Insomnia if taken too late (duration 8-10 hours)</li>
+  <li>Headache</li>
+  <li>Increased heart rate</li>
+  <li>Jitteriness or anxiety in some people</li>
+</ul>
+<div class="rich-h2">Less common</div>
+<ul class="rich-ul">
+  <li>Elevated blood pressure</li>
+  <li>In people with bipolar disorder, stimulants can occasionally trigger mania</li>
+</ul>
+<div class="rich-h2">Food and drug interactions</div>
+<ul class="rich-ul">
+  <li>Acidic drinks reduce absorption — take medication before acidic food or drink</li>
+  <li>High-fat meals can delay the second-pulse release but this is usually not clinically significant</li>
+  <li>MAOIs: absolute contraindication</li>
+</ul>`,
+
+    s_se_concerta: `<div class="rich-h1">Side Effects: Concerta</div>
+<p class="rich-p">Concerta's osmotic pump delivery creates a slowly ascending blood level across the day, which tends to produce a smooth effect with a manageable side effect profile. The shell of the tablet may appear in the stool — this is normal and does not mean the medication hasn't worked.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Reduced appetite</li>
+  <li>Insomnia — given the 10-12 hour duration, take in the morning</li>
+  <li>Headache</li>
+  <li>Increased heart rate</li>
+  <li>Dry mouth</li>
+</ul>
+<div class="rich-h2">Less common</div>
+<ul class="rich-ul">
+  <li>Elevated blood pressure</li>
+  <li>Irritability as medication wears off in the evening</li>
+  <li>In people with bipolar disorder, stimulants can occasionally trigger mania</li>
+</ul>
+<div class="rich-h2">Important</div>
+<ul class="rich-ul">
+  <li>Must be swallowed whole — the OROS pump mechanism requires the tablet to remain intact. Do not crush or chew.</li>
+</ul>
+<div class="rich-h2">Food and drug interactions</div>
+<ul class="rich-ul">
+  <li>Acidic drinks reduce absorption</li>
+  <li>MAOIs: absolute contraindication</li>
+</ul>`,
+
+    s_se_strattera: `<div class="rich-h1">Side Effects: Strattera</div>
+<p class="rich-p">Atomoxetine's side effects differ from stimulants — it does not affect dopamine directly, so there is no rebound or appetite suppression in the same way. However, it has its own profile to be aware of.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Nausea or stomach discomfort — taking with food reduces this significantly</li>
+  <li>Dry mouth</li>
+  <li>Constipation</li>
+  <li>Dizziness</li>
+  <li>Mood changes — some people notice increased anxiety or irritability during the titration phase</li>
+  <li>Urinary hesitancy</li>
+  <li>Reduced appetite — milder than with stimulants</li>
+  <li>Insomnia in some, sedation in others</li>
+</ul>
+<div class="rich-h2">Rare but important</div>
+<ul class="rich-ul">
+  <li>Liver injury (rare): if you develop yellowing of the skin or eyes, dark urine, or persistent abdominal pain, stop the medication and seek medical attention promptly</li>
+  <li>Priapism (prolonged, painful erection): rare but documented — seek emergency treatment if it occurs</li>
+</ul>
+<div class="rich-h2">Drug interactions</div>
+<ul class="rich-ul">
+  <li>Fluoxetine (Prozac), paroxetine (Aropax), or bupropion: dramatically increase atomoxetine blood levels — inform your prescriber of all medications</li>
+  <li>Salbutamol (Ventolin): may increase cardiovascular effects when combined</li>
+</ul>`,
+
+    s_se_intuniv: `<div class="rich-h1">Side Effects: Intuniv</div>
+<p class="rich-p">Guanfacine acts on blood pressure pathways as well as ADHD circuits, so its side effects reflect both actions. Most settle after the first few weeks at a stable dose.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Drowsiness and sedation — especially in the first weeks. This often improves with time. Taking the dose in the evening can help.</li>
+  <li>Low blood pressure — can cause dizziness, especially when standing up quickly</li>
+  <li>Slow heart rate (bradycardia)</li>
+  <li>Headache</li>
+  <li>Dry mouth</li>
+  <li>Constipation</li>
+  <li>Stomach discomfort</li>
+</ul>
+<div class="rich-h2">Critical: do not stop suddenly</div>
+<p class="rich-p">Stopping guanfacine abruptly can cause a rebound rise in blood pressure and heart rate. Always taper the dose gradually under your doctor's guidance. Do not run out without a plan.</p>
+<div class="rich-h2">Drug interactions</div>
+<ul class="rich-ul">
+  <li>Other blood pressure medications: effects can add up — ensure all your doctors know you are on guanfacine</li>
+  <li>Avoid high-fat meals at the time of dose — they increase absorption and can worsen side effects</li>
+</ul>`,
+
+    s_se_catapres: `<div class="rich-h1">Side Effects: Catapres</div>
+<p class="rich-p">Clonidine has a broader pharmacological profile than guanfacine and requires careful management. Side effects often diminish after the first few weeks at a stable dose.</p>
+<div class="rich-h2">Common side effects</div>
+<ul class="rich-ul">
+  <li>Sedation — can be significant, especially when starting or after dose increases</li>
+  <li>Dizziness, particularly on standing</li>
+  <li>Low blood pressure</li>
+  <li>Slow heart rate</li>
+  <li>Dry mouth</li>
+  <li>Constipation</li>
+  <li>Headache</li>
+  <li>Low mood or fatigue in some people</li>
+  <li>Erectile dysfunction</li>
+</ul>
+<div class="rich-h2">Critical: do not stop suddenly</div>
+<p class="rich-p">Stopping clonidine abruptly can cause a rebound rise in blood pressure and heart rate. Always taper the dose gradually under your doctor's guidance.</p>
+<div class="rich-h2">Drug interactions</div>
+<ul class="rich-ul">
+  <li>Alcohol significantly increases sedation — avoid or strictly limit alcohol while taking clonidine</li>
+  <li>Other blood pressure medications: effects can add up — ensure all your doctors know you are on clonidine</li>
+</ul>`,
+
+  };
+  return sections[id] || '';
+}
+
+// Build titration section HTML (for embedding in full guide)
+function buildTitrationSection() {
+  const shortHTML = buildShortTableHTML();
+  return shortHTML;
+}
+
+function buildSimpleWordHTML() {
+  // Clean plan output in Arial for Word paste
+  const short = buildShortTableHTML();
+  const script = buildScriptText();
+  const F = 'font-family:Arial,sans-serif;';
+  const lines = script.split('\n').filter(l => l.trim()).map(l => `<p style="${F}font-size:11pt;margin:0 0 4pt 0;">${l}</p>`).join('');
+  const scriptBlock = lines ? `<div style="margin-top:16pt;${F}"><p style="${F}font-size:12pt;font-weight:bold;margin:0 0 8pt 0;">Prescription Schedule</p>${lines}</div>` : '';
+  return `<div style="${F}font-size:11pt;line-height:1.4;">${short}${scriptBlock}</div>`;
+}
+
+function showOutput(richContent, titContent, longContent, scriptContent) {
+  document.getElementById('output-rich').innerHTML = richContent;
+  document.getElementById('output-tit-only').innerHTML = titContent;
+  document.getElementById('output-long').innerHTML = longContent;
+  document.getElementById('output-script').textContent = scriptContent;
+  document.getElementById('output-plain').textContent = richToPlain(richContent);
+  document.getElementById('output-area').classList.add('visible');
+  document.getElementById('output-area').scrollIntoView({ behavior: 'smooth' });
+}
+
+function generateOutput() {
+  const patientName = document.getElementById('patient-name').value;
+  const clinician = document.getElementById('clinician-name').value;
+  const date = document.getElementById('patient-date').value;
+
+  let richHTML = '';
+  richHTML += `<div style="margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid var(--lightblue);">
+    <h2 style="color:var(--blue);font-size:1.5em;margin-bottom:4px;">ADHD: What You Need to Know</h2>
+    <div style="color:var(--grey);font-size:0.9em;">
+      ${patientName ? `<strong>Patient:</strong> ${patientName}&nbsp;&nbsp;` : ''}
+      ${clinician ? `<strong>Clinician:</strong> ${clinician}&nbsp;&nbsp;` : ''}
+      ${date ? `<strong>Date:</strong> ${date}` : ''}
+    </div>
+
+  </div>`;
+
+  // Build a custom output order: for each med how-it-works, immediately follow
+  // with its corresponding side effects section (if enabled).
+  const MED_IDS = ['dex','vyvanse','ritalinIR','ritalinLA','concerta','strattera','intuniv','catapres'];
+  const seByMed = {};
+  MED_IDS.forEach(id => { seByMed['s_meds_' + id] = 's_se_' + id; });
+
+  // Build ordered list: SECTIONS in order, but skip s_se_* and instead inject
+  // them right after their corresponding s_meds_* entry.
+  const seSectionIds = new Set(MED_IDS.map(id => 's_se_' + id));
+  const orderedSections = [];
+  SECTIONS.forEach(s => {
+    if (seSectionIds.has(s.id)) return; // skip — will be inserted inline
+    orderedSections.push(s);
+    const seId = seByMed[s.id];
+    if (seId) {
+      const seSec = SECTIONS.find(x => x.id === seId);
+      if (seSec) orderedSections.push(seSec);
+    }
+  });
+
+  let lastH1 = '';
+  orderedSections.forEach(s => {
+    if (!sectionOn(s.id)) return;
+    let html = getSectionHTML(s.id);
+    const h1Match = html.match(/^<div class="rich-h1">(.*?)<\/div>/);
+    if (h1Match) {
+      if (h1Match[1] === lastH1) {
+        html = html.replace(/^<div class="rich-h1">.*?<\/div>\n?/, '');
+      } else {
+        lastH1 = h1Match[1];
+      }
+    }
+    richHTML += html;
+  });
+
+  // Append plan tables if phases exist
+  if (phases.length > 0) {
+    richHTML += buildShortTableHTML();
+    richHTML += '<div class="page-break" style="page-break-before:always;"></div>';
+    richHTML += buildLongTableHTML();
+  }
+
+  showOutput(richHTML, buildShortTableHTML(), buildLongTableHTML(), buildScriptText());
+  // Switch to rich tab
+  document.querySelectorAll('.output-tab').forEach(b => b.classList.remove('active'));
+  document.querySelector('.output-tab').classList.add('active');
+  switchOutputTabById('rich');
+}
+
+function generatePlanShort() {
+  const html = buildShortTableHTML();
+  showOutput(html, html, buildLongTableHTML(), buildScriptText());
+  switchOutputTabById('tit');
+}
+
+function generatePlanLong() {
+  const html = buildLongTableHTML();
+  showOutput(html, buildShortTableHTML(), html, buildScriptText());
+  switchOutputTabById('long');
+}
+
+function generateScriptText() {
+  const txt = buildScriptText();
+  showOutput(buildShortTableHTML(), buildShortTableHTML(), buildLongTableHTML(), txt);
+  switchOutputTabById('script');
+}
+
+function switchOutputTabById(tab) {
+  const allDivs = { rich: 'output-rich', tit: 'output-tit-only', long: 'output-long', script: 'output-script', plain: 'output-plain' };
+  Object.entries(allDivs).forEach(([t, id]) => {
+    document.getElementById(id).style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+function richToPlain(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  // Replace headings
+  tmp.querySelectorAll('.rich-h1').forEach(el => { el.textContent = '\n\n=== ' + el.textContent.toUpperCase() + ' ===\n'; });
+  tmp.querySelectorAll('.rich-h2').forEach(el => { el.textContent = '\n--- ' + el.textContent + ' ---\n'; });
+  tmp.querySelectorAll('.rich-h3').forEach(el => { el.textContent = '\n' + el.textContent + '\n'; });
+  tmp.querySelectorAll('li').forEach(el => { el.textContent = '  * ' + el.textContent + '\n'; });
+  tmp.querySelectorAll('table').forEach(tbl => {
+    let t = '\n';
+    tbl.querySelectorAll('tr').forEach(tr => {
+      const cells = [];
+      tr.querySelectorAll('th,td').forEach(td => cells.push(td.textContent.trim().replace(/\s+/g,' ')));
+      t += cells.join(' | ') + '\n';
+    });
+    tbl.textContent = t;
+  });
+  return tmp.textContent.replace(/\n{3,}/g, '\n\n').trim();
+}
+
+// ==================== OUTPUT TABS ====================
+let currentOutputTab = 'rich';
+function switchOutputTab(tab, btn) {
+  currentOutputTab = tab;
+  document.querySelectorAll('.output-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  switchOutputTabById(tab);
+}
+
+// ==================== COPY ====================
+function downloadWordDoc() {
+  // Build Word-compatible HTML document from current visible tab
+  const tabMap = { rich: 'output-rich', tit: 'output-tit-only', long: 'output-long', script: 'output-script', plain: 'output-plain' };
+  const el = document.getElementById(tabMap[currentOutputTab] || 'output-rich');
+  const isText = (currentOutputTab === 'script' || currentOutputTab === 'plain');
+  const bodyContent = isText
+    ? `<pre style="font-family:Courier New,monospace;font-size:10pt;white-space:pre-wrap;">${el.textContent}</pre>`
+    : el.innerHTML;
+
+  const patNameForHeader = document.getElementById('patient-name').value || '';
+  const drRaw = document.getElementById('clinician-name') ? (document.getElementById('clinician-name').value || '') : '';
+  const drNameForHeader = drRaw ? ' | ' + drRaw : '';
+
+  const wordHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:w="urn:schemas-microsoft-com:office:word"
+    xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<style>
+  @page { margin: 2.5cm; mso-header-margin: 1cm; mso-footer-margin: 1cm; }
+  body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.4; color: #222; }
+  h1, h2, h3 { font-family: Arial, sans-serif; }
+  p { margin: 0 0 6pt 0; font-size: 11pt; }
+  ul, ol { margin: 4pt 0 8pt 18pt; }
+  li { margin-bottom: 3pt; font-size: 11pt; }
+  table { border-collapse: collapse; width: auto; font-family: Arial, sans-serif; font-size: 9pt; }
+  th, td { border: 1pt solid #999; padding: 3pt 5pt; }
+  .rich-h1 { font-size: 13pt; font-weight: bold; color: #1a3a6b; margin: 14pt 0 4pt; border-bottom: 1pt solid #c8d8ee; padding-bottom: 2pt; }
+  .rich-h2 { font-size: 11pt; font-weight: bold; color: #2a5298; margin: 10pt 0 3pt; }
+  .rich-h3 { font-size: 10pt; font-weight: bold; color: #1a3a6b; margin: 7pt 0 2pt; font-style: italic; }
+  .rich-p { font-size: 11pt; margin-bottom: 5pt; }
+  .rich-ul { margin: 3pt 0 7pt 16pt; }
+  .rich-ul li { margin-bottom: 3pt; font-size: 11pt; }
+  .rich-cite { font-size: 9pt; color: #666; font-style: italic; }
+</style>
+</head>
+<body>
+<div style="font-family:Arial,sans-serif;font-size:9pt;color:#555;border-bottom:1pt solid #ccc;padding-bottom:4pt;margin-bottom:14pt;">
+ADHD Guide — ${patNameForHeader}${drNameForHeader}
+</div>
+${bodyContent}
+</body></html>`;
+
+  const blob = new Blob([wordHtml], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const patName = (document.getElementById('patient-name').value || 'ADHD').replace(/[^a-zA-Z0-9]/g, '_');
+  const tabName = currentOutputTab === 'rich' ? 'Guide' : currentOutputTab === 'tit' ? 'PlanShort' : currentOutputTab === 'long' ? 'PlanDayByDay' : currentOutputTab;
+  a.href = url;
+  a.download = `ADHD_${patName}_${tabName}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast();
+}
+
+function copyOutput() {
+  const textTabs = ['plain', 'script'];
+  if (textTabs.includes(currentOutputTab)) {
+    const id = currentOutputTab === 'plain' ? 'output-plain' : 'output-script';
+    navigator.clipboard.writeText(document.getElementById(id).textContent).then(showToast);
+    return;
+  }
+  const tabMap = { rich: 'output-rich', tit: 'output-tit-only', long: 'output-long' };
+  const el = document.getElementById(tabMap[currentOutputTab] || 'output-rich');
+  const innerHtml = el.innerHTML;
+
+  // Word-compatible wrapper: includes heading styles so bold/colour is preserved on paste
+  const wordHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.4;} p{margin:0 0 6pt 0;} .rich-h1{font-family:Arial,sans-serif;font-size:13pt;font-weight:bold;color:#1a3a6b;margin:14pt 0 4pt;border-bottom:1pt solid #c8d8ee;padding-bottom:2pt;display:block;} .rich-h2{font-family:Arial,sans-serif;font-size:11pt;font-weight:bold;color:#2a5298;margin:10pt 0 3pt;display:block;} .rich-h3{font-family:Arial,sans-serif;font-size:10pt;font-weight:bold;color:#1a3a6b;margin:7pt 0 2pt;font-style:italic;display:block;} .rich-p{font-size:11pt;margin-bottom:5pt;} .rich-ul{margin:3pt 0 7pt 16pt;} .rich-ul li{margin-bottom:3pt;font-size:11pt;} .rich-cite{font-size:9pt;color:#666;font-style:italic;} table{border-collapse:collapse;width:auto;} th,td{border:1pt solid #999;padding:3pt 5pt;font-family:Arial,sans-serif;font-size:9pt;} </style></head><body>${innerHtml}</body></html>`;
+
+  if (window.ClipboardItem) {
+    const blob = new Blob([wordHtml], { type: 'text/html' });
+    const item = new ClipboardItem({ 'text/html': blob });
+    navigator.clipboard.write([item]).then(showToast).catch(() => {
+      fallbackCopy(el);
+    });
+  } else {
+    fallbackCopy(el);
+  }
+}
+
+function fallbackCopy(el) {
+  const range = document.createRange();
+  range.selectNode(el);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+  document.execCommand('copy');
+  window.getSelection().removeAllRanges();
+  showToast();
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ==================== PRINT REPORT ====================
+function downloadPDF() {
+  const tabMap = { rich: 'output-rich', tit: 'output-tit-only', long: 'output-long', script: 'output-script', plain: 'output-plain' };
+  const contentEl = document.getElementById(tabMap[currentOutputTab] || 'output-rich');
+  if (!contentEl) return;
+  const isText = (currentOutputTab === 'script' || currentOutputTab === 'plain');
+  const patName = document.getElementById('patient-name').value || '';
+  const drName = (document.getElementById('clinician-name') ? document.getElementById('clinician-name').value : '') || '';
+  const headerLeft = patName ? 'ADHD Guide \u2014 ' + patName + (drName ? ' | ' + drName : '') : 'ADHD Guide' + (drName ? ' | ' + drName : '');
+
+  const bodyContent = isText
+    ? `<pre style="font-family:monospace;font-size:9.5pt;white-space:pre-wrap;">${contentEl.textContent}</pre>`
+    : contentEl.innerHTML;
+
+  const pdfDoc = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>ADHD Guide${patName ? ' — ' + patName : ''}</title>
+<style>
+  @page { margin: 2cm 2.2cm 2.2cm 2.2cm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.45; color: #222; background: white; margin: 0; padding: 0; }
+  .pdf-header { font-size: 9pt; color: #555; border-bottom: 1pt solid #ccc; padding-bottom: 5pt; margin-bottom: 16pt; display: flex; justify-content: space-between; }
+  .rich-h1 { font-size: 13pt; font-weight: bold; color: #1a3a6b; margin: 14pt 0 4pt; border-bottom: 1pt solid #c8d8ee; padding-bottom: 2pt; }
+  .rich-h2 { font-size: 11pt; font-weight: bold; color: #2a5298; margin: 10pt 0 3pt; }
+  .rich-h3 { font-size: 10pt; font-weight: bold; color: #1a3a6b; margin: 7pt 0 2pt; font-style: italic; }
+  .rich-p { font-size: 11pt; margin-bottom: 5pt; }
+  .rich-ul { margin: 3pt 0 7pt 16pt; }
+  .rich-ul li { margin-bottom: 3pt; font-size: 11pt; }
+  .rich-cite { font-size: 9pt; color: #666; font-style: italic; }
+  table { border-collapse: collapse; width: auto; font-size: 9pt; }
+  th, td { border: 1pt solid #999; padding: 3pt 5pt; }
+  @media print {
+    body { background: white !important; }
+    .pdf-header { position: running(header); }
+  }
+</style>
+</head><body>
+<div class="pdf-header"><span>${headerLeft}</span><span id="pdf-date">${new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'})}</span></div>
+${bodyContent}
+</body></html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=750');
+  if (!w) { alert('Please allow pop-ups for PDF generation.'); return; }
+  w.document.write(pdfDoc);
+  w.document.close();
+  setTimeout(() => {
+    w.focus();
+    w.print(); // browser Save as PDF dialog
+  }, 600);
+}
+
+function printReport() {
+  const tabMap = { rich: 'output-rich', tit: 'output-tit-only', long: 'output-long', script: 'output-script', plain: 'output-plain' };
+  const contentEl = document.getElementById(tabMap[currentOutputTab] || 'output-rich');
+  if (!contentEl) return;
+  const content = contentEl.innerHTML || contentEl.textContent;
+  const isText = (currentOutputTab === 'script' || currentOutputTab === 'plain');
+
+  // Collect all CSS from the page
+  let styleText = '';
+  document.querySelectorAll('style').forEach(s => { styleText += s.innerHTML + '\n'; });
+
+  const bodyContent = isText
+    ? `<pre style="font-family:monospace;font-size:0.87em;white-space:pre-wrap;padding:20px;">${contentEl.textContent}</pre>`
+    : `<div style="padding:28px 40px;font-size:0.95em;line-height:1.7;">${content}</div>`;
+
+  const printDoc = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>ADHD Guide</title>
+<style>
+${styleText}
+@media print { .page-break { page-break-before: always; } body { background: white !important; } }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: white; color: #222; }
+</style>
+</head><body>
+${bodyContent}
+</body></html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  if (!w) { alert('Please allow pop-ups to use Print Report.'); return; }
+  w.document.write(printDoc);
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 500);
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+  // Pre-set ALL sections as excluded, then un-exclude only Brief Explainer
+  SECTIONS.forEach(s => { sectionExcluded[s.id] = true; });
+  activePresets['brief'] = true;
+  (PRESETS['brief'] || []).forEach(id => { sectionExcluded[id] = false; });
+  // buildSectionBubbles will now see sectionExcluded already populated and skip reinit
+  buildSectionBubbles();
+  // Mark the brief button as active visually
+  const briefBtn = document.querySelector('.preset-btn[data-preset="brief"]');
+  if (briefBtn) briefBtn.classList.add('active');
+  renderPhases();
+  document.getElementById('patient-date').value = new Date().toISOString().slice(0,10);
+  // Hide all output panes except rich
+  ['output-tit-only','output-long','output-script','output-plain'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+});
+</script>
+</body>
+</html>
