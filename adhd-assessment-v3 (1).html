@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structured Adult ADHD Assessment</title>
+<style>
+:root {
+  --bg: #f7fafc;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --accent: #c53030;
+  --radius: 8px;
+  --part0: #334155;
+  --part1: #6b21a8;
+  --part2: #1e40af;
+  --part3: #0f766e;
+  --part4: #b45309;
+  --part5: #4338ca;
+  --part6: #be185d;
+  --part7: #15803d;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--gray-800); line-height: 1.5; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.main-header { text-align: center; padding: 28px 16px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: white; border-radius: var(--radius); margin-bottom: 20px; }
+.main-header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+.main-header p { opacity: 0.85; font-size: 0.88rem; }
+.part-divider { padding: 14px 20px; border-radius: var(--radius) var(--radius) 0 0; color: white; margin-top: 28px; }
+.part-divider h2 { font-size: 1.1rem; margin-bottom: 2px; }
+.part-divider p { font-size: 0.82rem; opacity: 0.85; }
+.section { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; }
+.section-header { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.95rem; color: white; user-select: none; transition: background 0.2s; }
+.section-header:hover { filter: brightness(1.1); }
+.toggle { font-size: 0.7rem; transition: transform 0.3s; display: inline-block; }
+.toggle.collapsed { transform: rotate(-90deg); }
+.section-body { padding: 16px; }
+.section-body.collapsed { display: none; }
+.hdr-neutral { background: #475569; }
+.hdr-part0 { background: var(--part0); }
+.hdr-part1 { background: var(--part1); }
+.hdr-part2 { background: var(--part2); }
+.hdr-part3 { background: var(--part3); }
+.hdr-part4 { background: var(--part4); }
+.hdr-part5 { background: var(--part5); }
+.hdr-part6 { background: var(--part6); }
+.hdr-part7 { background: var(--part7); }
+.patient-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.patient-info label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 2px; }
+.patient-info input, .patient-info select { width: 100%; padding: 7px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.9rem; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; }
+.btn:hover { filter: brightness(1.1); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; justify-content: center; }
+.results-section { display: none; margin-top: 16px; }
+.report-output { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem; white-space: pre-wrap; word-break: break-word; overflow-x: auto; max-height: 600px; overflow-y: auto; line-height: 1.45; }
+.symptom-block { border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+.symptom-header { background: var(--gray-100); padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.88rem; }
+.symptom-body { padding: 12px 14px; }
+.symptom-body.collapsed { display: none; }
+.example-list { margin: 6px 0; padding-left: 18px; }
+.example-list li { font-size: 0.84rem; color: var(--gray-700); margin-bottom: 3px; }
+.verdict-row { background: var(--gray-50); padding: 10px 14px; border-top: 1px solid var(--gray-200); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.verdict-row label { font-size: 0.85rem; cursor: pointer; }
+.radio-row { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+.radio-row label { font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.criteria-block { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+.criteria-block h3 { font-size: 0.92rem; margin-bottom: 8px; color: var(--gray-800); }
+.support-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-100); }
+.support-row span { font-size: 0.88rem; }
+.support-row select { padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
+.other-input { width: 100%; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; margin-top: 6px; }
+.note { font-size: 0.82rem; color: var(--gray-500); margin-top: 6px; }
+table.asrs { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 10px; }
+table.asrs th, table.asrs td { border: 1px solid var(--gray-300); padding: 6px 8px; text-align: center; }
+table.asrs th { background: var(--part2); color: white; font-size: 0.78rem; }
+table.asrs td:first-child { text-align: left; min-width: 200px; }
+table.asrs tr:nth-child(even) { background: var(--gray-50); }
+td.shaded-cell { background: #bfdbfe !important; }
+.diagnosis-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 0.88rem; }
+.badge-met { background: #c6f6d5; color: #276749; }
+.badge-not { background: #fed7d7; color: #9b2c2c; }
+.badge-partial { background: #fefcbf; color: #975a16; }
+.badge-missing { background: #e2e8f0; color: #475569; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-weight: 600; font-size: 0.82rem; }
+.dev-area { margin-bottom: 14px; }
+.dev-area h4 { font-size: 0.9rem; margin-bottom: 6px; font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 4px; }
+.dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+.dev-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; margin-bottom: 4px; }
+.dev-item input[type="checkbox"] { margin-top: 3px; }
+.comorb-detail { display: none; grid-column: 1 / -1; padding: 6px 0 6px 20px; }
+.comorb-detail.show { display: block; }
+.comorb-detail textarea { width: 100%; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
+.med-check-row { display: grid; grid-template-columns: 2fr 80px 80px 80px 1fr; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.88rem; }
+.med-check-row select { padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
+.mse-group { margin-bottom: 14px; }
+.mse-group h4 { font-size: 0.9rem; margin-bottom: 6px; font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 4px; }
+.mse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+.mse-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; }
+.mse-item input[type="checkbox"] { margin-top: 3px; }
+.safety-flag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
+.flag-done { background: #c6f6d5; color: #276749; }
+.flag-missing { background: #fed7d7; color: #9b2c2c; }
+.flag-na { background: var(--gray-200); color: var(--gray-600); }
+.part1-accent h4 { color: var(--part1); border-bottom-color: #e9d5ff; }
+.part2-accent h4 { color: var(--part2); border-bottom-color: #bfdbfe; }
+.part3-accent h4 { color: var(--part3); border-bottom-color: #99f6e4; }
+.part4-accent h4 { color: var(--part4); border-bottom-color: #fde68a; }
+.part5-accent h4 { color: var(--part5); border-bottom-color: #c7d2fe; }
+.part6-accent h4 { color: var(--part6); border-bottom-color: #fbcfe8; }
+.part7-accent h4 { color: var(--part7); border-bottom-color: #bbf7d0; }
+/* Intro section */
+.intro-checklist { margin: 12px 0; }
+.intro-checklist label { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.88rem; line-height: 1.4; transition: background 0.15s; }
+.intro-checklist label:hover { background: var(--gray-100); }
+.intro-checklist input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; }
+.intro-checklist .phrase-text { color: var(--gray-700); }
+.intro-checklist .phrase-text em { color: var(--part0); font-style: normal; font-weight: 600; }
+/* FIX: reason-grid items clickable labels */
+.reason-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+.reason-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; padding: 3px 0; }
+.reason-item label { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.reason-item input[type="checkbox"] { flex-shrink: 0; }
+/* DSM highlight - FIXED for readability */
+.dsm-highlight { background: #ffffff; border: 3px solid #1e40af; border-radius: var(--radius); padding: 0; margin-bottom: 8px; }
+.dsm-highlight .section-header { background: linear-gradient(135deg, #1e3a5f, #1e40af) !important; font-size: 1rem; padding: 14px 20px; }
+.dsm-highlight .section-body { border-top: 3px solid #3b82f6; }
+/* DIVA positive all button */
+.diva-positive-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; padding: 10px 20px; font-size: 0.9rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; margin: 8px 4px; }
+.diva-positive-btn:hover { filter: brightness(1.1); }
+/* Collateral card */
+.collateral-card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
+.collateral-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.collateral-card select, .collateral-card input[type="text"] { padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
+.collateral-row { display: grid; grid-template-columns: 150px 180px 160px 1fr; gap: 8px; align-items: center; }
+/* Malingering */
+.red-flag-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; margin-bottom: 4px; padding: 4px 8px; border-radius: 4px; }
+.red-flag-item input[type="checkbox"] { margin-top: 3px; accent-color: #dc2626; }
+.red-flag-item.checked-flag { background: #fef2f2; }
+/* Report modal */
+.report-modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto; }
+.report-modal { max-width: 850px; margin: 40px auto; background: white; border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; }
+.report-modal-header { background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+.report-modal-header h2 { font-size: 1.1rem; }
+.report-modal-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+.report-modal-close:hover { background: rgba(255,255,255,0.3); }
+.report-modal-actions { display: flex; gap: 8px; padding: 16px 24px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); flex-wrap: wrap; }
+.report-modal-actions .btn { padding: 8px 16px; font-size: 0.85rem; border-radius: 6px; }
+.report-tabs { display: flex; border-bottom: 2px solid var(--gray-200); padding: 0 24px; background: var(--gray-50); }
+.report-tab { padding: 10px 20px; cursor: pointer; font-size: 0.88rem; font-weight: 600; color: var(--gray-500); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+.report-tab:hover { color: var(--gray-700); }
+.report-tab.active { color: #1e40af; border-bottom-color: #1e40af; }
+.report-content { padding: 24px; max-height: 60vh; overflow-y: auto; }
+.formatted-report { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 0.9rem; line-height: 1.6; color: #1f2937; }
+.formatted-report h1 { font-size: 1.3rem; margin-bottom: 4px; color: #1e3a5f; }
+.formatted-report h2 { font-size: 1.05rem; margin-top: 20px; margin-bottom: 8px; color: #1e40af; border-bottom: 2px solid #bfdbfe; padding-bottom: 4px; }
+.formatted-report h3 { font-size: 0.95rem; margin-top: 14px; margin-bottom: 6px; color: var(--gray-800); }
+.formatted-report table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.85rem; }
+.formatted-report table th { background: #1e40af; color: white; padding: 6px 10px; text-align: left; }
+.formatted-report table td { padding: 6px 10px; border-bottom: 1px solid var(--gray-200); }
+.formatted-report .met-badge { background: #c6f6d5; color: #276749; padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; }
+.formatted-report .not-badge { background: #fed7d7; color: #9b2c2c; padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; }
+.formatted-report .missing-badge { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; }
+.formatted-report .warn-badge { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; }
+/* Substance alert styles */
+.substance-alert { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: none; }
+.substance-alert.alert-warn { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+.substance-alert.alert-info { background: #eff6ff; border: 1px solid #93c5fd; color: #1e40af; }
+.substance-alert.alert-caution { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+/* Dev section quick buttons */
+.dev-quick-btns { display: flex; gap: 8px; margin-bottom: 8px; }
+.dev-quick-btn { font-size: 0.78rem; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--gray-300); background: var(--gray-50); cursor: pointer; color: var(--gray-600); }
+.dev-quick-btn:hover { background: var(--gray-200); }
+.dev-quick-btn.active { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+/* Treatment suitability */
+.treatment-option { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; border-radius: 6px; font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
+.treatment-option:hover { background: var(--gray-100); }
+.treatment-option input[type="radio"] { margin-top: 3px; }
+/* Summary section styling */
+.summary-card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+.summary-card h5 { font-size: 0.88rem; margin-bottom: 6px; font-weight: 700; }
+.summary-card ul { margin: 0 0 0 16px; font-size: 0.85rem; }
+.summary-card li { margin-bottom: 2px; }
+/* ASRS/DIVA patient completion */
+.completion-status { display: flex; gap: 12px; margin-bottom: 12px; padding: 10px 14px; background: #f0f7ff; border: 1px solid #93c5fd; border-radius: 6px; flex-wrap: wrap; align-items: center; }
+.completion-status label { font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; }
+@media (max-width: 700px) {
+  .container { padding: 10px; }
+  .patient-info { grid-template-columns: 1fr; }
+  .dev-grid { grid-template-columns: 1fr; }
+  .mse-grid { grid-template-columns: 1fr; }
+  .med-check-row { grid-template-columns: 1fr; }
+  .main-header h1 { font-size: 1.2rem; }
+  table.asrs { font-size: 0.72rem; }
+  table.asrs td:first-child { min-width: 140px; }
+  .collateral-row { grid-template-columns: 1fr; }
+  .reason-grid { grid-template-columns: 1fr; }
+}
+.symptom-question { padding: 10px 14px; background: #eff6ff; font-weight: 600; font-size: 0.9rem; border-bottom: 1px solid var(--gray-200); color: var(--part2); }
+.symptom-content { padding: 12px 14px; }
+.period-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.period-col h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid var(--gray-200); }
+.period-col h4.adult { color: var(--part2); border-bottom-color: #bfdbfe; }
+.period-col h4.child { color: #7c3aed; border-bottom-color: #ddd6fe; }
+.example-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.84rem; margin-bottom: 4px; }
+.example-item input[type="checkbox"] { margin-top: 3px; }
+.symptom-verdict { display: flex; gap: 24px; flex-wrap: wrap; padding: 10px 14px; background: var(--gray-50); border-top: 1px solid var(--gray-200); margin-top: 10px; border-radius: 0 0 var(--radius) var(--radius); }
+.verdict-group { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; }
+.verdict-group strong { font-size: 0.85rem; }
+.verdict-group label { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.impairment-area { margin-bottom: 10px; }
+.impairment-area h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; color: var(--gray-700); }
+.impairment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
+.impairment-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.84rem; }
+.impairment-item input[type="checkbox"] { margin-top: 3px; }
+.supplement-q { margin-top: 12px; padding: 10px; background: var(--gray-50); border-radius: var(--radius); }
+.supplement-q p { font-size: 0.88rem; margin-bottom: 6px; }
+@media (max-width: 700px) {
+  .period-grid { grid-template-columns: 1fr; }
+}
+@media print {
+  .report-modal-overlay { position: static; background: none; display: block !important; }
+  .report-modal { box-shadow: none; margin: 0; }
+  .report-modal-header, .report-modal-actions, .report-tabs, .report-modal-close { display: none !important; }
+  .report-content { max-height: none; overflow: visible; }
+  body > .container { display: none; }
+}
+/* Nil known issues button for medical */
+.nil-known-btn { font-size: 0.78rem; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--gray-300); background: var(--gray-50); cursor: pointer; color: var(--gray-600); margin-bottom: 6px; display: inline-block; }
+.nil-known-btn:hover { background: var(--gray-200); }
+.nil-known-btn.active { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="main-header">
+  <h1>Structured Adult ADHD Assessment</h1>
+  <p>Comprehensive clinical assessment for ADHD diagnosis &amp; safe prescribing</p>
+</div>
+
+<!-- INTRO / OPENING -->
+<div class="part-divider" style="background:var(--part0);">
+  <h2>Opening</h2>
+  <p>Session setup, key phrases &amp; presenting concerns</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part0" onclick="toggleSection(this)">Session Information <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <div class="patient-info">
+      <div><label>Patient Name / Initials</label><input type="text" id="ptName" placeholder="Name or initials"></div>
+      <div><label>Age</label><input type="number" id="ptAge" min="0" max="120"></div>
+      <div><label>State</label><select id="ptState"><option value="">Select State</option><option value="NSW">NSW</option><option value="VIC">VIC</option><option value="QLD">QLD</option><option value="WA">WA</option><option value="SA">SA</option><option value="TAS">TAS</option><option value="ACT">ACT</option><option value="NT">NT</option></select></div>
+      <div><label>Date of Assessment</label><input type="date" id="ptDate"></div>
+      <div><label>Gender</label><select id="ptGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Other</option></select></div>
+      <div>
+        <label>MBS Item Number</label>
+        <select id="ptMBS" onchange="toggleMBSOther()">
+          <option value="">Select</option>
+          <option value="291/92435">291 / 92435</option>
+          <option value="296/92437">296 / 92437</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div id="mbsOtherDiv" style="display:none;"><label>Other MBS Item</label><input type="text" id="ptMBSOther" placeholder="Enter item number"></div>
+      <div><label>Assessing Clinician</label><input type="text" id="ptAssessor"></div>
+      <div><label>Referring Clinician</label><input type="text" id="ptReferrer"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header hdr-part0" onclick="toggleSection(this)">Key Opening Phrases <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:10px;">Check each item as you cover it with the patient.</p>
+    <div class="intro-checklist">
+      <label><input type="checkbox" id="kp_intro"><span class="phrase-text"><em>Introduction:</em> "I'm Dr [name], I'm a psychiatrist..."</span></label>
+      <label><input type="checkbox" id="kp_experience"><span class="phrase-text"><em>Experience:</em> "I have extensive experience in adult psychiatry and have seen a very wide range of presentations. I have a particular interest in neurodevelopmental disorders including ADHD."</span></label>
+      <label><input type="checkbox" id="kp_purpose"><span class="phrase-text"><em>Purpose:</em> "So we're here today to assess for ADHD — is that your understanding?"</span></label>
+      <label><input type="checkbox" id="kp_complex"><span class="phrase-text"><em>Complexity:</em> "ADHD is an important thing to investigate, however it is a complex disorder and requires a thorough assessment. While we are focusing on ADHD today, I am ultimately assessing for everything — I need to consider the full picture."</span></label>
+      <label><input type="checkbox" id="kp_noguarantee"><span class="phrase-text"><em>No guarantee:</em> "I want to make the best diagnosis and treatment decisions for you. So I don't want to promise or guarantee at the outset that you'll receive an ADHD diagnosis and medication — you may, but only after carefully assessing things."</span></label>
+      <label><input type="checkbox" id="kp_followup"><span class="phrase-text"><em>Follow-up:</em> "I aim to do the bulk of the assessment in this session, but sometimes I need more information which may require a follow-up. If I do make a diagnosis and want to start treatment, I always want to follow up at least two more times to ensure the medications are right — some people need more follow-ups and some need fewer, but we can work together on that."</span></label>
+      <label><input type="checkbox" id="kp_cost"><span class="phrase-text"><em>Cost awareness:</em> "I am mindful of the cost but I also have to be a thorough and responsible psychiatrist."</span></label>
+      <label><input type="checkbox" id="kp_consent"><span class="phrase-text"><em>Consent:</em> "Are you happy to continue?"</span></label>
+    </div>
+  </div>
+</div>
+
+<!-- FIX #1: Presenting concerns now use proper <label> wrapping for clickable text -->
+<div class="section">
+  <div class="section-header hdr-part0" onclick="toggleSection(this)">Presenting Concerns <span class="toggle">&#9660;</span></div>
+  <div class="section-body">
+    <div class="dev-area">
+      <h4>Why are you seeking an ADHD assessment?</h4>
+      <div class="reason-grid">
+        <div class="reason-item"><label><input type="checkbox" id="reason_self">Self-identified concerns</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_gp">GP suggested assessment</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_psych">Psychologist suggested assessment</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_family">Family member suggested</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_partner">Partner suggested</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_work">Workplace difficulties</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_study">Academic/study difficulties</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_social">Social media / online content</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_friend">Friend diagnosed with ADHD</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="reason_child">Child diagnosed — recognised in self</label></div>
+      </div>
+      <input type="text" class="other-input" id="reason_other" placeholder="Other reason (specify)">
+    </div>
+
+    <div class="dev-area" style="margin-top:16px;">
+      <h4>Biggest current issues / difficulties</h4>
+      <div class="reason-grid">
+        <div class="reason-item"><label><input type="checkbox" id="issue_focus">Difficulty focusing / concentrating</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_org">Poor organisation / time management</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_procrastinate">Procrastination</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_memory">Forgetfulness / memory issues</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_restless">Restlessness / inability to sit still</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_emotional">Emotional dysregulation / mood swings</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_work">Underperformance at work</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_relationships">Relationship difficulties</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_sleep">Sleep problems</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_anxiety">Anxiety</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_depression">Low mood / depression</label></div>
+        <div class="reason-item"><label><input type="checkbox" id="issue_impulsive">Impulsive behaviour / decisions</label></div>
+      </div>
+      <input type="text" class="other-input" id="issue_other" placeholder="Other issues (specify)">
+    </div>
+
+    <div class="dev-area" style="margin-top:16px;">
+      <h4>Main goals for this assessment</h4>
+      <textarea id="mainGoals" rows="3" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="What does the patient hope to achieve? (e.g. clarity on diagnosis, medication trial, workplace accommodations, understanding themselves better...)"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- PART 1: DEVELOPMENTAL SCREEN -->
+<div class="part-divider" style="background:var(--part1);">
+  <h2>Part 1: Developmental Screen</h2>
+  <p>Prenatal, perinatal, childhood risk factors &amp; adverse experiences</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part1" onclick="toggleSection(this)">Developmental History <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part1-accent" id="devScreenBody"></div>
+</div>
+
+<!-- PART 2: DIAGNOSTIC ASSESSMENT -->
+<div class="part-divider" style="background:var(--part2);">
+  <h2>Part 2: Diagnostic Assessment</h2>
+  <p>ASRS v1.1 screening, DIVA-5 diagnostic interview &amp; DSM-5-TR checklist</p>
+</div>
+
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2A. ASRS v1.1 Screening Checklist <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="asrsBody"></div>
+</div>
+
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2B. DIVA-5 — Attention Deficit (Part 1) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="part1Body"></div>
+</div>
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2B. DIVA-5 — Hyperactivity/Impulsivity (Part 2) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="part2Body"></div>
+</div>
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2B. DIVA-5 — Onset, Impairment &amp; Exclusion (Part 3) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="part3Body"></div>
+</div>
+
+<!-- 2C: DSM-5-TR Checklist - HIGHLIGHTED -->
+<div class="dsm-highlight">
+  <div class="section-header" style="background:linear-gradient(135deg, #1e3a5f, #1e40af) !important;font-size:1rem;padding:14px 20px;" onclick="toggleSection(this)">&#9733; 2C. DSM-5-TR Diagnostic Criteria Checklist <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="dsmChecklistBody"></div>
+</div>
+
+<!-- PART 3: COMORBIDITIES -->
+<div class="part-divider" style="background:var(--part3);">
+  <h2>Part 3: Comorbidities &amp; Psychiatric Background</h2>
+  <p>Psychiatric comorbidities, family history &amp; substance use</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part3" onclick="toggleSection(this)">Psychiatric Comorbidities, Family &amp; Substance History <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part3-accent" id="comorbBody"></div>
+</div>
+
+<!-- PART 4: MEDICAL SCREEN -->
+<div class="part-divider" style="background:var(--part4);">
+  <h2>Part 4: Medical Screen &amp; Safe Prescribing</h2>
+  <p>Medical conditions, cardiac screening, medications, investigations &amp; safety checks</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part4" onclick="toggleSection(this)">Medical History, Medications &amp; Investigations <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part4-accent" id="medScreenBody"></div>
+</div>
+
+<!-- PART 5: COLLATERAL -->
+<div class="part-divider" style="background:var(--part5);">
+  <h2>Part 5: Collateral Support</h2>
+  <p>Corroborating information from collateral sources</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part5" onclick="toggleSection(this)">Collateral Information <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed" id="collateralBody"></div>
+</div>
+
+<!-- PART 6: MSE -->
+<div class="part-divider" style="background:var(--part6);">
+  <h2>Part 6: Mental State Examination</h2>
+  <p>Structured MSE with ADHD-relevant findings</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part6" onclick="toggleSection(this)">Mental State Examination <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part6-accent" id="mseBody"></div>
+</div>
+
+<!-- PART 7: OUTCOME -->
+<div class="part-divider" style="background:var(--part7);">
+  <h2>Part 7: Outcome &amp; Diagnosis</h2>
+  <p>Diagnostic formulation, safety checklist &amp; management plan</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part7" onclick="toggleSection(this)">Outcome &amp; Diagnosis <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part7-accent" id="outcomeBody"></div>
+</div>
+
+<div class="btn-row" style="margin-top:24px;">
+  <button class="btn" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;font-size:1.1rem;padding:14px 36px;" onclick="generateFullReport()">Generate Full Assessment Report</button>
+</div>
+
+</div><!-- /container -->
+
+<!-- Report Modal -->
+<div class="report-modal-overlay" id="reportModal">
+  <div class="report-modal">
+    <div class="report-modal-header">
+      <h2>Assessment Report</h2>
+      <button class="report-modal-close" onclick="closeReportModal()">&times;</button>
+    </div>
+    <div class="report-modal-actions">
+      <button class="btn" style="background:#1e40af;color:#fff;" onclick="copyReportText('brief')">Copy Brief</button>
+      <button class="btn" style="background:#0f766e;color:#fff;" onclick="copyReportText('detailed')">Copy Detailed</button>
+      <button class="btn" style="background:#475569;color:#fff;" onclick="copyReportText('plain')">Copy Plain Text</button>
+      <button class="btn" style="background:#15803d;color:#fff;" onclick="saveAsWord()">Save as Word</button>
+      <button class="btn" style="background:#7c3aed;color:#fff;" onclick="printReport()">Print</button>
+    </div>
+    <div class="report-tabs">
+      <div class="report-tab active" onclick="switchReportTab('brief')">Brief Report</div>
+      <div class="report-tab" onclick="switchReportTab('detailed')">Detailed Report</div>
+      <div class="report-tab" onclick="switchReportTab('plain')">Plain Text</div>
+    </div>
+    <div class="report-content">
+      <div id="briefReportView" class="formatted-report"></div>
+      <div id="detailedReportView" class="formatted-report" style="display:none;"></div>
+      <div id="plainReportView" class="report-output" style="display:none;max-height:none;"></div>
+    </div>
+  </div>
+</div>
+
+<div style="display:none;">
+  <textarea id="asrsNotes"></textarea>
+  <textarea id="divaNotes"></textarea>
+</div>
+
+<script>
+
+window.onerror = function(msg, url, line, col, error) {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:red;color:white;padding:10px;font-size:12px;z-index:99999;max-height:30vh;overflow:auto;';
+  d.textContent = 'JS Error: ' + msg + ' (line ' + line + ')';
+  document.body.appendChild(d);
+  setTimeout(function() { d.remove(); }, 10000);
+  return false;
+};
+
+function _v(id, prop) {
+  var el = document.getElementById(id);
+  if (!el) return prop === 'checked' ? false : '';
+  return el[prop] !== undefined ? el[prop] : '';
+}
+function _vt(id) { return (_v(id,'value') || '').trim(); }
+
+function toggleMBSOther() {
+  document.getElementById('mbsOtherDiv').style.display = document.getElementById('ptMBS').value === 'other' ? '' : 'none';
+}
+
+// ==================== DIVA-5 DATA ====================
+const attentionSymptoms = [
+  { id:"A1", code:"A1a", q:"Often fails to give close attention to details, or makes careless mistakes in work or during other activities.",
+    adultEx:["Makes careless mistakes","Works slowly to avoid mistakes","Work is inaccurate","Does not read instructions carefully","Too much time needed to complete detailed tasks","Overlooks or misses details","Gets easily bogged down by details","Works too quickly and therefore makes mistakes"],
+    childEx:["Careless mistakes in schoolwork","Mistakes made by not reading questions properly","Leaves questions unanswered by not reading them properly","Overlooks or misses details","Work is inaccurate","Others comment about careless work","Not checking the answers in homework","Too much time needed to complete detailed tasks"] },
+  { id:"A2", code:"A1b", q:"Often has difficulty sustaining attention in tasks or play activities.",
+    adultEx:["Not able to keep attention on tasks for long*","Quickly distracted by own thoughts or associations","Difficulty remaining focussed during lectures/conversations","Finds it difficult to watch a film or read a book*","Easily distracted by unrelated thoughts","Quickly becomes bored with things*","Asks about subjects already discussed"],
+    childEx:["Difficulty keeping attention on schoolwork","Difficulty keeping attention on play*","Difficulty remaining focussed during lectures/conversations","Easily distracted","Difficulty concentrating*","Needing structure to avoid becoming distracted","Quickly becoming bored of activities*"],
+    note:"*Unless the subject is found to be really interesting (e.g. computer or hobby)" },
+  { id:"A3", code:"A1c", q:"Often does not seem to listen when spoken to directly.",
+    adultEx:["Dreamy or preoccupied","Difficulty concentrating on a conversation","Afterwards, not knowing what conversation was about","Often changing the subject of conversation","Others say thoughts are somewhere else","Mind seems elsewhere, even without obvious distraction"],
+    childEx:["Not knowing what parents/teachers said","Dreamy or preoccupied","Only listening during eye contact or raised voice","Mind seems elsewhere, even without obvious distraction","Often having to be addressed again","Questions having to be repeated"] },
+  { id:"A4", code:"A1d", q:"Often does not follow through on instructions and fails to finish chores or duties in the workplace (or schoolwork).",
+    adultEx:["Does things muddled up together without completing them","Starts tasks but quickly loses focus and is easily sidetracked","Needing a time limit to complete tasks","Difficulty completing administrative tasks","Difficulty following instructions from a manual"],
+    childEx:["Difficulty following instructions","Difficulty with multi-step instructions","Not completing things","Not completing homework or handing it in","Needing a lot of structure to complete tasks"] },
+  { id:"A5", code:"A1e", q:"Often has difficulty organising tasks and activities.",
+    adultEx:["Difficulty planning activities of daily life","Difficulty managing sequential tasks","House/workplace disorganised","Works messy and disorganised","Non-efficient planning or double-booking","Arriving late","Fails to meet deadlines","Cannot use agenda consistently","Inflexible due to need for schedules","Poor sense and management of time","Creates schedules but doesn't use them","Needs others to structure things","Difficulty keeping materials/belongings in order"],
+    childEx:["Difficulty being ready on time","Messy room/desk and/or work","Difficulty playing alone","Difficulty planning tasks or homework","Fails to meet deadlines","Doing things in a muddled way","Arriving late","Poor sense of time","Difficulty keeping self entertained","Difficulty keeping materials/belongings in order"] },
+  { id:"A6", code:"A1f", q:"Often avoids, dislikes, or is reluctant to engage in tasks that require sustained mental effort.",
+    adultEx:["Does easiest/nicest things first","Often postpones boring or difficult tasks","Postpones tasks so deadlines are missed","Avoids monotonous work (e.g. administration)","Avoids preparing reports, completing forms, reviewing lengthy papers","Doesn't like reading due to mental effort","Avoidance of tasks requiring a lot of concentration"],
+    childEx:["Avoidance of homework or aversion to it","Reads few books due to mental effort","Avoidance of tasks requiring concentration","Aversion to school subjects requiring concentration","Often postpones boring or difficult tasks"] },
+  { id:"A7", code:"A1g", q:"Often loses things necessary for tasks or activities.",
+    adultEx:["Mislays tools, paperwork, glasses, phone, wallet, keys, agenda","Often leaves things behind","Loses papers for work","Loses a lot of time searching for things","Panics if others move things around","Stores things in wrong place","Loses notes, lists or phone numbers"],
+    childEx:["Loses school materials, pencils, books or other items","Mislays toys, clothing, or homework","Spends a lot of time searching for things","Panics if others move things around","Comments from parents/teachers about lost items"] },
+  { id:"A8", code:"A1h", q:"Often easily distracted by extraneous stimuli.",
+    adultEx:["Difficulty shutting off from external stimuli","Easily distracted by noises or events","After distraction, difficult to pick up thread again","Easily distracted by others' conversations","Difficulty filtering/selecting information"],
+    childEx:["In classroom, often looking outside","Easily distracted by noises or events","After distraction, difficulty picking up thread again"] },
+  { id:"A9", code:"A1i", q:"Often forgetful in daily activities.",
+    adultEx:["Forgets appointments or obligations","Forgets keys, agenda etc.","Needs frequent reminders","Forgets chores or errands","Forgets to pay bills or return calls","Returns home to fetch forgotten things","Rigid use of lists to avoid forgetting","Forgets to keep or look at daily agenda"],
+    childEx:["Forgets appointments or instructions","Forgets chores or errands","Has to be frequently reminded","Forgets to take things to school","Half-way through task, forgets what to do","Leaves things behind at school or friends' houses"] }
+];
+
+const hiSymptoms = [
+  { id:"HI1", code:"A2a", q:"Often fidgets with or taps hands or feet, or squirms in seat.",
+    adultEx:["Difficulty sitting still","Fidgets with the legs","Tapping with a pen or playing with something","Fiddling with hair or biting nails","Can control restlessness but feels stressed as a result"],
+    childEx:["Parents often said 'sit still' or similar","Fidgets with the legs","Tapping with a pen or playing with something","Fiddling with hair or biting nails","Can control restlessness but feels stressed"] },
+  { id:"HI2", code:"A2b", q:"Often leaves seat in situations where remaining seated is expected.",
+    adultEx:["Avoids symposiums, lectures, church etc.","Prefers to walk around rather than sit","Often leaves place in office/workplace","Never sits still for long, always moving","Stressed owing to difficulty sitting still","Makes excuses to walk around"],
+    childEx:["Often stands up while eating or in classroom","Very difficult to stay seated at school or meals","Being told to remain seated","Making excuses to walk around"] },
+  { id:"HI3", code:"A2c", q:"Often feels restless (adults) / runs about or climbs excessively (children).",
+    adultEx:["Feeling restless or agitated inside","Constantly feeling that you have to be doing something","Finding it hard to relax"],
+    childEx:["Always running around where inappropriate","Climbing on furniture or jumping on sofa","Climbing in trees","Feeling restless inside"] },
+  { id:"HI4", code:"A2d", q:"Often unable to engage in leisure activities quietly.",
+    adultEx:["Talks during activities when inappropriate","Becoming quickly too cocky in public","Being loud in all kinds of situations","Difficulty speaking softly"],
+    childEx:["Loud-spoken during play or in classroom","Unable to watch TV or films quietly","Asked to be quieter or calm down","Becoming quickly too cocky in public"] },
+  { id:"HI5", code:"A2e", q:"Often \"on the go\" or acts as if \"driven by a motor\".",
+    adultEx:["Always busy doing something","Too much energy, always on the move","Stepping over own boundaries","Difficult to let things go, excessively driven","Uncomfortable being still for extended time","Others find you restless or hard to keep up with"],
+    childEx:["Constantly busy","Others find you restless or hard to keep up with","Uncomfortable being still for extended time","Excessively active at school and home","Has lots of energy","Always on the go, excessively driven"] },
+  { id:"HI6", code:"A2f", q:"Often talks excessively.",
+    adultEx:["So busy talking others find it tiring","Known as an incessant talker","Finds it difficult to stop talking","Tendency to talk too much","Doesn't give others room to interject","Needs a lot of words to say something"],
+    childEx:["Known as a chatterbox","Teachers/parents often ask to be quiet","School report comments about talking too much","Punished for talking too much","Keeps others from doing schoolwork by talking","Doesn't give others room in conversation"] },
+  { id:"HI7", code:"A2g", q:"Often blurts out an answer before questions have been completed.",
+    adultEx:["Blabbermouth — says what you think","Says things without thinking first","Answers before others finish speaking","Completes other people's sentences","Being tactless","Difficulty waiting for turn in conversations"],
+    childEx:["Says things without thinking first","Wants to be first to answer at school","Blurts out answer even if wrong","Interrupts others before sentences finished","Comes across as tactless"] },
+  { id:"HI8", code:"A2h", q:"Often has difficulty awaiting turn.",
+    adultEx:["Difficulty waiting in a queue, jumping queue","Difficulty waiting in traffic/jams","Being impatient","Quickly starting/ending relationships or jobs due to impatience"],
+    childEx:["Difficulty waiting turn in group activities","Difficulty waiting turn in classroom","Always first to talk or act","Becomes quickly impatient","Crosses road without looking"] },
+  { id:"HI9", code:"A2i", q:"Often interrupts or intrudes on others.",
+    adultEx:["Quick to interfere with others","Intrudes on others","Disturbs others' activities or takes over their tasks","Interrupts conversations","Comments from others about interference","Difficulty respecting boundaries","Opinion about everything, expressed immediately","Starts using people's things without permission"],
+    childEx:["Interrupts games or activities of others","Interrupts conversations of others","Reacts to everything","Unable to wait"] }
+];
+
+const impairmentAreas = {
+  adultWork:{title:"Adulthood — Work/Education",items:["Did not complete education/training needed for work","Work below level of education","Tire quickly of a workplace","Pattern of many short-lasting jobs","Difficulty with administrative work/planning","Not achieving promotions","Under-performing at work","Left work following arguments or dismissal","Sickness benefits/disability benefit from symptoms","Limited impairment through compensation of high IQ","Limited impairment through compensation of external structure"]},
+  adultRel:{title:"Adulthood — Relationships/Family",items:["Tire quickly of relationships","Impulsively commencing/ending relationships","Unequal partner relationship owing to symptoms","Relationship problems, arguments, lack of intimacy","Divorced owing to symptoms","Problems with sexuality from symptoms","Problems with upbringing from symptoms","Difficulty with housekeeping/administration","Financial problems or gambling","Not daring to start a relationship"]},
+  adultSocial:{title:"Adulthood — Social Contacts",items:["Tire quickly of social contacts","Difficulty maintaining social contacts","Conflicts from communication problems","Difficulty initiating social contacts","Low self-assertiveness from negative experiences","Not being attentive (forget cards/calls/empathising)"]},
+  adultFree:{title:"Adulthood — Free Time/Hobby",items:["Unable to relax properly during free time","Having to play lots of sport to relax","Injuries from excessive sport","Unable to finish a book or watch a film","Continually busy, becoming overtired","Tire quickly of hobbies","Accidents/loss of licence from reckless driving","Sensation seeking / taking too many risks","Contact with police/courts","Binge eating"]},
+  adultSelf:{title:"Adulthood — Self-Confidence/Self-Image",items:["Uncertainty from negative comments of others","Negative self-image from experience of failure","Fear of failure starting new things","Excessive intense reaction to criticism","Perfectionism","Distressed by symptoms of ADHD"]},
+  childEdu:{title:"Childhood — Education",items:["Lower educational level than expected (IQ)","Repeating classes from concentration problems","Education not completed / rejected from school","Took much longer to complete education","Achieved education suited to IQ with a lot of effort","Difficulty doing homework","Followed special education on account of symptoms","Comments from teachers about behaviour/concentration","Limited impairment through compensation of high IQ","Limited impairment through compensation of external structure"]},
+  childFam:{title:"Childhood — Family",items:["Frequent arguments with siblings","Frequent punishment","Little contact with family from conflicts","Required parental structure longer than normal"]},
+  childSocial:{title:"Childhood — Social Contacts",items:["Difficulty maintaining social contacts","Conflicts from communication problems","Difficulty entering into social contacts","Low self-assertiveness from negative experiences","Few friends","Being teased","Shut out from groups","Being a bully"]},
+  childFree:{title:"Childhood — Free Time/Hobby",items:["Unable to relax properly during free time","Having to play lots of sport to relax","Injuries from excessive sport","Unable to finish a book or watch a film","Continually busy, becoming overtired","Tired quickly of hobbies","Sensation seeking / taking too many risks","Contact with police/courts","Increased number of accidents"]},
+  childSelf:{title:"Childhood — Self-Confidence/Self-Image",items:["Uncertainty from negative comments of others","Negative self-image from experiences of failure","Fear of failure starting new things","Excessive intense reaction to criticism","Perfectionism"]}
+};
+
+const asrsQuestions = [
+  {num:1, part:"A", sub:"Inatt", q:"How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?", shade:[2,3,4]},
+  {num:2, part:"A", sub:"Inatt", q:"How often do you have difficulty getting things in order when you have to do a task that requires organization?", shade:[2,3,4]},
+  {num:3, part:"A", sub:"Inatt", q:"How often do you have problems remembering appointments or obligations?", shade:[2,3,4]},
+  {num:4, part:"A", sub:"Inatt", q:"When you have a task that requires a lot of thought, how often do you avoid or delay getting started?", shade:[3,4]},
+  {num:5, part:"A", sub:"H/I", q:"How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?", shade:[3,4]},
+  {num:6, part:"A", sub:"H/I", q:"How often do you feel overly active and compelled to do things, like you were driven by a motor?", shade:[3,4]},
+  {num:7, part:"B", sub:"Inatt", q:"How often do you make careless mistakes when you have to work on a boring or difficult project?", shade:[3,4]},
+  {num:8, part:"B", sub:"Inatt", q:"How often do you have difficulty keeping your attention when you are doing boring or repetitive work?", shade:[3,4]},
+  {num:9, part:"B", sub:"Inatt", q:"How often do you have difficulty concentrating on what people say to you, even when they are speaking to you directly?", shade:[2,3,4]},
+  {num:10, part:"B", sub:"Inatt", q:"How often do you misplace or have difficulty finding things at home or at work?", shade:[3,4]},
+  {num:11, part:"B", sub:"Inatt", q:"How often are you distracted by activity or noise around you?", shade:[3,4]},
+  {num:12, part:"B", sub:"H/I", q:"How often do you leave your seat in meetings or other situations in which you are expected to remain seated?", shade:[2,3,4]},
+  {num:13, part:"B", sub:"H/I", q:"How often do you feel restless or fidgety?", shade:[3,4]},
+  {num:14, part:"B", sub:"H/I", q:"How often do you have difficulty unwinding and relaxing when you have time to yourself?", shade:[3,4]},
+  {num:15, part:"B", sub:"H/I", q:"How often do you find yourself talking too much when you are in social situations?", shade:[3,4]},
+  {num:16, part:"B", sub:"H/I", q:"When you are in a conversation, how often do you find yourself finishing the sentences of the people you are talking to, before they can finish them themselves?", shade:[2,3,4]},
+  {num:17, part:"B", sub:"H/I", q:"How often do you have difficulty waiting your turn in situations when turn taking is required?", shade:[3,4]},
+  {num:18, part:"B", sub:"H/I", q:"How often do you interrupt others when they are busy?", shade:[3,4]}
+];
+const asrsLabels = ["Never","Rarely","Sometimes","Often","Very Often"];
+
+const devScreenData = {
+  prenatal: { title: "Prenatal / Pregnancy Factors", items: ["Maternal smoking during pregnancy","Maternal alcohol use during pregnancy","Maternal substance use during pregnancy","Maternal severe stress/anxiety during pregnancy","Maternal infection during pregnancy","Gestational diabetes","Pre-eclampsia/eclampsia","Maternal malnutrition","Medications during pregnancy (specify)","Assisted reproduction / IVF","Multiple pregnancy (twins/triplets)","Unwanted/unplanned pregnancy","Teen pregnancy","Advanced maternal age (>35)","Advanced paternal age (>40)","Exposure to environmental toxins (lead, pesticides)"] },
+  perinatal: { title: "Perinatal / Birth Factors", items: ["Premature birth (<37 weeks)","Very premature (<32 weeks)","Low birth weight (<2500g)","Very low birth weight (<1500g)","Prolonged/complicated labour","Emergency caesarean section","Instrumental delivery (forceps/vacuum)","Birth asphyxia / low Apgar score","Neonatal jaundice requiring treatment","Neonatal ICU admission","Cord complications","Meconium aspiration","Foetal distress"] },
+  earlyDev: { title: "Early Development (0-5 years)", items: ["Delayed motor milestones (walking, crawling)","Delayed speech/language milestones","Feeding difficulties in infancy","Sleep difficulties in early childhood","Excessive crying / colic","Difficult temperament as infant","Failure to thrive","Recurrent ear infections / hearing issues","Febrile convulsions","Head injury / concussion","Separation anxiety (excessive)","Developmental regression at any point","Exposure to lead or other toxins"] },
+  childhood: { title: "Childhood Factors (5-12 years)", items: ["Learning difficulties / specific learning disorder","Required remedial classes or tutoring","Repeated a school year","Behavioural problems at school","Suspensions or expulsions","Bullying (victim or perpetrator)","Difficulty making/keeping friends","Poor coordination / clumsiness (DCD)","Bedwetting beyond age 5","Tics or Tourette syndrome features","Speech/language therapy required","Occupational therapy required","Previous ADHD assessment or diagnosis","Previous psychological/psychiatric input"] },
+  adverseExp: { title: "Adverse Childhood Experiences (ACEs)", items: ["Physical abuse","Emotional abuse","Sexual abuse","Physical neglect","Emotional neglect","Parental separation/divorce","Domestic violence in household","Household member with mental illness","Household member with substance abuse","Incarceration of household member","Foster care / out-of-home placement","Frequent moves / instability","Poverty / financial hardship","Death of a parent or close family member","Social isolation","Refugee/asylum seeker background"] },
+  familyHx: { title: "Family History of Neurodevelopmental Conditions", items: ["ADHD in first-degree relative (parent/sibling)","ADHD in second-degree relative","Autism spectrum disorder in family","Intellectual disability in family","Specific learning disorder (dyslexia, dyscalculia) in family","Tic disorder / Tourette syndrome in family","Epilepsy in family","Substance use disorders in family","Mood disorders (depression/bipolar) in family","Anxiety disorders in family","Psychotic disorders in family","Personality disorders in family","Suicide in family"] },
+  protective: { title: "Protective Factors / Compensation", items: ["High IQ / giftedness masking difficulties","Highly structured home environment","Strong parental support","Small class sizes / supportive school","External tutoring or coaching","Sport / physical activity as outlet","Creative pursuits as outlet","Late diagnosis (specify age)","Self-developed coping strategies"] }
+};
+
+const dsmCriteria = {
+  inatt: { title: "A1. Inattention (>=5 for adults >=17, >=6 for <17)", items: ["a. Often fails to give close attention to details or makes careless mistakes","b. Often has difficulty sustaining attention in tasks or play activities","c. Often does not seem to listen when spoken to directly","d. Often does not follow through on instructions and fails to finish duties","e. Often has difficulty organising tasks and activities","f. Often avoids, dislikes, or is reluctant to engage in tasks requiring sustained mental effort","g. Often loses things necessary for tasks or activities","h. Is often easily distracted by extraneous stimuli","i. Is often forgetful in daily activities"] },
+  hi: { title: "A2. Hyperactivity-Impulsivity (>=5 for adults >=17, >=6 for <17)", items: ["a. Often fidgets with or taps hands or feet or squirms in seat","b. Often leaves seat in situations when remaining seated is expected","c. Often runs about or climbs in situations where it is inappropriate (in adults: feelings of restlessness)","d. Often unable to play or engage in leisure activities quietly","e. Is often 'on the go,' acting as if 'driven by a motor'","f. Often talks excessively","g. Often blurts out an answer before a question has been completed","h. Often has difficulty waiting his or her turn","i. Often interrupts or intrudes on others"] }
+};
+
+const comorbidities = [
+  {cat:"Mood Disorders", items:["Major Depressive Disorder","Persistent Depressive Disorder (Dysthymia)","Bipolar I Disorder","Bipolar II Disorder","Cyclothymic Disorder","Premenstrual Dysphoric Disorder","Disruptive Mood Dysregulation Disorder"]},
+  {cat:"Anxiety Disorders", items:["Generalised Anxiety Disorder","Social Anxiety Disorder","Panic Disorder","Agoraphobia","Specific Phobia","Separation Anxiety Disorder","Selective Mutism"]},
+  {cat:"Obsessive-Compulsive & Related", items:["Obsessive-Compulsive Disorder","Body Dysmorphic Disorder","Hoarding Disorder","Trichotillomania","Excoriation (Skin-Picking) Disorder"]},
+  {cat:"Trauma & Stressor-Related", items:["Post-Traumatic Stress Disorder","Complex PTSD","Acute Stress Disorder","Adjustment Disorder","Reactive Attachment Disorder"]},
+  {cat:"Neurodevelopmental", items:["Autism Spectrum Disorder","Intellectual Disability","Specific Learning Disorder (Dyslexia)","Specific Learning Disorder (Dyscalculia)","Developmental Coordination Disorder","Tic Disorder / Tourette Syndrome","Language Disorder"]},
+  {cat:"Personality Disorders", items:["Borderline Personality Disorder","Antisocial Personality Disorder","Narcissistic Personality Disorder","Avoidant Personality Disorder","Other Personality Disorder (specify)"]},
+  {cat:"Eating Disorders", items:["Binge Eating Disorder","Anorexia Nervosa","Bulimia Nervosa","ARFID","Other Specified Feeding/Eating Disorder"]},
+  {cat:"Substance Use Disorders", items:["Alcohol Use Disorder","Cannabis Use Disorder","Stimulant Use Disorder (cocaine/methamphetamine)","Opioid Use Disorder","Sedative/Hypnotic Use Disorder","Tobacco Use Disorder","Other Substance Use Disorder (specify)"]},
+  {cat:"Sleep Disorders", items:["Insomnia Disorder","Obstructive Sleep Apnoea","Restless Legs Syndrome","Circadian Rhythm Sleep-Wake Disorder","Narcolepsy"]},
+  {cat:"Psychotic Disorders", items:["Schizophrenia","Schizoaffective Disorder","Brief Psychotic Disorder","Delusional Disorder"]},
+  {cat:"Other", items:["Gambling Disorder","Internet Gaming Disorder","Gender Dysphoria","Somatic Symptom Disorder","Functional Neurological Disorder","Chronic Pain Syndrome"]}
+];
+
+const substanceList = ["Alcohol","Cannabis","Tobacco/Nicotine","Amphetamines/Methamphetamine","Cocaine","MDMA/Ecstasy","Opioids (heroin/prescription)","Benzodiazepines (non-prescribed)","Hallucinogens (LSD/psilocybin)","Inhalants/solvents","Synthetic cannabinoids","GHB/GBL","Ketamine","Caffeine (excessive)","Other (specify)"];
+
+const substanceAlerts = {
+  "Alcohol": "none", "Cannabis": "illicit", "Tobacco/Nicotine": "tobacco",
+  "Amphetamines/Methamphetamine": "illicit", "Cocaine": "illicit", "MDMA/Ecstasy": "illicit",
+  "Opioids (heroin/prescription)": "illicit", "Benzodiazepines (non-prescribed)": "illicit",
+  "Hallucinogens (LSD/psilocybin)": "illicit", "Inhalants/solvents": "illicit",
+  "Synthetic cannabinoids": "illicit", "GHB/GBL": "illicit", "Ketamine": "illicit",
+  "Caffeine (excessive)": "none", "Other (specify)": "illicit"
+};
+
+const medicalConditions = [
+  {cat:"Cardiovascular",items:["Hypertension","Cardiac arrhythmia","Structural heart disease","Cardiomyopathy","History of cardiac events","Raynaud phenomenon","Congenital heart defect"]},
+  {cat:"Neurological",items:["Epilepsy/seizure disorder","Migraine","Traumatic brain injury","Cerebrovascular disease","Multiple sclerosis","Tic disorder/Tourette"]},
+  {cat:"Endocrine/Metabolic",items:["Thyroid disorder (hyper/hypo)","Diabetes mellitus","Polycystic ovary syndrome","Cushing syndrome","Pheochromocytoma","Iron deficiency / anaemia"]},
+  {cat:"Respiratory",items:["Asthma","Obstructive sleep apnoea","COPD"]},
+  {cat:"Gastrointestinal",items:["Inflammatory bowel disease","Coeliac disease","GORD","Hepatic impairment"]},
+  {cat:"Renal",items:["Chronic kidney disease","Renal impairment"]},
+  {cat:"Other",items:["Chronic fatigue syndrome","Fibromyalgia","Autoimmune disorder","Pregnancy / breastfeeding","Glaucoma","Allergies / anaphylaxis"]}
+];
+
+const mseData = {
+  appearance: {title:"Appearance",items:["Appropriately dressed","Dishevelled/unkempt","Restless/fidgety in chair","Difficulty sitting still during interview","Tapping/drumming hands or feet","Playing with objects","Frequent position changes","Poor eye contact","Excessive eye contact","Appears younger than stated age","Appears older than stated age","Visible tattoos/piercings","Evidence of self-harm scars","Poor hygiene"]},
+  behaviour: {title:"Behaviour & Psychomotor Activity",items:["Cooperative and engaged","Distractible during interview","Frequently losing track of questions","Interrupting interviewer","Talking over interviewer","Answering before question finished","Going off on tangents","Difficulty returning to topic after distraction","Checking phone repeatedly","Restless/hyperactive","Psychomotor agitation","Psychomotor retardation","Guarded","Hostile/irritable","Overly familiar"]},
+  speech: {title:"Speech",items:["Normal rate and rhythm","Rapid/pressured speech","Verbose/over-inclusive","Tangential","Circumstantial","Disorganised","Loud volume","Soft/quiet","Monotone","Stuttering/hesitant","Normal prosody"]},
+  mood: {title:"Mood (subjective)",items:["Euthymic","Low/depressed","Anxious","Irritable","Frustrated","Flat/apathetic","Elated/euphoric","Labile","Overwhelmed"]},
+  affect: {title:"Affect (observed)",items:["Reactive and congruent","Restricted range","Blunted","Flat","Labile","Incongruent with content","Anxious","Irritable","Bright/elevated","Tearful"]},
+  thought_form: {title:"Thought Form",items:["Linear and goal-directed","Circumstantial","Tangential","Loose associations","Flight of ideas","Thought blocking","Perseveration","Poverty of thought"]},
+  thought_content: {title:"Thought Content",items:["No suicidal ideation","Passive suicidal ideation (no plan/intent)","Active suicidal ideation (plan/intent) — ESCALATE","No homicidal ideation","Homicidal ideation — ESCALATE","Ruminations","Obsessions","Overvalued ideas","Delusions — ESCALATE","Paranoid ideation","Hopelessness","Helplessness","Worthlessness","Guilt","Low self-esteem (chronic)","Fear of failure","Rejection sensitivity"]},
+  perception: {title:"Perception",items:["No perceptual disturbances","Auditory hallucinations — ESCALATE","Visual hallucinations — ESCALATE","Depersonalisation","Derealisation","Illusions","Hypnagogic/hypnopompic hallucinations"]},
+  cognition: {title:"Cognition (observed during interview)",items:["Alert and oriented","Attention sustained during interview","Attention poor — easily distracted","Working memory difficulties (loses thread)","Difficulty with sequential recall","Poor time estimation during interview","Concentration fluctuating","Forgetful of earlier questions","Intact fund of knowledge"]},
+  insight: {title:"Insight & Judgement",items:["Full insight — recognises symptoms and need for help","Partial insight","Poor insight","Good judgement","Impaired judgement","Help-seeking and motivated","Ambivalent about diagnosis","Seeking diagnosis for external reasons (specify)"]}
+};
+
+// FIX #8: Items that should NOT trigger warnings in MSE
+const mseNonWarningItems = ["No suicidal ideation","No homicidal ideation","No perceptual disturbances"];
+
+const malingeringFlags = [
+  "Overly specific self-diagnosis with DSM terminology",
+  "Reports only textbook symptoms with no personal examples",
+  "Symptoms appeared suddenly in adulthood with no childhood history",
+  "Inconsistencies between reported symptoms and observed behaviour",
+  "Primary motivation appears to be obtaining stimulant medication",
+  "Requests specific medication by name/brand",
+  "Reports all symptoms as maximum severity",
+  "Unable to describe how symptoms affect daily life in detail",
+  "History inconsistent with collateral information",
+  "Known history of substance misuse/diversion",
+  "Previously prescribed stimulants that were diverted/sold",
+  "Excessive knowledge of screening tools / coaching evident",
+  "Symptoms do not match observed presentation during interview",
+  "Academic/occupational history inconsistent with claimed impairment"
+];
+
+
+// ==================== BUILD UI ====================
+function buildSymptomBlock(s, prefix) {
+  let html = '<div class="symptom-block"><div class="symptom-question">' + s.code + ': ' + s.q + '</div><div class="symptom-content"><div class="period-grid">';
+  html += '<div class="period-col"><h4 class="adult">Adulthood (past 6+ months)</h4>';
+  s.adultEx.forEach(function(ex, i) {
+    html += '<div class="example-item"><input type="checkbox" id="' + prefix + '_' + s.id + '_aEx' + i + '"><label for="' + prefix + '_' + s.id + '_aEx' + i + '">' + ex + '</label></div>';
+  });
+  html += '<input type="text" class="other-input" id="' + prefix + '_' + s.id + '_aOther" placeholder="Other (specify)">';
+  html += '</div>';
+  html += '<div class="period-col"><h4 class="child">Childhood (age 5-12)</h4>';
+  s.childEx.forEach(function(ex, i) {
+    html += '<div class="example-item"><input type="checkbox" id="' + prefix + '_' + s.id + '_cEx' + i + '"><label for="' + prefix + '_' + s.id + '_cEx' + i + '">' + ex + '</label></div>';
+  });
+  html += '<input type="text" class="other-input" id="' + prefix + '_' + s.id + '_cOther" placeholder="Other (specify)">';
+  html += '</div></div>';
+  if (s.note) html += '<p class="note">' + s.note + '</p>';
+  html += '<div class="symptom-verdict">';
+  html += '<div class="verdict-group"><strong>Adult:</strong>';
+  html += '<label><input type="radio" name="' + prefix + '_' + s.id + '_aVerdict" value="yes"> Yes</label>';
+  html += '<label><input type="radio" name="' + prefix + '_' + s.id + '_aVerdict" value="no"> No</label></div>';
+  html += '<div class="verdict-group"><strong>Childhood:</strong>';
+  html += '<label><input type="radio" name="' + prefix + '_' + s.id + '_cVerdict" value="yes"> Yes</label>';
+  html += '<label><input type="radio" name="' + prefix + '_' + s.id + '_cVerdict" value="no"> No</label></div>';
+  html += '</div></div></div>';
+  return html;
+}
+
+// FIX #5: ASRS with Pre-completed / For patient to complete options
+function buildASRS() {
+  var html = '';
+  // Completion status
+  html += '<div class="completion-status">';
+  html += '<strong style="font-size:0.85rem;color:#1e40af;">Status:</strong>';
+  html += '<label style="color:#1e40af;"><input type="radio" name="asrs_status" value="clinician" checked> Clinician completing</label>';
+  html += '<label style="color:#059669;"><input type="radio" name="asrs_status" value="pre_completed"> Pre-completed by patient</label>';
+  html += '<label style="color:#b45309;"><input type="radio" name="asrs_status" value="for_patient"> For patient to complete</label>';
+  html += '</div>';
+  // Quick positive
+  html += '<div style="margin-bottom:12px;padding:10px 14px;background:#eff6ff;border:1px solid #93c5fd;border-radius:6px;">';
+  html += '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:#1e40af;font-size:0.9rem;">';
+  html += '<input type="checkbox" id="asrs_quick_positive" onchange="handleASRSQuickPositive()" style="accent-color:#1e40af;width:18px;height:18px;">';
+  html += 'Quick: Mark as ASRS Screen Positive (skip scoring)</label>';
+  html += '<p style="font-size:0.8rem;color:var(--gray-600);margin-top:4px;margin-left:26px;">Check this if the patient clearly screens positive. The report will output "ASRS screen positive" without individual scores.</p>';
+  html += '</div>';
+  html += '<div id="asrs_full_section">';
+  html += '<table class="asrs"><thead><tr><th>Question</th>';
+  asrsLabels.forEach(function(l) { html += '<th>' + l + '</th>'; });
+  html += '</tr></thead><tbody>';
+  var lastPart = '';
+  asrsQuestions.forEach(function(q) {
+    if (q.part !== lastPart) {
+      html += '<tr style="background:#e8f0fe;"><td colspan="6" style="font-weight:700;color:#1e40af;text-align:left;">Part ' + q.part + (q.part==='A'?' — Screener (6 items)':' — Additional Symptoms (12 items)') + '</td></tr>';
+      lastPart = q.part;
+    }
+    html += '<tr><td>' + q.num + '. ' + q.q + ' <span style="color:#6b7280;font-size:0.75rem;">[' + q.sub + ']</span></td>';
+    for (var v = 0; v < 5; v++) {
+      var shaded = q.shade.includes(v) ? 'background:#bee3f8;' : '';
+      html += '<td style="' + shaded + '"><input type="radio" name="asrs_' + q.num + '" value="' + v + '"></td>';
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  html += '<p class="note">Darkly shaded cells in Part A indicate responses consistent with ADHD. If 4+ shaded responses are marked in Part A, symptoms are highly consistent with ADHD.</p>';
+  html += '</div>';
+  return html;
+}
+
+function handleASRSQuickPositive() {
+  var checked = document.getElementById('asrs_quick_positive').checked;
+  var fullSection = document.getElementById('asrs_full_section');
+  if (checked) {
+    fullSection.style.opacity = '0.4';
+    fullSection.style.pointerEvents = 'none';
+  } else {
+    fullSection.style.opacity = '1';
+    fullSection.style.pointerEvents = '';
+  }
+}
+
+function initForm() {
+  // Part 1 - DIVA Attention
+  var p1 = '';
+  // FIX #5: DIVA completion status
+  p1 += '<div class="completion-status">';
+  p1 += '<strong style="font-size:0.85rem;color:#1e40af;">Status:</strong>';
+  p1 += '<label style="color:#1e40af;"><input type="radio" name="diva_status" value="clinician" checked> Clinician completing</label>';
+  p1 += '<label style="color:#059669;"><input type="radio" name="diva_status" value="pre_completed"> Pre-completed by patient</label>';
+  p1 += '<label style="color:#b45309;"><input type="radio" name="diva_status" value="for_patient"> For patient to complete</label>';
+  p1 += '</div>';
+  attentionSymptoms.forEach(function(s) { p1 += buildSymptomBlock(s, 'att'); });
+  p1 += '<div class="supplement-q"><p>Supplement — Do you have/did you have MORE of these attention deficit symptoms than other people your age?</p>';
+  p1 += '<div style="display:flex;flex-wrap:wrap;gap:12px 32px;"><div class="verdict-group"><strong>Adult:</strong>';
+  p1 += '<label><input type="radio" name="suppA_adult" value="yes"> Yes</label>';
+  p1 += '<label><input type="radio" name="suppA_adult" value="no"> No</label></div>';
+  p1 += '<div class="verdict-group"><strong>Childhood:</strong>';
+  p1 += '<label><input type="radio" name="suppA_child" value="yes"> Yes</label>';
+  p1 += '<label><input type="radio" name="suppA_child" value="no"> No</label></div></div></div>';
+  // FIX #2: No alert on DIVA positive buttons
+  document.getElementById('part1Body').innerHTML = '<div style="text-align:center;margin-bottom:12px;"><button class="diva-positive-btn" onclick="divaPositiveAll(\'att\', attentionSymptoms)">Positive for All Attention Symptoms</button></div>' + p1;
+
+  // Part 2 - DIVA H/I
+  var p2 = '';
+  hiSymptoms.forEach(function(s) { p2 += buildSymptomBlock(s, 'hi'); });
+  p2 += '<div class="supplement-q"><p>Supplement — Do you have/did you have MORE of these hyperactivity/impulsivity symptoms than other people your age?</p>';
+  p2 += '<div style="display:flex;flex-wrap:wrap;gap:12px 32px;"><div class="verdict-group"><strong>Adult:</strong>';
+  p2 += '<label><input type="radio" name="suppHI_adult" value="yes"> Yes</label>';
+  p2 += '<label><input type="radio" name="suppHI_adult" value="no"> No</label></div>';
+  p2 += '<div class="verdict-group"><strong>Childhood:</strong>';
+  p2 += '<label><input type="radio" name="suppHI_child" value="yes"> Yes</label>';
+  p2 += '<label><input type="radio" name="suppHI_child" value="no"> No</label></div></div></div>';
+  document.getElementById('part2Body').innerHTML = '<div style="text-align:center;margin-bottom:12px;"><button class="diva-positive-btn" onclick="divaPositiveAll(\'hi\', hiSymptoms)">Positive for All H/I Symptoms</button></div>' + p2;
+
+  // Part 3 - Onset/Impairment/Exclusion
+  var p3 = '';
+  p3 += '<div class="criteria-block"><h3>Criterion B — Age of Onset</h3>';
+  p3 += '<p>Were several inattentive or hyperactive-impulsive symptoms present before age 12?</p>';
+  p3 += '<div class="radio-row"><label><input type="radio" name="critB" value="yes"> Yes</label>';
+  p3 += '<label><input type="radio" name="critB" value="no"> No</label></div>';
+  p3 += '<p style="margin-top:4px;">If no, from what age? <input type="number" id="critB_age" min="1" max="99" style="width:60px;padding:4px 8px;border:1px solid var(--gray-300);border-radius:4px;"></p></div>';
+  p3 += '<div class="criteria-block"><h3>Criterion C — Impairment in Two or More Settings</h3>';
+  p3 += '<p>Check all areas where the patient experiences impairment from ADHD symptoms:</p>';
+  ['adultWork','adultRel','adultSocial','adultFree','adultSelf'].forEach(function(key) {
+    var area = impairmentAreas[key];
+    p3 += '<div class="impairment-area"><h4>' + area.title + '</h4><div class="impairment-grid">';
+    area.items.forEach(function(item, i) {
+      p3 += '<div class="impairment-item"><input type="checkbox" id="imp_' + key + '_' + i + '"><label for="imp_' + key + '_' + i + '">' + item + '</label></div>';
+    });
+    p3 += '</div></div>';
+  });
+  p3 += '<div class="radio-row" style="margin:8px 0 16px;"><strong style="margin-right:8px;">Adulthood — Impairment in 2+ areas?</strong>';
+  p3 += '<label><input type="radio" name="critC_adult" value="yes"> Yes</label>';
+  p3 += '<label><input type="radio" name="critC_adult" value="no"> No</label></div>';
+  ['childEdu','childFam','childSocial','childFree','childSelf'].forEach(function(key) {
+    var area = impairmentAreas[key];
+    p3 += '<div class="impairment-area"><h4>' + area.title + '</h4><div class="impairment-grid">';
+    area.items.forEach(function(item, i) {
+      p3 += '<div class="impairment-item"><input type="checkbox" id="imp_' + key + '_' + i + '"><label for="imp_' + key + '_' + i + '">' + item + '</label></div>';
+    });
+    p3 += '</div></div>';
+  });
+  p3 += '<div class="radio-row" style="margin:8px 0 16px;"><strong style="margin-right:8px;">Childhood — Impairment in 2+ areas?</strong>';
+  p3 += '<label><input type="radio" name="critC_child" value="yes"> Yes</label>';
+  p3 += '<label><input type="radio" name="critC_child" value="no"> No</label></div>';
+  p3 += '<div class="criteria-block"><h3>Criterion D — Clinical Significance</h3>';
+  p3 += '<p>Is there clear evidence that symptoms interfere with, or reduce the quality of, social, academic, or occupational functioning?</p>';
+  p3 += '<div class="radio-row"><label><input type="radio" name="critD" value="yes"> Yes</label>';
+  p3 += '<label><input type="radio" name="critD" value="no"> No</label></div></div>';
+  p3 += '<div class="criteria-block"><h3>Criterion E — Exclusion / Differential</h3>';
+  p3 += '<p>Do the symptoms occur exclusively during psychosis, or are they better explained by another mental disorder?</p>';
+  p3 += '<div class="radio-row"><label><input type="radio" name="critE" value="no"> No (symptoms NOT better explained)</label>';
+  p3 += '<label><input type="radio" name="critE" value="yes"> Yes (symptoms ARE better explained)</label></div>';
+  p3 += '<p style="margin-top:6px;">If yes, specify: <input type="text" id="critE_specify" style="width:300px;padding:6px 10px;border:1px solid var(--gray-300);border-radius:4px;" placeholder="e.g. bipolar disorder"></p></div>';
+  document.getElementById('part3Body').innerHTML = p3;
+
+  var divaExtra = document.createElement('div');
+  divaExtra.innerHTML = '<div style="margin-top:20px;text-align:center;">' +
+    '<button class="btn" style="background:var(--part2);color:#fff;padding:10px 24px;font-size:0.95rem;" onclick="calculateDIVA()">Calculate DIVA-5 Results</button>' +
+    '</div>' +
+    '<div id="divaResults" class="results-section" style="margin-top:16px;">' +
+    '<div id="divaResultsSummary"></div>' +
+    '<button class="btn" style="background:var(--part2);color:#fff;margin-top:10px;" onclick="copyText(\'divaReportOutput\', event)">Copy DIVA-5 Report</button>' +
+    '<div class="report-output" id="divaReportOutput" style="margin-top:10px;max-height:400px;"></div>' +
+    '</div>';
+  document.getElementById('part3Body').appendChild(divaExtra);
+
+  // ASRS
+  document.getElementById('asrsBody').innerHTML = buildASRS();
+  var asrsExtra = document.createElement('div');
+  asrsExtra.innerHTML = '<div style="margin-top:16px;text-align:center;">' +
+    '<button class="btn" style="background:var(--part2);color:#fff;padding:10px 24px;font-size:0.95rem;" onclick="calculateASRS()">Calculate ASRS Results</button>' +
+    '</div>' +
+    '<div id="asrsResults" class="results-section" style="margin-top:16px;">' +
+    '<div id="asrsResultsSummary"></div>' +
+    '<button class="btn" style="background:var(--part2);color:#fff;margin-top:10px;" onclick="copyText(\'asrsReportOutput\', event)">Copy ASRS Report</button>' +
+    '<div class="report-output" id="asrsReportOutput" style="margin-top:10px;max-height:400px;"></div>' +
+    '</div>';
+  document.getElementById('asrsBody').appendChild(asrsExtra);
+
+  document.getElementById('ptDate').valueAsDate = new Date();
+}
+
+// FIX #2: DIVA Positive for All - NO confirm dialog
+function divaPositiveAll(prefix, symptoms) {
+  symptoms.forEach(function(s) {
+    var aYes = document.querySelector('input[name="' + prefix + '_' + s.id + '_aVerdict"][value="yes"]');
+    var cYes = document.querySelector('input[name="' + prefix + '_' + s.id + '_cVerdict"][value="yes"]');
+    if (aYes) aYes.checked = true;
+    if (cYes) cYes.checked = true;
+  });
+  var suppPrefix = prefix === 'att' ? 'suppA' : 'suppHI';
+  var suppAdult = document.querySelector('input[name="' + suppPrefix + '_adult"][value="yes"]');
+  var suppChild = document.querySelector('input[name="' + suppPrefix + '_child"][value="yes"]');
+  if (suppAdult) suppAdult.checked = true;
+  if (suppChild) suppChild.checked = true;
+}
+
+function toggleSection(header) {
+  var body = header.nextElementSibling;
+  var toggle = header.querySelector('.toggle');
+  body.classList.toggle('collapsed');
+  toggle.classList.toggle('collapsed');
+}
+
+function getRadio(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : null;
+}
+function getPatientInfo() {
+  var mbsVal = document.getElementById('ptMBS').value;
+  if (mbsVal === 'other') mbsVal = document.getElementById('ptMBSOther').value.trim() || '(Other)';
+  return {
+    name: document.getElementById('ptName').value.trim() || '(Not provided)',
+    age: document.getElementById('ptAge').value.trim() || '(Not provided)',
+    date: document.getElementById('ptDate').value || '(Not provided)',
+    gender: document.getElementById('ptGender').value || '(Not provided)',
+    state: document.getElementById('ptState').value || '(Not provided)',
+    mbs: mbsVal || '(Not provided)',
+    assessor: document.getElementById('ptAssessor').value.trim() || '(Not provided)',
+    referrer: document.getElementById('ptReferrer').value.trim() || '(Not provided)',
+    ageNum: parseInt(document.getElementById('ptAge').value) || 18
+  };
+}
+
+function copyText(id, evt) {
+  var text = document.getElementById(id).textContent;
+  var btn = evt ? evt.target : document.activeElement;
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+    }).catch(function() { fallbackCopy(text, btn); });
+  } else { fallbackCopy(text, btn); }
+}
+function fallbackCopy(text, btn) {
+  var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); btn.textContent = 'Copied!'; } catch(e) { btn.textContent = 'Copy failed'; }
+  document.body.removeChild(ta); setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+}
+
+
+// ==================== DIVA-5 CALCULATION ====================
+function countSymptoms(symptoms, prefix) {
+  var adultCount = 0, childCount = 0, details = [];
+  symptoms.forEach(function(s) {
+    var aV = getRadio(prefix + '_' + s.id + '_aVerdict');
+    var cV = getRadio(prefix + '_' + s.id + '_cVerdict');
+    var aYes = aV === 'yes', cYes = cV === 'yes';
+    if (aYes) adultCount++;
+    if (cYes) childCount++;
+    var aChecked = [], cChecked = [];
+    s.adultEx.forEach(function(ex, i) { if (document.getElementById(prefix + '_' + s.id + '_aEx' + i).checked) aChecked.push(ex); });
+    s.childEx.forEach(function(ex, i) { if (document.getElementById(prefix + '_' + s.id + '_cEx' + i).checked) cChecked.push(ex); });
+    var aOther = document.getElementById(prefix + '_' + s.id + '_aOther').value.trim();
+    var cOther = document.getElementById(prefix + '_' + s.id + '_cOther').value.trim();
+    if (aOther) aChecked.push("Other: " + aOther);
+    if (cOther) cChecked.push("Other: " + cOther);
+    details.push({ code:s.code, q:s.q, adultYes:aYes, childYes:cYes, adultExamples:aChecked, childExamples:cChecked });
+  });
+  return { adultCount:adultCount, childCount:childCount, details:details };
+}
+function getCheckedImpairment(key) {
+  var area = impairmentAreas[key]; var checked = [];
+  area.items.forEach(function(item, i) { if (document.getElementById('imp_' + key + '_' + i).checked) checked.push(item); });
+  return checked;
+}
+
+function isDIVACompleted() {
+  // Check if any DIVA verdicts have been answered
+  var answered = false;
+  attentionSymptoms.forEach(function(s) {
+    if (getRadio('att_' + s.id + '_aVerdict')) answered = true;
+  });
+  hiSymptoms.forEach(function(s) {
+    if (getRadio('hi_' + s.id + '_aVerdict')) answered = true;
+  });
+  return answered;
+}
+
+function isASRSCompleted() {
+  if (document.getElementById('asrs_quick_positive') && document.getElementById('asrs_quick_positive').checked) return true;
+  var answered = false;
+  asrsQuestions.forEach(function(q) {
+    if (getRadio('asrs_' + q.num) !== null) answered = true;
+  });
+  return answered;
+}
+
+function getDIVAData() {
+  var pt = getPatientInfo();
+  var threshold = pt.ageNum >= 17 ? 5 : 6;
+  var att = countSymptoms(attentionSymptoms, 'att');
+  var hi = countSymptoms(hiSymptoms, 'hi');
+  var critA_inattAdult = att.adultCount >= threshold;
+  var critA_hiAdult = hi.adultCount >= threshold;
+  var critA_met = critA_inattAdult || critA_hiAdult;
+  var critB = getRadio('critB'), critB_met = critB === 'yes';
+  var critC_adult = getRadio('critC_adult'), critC_child = getRadio('critC_child');
+  var critC_met = critC_adult === 'yes' || critC_child === 'yes';
+  var critD = getRadio('critD'), critD_met = critD === 'yes';
+  var critE = getRadio('critE'), critE_met = critE === 'no';
+  var allMet = critA_met && critB_met && critC_met && critD_met && critE_met;
+  var presentation = 'No ADHD';
+  if (allMet) {
+    if (critA_inattAdult && critA_hiAdult) presentation = '314.01 (F90.2) Combined Presentation';
+    else if (critA_inattAdult) presentation = '314.00 (F90.0) Predominantly Inattentive Presentation';
+    else if (critA_hiAdult) presentation = '314.01 (F90.1) Predominantly Hyperactive-Impulsive Presentation';
+  }
+  var impDetails = {};
+  Object.keys(impairmentAreas).forEach(function(key) { var c = getCheckedImpairment(key); if (c.length) impDetails[key] = c; });
+  return { pt:pt, threshold:threshold, att:att, hi:hi, critA_inattAdult:critA_inattAdult, critA_hiAdult:critA_hiAdult, critA_met:critA_met, critB:critB, critB_met:critB_met, critC_adult:critC_adult, critC_child:critC_child, critC_met:critC_met, critD:critD, critD_met:critD_met, critE:critE, critE_met:critE_met, allMet:allMet, presentation:presentation, impDetails:impDetails };
+}
+
+function buildDIVAResultsHTML(d) {
+  var h = '<h2>DIVA-5 Results</h2>';
+  h += '<div class="result-row"><span>Age / Threshold</span><span>' + d.pt.age + ' years (>=' + d.threshold + ' per domain)</span></div>';
+  h += '<div class="result-row"><span>Inattention — Adult</span><span>' + d.att.adultCount + '/9 <span class="badge ' + (d.att.adultCount>=d.threshold?'badge-met':'badge-not') + '">' + (d.att.adultCount>=d.threshold?'Met':'Not met') + '</span></span></div>';
+  h += '<div class="result-row"><span>Inattention — Childhood</span><span>' + d.att.childCount + '/9 <span class="badge ' + (d.att.childCount>=6?'badge-met':'badge-not') + '">' + (d.att.childCount>=6?'Met':'Not met') + '</span></span></div>';
+  h += '<div class="result-row"><span>H/I — Adult</span><span>' + d.hi.adultCount + '/9 <span class="badge ' + (d.hi.adultCount>=d.threshold?'badge-met':'badge-not') + '">' + (d.hi.adultCount>=d.threshold?'Met':'Not met') + '</span></span></div>';
+  h += '<div class="result-row"><span>H/I — Childhood</span><span>' + d.hi.childCount + '/9 <span class="badge ' + (d.hi.childCount>=6?'badge-met':'badge-not') + '">' + (d.hi.childCount>=6?'Met':'Not met') + '</span></span></div>';
+  h += '<div class="diagnosis-box ' + (d.allMet?'diagnosis-met':'diagnosis-not') + '"><h3>' + (d.allMet?'ADHD Criteria Met':'ADHD Criteria Not Met') + '</h3><p>' + (d.allMet?'Presentation: '+d.presentation:'One or more DSM-5 criteria not satisfied.') + '</p></div>';
+  return h;
+}
+
+function buildDIVAReportText(d) {
+  var r = '';
+  r += 'DIVA-5 — DIAGNOSTIC INTERVIEW FOR ADHD IN ADULTS\n';
+  r += 'Based on DSM-5 Criteria (Kooij, Francken & Bron, 2019)\n\n';
+  r += 'Patient: ' + d.pt.name + '\nAge: ' + d.pt.age + '\nGender: ' + d.pt.gender + '\nDate: ' + d.pt.date + '\nClinician: ' + d.pt.assessor + '\nThreshold: >=' + d.threshold + ' symptoms per domain\n\n';
+  r += 'PART 1: ATTENTION DEFICIT SYMPTOMS\n';
+  d.att.details.forEach(function(x) {
+    r += x.code + ': ' + x.q + '\n';
+    r += '  Adult: ' + (x.adultYes?'YES':'NO') + (x.adultExamples.length?' — '+x.adultExamples.join('; '):'') + '\n';
+    r += '  Child: ' + (x.childYes?'YES':'NO') + (x.childExamples.length?' — '+x.childExamples.join('; '):'') + '\n\n';
+  });
+  r += 'INATTENTION TOTAL — Adult: ' + d.att.adultCount + '/9 | Childhood: ' + d.att.childCount + '/9\n\n';
+  r += 'PART 2: HYPERACTIVITY-IMPULSIVITY SYMPTOMS\n';
+  d.hi.details.forEach(function(x) {
+    r += x.code + ': ' + x.q + '\n';
+    r += '  Adult: ' + (x.adultYes?'YES':'NO') + (x.adultExamples.length?' — '+x.adultExamples.join('; '):'') + '\n';
+    r += '  Child: ' + (x.childYes?'YES':'NO') + (x.childExamples.length?' — '+x.childExamples.join('; '):'') + '\n\n';
+  });
+  r += 'H/I TOTAL — Adult: ' + d.hi.adultCount + '/9 | Childhood: ' + d.hi.childCount + '/9\n\n';
+  r += 'CRITERIA B-E\n';
+  var critB_age = document.getElementById('critB_age').value;
+  r += 'Criterion B (Onset < age 12): ' + (d.critB_met?'MET':'NOT MET') + (!d.critB_met&&critB_age?' (onset at age '+critB_age+')':'') + '\n';
+  r += 'Criterion C (>=2 settings): Adult ' + (d.critC_adult||'N/A') + ' | Child ' + (d.critC_child||'N/A') + ' — ' + (d.critC_met?'MET':'NOT MET') + '\n';
+  r += 'Criterion D (Clinical significance): ' + (d.critD_met?'MET':'NOT MET') + '\n';
+  var critE_spec = document.getElementById('critE_specify').value.trim();
+  r += 'Criterion E (Not better explained): ' + (d.critE_met?'MET':'NOT MET') + (!d.critE_met&&critE_spec?' — '+critE_spec:'') + '\n\n';
+  r += 'DIAGNOSIS: ' + (d.allMet ? d.presentation : 'ADHD criteria NOT met') + '\n';
+  return r;
+}
+
+function calculateDIVA() {
+  var d = getDIVAData();
+  document.getElementById('divaResultsSummary').innerHTML = buildDIVAResultsHTML(d);
+  document.getElementById('divaReportOutput').textContent = buildDIVAReportText(d);
+  document.getElementById('divaResults').style.display = 'block';
+  document.getElementById('divaResults').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ==================== ASRS CALCULATION ====================
+function getASRSData() {
+  if (document.getElementById('asrs_quick_positive') && document.getElementById('asrs_quick_positive').checked) {
+    return { quickPositive: true, partAShaded: 0, inattTotal: 0, hiTotal: 0, totalRaw: 0, details: [], screenPositive: true, allAnswered: false };
+  }
+  var partAShaded = 0, inattTotal = 0, hiTotal = 0, totalRaw = 0;
+  var details = []; var allAnswered = true;
+  asrsQuestions.forEach(function(q) {
+    var v = getRadio('asrs_' + q.num);
+    var val = v !== null ? parseInt(v) : null;
+    if (val === null) allAnswered = false;
+    var isShaded = val !== null && q.shade.includes(val);
+    if (q.part === 'A' && isShaded) partAShaded++;
+    if (val !== null) { totalRaw += val; if (q.sub === 'Inatt') inattTotal += val; else hiTotal += val; }
+    details.push({ num:q.num, part:q.part, sub:q.sub, q:q.q, value:val, label:val!==null?asrsLabels[val]:'(not answered)', isShaded:isShaded });
+  });
+  var screenPositive = partAShaded >= 4;
+  return { quickPositive: false, partAShaded:partAShaded, inattTotal:inattTotal, hiTotal:hiTotal, totalRaw:totalRaw, details:details, screenPositive:screenPositive, allAnswered:allAnswered };
+}
+
+function buildASRSResultsHTML(a) {
+  if (a.quickPositive) {
+    return '<h2>ASRS v1.1 Results</h2><div class="diagnosis-box diagnosis-met"><h3>ASRS Screen Positive</h3><p>Clinician marked as screen positive (quick assessment).</p></div>';
+  }
+  var h = '<h2>ASRS v1.1 Results</h2>';
+  h += '<div class="result-row"><span>Part A Screener</span><span>' + a.partAShaded + '/6 <span class="badge ' + (a.screenPositive?'badge-met':'badge-not') + '">' + (a.screenPositive?'Screen Positive':'Screen Negative') + '</span></span></div>';
+  h += '<div class="result-row"><span>Inattention (raw)</span><span>' + a.inattTotal + '/36</span></div>';
+  h += '<div class="result-row"><span>H/I (raw)</span><span>' + a.hiTotal + '/36</span></div>';
+  h += '<div class="result-row"><span>Total Raw</span><span>' + a.totalRaw + '/72</span></div>';
+  return h;
+}
+
+function buildASRSReportText(a) {
+  if (a.quickPositive) { return 'ASRS v1.1: ASRS screen positive\n'; }
+  var pt = getPatientInfo();
+  var r = 'ASRS v1.1 — ADULT ADHD SELF-REPORT SCALE\n\n';
+  r += 'Patient: ' + pt.name + '\nDate: ' + pt.date + '\n\n';
+  a.details.filter(function(d){return d.part==='A';}).forEach(function(d) {
+    r += 'Q' + d.num + '. ' + d.q + '\n  Response: ' + d.label + (d.isShaded?' [SHADED]':'') + '\n\n';
+  });
+  r += 'Part A shaded: ' + a.partAShaded + '/6 — ' + (a.screenPositive?'SCREEN POSITIVE':'Screen negative') + '\n';
+  r += 'Inattention (raw): ' + a.inattTotal + '/36\n';
+  r += 'H/I (raw): ' + a.hiTotal + '/36\n';
+  r += 'Total (raw): ' + a.totalRaw + '/72\n';
+  return r;
+}
+
+function calculateASRS() {
+  var a = getASRSData();
+  document.getElementById('asrsResultsSummary').innerHTML = buildASRSResultsHTML(a);
+  document.getElementById('asrsReportOutput').textContent = buildASRSReportText(a);
+  document.getElementById('asrsResults').style.display = 'block';
+  document.getElementById('asrsResults').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ==================== BUILD STRUCTURED SECTIONS ====================
+function buildDevScreen() {
+  var h = '<p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:16px;">Screen for developmental risk factors, adverse childhood experiences, and family history relevant to ADHD aetiology. Check all that apply.</p>';
+  Object.keys(devScreenData).forEach(function(key) {
+    var area = devScreenData[key];
+    h += '<div class="dev-area"><h4>' + area.title + '</h4>';
+    h += '<div class="dev-quick-btns">';
+    h += '<button class="dev-quick-btn" onclick="devQuickMark(\'' + key + '\', \'none\', this)">No Reported Issues</button>';
+    h += '<button class="dev-quick-btn" onclick="devQuickMark(\'' + key + '\', \'unknown\', this)">Unknown</button>';
+    h += '</div>';
+    h += '<input type="hidden" id="dev_' + key + '_quickstatus" value="">';
+    h += '<div class="dev-grid" id="dev_' + key + '_grid">';
+    area.items.forEach(function(item, i) {
+      h += '<div class="dev-item"><input type="checkbox" id="dev_' + key + '_' + i + '" onchange="devItemChanged(\'' + key + '\')"><label for="dev_' + key + '_' + i + '">' + item + '</label></div>';
+    });
+    h += '</div>';
+    h += '<input type="text" class="other-input" id="dev_' + key + '_other" placeholder="Other (specify)">';
+    h += '</div>';
+  });
+  h += '<div style="margin-top:12px;"><label style="font-weight:600;font-size:0.9rem;">Developmental notes</label><textarea id="devNotes" rows="3" style="width:100%;margin-top:4px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Additional developmental history notes..."></textarea></div>';
+  document.getElementById('devScreenBody').innerHTML = h;
+}
+
+function devQuickMark(key, status, btn) {
+  var statusEl = document.getElementById('dev_' + key + '_quickstatus');
+  var grid = document.getElementById('dev_' + key + '_grid');
+  var allBtns = btn.parentElement.querySelectorAll('.dev-quick-btn');
+  if (statusEl.value === status) {
+    statusEl.value = '';
+    btn.classList.remove('active');
+    grid.style.opacity = '1';
+    grid.style.pointerEvents = '';
+    return;
+  }
+  statusEl.value = status;
+  allBtns.forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var area = devScreenData[key];
+  area.items.forEach(function(item, i) { document.getElementById('dev_' + key + '_' + i).checked = false; });
+  grid.style.opacity = '0.4';
+  grid.style.pointerEvents = 'none';
+}
+
+function devItemChanged(key) {
+  var statusEl = document.getElementById('dev_' + key + '_quickstatus');
+  if (statusEl.value) {
+    statusEl.value = '';
+    var btns = statusEl.parentElement.querySelectorAll('.dev-quick-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    var grid = document.getElementById('dev_' + key + '_grid');
+    grid.style.opacity = '1';
+    grid.style.pointerEvents = '';
+  }
+}
+
+// FIX #4: DSM checklist with readable colors (dark text on light background)
+function buildDSMChecklist() {
+  var h = '<p style="font-size:0.95rem;color:#1e3a5f;font-weight:700;margin-bottom:8px;">DSM-5-TR Diagnostic Criteria for Attention-Deficit/Hyperactivity Disorder</p>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-700);margin-bottom:12px;">Optional standalone checklist. If DIVA-5 is completed above, this section is supplementary.</p>';
+  h += '<button class="btn" style="margin-bottom:16px;padding:8px 16px;font-size:0.85rem;background:#1e40af;color:white;" onclick="autofillDSMfromDIVA()">Auto-fill from DIVA-5 Results</button>';
+  // Inattention - readable dark text on light blue bg
+  h += '<div class="dev-area" style="background:#f0f7ff;padding:12px;border-radius:8px;border:2px solid #bfdbfe;">';
+  h += '<h4 style="color:#1e3a5f;border-bottom-color:#3b82f6;font-size:0.95rem;">' + dsmCriteria.inatt.title + '</h4><div class="dev-grid">';
+  dsmCriteria.inatt.items.forEach(function(item, i) {
+    h += '<div class="dev-item"><input type="checkbox" id="dsm_inatt_' + i + '"><label for="dsm_inatt_' + i + '" style="color:#1f2937;">' + item + '</label></div>';
+  });
+  h += '</div></div>';
+  // H/I
+  h += '<div class="dev-area" style="background:#f0f7ff;padding:12px;border-radius:8px;border:2px solid #bfdbfe;margin-top:12px;">';
+  h += '<h4 style="color:#1e3a5f;border-bottom-color:#3b82f6;font-size:0.95rem;">' + dsmCriteria.hi.title + '</h4><div class="dev-grid">';
+  dsmCriteria.hi.items.forEach(function(item, i) {
+    h += '<div class="dev-item"><input type="checkbox" id="dsm_hi_' + i + '"><label for="dsm_hi_' + i + '" style="color:#1f2937;">' + item + '</label></div>';
+  });
+  h += '</div></div>';
+  h += '<div class="criteria-block" style="margin-top:12px;"><h3>Criterion B</h3><div class="radio-row"><label><input type="radio" name="dsm_B" value="yes"> Several symptoms present before age 12</label><label><input type="radio" name="dsm_B" value="no"> No</label></div></div>';
+  h += '<div class="criteria-block"><h3>Criterion C</h3><div class="radio-row"><label><input type="radio" name="dsm_C" value="yes"> Symptoms present in >=2 settings</label><label><input type="radio" name="dsm_C" value="no"> No</label></div></div>';
+  h += '<div class="criteria-block"><h3>Criterion D</h3><div class="radio-row"><label><input type="radio" name="dsm_D" value="yes"> Clear evidence symptoms reduce quality of functioning</label><label><input type="radio" name="dsm_D" value="no"> No</label></div></div>';
+  h += '<div class="criteria-block"><h3>Criterion E</h3><div class="radio-row"><label><input type="radio" name="dsm_E" value="no"> Symptoms NOT better explained by another disorder</label><label><input type="radio" name="dsm_E" value="yes"> Better explained by another disorder</label></div></div>';
+  h += '<div class="criteria-block"><h3>Severity</h3><div class="radio-row"><label><input type="radio" name="dsm_severity" value="mild"> Mild</label><label><input type="radio" name="dsm_severity" value="moderate"> Moderate</label><label><input type="radio" name="dsm_severity" value="severe"> Severe</label></div></div>';
+  document.getElementById('dsmChecklistBody').innerHTML = h;
+}
+
+function autofillDSMfromDIVA() {
+  attentionSymptoms.forEach(function(s, i) {
+    var v = getRadio('att_' + s.id + '_aVerdict');
+    document.getElementById('dsm_inatt_' + i).checked = (v === 'yes');
+  });
+  hiSymptoms.forEach(function(s, i) {
+    var v = getRadio('hi_' + s.id + '_aVerdict');
+    document.getElementById('dsm_hi_' + i).checked = (v === 'yes');
+  });
+  var critB = getRadio('critB');
+  if (critB) { var el = document.querySelector('input[name="dsm_B"][value="' + critB + '"]'); if (el) el.checked = true; }
+  var critC = getRadio('critC_adult');
+  if (critC) { var el = document.querySelector('input[name="dsm_C"][value="' + critC + '"]'); if (el) el.checked = true; }
+  var critD = getRadio('critD');
+  if (critD) { var el = document.querySelector('input[name="dsm_D"][value="' + critD + '"]'); if (el) el.checked = true; }
+  var critE = getRadio('critE');
+  if (critE) { var el = document.querySelector('input[name="dsm_E"][value="' + critE + '"]'); if (el) el.checked = true; }
+}
+
+function buildComorbidities() {
+  var h = '<p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:16px;">Rate each condition. If "Current" or "Major Symptoms" is selected, a text box will appear for details.</p>';
+  comorbidities.forEach(function(cat, ci) {
+    h += '<div class="dev-area"><h4>' + cat.cat + '</h4>';
+    cat.items.forEach(function(item, ii) {
+      var id = 'comorb_' + ci + '_' + ii;
+      h += '<div style="border-bottom:1px solid var(--gray-100);padding:6px 0;">';
+      h += '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;">';
+      h += '<span style="min-width:240px;font-size:0.88rem;font-weight:500;">' + item + '</span>';
+      h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="radio" name="' + id + '" value="nil" onchange="toggleComorbDetail(\'' + id + '\')" checked> Nil</label>';
+      h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="radio" name="' + id + '" value="past" onchange="toggleComorbDetail(\'' + id + '\')"> Past</label>';
+      h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="radio" name="' + id + '" value="current" onchange="toggleComorbDetail(\'' + id + '\')"> Current</label>';
+      h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="checkbox" id="' + id + '_major" onchange="toggleComorbDetail(\'' + id + '\')"> Major Symptoms</label>';
+      h += '</div>';
+      h += '<div class="comorb-detail" id="' + id + '_detail"><textarea rows="2" id="' + id + '_notes" placeholder="Details for ' + item + '..."></textarea></div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+  h += '<div class="dev-area"><h4>Family Psychiatric History</h4>';
+  h += '<textarea id="familyHxNotes" rows="4" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Detail family psychiatric history here..."></textarea>';
+  h += '</div>';
+  h += '<div class="dev-area"><h4>Substance Use History</h4>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:8px;">Rate each substance. Provide details if past or current use.</p>';
+  substanceList.forEach(function(sub, i) {
+    var id = 'sub_' + i;
+    h += '<div style="border-bottom:1px solid var(--gray-100);padding:6px 0;">';
+    h += '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;">';
+    h += '<span style="min-width:240px;font-size:0.88rem;font-weight:500;">' + sub + '</span>';
+    h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="radio" name="' + id + '" value="nil" onchange="toggleComorbDetail(\'' + id + '\');updateSubstanceAlerts()" checked> Never</label>';
+    h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="radio" name="' + id + '" value="past" onchange="toggleComorbDetail(\'' + id + '\');updateSubstanceAlerts()"> Past</label>';
+    h += '<label style="font-size:0.82rem;cursor:pointer;"><input type="radio" name="' + id + '" value="current" onchange="toggleComorbDetail(\'' + id + '\');updateSubstanceAlerts()"> Current</label>';
+    h += '</div>';
+    h += '<div class="comorb-detail" id="' + id + '_detail"><textarea rows="2" id="' + id + '_notes" placeholder="Frequency, amount, duration, impact..."></textarea></div>';
+    h += '</div>';
+  });
+  h += '<div id="substanceAlertBox" class="substance-alert"></div>';
+  h += '</div>';
+  document.getElementById('comorbBody').innerHTML = h;
+}
+
+function toggleComorbDetail(id) {
+  var val = getRadio(id);
+  var majorEl = document.getElementById(id + '_major');
+  var major = majorEl ? majorEl.checked : false;
+  var detailEl = document.getElementById(id + '_detail');
+  if (detailEl) {
+    if (val === 'current' || major) { detailEl.classList.add('show'); }
+    else { detailEl.classList.remove('show'); }
+  }
+}
+
+function updateSubstanceAlerts() {
+  var alerts = [];
+  substanceList.forEach(function(sub, i) {
+    var val = getRadio('sub_' + i);
+    if (val === 'current') {
+      var cat = substanceAlerts[sub] || 'none';
+      if (cat === 'tobacco') {
+        alerts.push({type:'caution', msg:'Tobacco/Nicotine (current): Educate patient on increased cardiovascular risks of combination with stimulant medication.'});
+      } else if (cat === 'illicit') {
+        alerts.push({type:'warn', msg: sub + ' (current use): Avoid stimulant prescribing or seek second opinion before initiating treatment.'});
+      }
+    }
+  });
+  var box = document.getElementById('substanceAlertBox');
+  if (alerts.length === 0) { box.style.display = 'none'; return; }
+  var hasWarn = alerts.some(function(a) { return a.type === 'warn'; });
+  box.className = 'substance-alert ' + (hasWarn ? 'alert-warn' : 'alert-caution');
+  box.style.display = 'block';
+  box.innerHTML = alerts.map(function(a) { return '<div style="margin-bottom:4px;">' + (a.type==='warn'?'&#9888; ':'&#9432; ') + a.msg + '</div>'; }).join('');
+}
+
+
+// FIX #9: Medical screen - Cardiac at top, Nil known per area, Nil suspicion malingering
+function buildMedScreen() {
+  var h = '';
+  h += '<p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:12px;">Screen for medical conditions relevant to ADHD and stimulant prescribing safety.</p>';
+
+  // CARDIAC SCREENING AT TOP (FIX #9)
+  h += '<div class="dev-area" style="background:#fef3c7;padding:12px;border-radius:8px;border:2px solid #f59e0b;"><h4 style="color:#92400e;border-bottom-color:#f59e0b;">Cardiac Symptom Screening</h4>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-700);margin-bottom:10px;">Screen for personal and family cardiac symptoms relevant to stimulant prescribing.</p>';
+  h += '<button class="nil-known-btn" id="cardiac_nil_btn" onclick="toggleNilKnown(\'cardiac\', this)">Nil known cardiac issues</button>';
+  h += '<div id="cardiac_grid_wrap">';
+  h += '<div style="margin-bottom:10px;"><strong style="font-size:0.88rem;">Personal Cardiac Symptoms</strong><div class="dev-grid" style="margin-top:4px;">';
+  var personalCardiac = ["Palpitations","Chest pain on exertion","Syncope / fainting","Unexplained shortness of breath","Exercise intolerance","Dizziness on standing"];
+  personalCardiac.forEach(function(item, i) {
+    h += '<div class="dev-item"><input type="checkbox" id="cardiac_personal_' + i + '"><label for="cardiac_personal_' + i + '">' + item + '</label></div>';
+  });
+  h += '</div></div>';
+  h += '<div><strong style="font-size:0.88rem;">Family Cardiac History</strong><div class="dev-grid" style="margin-top:4px;">';
+  var familyCardiac = ["Sudden cardiac death in family member <40yrs","Cardiomyopathy in family","Long QT syndrome or channelopathy in family","Early-onset coronary artery disease (<55yrs male, <65yrs female)","Unexplained fainting/seizures in family","Known inherited cardiac condition"];
+  familyCardiac.forEach(function(item, i) {
+    h += '<div class="dev-item"><input type="checkbox" id="cardiac_family_' + i + '"><label for="cardiac_family_' + i + '">' + item + '</label></div>';
+  });
+  h += '</div></div></div></div>';
+
+  // Medical conditions with nil known per area
+  medicalConditions.forEach(function(cat) {
+    var catId = cat.cat.replace(/[^a-zA-Z]/g,'');
+    h += '<div class="dev-area"><h4>' + cat.cat + '</h4>';
+    h += '<button class="nil-known-btn" id="med_' + catId + '_nil_btn" onclick="toggleNilKnown(\'med_' + catId + '\', this)">Nil known issues</button>';
+    h += '<div class="dev-grid" id="med_' + catId + '_grid">';
+    cat.items.forEach(function(item, i) {
+      h += '<div class="dev-item"><input type="checkbox" id="med_' + catId + '_' + i + '"><label for="med_' + catId + '_' + i + '">' + item + '</label></div>';
+    });
+    h += '</div></div>';
+  });
+
+  h += '<div style="margin-top:8px"><label style="font-weight:600;font-size:0.9rem;">Other medical conditions</label><textarea id="medOtherNotes" rows="2" style="width:100%;margin-top:4px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Other conditions..."></textarea></div>';
+  h += '<div class="dev-area" style="margin-top:16px;"><h4>Current Medications</h4>';
+  h += '<textarea id="medsList" rows="4" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="List all current medications with doses..."></textarea></div>';
+
+  // Investigations
+  h += '<div class="dev-area" style="margin-top:16px;"><h4>Investigations &amp; Safety Checks</h4>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:10px;">Mark status of each investigation. If a test is not clinically necessary, check "Not Necessary" — it will not appear as outstanding in the report.</p>';
+  var investigations = [
+    {id:"inv_ecg", label:"ECG"},{id:"inv_bp", label:"Blood Pressure (sitting)"},{id:"inv_pulse", label:"Resting Pulse / Heart Rate"},
+    {id:"inv_uds", label:"Urine Drug Screen (UDS)"},{id:"inv_bloods", label:"Bloods (FBC, UEC, LFTs, TFTs, Iron studies, BSL, Lipids)"},{id:"inv_weight", label:"Weight / BMI"}
+  ];
+  investigations.forEach(function(inv) {
+    h += '<div class="med-check-row">';
+    h += '<span style="font-weight:500;">' + inv.label + '</span>';
+    h += '<select id="' + inv.id + '_status"><option value="not_done">Not done</option><option value="normal">Normal</option><option value="abnormal">Abnormal</option><option value="na">N/A</option></select>';
+    h += '<select id="' + inv.id + '_when"><option value="">When?</option><option value="today">Today</option><option value="1w">Past week</option><option value="1m">Past month</option><option value="3m">Past 3 months</option><option value="6m">Past 6 months</option><option value="12m">Past 12 months</option><option value="older">Older</option></select>';
+    h += '<label style="font-size:0.82rem;display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap;"><input type="checkbox" id="' + inv.id + '_notnecessary"> Not Necessary</label>';
+    h += '<input type="text" id="' + inv.id + '_comment" placeholder="Result / Comment" style="padding:4px 8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.85rem;">';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // Malingering red flags with "Nil suspicion" button
+  h += '<div class="dev-area" style="margin-top:16px;background:#fef2f2;padding:12px;border-radius:8px;border:2px solid #fca5a5;"><h4 style="color:#991b1b;border-bottom-color:#fca5a5;">Malingering / Red Flags</h4>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-700);margin-bottom:8px;">Check any observed red flags. These will be noted in the report for clinical consideration.</p>';
+  h += '<button class="nil-known-btn" id="malingering_nil_btn" onclick="toggleNilKnown(\'malingering\', this)">Nil suspicion of malingering</button>';
+  h += '<div id="malingering_grid">';
+  malingeringFlags.forEach(function(flag, i) {
+    h += '<div class="red-flag-item" id="rfwrap_' + i + '"><input type="checkbox" id="redflag_' + i + '" onchange="document.getElementById(\'rfwrap_'+i+'\').classList.toggle(\'checked-flag\',this.checked);clearNilMalingering()"><label for="redflag_' + i + '">' + flag + '</label></div>';
+  });
+  h += '</div>';
+  h += '<input type="text" class="other-input" id="redflag_other" placeholder="Other red flags (specify)">';
+  h += '</div>';
+
+  // SafeScript
+  h += '<div class="dev-area" style="margin-top:16px;"><h4>Prescription Monitoring</h4>';
+  h += '<div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;">';
+  h += '<label style="font-size:0.9rem;cursor:pointer;"><input type="checkbox" id="safescript_checked"> SafeScript / RTPM checked</label>';
+  h += '<label style="font-size:0.9rem;cursor:pointer;"><input type="checkbox" id="safescript_clear"> No concerning findings</label>';
+  h += '</div>';
+  h += '<textarea id="safescriptNotes" rows="2" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="SafeScript findings or notes..."></textarea>';
+  h += '</div>';
+  document.getElementById('medScreenBody').innerHTML = h;
+}
+
+// FIX #9: Nil known issues toggle for medical areas
+function toggleNilKnown(prefix, btn) {
+  var gridId = prefix + '_grid_wrap';
+  var grid = document.getElementById(gridId);
+  if (!grid) {
+    gridId = prefix + '_grid';
+    grid = document.getElementById(gridId);
+  }
+  if (!grid) return;
+  if (btn.classList.contains('active')) {
+    btn.classList.remove('active');
+    grid.style.opacity = '1';
+    grid.style.pointerEvents = '';
+  } else {
+    btn.classList.add('active');
+    grid.style.opacity = '0.3';
+    grid.style.pointerEvents = 'none';
+  }
+}
+
+function clearNilMalingering() {
+  var btn = document.getElementById('malingering_nil_btn');
+  if (btn && btn.classList.contains('active')) {
+    btn.classList.remove('active');
+    var grid = document.getElementById('malingering_grid');
+    if (grid) { grid.style.opacity = '1'; grid.style.pointerEvents = ''; }
+  }
+}
+
+// ==================== COLLATERAL ====================
+var collateralCount = 0;
+var collateralRelationships = ["Mother","Father","Stepmother","Stepfather","Sister","Brother","Spouse","Partner","Husband","Wife","Son","Daughter","Grandmother","Grandfather","Aunt","Uncle","Cousin","Friend","Colleague","Teacher","Employer","School Reports","GP Records","Previous Psychiatric Report","Psychological Report","Other"];
+
+function buildCollateral() {
+  var h = '<p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:12px;">Add collateral sources and rate the level of support for childhood ADHD symptoms.</p>';
+  h += '<div id="collateralCards"></div>';
+  h += '<button class="btn" style="background:var(--part5);color:white;margin-top:8px;" onclick="addCollateralSource()">+ Add Collateral Source</button>';
+  h += '<div style="margin-top:12px;"><label style="font-weight:600;font-size:0.9rem;">Collateral Notes</label><textarea id="collateralNotes" rows="3" style="width:100%;margin-top:4px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Details about collateral sources, who provided information, quality of information..."></textarea></div>';
+  document.getElementById('collateralBody').innerHTML = h;
+  addCollateralSource();
+}
+
+function addCollateralSource() {
+  collateralCount++;
+  var n = collateralCount;
+  var card = document.createElement('div');
+  card.className = 'collateral-card';
+  card.id = 'colcard_' + n;
+  var h = '<div class="card-header"><strong style="font-size:0.9rem;">Source #' + n + '</strong>';
+  if (n > 1) h += '<button class="btn" style="background:#ef4444;color:white;font-size:0.78rem;padding:4px 10px;" onclick="removeCollateral(' + n + ')">Remove</button>';
+  h += '</div>';
+  h += '<div class="collateral-row">';
+  h += '<select id="col_' + n + '_rel" style="width:100%;">';
+  h += '<option value="">Relationship</option>';
+  collateralRelationships.forEach(function(r) { h += '<option value="' + r + '">' + r + '</option>'; });
+  h += '</select>';
+  h += '<input type="text" id="col_' + n + '_name" placeholder="Name (optional)" style="width:100%;">';
+  h += '<select id="col_' + n + '_support" style="width:100%;"><option value="N/A">N/A</option><option value="not_obtained">Not obtained</option><option value="0">0 — None/Little support</option><option value="1">1 — Some support</option><option value="2">2 — Clear support</option></select>';
+  h += '<input type="text" id="col_' + n + '_notes" placeholder="Notes" style="width:100%;">';
+  h += '</div>';
+  card.innerHTML = h;
+  document.getElementById('collateralCards').appendChild(card);
+}
+
+function removeCollateral(n) {
+  var card = document.getElementById('colcard_' + n);
+  if (card) card.remove();
+}
+
+// ==================== MSE ====================
+function buildMSE() {
+  var h = '<p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:12px;">Check all findings observed during the clinical interview.</p>';
+  Object.keys(mseData).forEach(function(key) {
+    var group = mseData[key];
+    h += '<div class="mse-group"><h4>' + group.title + '</h4><div class="mse-grid">';
+    group.items.forEach(function(item, i) {
+      var isEscalate = item.includes('ESCALATE');
+      // FIX #8: Non-warning items (No suicidal ideation etc.) should NOT be styled as warnings
+      var isNonWarning = mseNonWarningItems.includes(item);
+      var style = isEscalate ? 'color:var(--accent);font-weight:600;' : (isNonWarning ? 'color:#059669;font-weight:500;' : '');
+      h += '<div class="mse-item"><input type="checkbox" id="mse_' + key + '_' + i + '"><label for="mse_' + key + '_' + i + '" style="' + style + '">' + item + '</label></div>';
+    });
+    h += '</div>';
+    h += '<input type="text" class="other-input" id="mse_' + key + '_other" placeholder="Other observations...">';
+    h += '</div>';
+  });
+  h += '<div style="margin-top:12px"><label style="font-weight:600;font-size:0.9rem;">MSE Summary Notes</label><textarea id="mseNotes" rows="3" style="width:100%;margin-top:4px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Overall MSE formulation notes..."></textarea></div>';
+  document.getElementById('mseBody').innerHTML = h;
+}
+
+
+// ==================== OUTCOME (FIX #6, #7, #10) ====================
+function buildOutcome() {
+  var h = '';
+  h += '<div class="dev-area"><h4>Assessment Summary (Auto-Generated)</h4>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:8px;">Click the button below to pull results from all sections above.</p>';
+  h += '<button class="btn" style="background:#1e40af;color:#fff;margin-bottom:12px;padding:8px 16px;font-size:0.9rem;" onclick="refreshOutcomeSummary()">Refresh Summary</button>';
+  h += '<div id="outcomeSummaryBox" style="font-size:0.9rem;"></div>';
+  h += '</div>';
+  h += '<div class="dev-area"><h4>Clinician Diagnosis</h4>';
+  h += '<div class="radio-row" style="flex-wrap:wrap;gap:8px 16px;">';
+  h += '<label><input type="radio" name="finalDx" value="none"> No ADHD</label>';
+  h += '<label><input type="radio" name="finalDx" value="combined"> 314.01 (F90.2) Combined Presentation</label>';
+  h += '<label><input type="radio" name="finalDx" value="inattentive"> 314.00 (F90.0) Predominantly Inattentive</label>';
+  h += '<label><input type="radio" name="finalDx" value="hyperactive"> 314.01 (F90.1) Predominantly Hyperactive-Impulsive</label>';
+  h += '<label><input type="radio" name="finalDx" value="partial"> In Partial Remission</label>';
+  h += '<label><input type="radio" name="finalDx" value="provisional"> Provisional Diagnosis</label>';
+  h += '<label><input type="radio" name="finalDx" value="deferred"> Deferred</label>';
+  h += '</div>';
+  h += '<div style="margin-top:8px;"><label style="font-size:0.88rem;">If provisional/deferred, specify:</label><input type="text" id="deferredReason" style="width:100%;margin-top:4px;padding:6px 10px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="e.g. Awaiting collateral, need school reports..."></div>';
+  h += '</div>';
+  h += '<div class="dev-area"><h4>Severity</h4>';
+  h += '<div class="radio-row"><label><input type="radio" name="finalSeverity" value="mild"> Mild</label><label><input type="radio" name="finalSeverity" value="moderate"> Moderate</label><label><input type="radio" name="finalSeverity" value="severe"> Severe</label></div></div>';
+  h += '<div class="dev-area"><h4>Comorbid Diagnoses (Clinician Summary)</h4>';
+  h += '<textarea id="comorbidDxSummary" rows="3" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="List confirmed comorbid diagnoses..."></textarea></div>';
+
+  // FIX #10: Treatment Suitability
+  h += '<div class="dev-area"><h4>Treatment Recommendation</h4>';
+  h += '<p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:8px;">Select the most appropriate recommendation.</p>';
+  var treatOptions = [
+    "Suitable for stimulant treatment",
+    "Diagnosis made, suitable for stimulant treatment, additional information requested but not required to start treatment",
+    "More information required prior to finalise provisional diagnosis",
+    "Substantial information missing for diagnosis",
+    "Diagnosis made, however medical tests are needed prior to commencing treatment",
+    "Safety concerns limit use of stimulant medication, try alternatives",
+    "Not suitable for stimulant treatment at this time",
+    "Referral to specialist required before treatment",
+    "Other"
+  ];
+  treatOptions.forEach(function(opt, i) {
+    h += '<div class="treatment-option"><label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;"><input type="radio" name="treatmentRec" value="' + opt + '">' + opt + '</label></div>';
+  });
+  h += '<input type="text" class="other-input" id="treatmentRecOther" placeholder="Other recommendation (specify)">';
+  h += '</div>';
+
+  h += '<div class="dev-area"><h4>Safe Prescribing Checklist</h4>';
+  h += '<div id="safetyChecklist"></div></div>';
+  h += '<div class="dev-area"><h4>Management Plan</h4>';
+  h += '<textarea id="planNotes" rows="5" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Management plan including medication, psychoeducation, referrals, follow-up..."></textarea></div>';
+  document.getElementById('outcomeBody').innerHTML = h;
+}
+
+// FIX #6 & #7: Comprehensive refreshed summary
+function refreshOutcomeSummary() {
+  refreshSafetyChecklist();
+
+  // Get DSM-5 checklist data (PRIMARY source for criteria)
+  var dsmInattCount = 0, dsmHICount = 0;
+  dsmCriteria.inatt.items.forEach(function(item, i) {
+    if (_v('dsm_inatt_' + i, 'checked')) dsmInattCount++;
+  });
+  dsmCriteria.hi.items.forEach(function(item, i) {
+    if (_v('dsm_hi_' + i, 'checked')) dsmHICount++;
+  });
+  var pt = getPatientInfo();
+  var dsmThreshold = pt.ageNum >= 17 ? 5 : 6;
+  var dsmInattMet = dsmInattCount >= dsmThreshold;
+  var dsmHIMet = dsmHICount >= dsmThreshold;
+  var dsmB = getRadio('dsm_B');
+  var dsmC = getRadio('dsm_C');
+  var dsmD = getRadio('dsm_D');
+  var dsmE = getRadio('dsm_E');
+  var dsmCritMet = (dsmInattMet || dsmHIMet) && dsmB === 'yes' && dsmC === 'yes' && dsmD === 'yes' && dsmE === 'no';
+
+  // DIVA data
+  var divaCompleted = isDIVACompleted();
+  var d = divaCompleted ? getDIVAData() : null;
+
+  // ASRS data
+  var asrsCompleted = isASRSCompleted();
+  var a = asrsCompleted ? getASRSData() : null;
+
+  // Collateral
+  var colData = getCollateralData();
+  var hasCollateral = colData.length > 0 && colData.some(function(c) { return c.rel; });
+
+  var h = '';
+
+  // DSM-5 Criteria Status
+  h += '<div class="summary-card"><h5>DSM-5-TR Criteria</h5>';
+  if (dsmInattCount === 0 && dsmHICount === 0 && !dsmB && !dsmC && !dsmD && !dsmE) {
+    h += '<p style="color:var(--gray-500);">DSM-5 checklist not completed</p>';
+  } else {
+    h += '<p>Inattention: <strong>' + dsmInattCount + '/9</strong> ' + (dsmInattMet ? '<span class="badge badge-met">Met</span>' : '<span class="badge badge-not">Not met</span>') + ' (threshold: ' + dsmThreshold + ')</p>';
+    h += '<p>Hyperactivity-Impulsivity: <strong>' + dsmHICount + '/9</strong> ' + (dsmHIMet ? '<span class="badge badge-met">Met</span>' : '<span class="badge badge-not">Not met</span>') + '</p>';
+    h += '<p>Criterion B (onset <12): ' + (dsmB === 'yes' ? '<span class="badge badge-met">Met</span>' : dsmB === 'no' ? '<span class="badge badge-not">Not met</span>' : '<span class="badge badge-missing">Not assessed</span>') + '</p>';
+    h += '<p>Criterion C (2+ settings): ' + (dsmC === 'yes' ? '<span class="badge badge-met">Met</span>' : dsmC === 'no' ? '<span class="badge badge-not">Not met</span>' : '<span class="badge badge-missing">Not assessed</span>') + '</p>';
+    h += '<p>Criterion D (clinical significance): ' + (dsmD === 'yes' ? '<span class="badge badge-met">Met</span>' : dsmD === 'no' ? '<span class="badge badge-not">Not met</span>' : '<span class="badge badge-missing">Not assessed</span>') + '</p>';
+    h += '<p>Criterion E (not better explained): ' + (dsmE === 'no' ? '<span class="badge badge-met">Met</span>' : dsmE === 'yes' ? '<span class="badge badge-not">Not met</span>' : '<span class="badge badge-missing">Not assessed</span>') + '</p>';
+    h += '<p style="margin-top:6px;"><strong>Overall: </strong>';
+    if (dsmCritMet) {
+      var pres = '';
+      if (dsmInattMet && dsmHIMet) pres = 'Combined Presentation';
+      else if (dsmInattMet) pres = 'Predominantly Inattentive';
+      else pres = 'Predominantly Hyperactive-Impulsive';
+      h += '<span class="badge badge-met" style="font-size:0.9rem;">CRITERIA MET — ' + pres + '</span>';
+    } else {
+      h += '<span class="badge badge-not" style="font-size:0.9rem;">CRITERIA NOT MET</span>';
+    }
+    h += '</p>';
+  }
+  h += '</div>';
+
+  // Screener Support
+  h += '<div class="summary-card"><h5>Screener Support</h5>';
+  if (divaCompleted) {
+    h += '<p><strong>DIVA-5:</strong> Inatt ' + d.att.adultCount + '/9 adult, ' + d.att.childCount + '/9 child | H/I ' + d.hi.adultCount + '/9 adult, ' + d.hi.childCount + '/9 child';
+    h += ' — ' + (d.allMet ? '<span class="badge badge-met">Criteria met</span>' : '<span class="badge badge-not">Criteria not met</span>') + '</p>';
+  } else {
+    var divaStatus = getRadio('diva_status');
+    if (divaStatus === 'for_patient') {
+      h += '<p><strong>DIVA-5:</strong> <span class="badge badge-missing">For patient to complete</span></p>';
+    } else {
+      h += '<p><strong>DIVA-5:</strong> <span class="badge badge-missing">Not completed</span></p>';
+    }
+  }
+  if (asrsCompleted) {
+    if (a.quickPositive) {
+      h += '<p><strong>ASRS:</strong> <span class="badge badge-met">Screen Positive</span> (quick assessment)</p>';
+    } else {
+      h += '<p><strong>ASRS:</strong> Part A ' + a.partAShaded + '/6 — ' + (a.screenPositive ? '<span class="badge badge-met">Screen Positive</span>' : '<span class="badge badge-not">Screen Negative</span>');
+      h += ' | Inatt ' + a.inattTotal + '/36 | H/I ' + a.hiTotal + '/36 | Total ' + a.totalRaw + '/72</p>';
+    }
+  } else {
+    var asrsStatus = getRadio('asrs_status');
+    if (asrsStatus === 'for_patient') {
+      h += '<p><strong>ASRS:</strong> <span class="badge badge-missing">For patient to complete</span></p>';
+    } else {
+      h += '<p><strong>ASRS:</strong> <span class="badge badge-missing">Not completed</span></p>';
+    }
+  }
+  h += '</div>';
+
+  // Collateral
+  h += '<div class="summary-card"><h5>Collateral Support</h5>';
+  if (hasCollateral) {
+    colData.forEach(function(c) {
+      if (c.rel) {
+        var supportLabel = c.support === '2' ? 'Clear support' : c.support === '1' ? 'Some support' : c.support === '0' ? 'None/Little support' : c.support === 'not_obtained' ? 'Not obtained' : 'N/A';
+        h += '<p>' + c.rel + (c.name ? ' (' + c.name + ')' : '') + ': <strong>' + supportLabel + '</strong>' + (c.notes ? ' — ' + c.notes : '') + '</p>';
+      }
+    });
+  } else {
+    h += '<p><span class="badge badge-missing">No collateral gathered</span></p>';
+  }
+  h += '</div>';
+
+  // Current Comorbidities
+  var currentComorbs = [];
+  comorbidities.forEach(function(cat, ci) {
+    cat.items.forEach(function(item, ii) {
+      var id = 'comorb_' + ci + '_' + ii;
+      var val = getRadio(id);
+      var major = _v(id + '_major','checked');
+      var notes = _vt(id + '_notes');
+      if (val === 'current' || major) {
+        currentComorbs.push(item + (major ? ' [MAJOR]' : '') + (notes ? ' — ' + notes : ''));
+      }
+    });
+  });
+  if (currentComorbs.length) {
+    h += '<div class="summary-card"><h5>Current Comorbidities</h5><ul>';
+    currentComorbs.forEach(function(c) { h += '<li>' + c + '</li>'; });
+    h += '</ul></div>';
+  }
+
+  // Safety / Medical
+  h += '<div class="summary-card"><h5>Safety &amp; Medical</h5>';
+  var invList = [{id:"inv_ecg",label:"ECG"},{id:"inv_bp",label:"Blood Pressure"},{id:"inv_pulse",label:"Resting Pulse"},{id:"inv_uds",label:"UDS"},{id:"inv_bloods",label:"Bloods"},{id:"inv_weight",label:"Weight/BMI"}];
+  var normalInv = [], abnormalInv = [], outstandingInv = [];
+  invList.forEach(function(inv) {
+    var status = _v(inv.id+'_status','value') || 'not_done';
+    var notNec = _v(inv.id+'_notnecessary','checked');
+    var comment = _vt(inv.id+'_comment');
+    if (status === 'normal') normalInv.push(inv.label + (comment ? ' — ' + comment : ''));
+    else if (status === 'abnormal') abnormalInv.push(inv.label + (comment ? ' — ' + comment : ''));
+    else if (status === 'not_done' && !notNec) outstandingInv.push(inv.label);
+  });
+  if (normalInv.length) h += '<p style="color:#059669;"><strong>Normal:</strong> ' + normalInv.join(', ') + '</p>';
+  if (abnormalInv.length) h += '<p style="color:#dc2626;"><strong>Abnormal:</strong> ' + abnormalInv.join(', ') + '</p>';
+  if (outstandingInv.length) h += '<p style="color:#b45309;"><strong>Outstanding:</strong> ' + outstandingInv.join(', ') + '</p>';
+  if (!normalInv.length && !abnormalInv.length && !outstandingInv.length) h += '<p>No investigations recorded</p>';
+  // Malingering
+  var flagged = [];
+  malingeringFlags.forEach(function(flag, i) { if (_v('redflag_' + i,'checked')) flagged.push(flag); });
+  var flagOther = _vt('redflag_other');
+  if (flagOther) flagged.push(flagOther);
+  var nilMalingering = document.getElementById('malingering_nil_btn') && document.getElementById('malingering_nil_btn').classList.contains('active');
+  if (flagged.length) {
+    h += '<p style="color:#dc2626;font-weight:600;">Malingering Red Flags:</p><ul style="color:#dc2626;">';
+    flagged.forEach(function(f) { h += '<li>' + f + '</li>'; });
+    h += '</ul>';
+  } else if (nilMalingering) {
+    h += '<p style="color:#059669;">Nil suspicion of malingering</p>';
+  }
+  h += '</div>';
+
+  // Missing Items
+  var missingItems = [];
+  if (outstandingInv.length) missingItems.push('Medical tests: ' + outstandingInv.join(', '));
+  if (!hasCollateral) missingItems.push('Collateral information not gathered');
+  var divaStatus = getRadio('diva_status');
+  var asrsStatus = getRadio('asrs_status');
+  if (divaStatus === 'for_patient') missingItems.push('DIVA-5: For patient to complete');
+  else if (!divaCompleted) missingItems.push('DIVA-5: Not completed');
+  if (asrsStatus === 'for_patient') missingItems.push('ASRS: For patient to complete');
+  else if (!asrsCompleted) missingItems.push('ASRS: Not completed');
+  if (flagged.length) missingItems.push('Malingering red flags identified — requires clinical attention');
+
+  if (missingItems.length) {
+    h += '<div class="summary-card" style="border-color:#fca5a5;background:#fef2f2;"><h5 style="color:#991b1b;">Missing / Outstanding Items</h5><ul>';
+    missingItems.forEach(function(m) { h += '<li>' + m + '</li>'; });
+    h += '</ul></div>';
+  }
+
+  document.getElementById('outcomeSummaryBox').innerHTML = h;
+}
+
+function refreshSafetyChecklist() {
+  var checks = [
+    {id:"inv_ecg", label:"ECG"},{id:"inv_bp", label:"Blood Pressure"},{id:"inv_pulse", label:"Resting Pulse"},
+    {id:"inv_uds", label:"Urine Drug Screen"},{id:"inv_bloods", label:"Bloods"},{id:"inv_weight", label:"Weight / BMI"}
+  ];
+  var h = '';
+  checks.forEach(function(c) {
+    var status = _v(c.id + '_status','value') || 'not_done';
+    var notNecessary = _v(c.id + '_notnecessary','checked');
+    var comment = _v(c.id + '_comment','value') || '';
+    var flagClass, flagText;
+    if (notNecessary && status === 'not_done') { flagClass = 'flag-na'; flagText = 'Not Necessary'; }
+    else if (status === 'not_done') { flagClass = 'flag-missing'; flagText = 'NOT DONE'; }
+    else if (status === 'normal') { flagClass = 'flag-done'; flagText = 'Normal'; }
+    else if (status === 'abnormal') { flagClass = 'flag-missing'; flagText = 'ABNORMAL'; }
+    else { flagClass = 'flag-na'; flagText = 'N/A'; }
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100);">';
+    h += '<span style="font-size:0.9rem;">' + c.label + '</span>';
+    h += '<span><span class="safety-flag ' + flagClass + '">' + flagText + '</span>' + (comment?' <span style="font-size:0.82rem;color:var(--gray-600);margin-left:8px;">'+comment+'</span>':'') + '</span>';
+    h += '</div>';
+  });
+  var ssChecked = _v('safescript_checked','checked');
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">';
+  h += '<span style="font-size:0.9rem;">SafeScript / RTPM</span>';
+  h += '<span class="safety-flag ' + (ssChecked?'flag-done':'flag-missing') + '">' + (ssChecked?'Checked':'NOT CHECKED') + '</span>';
+  h += '</div>';
+  document.getElementById('safetyChecklist').innerHTML = h;
+}
+
+
+// ==================== REPORT GENERATION ====================
+function getCollateralData() {
+  var sources = [];
+  for (var i = 1; i <= collateralCount; i++) {
+    var card = document.getElementById('colcard_' + i);
+    if (!card) continue;
+    var rel = _v('col_' + i + '_rel','value') || '';
+    var name = _vt('col_' + i + '_name');
+    var support = _v('col_' + i + '_support','value') || 'N/A';
+    var notes = _vt('col_' + i + '_notes');
+    if (rel || name) sources.push({rel:rel, name:name, support:support, notes:notes});
+  }
+  return sources;
+}
+
+function generateFullReport() {
+  var pt = getPatientInfo();
+  var divaCompleted = isDIVACompleted();
+  var asrsCompleted = isASRSCompleted();
+  var a = asrsCompleted ? getASRSData() : null;
+  var d = divaCompleted ? getDIVAData() : null;
+  var dxMap = {none:'No ADHD',combined:'314.01 (F90.2) Combined Presentation',inattentive:'314.00 (F90.0) Predominantly Inattentive',hyperactive:'314.01 (F90.1) Predominantly Hyperactive-Impulsive',partial:'ADHD — In Partial Remission',provisional:'Provisional Diagnosis',deferred:'Deferred'};
+  var finalDx = getRadio('finalDx');
+  var finalSeverity = getRadio('finalSeverity');
+  var treatmentRec = getRadio('treatmentRec');
+  if (treatmentRec === 'Other') treatmentRec = _vt('treatmentRecOther') || 'Other';
+
+  // DSM-5 checklist counts
+  var dsmInattCount = 0, dsmHICount = 0;
+  dsmCriteria.inatt.items.forEach(function(item, i) { if (_v('dsm_inatt_' + i, 'checked')) dsmInattCount++; });
+  dsmCriteria.hi.items.forEach(function(item, i) { if (_v('dsm_hi_' + i, 'checked')) dsmHICount++; });
+  var dsmThreshold = pt.ageNum >= 17 ? 5 : 6;
+  var dsmInattMet = dsmInattCount >= dsmThreshold;
+  var dsmHIMet = dsmHICount >= dsmThreshold;
+  var dsmB = getRadio('dsm_B'), dsmC = getRadio('dsm_C'), dsmD = getRadio('dsm_D'), dsmE = getRadio('dsm_E');
+  var dsmCritMet = (dsmInattMet || dsmHIMet) && dsmB === 'yes' && dsmC === 'yes' && dsmD === 'yes' && dsmE === 'no';
+
+  // Collateral
+  var colData = getCollateralData();
+  var hasCollateral = colData.length > 0 && colData.some(function(c) { return c.rel; });
+
+  // Current comorbidities
+  var currentComorbs = [];
+  comorbidities.forEach(function(cat, ci) {
+    cat.items.forEach(function(item, ii) {
+      var id = 'comorb_' + ci + '_' + ii;
+      var val = getRadio(id);
+      var major = _v(id + '_major','checked');
+      if (val === 'current' || major) currentComorbs.push(item + (major ? ' [MAJOR]' : ''));
+    });
+  });
+
+  // Missing items
+  var invList = [{id:"inv_ecg",label:"ECG"},{id:"inv_bp",label:"Blood Pressure"},{id:"inv_pulse",label:"Resting Pulse"},{id:"inv_uds",label:"UDS"},{id:"inv_bloods",label:"Bloods"},{id:"inv_weight",label:"Weight/BMI"}];
+  var outstandingInv = [];
+  invList.forEach(function(inv) {
+    var status = _v(inv.id+'_status','value') || 'not_done';
+    var notNec = _v(inv.id+'_notnecessary','checked');
+    if (status === 'not_done' && !notNec) outstandingInv.push(inv.label);
+  });
+  var missingItems = [];
+  if (outstandingInv.length) missingItems.push('Medical tests: ' + outstandingInv.join(', '));
+  if (!hasCollateral) missingItems.push('Collateral information not gathered');
+  var divaStatus = getRadio('diva_status');
+  var asrsStatus = getRadio('asrs_status');
+  if (divaStatus === 'for_patient' && !divaCompleted) missingItems.push('DIVA-5: For patient to complete');
+  if (asrsStatus === 'for_patient' && !asrsCompleted) missingItems.push('ASRS: For patient to complete');
+
+  // Malingering
+  var flagged = [];
+  malingeringFlags.forEach(function(flag, i) { if (_v('redflag_' + i,'checked')) flagged.push(flag); });
+  var flagOther = _vt('redflag_other');
+  if (flagOther) flagged.push(flagOther);
+
+  // Safety concerns
+  var safetyNotes = [];
+  // Cardiac
+  var personalCardiacItems = ["Palpitations","Chest pain on exertion","Syncope / fainting","Unexplained shortness of breath","Exercise intolerance","Dizziness on standing"];
+  var familyCardiacItems = ["Sudden cardiac death <40yrs","Cardiomyopathy","Long QT / channelopathy","Early coronary artery disease","Unexplained fainting/seizures","Inherited cardiac condition"];
+  var pcChecked = [], fcChecked = [];
+  personalCardiacItems.forEach(function(item, i) { if (_v('cardiac_personal_' + i,'checked')) pcChecked.push(item); });
+  familyCardiacItems.forEach(function(item, i) { if (_v('cardiac_family_' + i,'checked')) fcChecked.push(item); });
+  if (pcChecked.length) safetyNotes.push('Personal cardiac: ' + pcChecked.join(', '));
+  if (fcChecked.length) safetyNotes.push('Family cardiac: ' + fcChecked.join(', '));
+  // Substance
+  substanceList.forEach(function(sub, i) {
+    var val = getRadio('sub_' + i);
+    if (val === 'current') {
+      var cat = substanceAlerts[sub] || 'none';
+      if (cat === 'illicit') safetyNotes.push(sub + ' (current use) — avoid stimulants');
+      else if (cat === 'tobacco') safetyNotes.push(sub + ' — educate on combination risks');
+    }
+  });
+
+  // ==================== BRIEF REPORT ====================
+  var bh = '<h1>Structured Adult ADHD Assessment — Brief Report</h1>';
+  bh += '<p style="color:var(--gray-600);margin-bottom:16px;">This report summarises the key findings from a structured adult ADHD assessment conducted on ' + pt.date + '. The assessment included clinical interview, standardised screening instruments, developmental history, mental state examination, medical screening, and collateral information review where available.</p>';
+  bh += '<table><tr><th>Patient</th><td>' + pt.name + '</td><th>Age</th><td>' + pt.age + '</td></tr>';
+  bh += '<tr><th>State</th><td>' + pt.state + '</td><th>Gender</th><td>' + pt.gender + '</td></tr>';
+  bh += '<tr><th>Date</th><td>' + pt.date + '</td><th>MBS Item</th><td>' + pt.mbs + '</td></tr>';
+  bh += '<tr><th>Clinician</th><td>' + pt.assessor + '</td><th>Referrer</th><td>' + pt.referrer + '</td></tr></table>';
+
+  // Scoring summary
+  bh += '<h2>Scoring Criteria Summary</h2>';
+  bh += '<p><strong>DSM-5-TR:</strong> Inattention ' + dsmInattCount + '/9 ' + (dsmInattMet?'<span class="met-badge">Met</span>':'<span class="not-badge">Not met</span>') + ' | H/I ' + dsmHICount + '/9 ' + (dsmHIMet?'<span class="met-badge">Met</span>':'<span class="not-badge">Not met</span>') + '</p>';
+  if (divaCompleted) {
+    bh += '<p><strong>DIVA-5:</strong> Inatt ' + d.att.adultCount + '/9 adult, ' + d.att.childCount + '/9 child | H/I ' + d.hi.adultCount + '/9 adult, ' + d.hi.childCount + '/9 child — ' + (d.allMet?'<span class="met-badge">Criteria met</span>':'<span class="not-badge">Criteria not met</span>') + '</p>';
+  }
+  if (asrsCompleted) {
+    if (a.quickPositive) {
+      bh += '<p><strong>ASRS:</strong> <span class="met-badge">Screen Positive</span></p>';
+    } else {
+      bh += '<p><strong>ASRS:</strong> Part A ' + a.partAShaded + '/6 ' + (a.screenPositive?'<span class="met-badge">Screen Positive</span>':'<span class="not-badge">Screen Negative</span>') + ' | Total ' + a.totalRaw + '/72</p>';
+    }
+  }
+
+  // Collateral
+  bh += '<h2>Collateral Support</h2>';
+  if (hasCollateral) {
+    bh += '<ul>';
+    colData.forEach(function(c) {
+      if (c.rel) {
+        var sl = c.support === '2' ? 'Clear support' : c.support === '1' ? 'Some support' : c.support === '0' ? 'None/Little support' : 'N/A';
+        bh += '<li>' + c.rel + (c.name ? ' (' + c.name + ')' : '') + ': ' + sl + '</li>';
+      }
+    });
+    bh += '</ul>';
+  } else {
+    bh += '<p><span class="missing-badge">No collateral gathered</span></p>';
+  }
+
+  // Comorbidities
+  if (currentComorbs.length) {
+    bh += '<h2>Current Comorbidities</h2><ul>';
+    currentComorbs.forEach(function(c) { bh += '<li>' + c + '</li>'; });
+    bh += '</ul>';
+  }
+
+  // Diagnosis
+  bh += '<h2>Diagnostic Outcome</h2>';
+  bh += '<p><strong>Primary Diagnosis:</strong> ' + (finalDx ? dxMap[finalDx] : 'Not specified') + '</p>';
+  if (finalSeverity) bh += '<p><strong>Severity:</strong> ' + finalSeverity.charAt(0).toUpperCase() + finalSeverity.slice(1) + '</p>';
+  var comorbDx = _vt('comorbidDxSummary');
+  if (comorbDx) bh += '<p><strong>Comorbid Diagnoses:</strong> ' + comorbDx + '</p>';
+
+  // Missing items
+  if (missingItems.length) {
+    bh += '<h2>Missing / Outstanding Items</h2><ul>';
+    missingItems.forEach(function(m) { bh += '<li>' + m + '</li>'; });
+    bh += '</ul>';
+  }
+
+  // Safety
+  if (safetyNotes.length || flagged.length) {
+    bh += '<h2>Safety Concerns</h2>';
+    if (safetyNotes.length) { bh += '<ul>'; safetyNotes.forEach(function(s) { bh += '<li>' + s + '</li>'; }); bh += '</ul>'; }
+    if (flagged.length) {
+      bh += '<p style="color:#991b1b;font-weight:600;">Malingering Red Flags:</p><ul>';
+      flagged.forEach(function(f) { bh += '<li style="color:#991b1b;">' + f + '</li>'; });
+      bh += '</ul>';
+    }
+  }
+
+  // Recommendation
+  bh += '<h2>Recommendation</h2>';
+  bh += '<p><strong>' + (treatmentRec || 'Not specified') + '</strong></p>';
+  if (missingItems.length && (treatmentRec && treatmentRec.toLowerCase().indexOf('more info') >= 0 || treatmentRec && treatmentRec.toLowerCase().indexOf('missing') >= 0)) {
+    bh += '<p><strong>Requirements to proceed:</strong></p><ul>';
+    missingItems.forEach(function(m) { bh += '<li>' + m + '</li>'; });
+    bh += '</ul>';
+  }
+  var plan = _vt('planNotes');
+  if (plan) bh += '<p><strong>Management Plan:</strong> ' + plan.replace(/\n/g,'<br>') + '</p>';
+
+  // ==================== DETAILED REPORT ====================
+  var fh = '<h1>Structured Adult ADHD Assessment — Detailed Report</h1>';
+  fh += '<p style="color:var(--gray-600);margin-bottom:16px;">This is a comprehensive assessment report detailing all findings from the structured adult ADHD assessment conducted on ' + pt.date + '. The assessment followed a systematic protocol including standardised screening instruments (ASRS v1.1, DIVA-5), DSM-5-TR criteria evaluation, developmental history, psychiatric comorbidity screening, medical safety review, mental state examination, and collateral information gathering.</p>';
+  fh += '<table><tr><th>Patient</th><td>' + pt.name + '</td><th>Age</th><td>' + pt.age + '</td></tr>';
+  fh += '<tr><th>State</th><td>' + pt.state + '</td><th>Gender</th><td>' + pt.gender + '</td></tr>';
+  fh += '<tr><th>Date</th><td>' + pt.date + '</td><th>MBS Item</th><td>' + pt.mbs + '</td></tr>';
+  fh += '<tr><th>Clinician</th><td>' + pt.assessor + '</td><th>Referrer</th><td>' + pt.referrer + '</td></tr></table>';
+
+  // Presenting concerns
+  fh += '<h2>Presenting Concerns</h2>';
+  var reasons = [];
+  ['self','gp','psych','family','partner','work','study','social','friend','child'].forEach(function(k) {
+    if (_v('reason_' + k, 'checked')) {
+      var labels = {self:'Self-identified',gp:'GP suggested',psych:'Psychologist suggested',family:'Family suggested',partner:'Partner suggested',work:'Workplace difficulties',study:'Academic difficulties',social:'Social media/online',friend:'Friend diagnosed',child:'Child diagnosed'};
+      reasons.push(labels[k]);
+    }
+  });
+  var reasonOther = _vt('reason_other');
+  if (reasonOther) reasons.push(reasonOther);
+  if (reasons.length) fh += '<p><strong>Reasons for assessment:</strong> ' + reasons.join(', ') + '</p>';
+  var issues = [];
+  ['focus','org','procrastinate','memory','restless','emotional','work','relationships','sleep','anxiety','depression','impulsive'].forEach(function(k) {
+    if (_v('issue_' + k, 'checked')) {
+      var labels = {focus:'Difficulty focusing',org:'Poor organisation',procrastinate:'Procrastination',memory:'Forgetfulness',restless:'Restlessness',emotional:'Emotional dysregulation',work:'Underperformance at work',relationships:'Relationship difficulties',sleep:'Sleep problems',anxiety:'Anxiety',depression:'Low mood',impulsive:'Impulsive behaviour'};
+      issues.push(labels[k]);
+    }
+  });
+  var issueOther = _vt('issue_other');
+  if (issueOther) issues.push(issueOther);
+  if (issues.length) fh += '<p><strong>Current difficulties:</strong> ' + issues.join(', ') + '</p>';
+  var goals = _vt('mainGoals');
+  if (goals) fh += '<p><strong>Goals:</strong> ' + goals + '</p>';
+
+  // Diagnostic results
+  fh += '<h2>Diagnostic Assessment</h2>';
+  fh += '<h3>DSM-5-TR Criteria</h3>';
+  fh += '<p>Inattention: ' + dsmInattCount + '/9 ' + (dsmInattMet?'<span class="met-badge">Met</span>':'<span class="not-badge">Not met</span>') + ' | H/I: ' + dsmHICount + '/9 ' + (dsmHIMet?'<span class="met-badge">Met</span>':'<span class="not-badge">Not met</span>') + '</p>';
+  fh += '<p>Criteria B-E: B ' + (dsmB==='yes'?'<span class="met-badge">Met</span>':dsmB==='no'?'<span class="not-badge">Not met</span>':'<span class="missing-badge">N/A</span>');
+  fh += ' | C ' + (dsmC==='yes'?'<span class="met-badge">Met</span>':dsmC==='no'?'<span class="not-badge">Not met</span>':'<span class="missing-badge">N/A</span>');
+  fh += ' | D ' + (dsmD==='yes'?'<span class="met-badge">Met</span>':dsmD==='no'?'<span class="not-badge">Not met</span>':'<span class="missing-badge">N/A</span>');
+  fh += ' | E ' + (dsmE==='no'?'<span class="met-badge">Met</span>':dsmE==='yes'?'<span class="not-badge">Not met</span>':'<span class="missing-badge">N/A</span>') + '</p>';
+
+  // FIX #3: Only include ASRS/DIVA if completed
+  if (asrsCompleted) {
+    fh += '<h3>ASRS v1.1 Screening</h3>';
+    if (a.quickPositive) { fh += '<p><span class="met-badge">ASRS screen positive</span></p>'; }
+    else { fh += '<p>Part A: ' + a.partAShaded + '/6 — ' + (a.screenPositive?'<span class="met-badge">Screen Positive</span>':'<span class="not-badge">Screen Negative</span>') + ' | Inatt ' + a.inattTotal + '/36 | H/I ' + a.hiTotal + '/36 | Total ' + a.totalRaw + '/72</p>'; }
+  }
+  if (divaCompleted) {
+    fh += '<h3>DIVA-5 Results</h3>';
+    fh += '<table><tr><th>Domain</th><th>Adult</th><th>Childhood</th></tr>';
+    fh += '<tr><td>Inattention</td><td>' + d.att.adultCount + '/9</td><td>' + d.att.childCount + '/9</td></tr>';
+    fh += '<tr><td>H/I</td><td>' + d.hi.adultCount + '/9</td><td>' + d.hi.childCount + '/9</td></tr></table>';
+    fh += '<p>Criteria: A ' + (d.critA_met?'<span class="met-badge">MET</span>':'<span class="not-badge">NOT MET</span>');
+    fh += ' | B ' + (d.critB_met?'<span class="met-badge">MET</span>':'<span class="not-badge">NOT MET</span>');
+    fh += ' | C ' + (d.critC_met?'<span class="met-badge">MET</span>':'<span class="not-badge">NOT MET</span>');
+    fh += ' | D ' + (d.critD_met?'<span class="met-badge">MET</span>':'<span class="not-badge">NOT MET</span>');
+    fh += ' | E ' + (d.critE_met?'<span class="met-badge">MET</span>':'<span class="not-badge">NOT MET</span>') + '</p>';
+  }
+
+  // Developmental
+  fh += '<h2>Developmental Screen</h2>';
+  Object.keys(devScreenData).forEach(function(key) {
+    var area = devScreenData[key];
+    var quickStatus = _v('dev_' + key + '_quickstatus', 'value');
+    if (quickStatus === 'none') { fh += '<p><strong>' + area.title + ':</strong> No reported issues</p>'; return; }
+    if (quickStatus === 'unknown') { fh += '<p><strong>' + area.title + ':</strong> Unknown</p>'; return; }
+    var checked = [];
+    area.items.forEach(function(item, i) { if (_v('dev_' + key + '_' + i,'checked')) checked.push(item); });
+    var other = _vt('dev_' + key + '_other');
+    if (other) checked.push('Other: ' + other);
+    if (checked.length) { fh += '<p><strong>' + area.title + ':</strong> ' + checked.join(', ') + '</p>'; }
+  });
+
+  // Comorbidities
+  fh += '<h2>Psychiatric Comorbidities</h2>';
+  var anyComorb = false;
+  comorbidities.forEach(function(cat, ci) {
+    var catItems = [];
+    cat.items.forEach(function(item, ii) {
+      var id = 'comorb_' + ci + '_' + ii;
+      var val = getRadio(id);
+      var major = _v(id + '_major','checked');
+      var notes = _vt(id + '_notes');
+      if (val && val !== 'nil') {
+        catItems.push(item + ': ' + val.toUpperCase() + (major ? ' [MAJOR]' : '') + (notes ? ' — ' + notes : ''));
+        anyComorb = true;
+      }
+    });
+    if (catItems.length) { fh += '<p><strong>' + cat.cat + ':</strong></p><ul>'; catItems.forEach(function(c) { fh += '<li>' + c + '</li>'; }); fh += '</ul>'; }
+  });
+  if (!anyComorb) fh += '<p>No psychiatric comorbidities identified.</p>';
+
+  // Medical
+  fh += '<h2>Medical Screen</h2>';
+  var medChecked = [];
+  medicalConditions.forEach(function(cat) {
+    cat.items.forEach(function(item, i) { if (_v('med_' + cat.cat.replace(/[^a-zA-Z]/g,'') + '_' + i,'checked')) medChecked.push(item); });
+  });
+  fh += '<p><strong>Medical Conditions:</strong> ' + (medChecked.length ? medChecked.join(', ') : 'Nil significant') + '</p>';
+  if (pcChecked.length) fh += '<p><strong>Personal Cardiac Symptoms:</strong> ' + pcChecked.join(', ') + '</p>';
+  else fh += '<p><strong>Personal Cardiac Symptoms:</strong> Nil</p>';
+  if (fcChecked.length) fh += '<p><strong>Family Cardiac History:</strong> ' + fcChecked.join(', ') + '</p>';
+  else fh += '<p><strong>Family Cardiac History:</strong> Nil</p>';
+  fh += '<p><strong>Medications:</strong> ' + (_vt('medsList') || 'Nil reported') + '</p>';
+
+  // Investigations
+  fh += '<h3>Investigations</h3>';
+  invList.forEach(function(inv) {
+    var status = _v(inv.id+'_status','value') || 'not_done';
+    var notNec = _v(inv.id+'_notnecessary','checked');
+    var comment = _vt(inv.id+'_comment');
+    if (status === 'not_done' && notNec) return;
+    fh += '<p>' + inv.label + ': ' + (status === 'normal' ? '<span class="met-badge">Normal</span>' : status === 'abnormal' ? '<span class="not-badge">Abnormal</span>' : '<span class="missing-badge">Not done</span>') + (comment ? ' — ' + comment : '') + '</p>';
+  });
+
+  // Malingering
+  if (flagged.length) {
+    fh += '<h3>Malingering Red Flags</h3><ul>';
+    flagged.forEach(function(f) { fh += '<li style="color:#991b1b;">' + f + '</li>'; });
+    fh += '</ul>';
+  }
+
+  // Collateral
+  fh += '<h2>Collateral Information</h2>';
+  if (hasCollateral) {
+    colData.forEach(function(c) {
+      if (c.rel) {
+        var sl = c.support === '2' ? 'Clear support' : c.support === '1' ? 'Some support' : c.support === '0' ? 'None/Little' : 'N/A';
+        fh += '<p>' + c.rel + (c.name ? ' (' + c.name + ')' : '') + ': ' + sl + (c.notes ? ' — ' + c.notes : '') + '</p>';
+      }
+    });
+  } else { fh += '<p>No collateral sources provided.</p>'; }
+
+  // MSE
+  fh += '<h2>Mental State Examination</h2>';
+  Object.keys(mseData).forEach(function(key) {
+    var group = mseData[key]; var checked = [];
+    group.items.forEach(function(item, i) { if (_v('mse_' + key + '_' + i,'checked')) checked.push(item); });
+    var other = _vt('mse_' + key + '_other');
+    if (other) checked.push(other);
+    if (checked.length) fh += '<p><strong>' + group.title + ':</strong> ' + checked.join('; ') + '</p>';
+  });
+
+  // Outcome
+  fh += '<h2>Diagnostic Outcome</h2>';
+  fh += '<p><strong>Primary Diagnosis:</strong> ' + (finalDx ? dxMap[finalDx] : 'Not specified') + '</p>';
+  if (finalSeverity) fh += '<p><strong>Severity:</strong> ' + finalSeverity.charAt(0).toUpperCase() + finalSeverity.slice(1) + '</p>';
+  if (comorbDx) fh += '<p><strong>Comorbid Diagnoses:</strong> ' + comorbDx + '</p>';
+  fh += '<p><strong>Treatment Recommendation:</strong> ' + (treatmentRec || 'Not specified') + '</p>';
+  if (plan) fh += '<h2>Management Plan</h2><p>' + plan.replace(/\n/g,'<br>') + '</p>';
+
+  // ==================== PLAIN TEXT ====================
+  var r = '';
+  r += 'STRUCTURED ADULT ADHD ASSESSMENT REPORT\n';
+  r += '========================================\n\n';
+  r += 'Patient: ' + pt.name + '\nAge: ' + pt.age + '\nState: ' + pt.state + '\nGender: ' + pt.gender + '\nDate: ' + pt.date + '\nMBS Item: ' + pt.mbs + '\nClinician: ' + pt.assessor + '\nReferrer: ' + pt.referrer + '\n';
+  r += '\nPRESENTING CONCERNS\n';
+  if (reasons.length) r += 'Reasons: ' + reasons.join(', ') + '\n';
+  if (issues.length) r += 'Current difficulties: ' + issues.join(', ') + '\n';
+  if (goals) r += 'Goals: ' + goals + '\n';
+
+  // FIX #3: Only include ASRS/DIVA if completed
+  if (asrsCompleted) {
+    r += '\nASRS v1.1 SCREENING\n';
+    if (a.quickPositive) { r += 'ASRS screen positive\n'; }
+    else {
+      r += 'Part A shaded: ' + a.partAShaded + '/6 — ' + (a.screenPositive?'SCREEN POSITIVE':'Screen negative') + '\n';
+      r += 'Inattention (raw): ' + a.inattTotal + '/36 | H/I (raw): ' + a.hiTotal + '/36 | Total: ' + a.totalRaw + '/72\n';
+    }
+  }
+
+  if (divaCompleted) {
+    r += '\nDIVA-5 RESULTS\n';
+    r += 'Inattention — Adult: ' + d.att.adultCount + '/9 | Childhood: ' + d.att.childCount + '/9\n';
+    r += 'H/I — Adult: ' + d.hi.adultCount + '/9 | Childhood: ' + d.hi.childCount + '/9\n';
+    r += 'Criterion A: ' + (d.critA_met?'MET':'NOT MET') + ' | B: ' + (d.critB_met?'MET':'NOT MET') + ' | C: ' + (d.critC_met?'MET':'NOT MET') + ' | D: ' + (d.critD_met?'MET':'NOT MET') + ' | E: ' + (d.critE_met?'MET':'NOT MET') + '\n';
+    r += 'Diagnosis: ' + (d.allMet?d.presentation:'ADHD criteria NOT met') + '\n';
+  }
+
+  r += '\nDSM-5-TR CRITERIA\n';
+  r += 'Inattention: ' + dsmInattCount + '/9 (' + (dsmInattMet?'MET':'NOT MET') + ') | H/I: ' + dsmHICount + '/9 (' + (dsmHIMet?'MET':'NOT MET') + ')\n';
+  r += 'B: ' + (dsmB||'N/A') + ' | C: ' + (dsmC||'N/A') + ' | D: ' + (dsmD||'N/A') + ' | E: ' + (dsmE||'N/A') + '\n';
+  r += 'Overall: ' + (dsmCritMet?'CRITERIA MET':'CRITERIA NOT MET') + '\n';
+
+  // Dev
+  r += '\nDEVELOPMENTAL SCREEN\n';
+  Object.keys(devScreenData).forEach(function(key) {
+    var area = devScreenData[key];
+    var quickStatus = _v('dev_' + key + '_quickstatus', 'value');
+    if (quickStatus === 'none') { r += area.title + ': No reported issues\n'; return; }
+    if (quickStatus === 'unknown') { r += area.title + ': Unknown\n'; return; }
+    var checked = [];
+    area.items.forEach(function(item, i) { if (_v('dev_' + key + '_' + i,'checked')) checked.push(item); });
+    var other = _vt('dev_' + key + '_other');
+    if (other) checked.push('Other: ' + other);
+    if (checked.length) { r += area.title + ':\n'; checked.forEach(function(c) { r += '  - ' + c + '\n'; }); }
+  });
+
+  r += '\nPSYCHIATRIC COMORBIDITIES\n';
+  comorbidities.forEach(function(cat, ci) {
+    var catItems = [];
+    cat.items.forEach(function(item, ii) {
+      var id = 'comorb_' + ci + '_' + ii;
+      var val = getRadio(id); var major = _v(id + '_major','checked'); var notes = _vt(id + '_notes');
+      if (val && val !== 'nil') { catItems.push(item + ': ' + val.toUpperCase() + (major?' [MAJOR]':'') + (notes?' — '+notes:'')); }
+    });
+    if (catItems.length) { r += cat.cat + ':\n'; catItems.forEach(function(c) { r += '  - ' + c + '\n'; }); }
+  });
+
+  r += '\nSUBSTANCE USE\n';
+  substanceList.forEach(function(sub, i) {
+    var val = getRadio('sub_' + i); var notes = _vt('sub_' + i + '_notes');
+    if (val && val !== 'nil') { r += sub + ': ' + val.toUpperCase() + (notes?' — '+notes:'') + '\n'; }
+  });
+
+  r += '\nMEDICAL SCREEN\n';
+  r += 'Medical Conditions: ' + (medChecked.length ? medChecked.join(', ') : 'Nil significant') + '\n';
+  if (pcChecked.length) r += 'Personal Cardiac: ' + pcChecked.join(', ') + '\n';
+  if (fcChecked.length) r += 'Family Cardiac: ' + fcChecked.join(', ') + '\n';
+  r += 'Medications: ' + (_vt('medsList') || 'Nil reported') + '\n';
+
+  r += '\nInvestigations:\n';
+  invList.forEach(function(inv) {
+    var status = _v(inv.id+'_status','value') || 'not_done';
+    var notNec = _v(inv.id+'_notnecessary','checked');
+    var comment = _vt(inv.id+'_comment');
+    if (status === 'not_done' && notNec) return;
+    r += '  ' + inv.label + ': ' + status.toUpperCase().replace('_',' ') + (comment?' — '+comment:'') + (status==='not_done'&&!notNec?' [OUTSTANDING]':'') + '\n';
+  });
+
+  if (flagged.length) { r += '\nMALINGERING RED FLAGS:\n'; flagged.forEach(function(f) { r += '  - ' + f + '\n'; }); }
+
+  r += '\nCOLLATERAL\n';
+  if (hasCollateral) {
+    colData.forEach(function(c) {
+      if (c.rel) r += '  ' + c.rel + (c.name?' ('+c.name+')':'') + ': Support level ' + c.support + (c.notes?' — '+c.notes:'') + '\n';
+    });
+  } else { r += '  No collateral sources provided\n'; }
+
+  r += '\nMENTAL STATE EXAMINATION\n';
+  Object.keys(mseData).forEach(function(key) {
+    var group = mseData[key]; var checked = [];
+    group.items.forEach(function(item, i) { if (_v('mse_' + key + '_' + i,'checked')) checked.push(item); });
+    var other = _vt('mse_' + key + '_other');
+    if (other) checked.push(other);
+    if (checked.length) r += group.title + ': ' + checked.join('; ') + '\n';
+  });
+
+  r += '\nDIAGNOSTIC OUTCOME\n';
+  r += 'Primary Diagnosis: ' + (finalDx ? dxMap[finalDx] : 'Not specified') + '\n';
+  r += 'Severity: ' + (finalSeverity || 'Not specified') + '\n';
+  if (comorbDx) r += 'Comorbid Diagnoses: ' + comorbDx + '\n';
+  r += 'Treatment Recommendation: ' + (treatmentRec || 'Not specified') + '\n';
+  if (plan) r += '\nManagement Plan:\n' + plan + '\n';
+  r += '\nGenerated by Structured Adult ADHD Assessment\n';
+
+  // Show modal
+  document.getElementById('briefReportView').innerHTML = bh;
+  document.getElementById('detailedReportView').innerHTML = fh;
+  document.getElementById('plainReportView').textContent = r;
+  document.getElementById('reportModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReportModal() {
+  document.getElementById('reportModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function switchReportTab(tab) {
+  document.querySelectorAll('.report-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('briefReportView').style.display = 'none';
+  document.getElementById('detailedReportView').style.display = 'none';
+  document.getElementById('plainReportView').style.display = 'none';
+  if (tab === 'brief') {
+    document.getElementById('briefReportView').style.display = '';
+    document.querySelectorAll('.report-tab')[0].classList.add('active');
+  } else if (tab === 'detailed') {
+    document.getElementById('detailedReportView').style.display = '';
+    document.querySelectorAll('.report-tab')[1].classList.add('active');
+  } else {
+    document.getElementById('plainReportView').style.display = '';
+    document.querySelectorAll('.report-tab')[2].classList.add('active');
+  }
+}
+
+function copyReportText(type) {
+  var text;
+  if (type === 'brief') {
+    text = document.getElementById('briefReportView').innerText;
+  } else if (type === 'detailed') {
+    text = document.getElementById('detailedReportView').innerText;
+  } else {
+    text = document.getElementById('plainReportView').textContent;
+  }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function() { alert('Report copied to clipboard'); });
+  } else {
+    var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); alert('Report copied to clipboard'); } catch(e) { alert('Copy failed'); }
+    document.body.removeChild(ta);
+  }
+}
+
+function saveAsWord() {
+  var header = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>ADHD Assessment Report</title><style>body{font-family:Calibri,sans-serif;font-size:11pt;line-height:1.4;}h1{font-size:16pt;color:#1e3a5f;}h2{font-size:13pt;color:#1e40af;border-bottom:1pt solid #bfdbfe;padding-bottom:4pt;}h3{font-size:11pt;color:#1f2937;}table{border-collapse:collapse;width:100%;}th,td{border:1pt solid #d1d5db;padding:4pt 8pt;font-size:10pt;}th{background:#1e40af;color:white;}.met-badge{background:#c6f6d5;padding:2pt 6pt;}.not-badge{background:#fed7d7;padding:2pt 6pt;}.missing-badge{background:#e2e8f0;padding:2pt 6pt;}</style></head><body>';
+  var footer = '</body></html>';
+  var content = header + document.getElementById('detailedReportView').innerHTML + footer;
+  var blob = new Blob(['\ufeff' + content], {type: 'application/msword'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'ADHD_Assessment_Report.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function printReport() {
+  window.print();
+}
+
+// ==================== INIT ====================
+function initStructuredAssessment() {
+  buildDevScreen();
+  buildDSMChecklist();
+  buildComorbidities();
+  buildMedScreen();
+  buildCollateral();
+  buildMSE();
+  buildOutcome();
+}
+
+try { initForm(); } catch(e) { console.error('initForm error:', e); }
+try { initStructuredAssessment(); } catch(e) { console.error('initStructuredAssessment error:', e); }
+
+</script>
+</body>
+</html>

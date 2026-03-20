@@ -3,370 +3,346 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIVA-5 &amp; ASRS v1.1 — ADHD Assessment Suite</title>
+<title>Structured Adult ADHD Assessment</title>
 <style>
 :root {
-  --primary: #2c5282;
-  --primary-light: #ebf4ff;
-  --accent: #e53e3e;
-  --green: #38a169;
-  --orange: #dd6b20;
-  --teal: #319795;
-  --teal-light: #e6fffa;
-  --gray-50: #f7fafc;
-  --gray-100: #edf2f7;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e0;
-  --gray-600: #718096;
-  --gray-700: #4a5568;
-  --gray-800: #2d3748;
-  --gray-900: #1a202c;
+  --bg: #f7fafc;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --accent: #c53030;
   --radius: 8px;
+  /* Part colours */
+  --part1: #6b21a8;   /* purple - developmental */
+  --part2: #1e40af;   /* blue - diagnostic (ASRS/DIVA/DSM) */
+  --part3: #0f766e;   /* teal - comorbidities */
+  --part4: #b45309;   /* amber - medical */
+  --part5: #4338ca;   /* indigo - collateral */
+  --part6: #be185d;   /* rose - MSE */
+  --part7: #15803d;   /* green - outcome */
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.6; }
-.container { max-width: 900px; margin: 0 auto; padding: 20px; }
-h1 { color: var(--primary); font-size: 1.6rem; text-align: center; margin-bottom: 4px; }
-.subtitle { text-align: center; color: var(--gray-600); font-size: 0.9rem; margin-bottom: 24px; }
-.instrument-divider { text-align:center; margin:40px 0 24px; padding:16px; background:linear-gradient(135deg, var(--teal), #2b6cb0); border-radius:var(--radius); color:#fff; }
-.instrument-divider h2 { font-size:1.4rem; margin-bottom:4px; }
-.instrument-divider p { font-size:0.9rem; opacity:0.9; }
-.section { background: #fff; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden; }
-.section-header { background: var(--primary); color: #fff; padding: 12px 20px; font-size: 1.05rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-.section-header:hover { background: #2b4c7e; }
-.section-header.teal { background: var(--teal); }
-.section-header.teal:hover { background: #2c7a7b; }
-.section-header .toggle { font-size: 1.2rem; transition: transform 0.2s; }
-.section-header .toggle.collapsed { transform: rotate(-90deg); }
-.section-body { padding: 20px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--gray-800); line-height: 1.5; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.main-header { text-align: center; padding: 28px 16px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: white; border-radius: var(--radius); margin-bottom: 20px; }
+.main-header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+.main-header p { opacity: 0.85; font-size: 0.88rem; }
+.part-divider { padding: 14px 20px; border-radius: var(--radius) var(--radius) 0 0; color: white; margin-top: 28px; }
+.part-divider h2 { font-size: 1.1rem; margin-bottom: 2px; }
+.part-divider p { font-size: 0.82rem; opacity: 0.85; }
+.section { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; }
+.section-header { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.95rem; color: white; user-select: none; transition: background 0.2s; }
+.section-header:hover { filter: brightness(1.1); }
+.toggle { font-size: 0.7rem; transition: transform 0.3s; display: inline-block; }
+.toggle.collapsed { transform: rotate(-90deg); }
+.section-body { padding: 16px; }
 .section-body.collapsed { display: none; }
-.patient-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.patient-info label { font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 4px; color: var(--gray-700); }
-.patient-info input, .patient-info select { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 0.95rem; }
-.symptom-block { border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
-.symptom-question { background: var(--primary-light); padding: 12px 16px; font-weight: 600; color: var(--primary); font-size: 0.95rem; border-bottom: 1px solid var(--gray-200); }
-.symptom-content { padding: 16px; }
-.period-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.period-col h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-600); margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid var(--gray-200); }
-.period-col h4.adult { border-color: var(--primary); }
-.period-col h4.child { border-color: var(--orange); }
-.example-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 0.88rem; }
-.example-item input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--primary); }
-.other-input { width: 100%; margin-top: 6px; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
-.other-input::placeholder { color: var(--gray-300); }
-.symptom-verdict { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200); }
-.verdict-group { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; min-width: 240px; }
-.verdict-group label { display: flex; align-items: center; gap: 4px; font-weight: 400; cursor: pointer; white-space: nowrap; }
-.verdict-group input[type="radio"] { accent-color: var(--primary); }
-.supplement-q { background: var(--gray-100); padding: 14px 16px; border-radius: var(--radius); margin-top: 8px; }
-.supplement-q p { font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
-.criteria-block { margin-bottom: 16px; }
-.criteria-block h3 { font-size: 1rem; color: var(--primary); margin-bottom: 8px; }
-.criteria-block p { font-size: 0.9rem; margin-bottom: 8px; color: var(--gray-700); }
-.radio-row { display: flex; gap: 16px; margin-bottom: 8px; }
-.radio-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.9rem; }
-.impairment-area { margin-bottom: 14px; }
-.impairment-area h4 { font-size: 0.9rem; color: var(--gray-700); margin-bottom: 6px; font-weight: 600; }
-.impairment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
-.impairment-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; }
-.impairment-item input[type="checkbox"] { margin-top: 3px; accent-color: var(--primary); }
-.support-row { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 0.9rem; }
-.support-row select { padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; }
-.btn { display: inline-block; padding: 12px 28px; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: #2b4c7e; }
-.btn-teal { background: var(--teal); color: #fff; }
-.btn-teal:hover { background: #2c7a7b; }
-.btn-combined { background: linear-gradient(135deg, var(--primary), var(--teal)); color: #fff; font-size: 1.1rem; padding: 14px 36px; }
-.btn-combined:hover { opacity: 0.9; }
-.btn-secondary { background: var(--gray-200); color: var(--gray-700); margin-left: 10px; }
-.btn-secondary:hover { background: var(--gray-300); }
-.btn-row { text-align: center; margin: 24px 0; }
-.results-section { display: none; }
-.result-card { background: #fff; border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.12); padding: 24px; margin-bottom: 20px; }
-.result-card h2 { color: var(--primary); margin-bottom: 16px; font-size: 1.2rem; }
-.result-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.95rem; }
-.result-row:last-child { border-bottom: none; }
-.badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
+/* Part colour classes */
+.hdr-neutral { background: #475569; }
+.hdr-part1 { background: var(--part1); }
+.hdr-part2 { background: var(--part2); }
+.hdr-part3 { background: var(--part3); }
+.hdr-part4 { background: var(--part4); }
+.hdr-part5 { background: var(--part5); }
+.hdr-part6 { background: var(--part6); }
+.hdr-part7 { background: var(--part7); }
+.patient-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.patient-info label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 2px; }
+.patient-info input, .patient-info select { width: 100%; padding: 7px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.9rem; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; }
+.btn:hover { filter: brightness(1.1); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; justify-content: center; }
+.results-section { display: none; margin-top: 16px; }
+.report-output { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem; white-space: pre-wrap; word-break: break-word; overflow-x: auto; max-height: 600px; overflow-y: auto; line-height: 1.45; }
+.symptom-block { border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+.symptom-header { background: var(--gray-100); padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.88rem; }
+.symptom-body { padding: 12px 14px; }
+.symptom-body.collapsed { display: none; }
+.example-list { margin: 6px 0; padding-left: 18px; }
+.example-list li { font-size: 0.84rem; color: var(--gray-700); margin-bottom: 3px; }
+.verdict-row { background: var(--gray-50); padding: 10px 14px; border-top: 1px solid var(--gray-200); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.verdict-row label { font-size: 0.85rem; cursor: pointer; }
+.radio-row { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+.radio-row label { font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.criteria-block { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+.criteria-block h3 { font-size: 0.92rem; margin-bottom: 8px; color: var(--gray-800); }
+.support-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-100); }
+.support-row span { font-size: 0.88rem; }
+.support-row select { padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
+.other-input { width: 100%; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; margin-top: 6px; }
+.note { font-size: 0.82rem; color: var(--gray-500); margin-top: 6px; }
+table.asrs { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 10px; }
+table.asrs th, table.asrs td { border: 1px solid var(--gray-300); padding: 6px 8px; text-align: center; }
+table.asrs th { background: var(--part2); color: white; font-size: 0.78rem; }
+table.asrs td:first-child { text-align: left; min-width: 200px; }
+table.asrs tr:nth-child(even) { background: var(--gray-50); }
+td.shaded-cell { background: #bfdbfe !important; }
+.diagnosis-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 0.88rem; }
 .badge-met { background: #c6f6d5; color: #276749; }
 .badge-not { background: #fed7d7; color: #9b2c2c; }
 .badge-partial { background: #fefcbf; color: #975a16; }
-.diagnosis-box { text-align: center; padding: 20px; border-radius: var(--radius); margin: 16px 0; }
-.diagnosis-met { background: #c6f6d5; border: 2px solid var(--green); }
-.diagnosis-not { background: #fed7d7; border: 2px solid var(--accent); }
-.diagnosis-box h3 { font-size: 1.1rem; margin-bottom: 4px; }
-.diagnosis-box p { font-size: 0.95rem; }
-.report-output { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 20px; font-family: 'Courier New', monospace; font-size: 0.82rem; white-space: pre-wrap; line-height: 1.5; max-height: 600px; overflow-y: auto; }
-.copy-btn { margin-top: 10px; }
-.note { font-size: 0.82rem; color: var(--gray-600); font-style: italic; margin-top: 4px; }
-/* ASRS specific */
-.asrs-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-.asrs-table th { background: var(--teal); color: #fff; padding: 8px 6px; font-size: 0.8rem; text-align: center; }
-.asrs-table th:first-child { text-align: left; width: 50%; }
-.asrs-table td { padding: 10px 6px; border-bottom: 1px solid var(--gray-200); font-size: 0.88rem; text-align: center; }
-.asrs-table td:first-child { text-align: left; }
-.asrs-table tr:hover { background: var(--teal-light); }
-.asrs-table input[type="radio"] { accent-color: var(--teal); transform: scale(1.1); }
-.asrs-part-label { background: var(--teal-light); padding: 8px 12px; font-weight: 700; color: var(--teal); border-bottom: 2px solid var(--teal); }
-.asrs-part-label td { font-weight: 700; color: var(--teal); text-align: left !important; }
-.asrs-subscale { font-size: 0.8rem; color: var(--gray-600); }
-.section-header.purple { background: #553c9a; }
-.section-header.purple:hover { background: #44337a; }
-.comorb-row { display: grid; grid-template-columns: 2fr auto auto auto auto 1fr; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.88rem; }
-.comorb-row label { cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.82rem; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-weight: 600; font-size: 0.82rem; }
+.dev-area { margin-bottom: 14px; }
+.dev-area h4 { font-size: 0.9rem; margin-bottom: 6px; font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 4px; }
+.dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+.dev-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; margin-bottom: 4px; }
+.dev-item input[type="checkbox"] { margin-top: 3px; }
 .comorb-detail { display: none; grid-column: 1 / -1; padding: 6px 0 6px 20px; }
 .comorb-detail.show { display: block; }
 .comorb-detail textarea { width: 100%; padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
 .med-check-row { display: grid; grid-template-columns: 2fr 80px 80px 1fr; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.88rem; }
 .med-check-row select { padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; }
 .mse-group { margin-bottom: 14px; }
-.mse-group h4 { font-size: 0.9rem; color: #553c9a; margin-bottom: 6px; font-weight: 600; }
+.mse-group h4 { font-size: 0.9rem; margin-bottom: 6px; font-weight: 600; border-bottom: 2px solid var(--gray-200); padding-bottom: 4px; }
 .mse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
 .mse-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; }
-.mse-item input[type="checkbox"] { margin-top: 3px; accent-color: #553c9a; }
+.mse-item input[type="checkbox"] { margin-top: 3px; }
 .safety-flag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
 .flag-done { background: #c6f6d5; color: #276749; }
 .flag-missing { background: #fed7d7; color: #9b2c2c; }
 .flag-na { background: var(--gray-200); color: var(--gray-600); }
-.dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
-.dev-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; margin-bottom: 4px; }
-.dev-item input[type="checkbox"] { margin-top: 3px; accent-color: #553c9a; }
-.dev-area { margin-bottom: 14px; }
-.dev-area h4 { font-size: 0.9rem; color: #553c9a; margin-bottom: 6px; font-weight: 600; border-bottom: 2px solid #e9d8fd; padding-bottom: 4px; }
+/* Colour-coded part headers for dev-area h4 */
+.part1-accent h4 { color: var(--part1); border-bottom-color: #e9d5ff; }
+.part2-accent h4 { color: var(--part2); border-bottom-color: #bfdbfe; }
+.part3-accent h4 { color: var(--part3); border-bottom-color: #99f6e4; }
+.part4-accent h4 { color: var(--part4); border-bottom-color: #fde68a; }
+.part5-accent h4 { color: var(--part5); border-bottom-color: #c7d2fe; }
+.part6-accent h4 { color: var(--part6); border-bottom-color: #fbcfe8; }
+.part7-accent h4 { color: var(--part7); border-bottom-color: #bbf7d0; }
 @media (max-width: 700px) {
-  .comorb-row { grid-template-columns: 1fr; gap: 4px; }
-  .med-check-row { grid-template-columns: 1fr; }
-  .mse-grid { grid-template-columns: 1fr; }
-  .dev-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 700px) {
+  .container { padding: 10px; }
   .patient-info { grid-template-columns: 1fr; }
+  .dev-grid { grid-template-columns: 1fr; }
+  .mse-grid { grid-template-columns: 1fr; }
+  .med-check-row { grid-template-columns: 1fr; }
+  .main-header h1 { font-size: 1.2rem; }
+  table.asrs { font-size: 0.72rem; }
+  table.asrs td:first-child { min-width: 140px; }
+}
+
+/* DIVA-5 symptom block styles */
+.symptom-question { padding: 10px 14px; background: #eff6ff; font-weight: 600; font-size: 0.9rem; border-bottom: 1px solid var(--gray-200); color: var(--part2); }
+.symptom-content { padding: 12px 14px; }
+.period-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.period-col { }
+.period-col h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid var(--gray-200); }
+.period-col h4.adult { color: var(--part2); border-bottom-color: #bfdbfe; }
+.period-col h4.child { color: #7c3aed; border-bottom-color: #ddd6fe; }
+.example-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.84rem; margin-bottom: 4px; }
+.example-item input[type="checkbox"] { margin-top: 3px; }
+.symptom-verdict { display: flex; gap: 24px; flex-wrap: wrap; padding: 10px 14px; background: var(--gray-50); border-top: 1px solid var(--gray-200); margin-top: 10px; border-radius: 0 0 var(--radius) var(--radius); }
+.verdict-group { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; }
+.verdict-group strong { font-size: 0.85rem; }
+.verdict-group label { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+@media (max-width: 700px) {
   .period-grid { grid-template-columns: 1fr; }
-  .impairment-grid { grid-template-columns: 1fr; }
-  .asrs-table th, .asrs-table td { padding: 6px 3px; font-size: 0.78rem; }
 }
 </style>
 </head>
 <body>
 <div class="container">
-<h1>ADHD Assessment Suite</h1>
-<p class="subtitle">DIVA-5 Diagnostic Interview &amp; ASRS v1.1 Symptom Checklist<br><em>For clinician use only. Results must be interpreted by a qualified professional.</em></p>
 
-<!-- ============ PATIENT INFO ============ -->
+<div class="main-header">
+  <h1>Structured Adult ADHD Assessment</h1>
+  <p>Comprehensive clinical assessment for ADHD diagnosis &amp; safe prescribing</p>
+</div>
+
+<!-- ============================================================ -->
+<!--                    PATIENT INFORMATION                       -->
+<!-- ============================================================ -->
 <div class="section">
-  <div class="section-header" onclick="toggleSection(this)">Patient Information <span class="toggle">&#9660;</span></div>
+  <div class="section-header hdr-neutral" onclick="toggleSection(this)">Patient Information <span class="toggle">&#9660;</span></div>
   <div class="section-body">
     <div class="patient-info">
-      <div><label for="ptName">Name / Initials</label><input type="text" id="ptName" placeholder="e.g. J.S."></div>
-      <div><label for="ptAge">Age</label><input type="number" id="ptAge" min="5" max="120" placeholder="e.g. 34"></div>
-      <div><label for="ptDate">Date of Assessment</label><input type="date" id="ptDate"></div>
-      <div><label for="ptGender">Gender</label>
-        <select id="ptGender"><option value="">—</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Other</option><option>Prefer not to say</option></select>
-      </div>
-      <div><label for="ptAssessor">Clinician / Assessor</label><input type="text" id="ptAssessor" placeholder="e.g. Dr. Smith"></div>
-      <div><label for="ptReferrer">Referrer</label><input type="text" id="ptReferrer" placeholder="e.g. GP"></div>
+      <div><label>Patient Name</label><input type="text" id="ptName"></div>
+      <div><label>Date of Assessment</label><input type="date" id="ptDate"></div>
+      <div><label>Age</label><input type="number" id="ptAge" min="0" max="120"></div>
+      <div><label>Gender</label><select id="ptGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Other</option></select></div>
+      <div><label>Assessing Clinician</label><input type="text" id="ptAssessor"></div>
+      <div><label>Referring Clinician</label><input type="text" id="ptReferrer"></div>
     </div>
   </div>
 </div>
 
 <!-- ============================================================ -->
-<!--                        ASRS SECTION                          -->
+<!--          PART 1: DEVELOPMENTAL SCREEN (Purple)               -->
 <!-- ============================================================ -->
-<div class="instrument-divider">
-  <h2>ASRS v1.1 — Adult ADHD Self-Report Scale</h2>
-  <p>Kessler, Adler et al. (2005) &bull; WHO &bull; 18-Item Symptom Checklist</p>
+<div class="part-divider" style="background:var(--part1);">
+  <h2>Part 1: Developmental Screen</h2>
+  <p>Prenatal, perinatal, childhood risk factors &amp; adverse experiences</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part1" onclick="toggleSection(this)">Developmental History <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part1-accent" id="devScreenBody"></div>
 </div>
 
+<!-- ============================================================ -->
+<!--     PART 2: DIAGNOSTIC ASSESSMENT (Blue) - ASRS/DIVA/DSM    -->
+<!-- ============================================================ -->
+<div class="part-divider" style="background:var(--part2);">
+  <h2>Part 2: Diagnostic Assessment</h2>
+  <p>ASRS v1.1 screening, DIVA-5 diagnostic interview &amp; DSM-5-TR checklist</p>
+</div>
+
+<!-- 2A: ASRS -->
 <div class="section">
-  <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Instructions <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2A. ASRS v1.1 Screening Checklist <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="asrsBody"></div>
+</div>
+
+
+
+<!-- 2B: DIVA-5 -->
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2B. DIVA-5 — Attention Deficit (Part 1) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="part1Body"></div>
+</div>
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2B. DIVA-5 — Hyperactivity/Impulsivity (Part 2) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="part2Body"></div>
+</div>
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2B. DIVA-5 — Onset, Impairment &amp; Exclusion (Part 3) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="part3Body"></div>
+</div>
+
+
+
+<!-- 2C: DSM-5-TR Checklist -->
+<div class="section">
+  <div class="section-header hdr-part2" onclick="toggleSection(this)">2C. DSM-5-TR Diagnostic Checklist (Optional if DIVA-5 done) <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part2-accent" id="dsmChecklistBody"></div>
+</div>
+
+<!-- ============================================================ -->
+<!--       PART 3: COMORBIDITIES / BACKGROUND (Teal)             -->
+<!-- ============================================================ -->
+<div class="part-divider" style="background:var(--part3);">
+  <h2>Part 3: Comorbidities &amp; Psychiatric Background</h2>
+  <p>Psychiatric comorbidities, family history &amp; substance use</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part3" onclick="toggleSection(this)">Psychiatric Comorbidities, Family &amp; Substance History <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part3-accent" id="comorbBody"></div>
+</div>
+
+<!-- ============================================================ -->
+<!--       PART 4: MEDICAL SCREEN (Amber)                        -->
+<!-- ============================================================ -->
+<div class="part-divider" style="background:var(--part4);">
+  <h2>Part 4: Medical Screen &amp; Safe Prescribing</h2>
+  <p>Medical conditions, medications, investigations &amp; safety checks</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part4" onclick="toggleSection(this)">Medical History, Medications &amp; Investigations <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part4-accent" id="medScreenBody"></div>
+</div>
+
+<!-- ============================================================ -->
+<!--       PART 5: COLLATERAL SUPPORT (Indigo)                   -->
+<!-- ============================================================ -->
+<div class="part-divider" style="background:var(--part5);">
+  <h2>Part 5: Collateral Support</h2>
+  <p>Corroborating information from collateral sources</p>
+</div>
+<div class="section">
+  <div class="section-header hdr-part5" onclick="toggleSection(this)">DIVA-5 Collateral (Childhood Symptoms) <span class="toggle collapsed">&#9660;</span></div>
   <div class="section-body collapsed">
-    <p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:8px;"><strong>Instructions:</strong> Rate each item based on how the patient has felt and conducted themselves <strong>over the past 6 months</strong>. Part A (Questions 1–6) is the screener — 4 or more shaded responses indicate symptoms highly consistent with ADHD. Part B (Questions 7–18) provides additional symptom information.</p>
-    <p style="font-size:0.85rem;color:var(--gray-600);"><strong>Subscales:</strong> Inattention = Q1–4, 7–11 &nbsp;|&nbsp; Hyperactivity-Impulsivity = Q5–6, 12–18</p>
+    <div class="support-row"><span>Informant 1 (e.g. parent)</span><select id="support1"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some support</option><option value="2">2 — Clear support</option></select></div>
+    <div class="support-row"><span>Informant 2 (e.g. sibling)</span><select id="support2"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some support</option><option value="2">2 — Clear support</option></select></div>
+    <div class="support-row"><span>Informant 3 (e.g. partner)</span><select id="support3"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some support</option><option value="2">2 — Clear support</option></select></div>
+    <div style="margin-top:10px"><textarea id="supportNotes" rows="2" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Collateral details..."></textarea></div>
   </div>
 </div>
-
 <div class="section">
-  <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Symptom Checklist <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="asrsBody"></div>
-</div>
-
-<div class="section">
-  <div class="section-header teal" onclick="toggleSection(this)">ASRS Clinician Notes <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed">
-    <textarea id="asrsNotes" rows="4" style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.9rem;" placeholder="Additional observations regarding ASRS responses..."></textarea>
-  </div>
-</div>
-
-<div class="btn-row">
-  <button class="btn btn-teal" onclick="calculateASRS()">Calculate ASRS Results</button>
-</div>
-
-<div id="asrsResults" class="results-section">
-  <div class="section">
-    <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Results Summary <span class="toggle collapsed">&#9660;</span></div>
-    <div class="section-body collapsed"><div class="result-card" id="asrsResultsSummary"></div></div>
-  </div>
-  <div class="section">
-    <div class="section-header teal" onclick="toggleSection(this)">ASRS v1.1 Report <span class="toggle collapsed">&#9660;</span></div>
-    <div class="section-body collapsed">
-      <button class="btn btn-teal copy-btn" onclick="copyText('asrsReportOutput')">📋 Copy ASRS Report</button>
-      <div class="report-output" id="asrsReportOutput" style="margin-top:12px;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================ -->
-<!--                        DIVA-5 SECTION                        -->
-<!-- ============================================================ -->
-<div class="instrument-divider">
-  <h2>DIVA-5 — Diagnostic Interview for ADHD in Adults</h2>
-  <p>J.J.S. Kooij, M.H. Francken &amp; T.I. Bron (2019) &bull; Based on DSM-5 Criteria</p>
-</div>
-
-<!-- PART 1: ATTENTION DEFICIT -->
-<div class="section">
-  <div class="section-header" onclick="toggleSection(this)">Part 1: Symptoms of Attention Deficit (Criterion A1) <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="part1Body"></div>
-</div>
-
-<!-- PART 2: HYPERACTIVITY-IMPULSIVITY -->
-<div class="section">
-  <div class="section-header" onclick="toggleSection(this)">Part 2: Symptoms of Hyperactivity-Impulsivity (Criterion A2) <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="part2Body"></div>
-</div>
-
-<!-- PART 3: CRITERIA B-E -->
-<div class="section">
-  <div class="section-header" onclick="toggleSection(this)">Part 3: Age of Onset, Impairment &amp; Differential (Criteria B–E) <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="part3Body"></div>
-</div>
-
-<!-- COLLATERAL SUPPORT -->
-<div class="section">
-  <div class="section-header" onclick="toggleSection(this)">Collateral Support <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed">
-    <div class="support-row"><span>Parent(s) / brother / sister / other</span><select id="support1"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some</option><option value="2">2 — Clear support</option></select></div>
-    <div class="support-row"><span>Partner / good friend / other</span><select id="support2"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some</option><option value="2">2 — Clear support</option></select></div>
-    <div class="support-row"><span>School reports</span><select id="support3"><option value="N/A">N/A</option><option value="0">0 — None/Little</option><option value="1">1 — Some</option><option value="2">2 — Clear support</option></select></div>
-    <div style="margin-top:12px"><label for="supportNotes" style="font-weight:600;font-size:0.9rem;">Additional collateral notes</label><textarea id="supportNotes" rows="3" style="width:100%;margin-top:4px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="Optional notes about informants, school reports, etc."></textarea></div>
-  </div>
-</div>
-
-<!-- DIVA CLINICIAN NOTES -->
-<div class="section">
-  <div class="section-header" onclick="toggleSection(this)">DIVA-5 Clinician Notes <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed">
-    <textarea id="divaNotes" rows="4" style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.9rem;" placeholder="Additional clinical observations for DIVA-5..."></textarea>
-  </div>
-</div>
-
-<div class="btn-row">
-  <button class="btn btn-primary" onclick="calculateDIVA()">Calculate DIVA-5 Results</button>
-</div>
-
-<div id="divaResults" class="results-section">
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">DIVA-5 Results Summary <span class="toggle collapsed">&#9660;</span></div>
-    <div class="section-body collapsed"><div class="result-card" id="divaResultsSummary"></div></div>
-  </div>
-  <div class="section">
-    <div class="section-header" onclick="toggleSection(this)">DIVA-5 Report <span class="toggle collapsed">&#9660;</span></div>
-    <div class="section-body collapsed">
-      <button class="btn btn-primary copy-btn" onclick="copyText('divaReportOutput')">📋 Copy DIVA-5 Report</button>
-      <div class="report-output" id="divaReportOutput" style="margin-top:12px;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================ -->
-<!--                    COMBINED REPORT                           -->
-<!-- ============================================================ -->
-<div style="margin-top:40px;padding-top:20px;border-top:3px solid var(--gray-300);">
-  <div class="btn-row">
-    <button class="btn btn-combined" onclick="generateCombinedReport()">📑 Generate Combined ASRS + DIVA-5 Report</button>
-    <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
-  </div>
-</div>
-
-<div id="combinedResults" class="results-section">
-  <div class="section">
-    <div class="section-header" style="background:linear-gradient(135deg, var(--primary), var(--teal));" onclick="toggleSection(this)">Combined Assessment Report <span class="toggle collapsed">&#9660;</span></div>
-    <div class="section-body collapsed">
-      <button class="btn btn-combined copy-btn" onclick="copyText('combinedReportOutput')" style="font-size:0.95rem;padding:10px 24px;">📋 Copy Combined Report to Clipboard</button>
-      <div class="report-output" id="combinedReportOutput" style="margin-top:12px;"></div>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- ============================================================ -->
-<!--              STRUCTURED ADULT ADHD ASSESSMENT                -->
-<!-- ============================================================ -->
-<div class="instrument-divider" style="background:linear-gradient(135deg,#553c9a,#2c5282);margin-top:40px;">
-  <h2>Structured Adult ADHD Assessment</h2>
-  <p>Comprehensive clinical assessment framework for safe ADHD diagnosis &amp; prescribing</p>
-</div>
-
-<!-- PART 1: DEVELOPMENTAL SCREEN -->
-<div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 1: Developmental Screen <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="devScreenBody"></div>
-</div>
-
-<!-- PART 2: DSM-5-TR CHECKLIST -->
-<div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 2: DSM-5-TR Diagnostic Checklist (Optional if DIVA-5 done) <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="dsmChecklistBody"></div>
-</div>
-
-<!-- PART 3: COMORBIDITIES -->
-<div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 3: Comorbidities / Psychiatric Background <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="comorbBody"></div>
-</div>
-
-<!-- PART 4: MEDICAL SCREEN -->
-<div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 4: Medical Screen &amp; Safe Prescribing <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="medScreenBody"></div>
-</div>
-
-<!-- PART 5: COLLATERAL -->
-<div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 5: Collateral Support <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-header hdr-part5" onclick="toggleSection(this)">Additional Collateral Sources <span class="toggle collapsed">&#9660;</span></div>
   <div class="section-body collapsed" id="collateral2Body"></div>
 </div>
 
-<!-- PART 6: MSE -->
+<!-- ============================================================ -->
+<!--       PART 6: MENTAL STATE EXAMINATION (Rose)               -->
+<!-- ============================================================ -->
+<div class="part-divider" style="background:var(--part6);">
+  <h2>Part 6: Mental State Examination</h2>
+  <p>Structured MSE with ADHD-relevant findings</p>
+</div>
 <div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 6: Mental State Examination <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="mseBody"></div>
+  <div class="section-header hdr-part6" onclick="toggleSection(this)">Mental State Examination <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part6-accent" id="mseBody"></div>
 </div>
 
-<!-- PART 7: OUTCOME -->
+<!-- ============================================================ -->
+<!--       PART 7: OUTCOME & DIAGNOSIS (Green)                   -->
+<!-- ============================================================ -->
+<div class="part-divider" style="background:var(--part7);">
+  <h2>Part 7: Outcome &amp; Diagnosis</h2>
+  <p>Diagnostic formulation, safety checklist &amp; management plan</p>
+</div>
 <div class="section">
-  <div class="section-header purple" onclick="toggleSection(this)">Part 7: Outcome &amp; Diagnosis <span class="toggle collapsed">&#9660;</span></div>
-  <div class="section-body collapsed" id="outcomeBody"></div>
+  <div class="section-header hdr-part7" onclick="toggleSection(this)">Outcome &amp; Diagnosis <span class="toggle collapsed">&#9660;</span></div>
+  <div class="section-body collapsed part7-accent" id="outcomeBody"></div>
 </div>
 
-<div class="btn-row">
-  <button class="btn" style="background:linear-gradient(135deg,#553c9a,#2c5282);color:#fff;font-size:1.1rem;padding:14px 36px;" onclick="generateFullReport()">📋 Generate Full Assessment Report (ASRS + DIVA-5 + Structured Assessment)</button>
+<!-- ============================================================ -->
+<!--              GENERATE FULL REPORT                            -->
+<!-- ============================================================ -->
+<div class="btn-row" style="margin-top:24px;">
+  <button class="btn" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;font-size:1.1rem;padding:14px 36px;" onclick="generateFullReport()">📋 Generate Full Assessment Report</button>
 </div>
 
 <div id="fullResults" class="results-section">
   <div class="section">
-    <div class="section-header" style="background:linear-gradient(135deg,#553c9a,#2c5282);" onclick="toggleSection(this)">Full Assessment Report <span class="toggle">&#9660;</span></div>
+    <div class="section-header" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);" onclick="toggleSection(this)">Full Assessment Report <span class="toggle">&#9660;</span></div>
     <div class="section-body">
-      <button class="btn" style="background:linear-gradient(135deg,#553c9a,#2c5282);color:#fff;" onclick="copyText('fullReportOutput')">📋 Copy Full Report to Clipboard</button>
+      <button class="btn" style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;" onclick="copyText('fullReportOutput', event)">📋 Copy Full Report to Clipboard</button>
       <div class="report-output" id="fullReportOutput" style="margin-top:12px;max-height:800px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden results containers for ASRS+DIVA combined (used by JS) -->
+<div id="combinedResults" class="results-section">
+  <div class="section">
+    <div class="section-header hdr-part2" onclick="toggleSection(this)">Combined ASRS + DIVA-5 Report <span class="toggle">&#9660;</span></div>
+    <div class="section-body">
+      <button class="btn" style="background:var(--part2);color:#fff;" onclick="copyText('combinedReportOutput', event)">📋 Copy Combined Report to Clipboard</button>
+      <div class="report-output" id="combinedReportOutput" style="margin-top:10px;max-height:600px;"></div>
     </div>
   </div>
 </div>
 
 </div><!-- /container -->
 
+<div style="display:none;">
+  <textarea id="asrsNotes"></textarea>
+  <textarea id="divaNotes"></textarea>
+</div>
 <script>
+
+window.onerror = function(msg, url, line, col, error) {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:red;color:white;padding:10px;font-size:12px;z-index:99999;max-height:30vh;overflow:auto;';
+  d.textContent = 'JS Error: ' + msg + ' (line ' + line + ')';
+  document.body.appendChild(d);
+  setTimeout(function() { d.remove(); }, 10000);
+  return false;
+};
+
+function _v(id, prop) {
+  var el = document.getElementById(id);
+  if (!el) return prop === 'checked' ? false : '';
+  return el[prop] !== undefined ? el[prop] : '';
+}
+function _vt(id) { return (_v(id,'value') || '').trim(); }
+
+
 // ==================== DIVA-5 DATA ====================
 const attentionSymptoms = [
   { id:"A1", code:"A1a", q:"Often fails to give close attention to details, or makes careless mistakes in work or during other activities.",
@@ -581,8 +557,32 @@ function initForm() {
     <p style="margin-top:6px;">If yes, specify: <input type="text" id="critE_specify" style="width:300px;padding:6px 10px;border:1px solid var(--gray-300);border-radius:4px;" placeholder="e.g. bipolar disorder"></p></div>`;
   document.getElementById('part3Body').innerHTML = p3;
 
+  // Add DIVA-5 calculate button and results area
+  var divaExtra = document.createElement('div');
+  divaExtra.innerHTML = '<div style="margin-top:20px;text-align:center;">' +
+    '<button class="btn" style="background:var(--part2);color:#fff;padding:10px 24px;font-size:0.95rem;" onclick="calculateDIVA()">Calculate DIVA-5 Results</button>' +
+    '</div>' +
+    '<div id="divaResults" class="results-section" style="margin-top:16px;">' +
+    '<div id="divaResultsSummary"></div>' +
+    '<button class="btn" style="background:var(--part2);color:#fff;margin-top:10px;" onclick="copyText(\x27divaReportOutput\x27, event)">📋 Copy DIVA-5 Report</button>' +
+    '<div class="report-output" id="divaReportOutput" style="margin-top:10px;max-height:400px;"></div>' +
+    '</div>';
+  document.getElementById('part3Body').appendChild(divaExtra);
+
   // ASRS
   document.getElementById('asrsBody').innerHTML = buildASRS();
+
+  // Add ASRS calculate button and results area
+  var asrsExtra = document.createElement('div');
+  asrsExtra.innerHTML = '<div style="margin-top:16px;text-align:center;">' +
+    '<button class="btn" style="background:var(--part2);color:#fff;padding:10px 24px;font-size:0.95rem;" onclick="calculateASRS()">Calculate ASRS Results</button>' +
+    '</div>' +
+    '<div id="asrsResults" class="results-section" style="margin-top:16px;">' +
+    '<div id="asrsResultsSummary"></div>' +
+    '<button class="btn" style="background:var(--part2);color:#fff;margin-top:10px;" onclick="copyText(\x27asrsReportOutput\x27, event)">📋 Copy ASRS Report</button>' +
+    '<div class="report-output" id="asrsReportOutput" style="margin-top:10px;max-height:400px;"></div>' +
+    '</div>';
+  document.getElementById('asrsBody').appendChild(asrsExtra);
 
   document.getElementById('ptDate').valueAsDate = new Date();
 }
@@ -610,16 +610,36 @@ function getPatientInfo() {
     ageNum: parseInt(document.getElementById('ptAge').value) || 18
   };
 }
-function copyText(id) {
-  const text = document.getElementById(id).textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    event.target.textContent = '✅ Copied!';
-    setTimeout(() => {
-      if (id.includes('combined')) event.target.textContent = '📋 Copy Combined Report to Clipboard';
-      else if (id.includes('diva')) event.target.textContent = '📋 Copy DIVA-5 Report';
-      else event.target.textContent = '📋 Copy ASRS Report';
-    }, 2000);
-  });
+function copyText(id, evt) {
+  var text = document.getElementById(id).textContent;
+  var btn = evt ? evt.target : (event ? event.target : document.activeElement);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = '✅ Copied!';
+      setTimeout(function() { resetCopyBtn(btn, id); }, 2000);
+    }).catch(function() { fallbackCopy(text, btn, id); });
+  } else {
+    fallbackCopy(text, btn, id);
+  }
+}
+function fallbackCopy(text, btn, id) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); btn.textContent = '✅ Copied!'; }
+  catch(e) { btn.textContent = '⚠️ Copy failed'; }
+  document.body.removeChild(ta);
+  setTimeout(function() { resetCopyBtn(btn, id); }, 2000);
+}
+function resetCopyBtn(btn, id) {
+  if (id.includes('full')) btn.textContent = '📋 Copy Full Report to Clipboard';
+  else if (id.includes('combined')) btn.textContent = '📋 Copy Combined Report to Clipboard';
+  else if (id.includes('diva')) btn.textContent = '📋 Copy DIVA-5 Report';
+  else btn.textContent = '📋 Copy ASRS Report';
 }
 
 // ==================== DIVA-5 CALCULATION ====================
@@ -829,12 +849,13 @@ function generateCombinedReport() {
   let r = '';
   r += '╔═══════════════════════════════════════════════════════╗\n';
   r += '║     COMBINED ADHD ASSESSMENT REPORT                  ║\n';
-  r += '║     ASRS v1.1 + DIVA-5                               ║\n';
+  r += '║     ASRS + DIVA-5                               ║\n';
   r += '╚═══════════════════════════════════════════════════════╝\n\n';
   r += `Patient:    ${pt.name}\nAge:        ${pt.age}\nGender:     ${pt.gender}\nDate:       ${pt.date}\nClinician:  ${pt.assessor}\nReferrer:   ${pt.referrer}\n`;
   r += '\n\n';
   r += buildDIVAReportText(d);
   r += '\n\n';
+  r += '\n══ PART 2A: ASRS v1.1 SCREENING ══════════════════════════\n\n';
   r += buildASRSReportText(a);
   r += '\n\n';
   r += '╔═══════════════════════════════════════════════════════╗\n';
@@ -854,40 +875,8 @@ function generateCombinedReport() {
     cat.items.forEach((item, ii) => {
       const id = `comorb_${ci}_${ii}`;
       const val = getRadio(id);
-      const major = document.getElementById(id + '_major')?.checked;
-      const notes = document.getElementById(id + '_notes')?.value?.trim();
-      if (val === 'current' || major) {
-        let line = item + ' — Current';
-        if (major) line += ' [MAJOR]';
-        if (notes) line += ' (' + notes + ')';
-        rptCurrentComorbs.push(line);
-      }
-    });
-  });
-  if (rptCurrentComorbs.length) {
-    r += '\\nCURRENT COMORBIDITIES:\\n';
-    rptCurrentComorbs.forEach(c => r += `  • ${c}\\n`);
-  }
-  // MSE concerns for report
-  let rptMseConcerns = [];
-  Object.keys(mseData).forEach(key => {
-    mseData[key].items.forEach((item, i) => {
-      if (document.getElementById('mse_'+key+'_'+i)?.checked && item.includes('ESCALATE')) rptMseConcerns.push(item.replace(' — ESCALATE',''));
-    });
-  });
-  if (rptMseConcerns.length) {
-    r += '\\n⚠️ MSE CONCERNS:\\n';
-    rptMseConcerns.forEach(c => r += `  • ${c}\\n`);
-  }
-
-  // Current comorbidities for report
-  let rptCurrentComorbs = [];
-  comorbidities.forEach((cat, ci) => {
-    cat.items.forEach((item, ii) => {
-      const id = `comorb_${ci}_${ii}`;
-      const val = getRadio(id);
-      const major = document.getElementById(id + '_major')?.checked;
-      const notes = document.getElementById(id + '_notes')?.value?.trim();
+      const major = _v(id + '_major','checked');
+      const notes = _vt(id + '_notes');
       if (val === 'current' || major) {
         let line = item + ' — Current';
         if (major) line += ' [MAJOR]';
@@ -904,7 +893,7 @@ function generateCombinedReport() {
   let rptMseConcerns = [];
   Object.keys(mseData).forEach(key => {
     mseData[key].items.forEach((item, i) => {
-      if (document.getElementById('mse_'+key+'_'+i)?.checked && item.includes('ESCALATE')) rptMseConcerns.push(item.replace(' — ESCALATE',''));
+      if (_v('mse_'+key+'_'+i,'checked') && item.includes('ESCALATE')) rptMseConcerns.push(item.replace(' — ESCALATE',''));
     });
   });
   if (rptMseConcerns.length) {
@@ -1066,7 +1055,7 @@ function buildDevScreen() {
 
 function buildDSMChecklist() {
   let h = '<p style="font-size:0.9rem;color:var(--gray-700);margin-bottom:8px;">Optional standalone DSM-5-TR checklist. If DIVA-5 is completed above, this section is supplementary.</p>';
-  h += '<button class="btn btn-primary" style="margin-bottom:16px;padding:8px 16px;font-size:0.85rem;background:#553c9a;" onclick="autofillDSMfromDIVA()">⚡ Auto-fill from DIVA-5 Results</button>';
+  h += '<button class="btn btn-primary" style="margin-bottom:16px;padding:8px 16px;font-size:0.85rem;background:#1e40af;" onclick="autofillDSMfromDIVA()">⚡ Auto-fill from DIVA-5 Results</button>';
   // Inattention
   h += `<div class="dev-area"><h4>${dsmCriteria.inatt.title}</h4><div class="dev-grid">`;
   dsmCriteria.inatt.items.forEach((item, i) => {
@@ -1201,8 +1190,8 @@ function buildMedScreen() {
   // SafeScript
   h += `<div class="dev-area" style="margin-top:16px;"><h4>Prescription Monitoring</h4>`;
   h += `<div style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;">`;
-  h += `<label style="font-size:0.9rem;cursor:pointer;"><input type="checkbox" id="safescript_checked" style="accent-color:#553c9a;"> SafeScript / RTPM checked</label>`;
-  h += `<label style="font-size:0.9rem;cursor:pointer;"><input type="checkbox" id="safescript_clear" style="accent-color:#553c9a;"> No concerning findings</label>`;
+  h += `<label style="font-size:0.9rem;cursor:pointer;"><input type="checkbox" id="safescript_checked" style="accent-color:#6b21a8;"> SafeScript / RTPM checked</label>`;
+  h += `<label style="font-size:0.9rem;cursor:pointer;"><input type="checkbox" id="safescript_clear" style="accent-color:#6b21a8;"> No concerning findings</label>`;
   h += `</div>`;
   h += `<textarea id="safescriptNotes" rows="2" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--gray-300);border-radius:4px;font-size:0.88rem;" placeholder="SafeScript findings or notes..."></textarea>`;
   h += `</div>`;
@@ -1251,7 +1240,7 @@ function buildOutcome() {
   // Auto-summary section
   h += `<div class="dev-area"><h4>Assessment Summary (Auto-Generated)</h4>`;
   h += `<p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:8px;">Click the button below to pull results from all sections above.</p>`;
-  h += `<button class="btn" style="background:#553c9a;color:#fff;margin-bottom:12px;padding:8px 16px;font-size:0.9rem;" onclick="refreshOutcomeSummary()">🔄 Refresh Summary</button>`;
+  h += `<button class="btn" style="background:#1e40af;color:#fff;margin-bottom:12px;padding:8px 16px;font-size:0.9rem;" onclick="refreshOutcomeSummary()">🔄 Refresh Summary</button>`;
   h += `<div id="outcomeSummaryBox" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px;font-size:0.9rem;"></div>`;
   h += `</div>`;
 
@@ -1324,14 +1313,14 @@ function refreshOutcomeSummary() {
   h += '<div style="margin-bottom:12px;">';
   h += '<strong>Collateral Support:</strong> ';
   const col2Sources = ["col2_parent","col2_partner","col2_school","col2_employer","col2_gp","col2_prev_psych","col2_other"];
-  const divaCol = [document.getElementById('support1')?.value, document.getElementById('support2')?.value, document.getElementById('support3')?.value];
+  const divaCol = [_v('support1','value'), _v('support2','value'), _v('support3','value')];
   let allColVals = [];
-  col2Sources.forEach(id => { const v = document.getElementById(id)?.value; if (v && v !== 'N/A' && v !== 'not_obtained') allColVals.push(parseInt(v)); });
+  col2Sources.forEach(id => { const v = _v(id,'value'); if (v && v !== 'N/A' && v !== 'not_obtained') allColVals.push(parseInt(v)); });
   divaCol.forEach(v => { if (v && v !== 'N/A') allColVals.push(parseInt(v)); });
   if (allColVals.length === 0) {
     h += '<span class="badge badge-not">NO COLLATERAL PROVIDED</span>';
   } else {
-    const maxCol = Math.max(...allColVals);
+    const maxCol = Math.max.apply(null, allColVals);
     if (maxCol >= 2) h += '<span class="badge badge-met">CLEAR SUPPORT</span>';
     else if (maxCol >= 1) h += '<span class="badge badge-partial">SOME SUPPORT</span>';
     else h += '<span class="badge badge-not">NO SUPPORT FROM COLLATERAL</span>';
@@ -1341,12 +1330,12 @@ function refreshOutcomeSummary() {
   // 3. Stimulant prescribing safety
   h += '<div style="margin-bottom:12px;">';
   h += '<strong>Stimulant Prescribing Safety:</strong> ';
-  const ecgOk = ['normal','na'].includes(document.getElementById('inv_ecg_status')?.value);
-  const bpOk = ['normal','na'].includes(document.getElementById('inv_bp_status')?.value);
-  const pulseOk = ['normal','na'].includes(document.getElementById('inv_pulse_status')?.value);
-  const udsOk = document.getElementById('inv_uds_status')?.value !== 'not_done';
-  const weightOk = ['normal','abnormal','na'].includes(document.getElementById('inv_weight_status')?.value) && document.getElementById('inv_weight_status')?.value !== 'not_done';
-  const ssOk = document.getElementById('safescript_checked')?.checked;
+  const ecgOk = ['normal','na'].includes(_v('inv_ecg_status','value'));
+  const bpOk = ['normal','na'].includes(_v('inv_bp_status','value'));
+  const pulseOk = ['normal','na'].includes(_v('inv_pulse_status','value'));
+  const udsOk = _v('inv_uds_status','value') !== 'not_done';
+  const weightOk = ['normal','abnormal','na'].includes(_v('inv_weight_status','value')) && _v('inv_weight_status','value') !== 'not_done';
+  const ssOk = _v('safescript_checked','checked');
   // Check for substance use concerns
   let activeSubstances = [];
   substanceList.forEach((sub, i) => { const v = getRadio(`sub_${i}`); if (v === 'current') activeSubstances.push(sub); });
@@ -1354,7 +1343,7 @@ function refreshOutcomeSummary() {
   let cardiacConcern = false;
   const cardiacItems = medicalConditions.find(c=>c.cat==='Cardiovascular');
   if (cardiacItems) {
-    cardiacItems.items.forEach((item,i) => { if (document.getElementById(`med_Cardiovascular_${i}`)?.checked) cardiacConcern = true; });
+    cardiacItems.items.forEach((item,i) => { if (_v(`med_Cardiovascular_${i}`,'checked')) cardiacConcern = true; });
   }
 
   const allSafe = ecgOk && bpOk && pulseOk && udsOk && weightOk && ssOk && activeSubstances.length === 0 && !cardiacConcern;
@@ -1391,8 +1380,8 @@ function refreshOutcomeSummary() {
     cat.items.forEach((item, ii) => {
       const id = `comorb_${ci}_${ii}`;
       const val = getRadio(id);
-      const major = document.getElementById(id + '_major')?.checked;
-      const notes = document.getElementById(id + '_notes')?.value?.trim();
+      const major = _v(id + '_major','checked');
+      const notes = _vt(id + '_notes');
       if (val === 'current' || major) {
         let line = `<strong>${item}</strong> — Current${major?' [MAJOR SYMPTOMS]':''}`;
         if (notes) line += ` — ${notes}`;
@@ -1424,7 +1413,7 @@ function refreshOutcomeSummary() {
   concernKeys.forEach(key => {
     const group = mseData[key];
     group.items.forEach((item, i) => {
-      if (document.getElementById(`mse_${key}_${i}`)?.checked && (item.includes('ESCALATE') || item.includes('suicidal') || item.includes('Hopelessness') || item.includes('homicidal'))) {
+      if (_v(`mse_${key}_${i}`,'checked') && (item.includes('ESCALATE') || item.includes('suicidal') || item.includes('Hopelessness') || item.includes('homicidal'))) {
         mseConcerns.push(item.replace(' — ESCALATE',''));
       }
     });
@@ -1433,7 +1422,7 @@ function refreshOutcomeSummary() {
   let mseFindings = [];
   Object.keys(mseData).forEach(key => {
     mseData[key].items.forEach((item, i) => {
-      if (document.getElementById(`mse_${key}_${i}`)?.checked && item.includes('ESCALATE')) {
+      if (_v(`mse_${key}_${i}`,'checked') && item.includes('ESCALATE')) {
         if (!mseConcerns.includes(item.replace(' — ESCALATE',''))) mseConcerns.push(item.replace(' — ESCALATE',''));
       }
     });
@@ -1462,7 +1451,7 @@ function refreshSafetyChecklist() {
   checks.forEach(c => {
     const el = document.getElementById(c.id + '_status');
     const status = el ? el.value : 'not_done';
-    const comment = document.getElementById(c.id + '_comment')?.value || '';
+    const comment = _v(c.id + '_comment','value') || '';
     let flagClass, flagText;
     if (status === 'not_done') { flagClass = c.req ? 'flag-missing' : 'flag-na'; flagText = c.req ? 'NOT DONE' : 'Not done (optional)'; }
     else if (status === 'normal') { flagClass = 'flag-done'; flagText = 'Normal'; }
@@ -1474,7 +1463,7 @@ function refreshSafetyChecklist() {
     h += `</div>`;
   });
   // SafeScript
-  const ssChecked = document.getElementById('safescript_checked')?.checked;
+  const ssChecked = _v('safescript_checked','checked');
   h += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100);">`;
   h += `<span style="font-size:0.9rem;">SafeScript / RTPM *</span>`;
   h += `<span class="safety-flag ${ssChecked?'flag-done':'flag-missing'}">${ssChecked?'Checked':'NOT CHECKED'}</span>`;
@@ -1492,13 +1481,14 @@ function generateFullReport() {
   const d = getDIVAData();
   let r = '';
   r += '╔═══════════════════════════════════════════════════════════╗\n';
-  r += '║   COMPREHENSIVE ADULT ADHD ASSESSMENT REPORT            ║\n';
-  r += '║   ASRS v1.1 + DIVA-5 + Structured Clinical Assessment  ║\n';
+  r += '║   STRUCTURED ADULT ADHD ASSESSMENT REPORT            ║\n';
+  r += '║   Structured Adult ADHD Assessment  ║\n';
   r += '╚═══════════════════════════════════════════════════════════╝\n\n';
   r += `Patient:    ${pt.name}\nAge:        ${pt.age}\nGender:     ${pt.gender}\nDate:       ${pt.date}\nClinician:  ${pt.assessor}\nReferrer:   ${pt.referrer}\n`;
 
   // ASRS
   r += '\n\n';
+  r += '\n══ PART 2A: ASRS v1.1 SCREENING ══════════════════════════\n\n';
   r += buildASRSReportText(a);
 
   // DIVA-5
@@ -1507,13 +1497,13 @@ function generateFullReport() {
 
   // Developmental Screen
   r += '\n\n═══════════════════════════════════════════════════════\n';
-  r += '  DEVELOPMENTAL SCREEN\n';
+  r += '  PART 1: DEVELOPMENTAL SCREEN\n';
   r += '═══════════════════════════════════════════════════════\n\n';
   Object.keys(devScreenData).forEach(key => {
     const area = devScreenData[key];
     let checked = [];
-    area.items.forEach((item, i) => { if (document.getElementById(`dev_${key}_${i}`)?.checked) checked.push(item); });
-    const other = document.getElementById(`dev_${key}_other`)?.value?.trim();
+    area.items.forEach((item, i) => { if (_v(`dev_${key}_${i}`,'checked')) checked.push(item); });
+    const other = _vt(`dev_${key}_other`);
     if (other) checked.push('Other: ' + other);
     if (checked.length) {
       r += `${area.title}:\n`;
@@ -1521,22 +1511,22 @@ function generateFullReport() {
       r += '\n';
     }
   });
-  const devNotes = document.getElementById('devNotes')?.value?.trim();
+  const devNotes = _vt('devNotes');
   if (devNotes) r += `Notes: ${devNotes}\n`;
 
   // DSM-5-TR Checklist
   r += '\n───────────────────────────────────────────────────────\n';
-  r += '  DSM-5-TR DIAGNOSTIC CHECKLIST\n';
+  r += '  PART 2C: DSM-5-TR DIAGNOSTIC CHECKLIST\n';
   r += '───────────────────────────────────────────────────────\n\n';
   let dsmInattCount = 0, dsmHICount = 0;
   dsmCriteria.inatt.items.forEach((item, i) => {
-    const checked = document.getElementById(`dsm_inatt_${i}`)?.checked;
+    const checked = _v(`dsm_inatt_${i}`,'checked');
     if (checked) dsmInattCount++;
     r += `  ${checked?'[X]':'[ ]'} ${item}\n`;
   });
   r += `\n  Inattention: ${dsmInattCount}/9\n\n`;
   dsmCriteria.hi.items.forEach((item, i) => {
-    const checked = document.getElementById(`dsm_hi_${i}`)?.checked;
+    const checked = _v(`dsm_hi_${i}`,'checked');
     if (checked) dsmHICount++;
     r += `  ${checked?'[X]':'[ ]'} ${item}\n`;
   });
@@ -1545,16 +1535,16 @@ function generateFullReport() {
   r += `  Severity: ${getRadio('dsm_severity')||'N/A'}\n`;
 
   // Comorbidities
-  r += '\n───────────────────────────────────────────────────────\n';
-  r += '  PSYCHIATRIC COMORBIDITIES\n';
+  r += '\n\n═══════════════════════════════════════════════════════\n';
+  r += '  PART 3: PSYCHIATRIC COMORBIDITIES\n';
   r += '───────────────────────────────────────────────────────\n\n';
   comorbidities.forEach((cat, ci) => {
     let catItems = [];
     cat.items.forEach((item, ii) => {
       const id = `comorb_${ci}_${ii}`;
       const val = getRadio(id);
-      const major = document.getElementById(id + '_major')?.checked;
-      const notes = document.getElementById(id + '_notes')?.value?.trim();
+      const major = _v(id + '_major','checked');
+      const notes = _vt(id + '_notes');
       if (val && val !== 'nil') {
         let line = `${item}: ${val.toUpperCase()}`;
         if (major) line += ' [MAJOR SYMPTOMS]';
@@ -1572,17 +1562,17 @@ function generateFullReport() {
       r += '\n';
     }
   });
-  const famHx = document.getElementById('familyHxNotes')?.value?.trim();
+  const famHx = _vt('familyHxNotes');
   if (famHx) r += `Family History:\n  ${famHx}\n\n`;
 
   // Substance use
   r += '───────────────────────────────────────────────────────\n';
-  r += '  SUBSTANCE USE HISTORY\n';
+  r += '  PART 3 (cont): SUBSTANCE USE HISTORY\n';
   r += '───────────────────────────────────────────────────────\n\n';
   substanceList.forEach((sub, i) => {
     const id = `sub_${i}`;
     const val = getRadio(id);
-    const notes = document.getElementById(id + '_notes')?.value?.trim();
+    const notes = _vt(id + '_notes');
     if (val && val !== 'nil') {
       r += `  ${sub}: ${val.toUpperCase()}`;
       if (notes) r += ' — ' + notes;
@@ -1591,14 +1581,14 @@ function generateFullReport() {
   });
 
   // Medical screen
-  r += '\n───────────────────────────────────────────────────────\n';
-  r += '  MEDICAL SCREEN & INVESTIGATIONS\n';
+  r += '\n\n═══════════════════════════════════════════════════════\n';
+  r += '  PART 4: MEDICAL SCREEN & INVESTIGATIONS\n';
   r += '───────────────────────────────────────────────────────\n\n';
   // Medical conditions
   let medChecked = [];
   medicalConditions.forEach(cat => {
     cat.items.forEach((item, i) => {
-      if (document.getElementById(`med_${cat.cat.replace(/[^a-zA-Z]/g,'')}_${i}`)?.checked) medChecked.push(item);
+      if ((_v(`med_${cat.cat.replace(/[^a-zA-Z]/g,'')}_${i}`,'checked'))) medChecked.push(item);
     });
   });
   if (medChecked.length) {
@@ -1608,9 +1598,9 @@ function generateFullReport() {
   } else {
     r += 'Medical Conditions: Nil significant reported\n\n';
   }
-  const medOther = document.getElementById('medOtherNotes')?.value?.trim();
+  const medOther = _vt('medOtherNotes');
   if (medOther) r += `Other: ${medOther}\n\n`;
-  const meds = document.getElementById('medsList')?.value?.trim();
+  const meds = _vt('medsList');
   r += `Current Medications:\n  ${meds||'Nil reported'}\n\n`;
 
   r += 'Investigations:\n';
@@ -1620,25 +1610,25 @@ function generateFullReport() {
     {id:"inv_weight",label:"Weight/BMI",req:true}
   ];
   invList.forEach(inv => {
-    const status = document.getElementById(inv.id+'_status')?.value || 'not_done';
-    const when = document.getElementById(inv.id+'_when')?.value || '';
-    const comment = document.getElementById(inv.id+'_comment')?.value?.trim() || '';
+    const status = _v(inv.id+'_status','value') || 'not_done';
+    const when = _v(inv.id+'_when','value') || '';
+    const comment = _vt(inv.id+'_comment');
     let line = `  ${inv.label}: ${status.toUpperCase().replace('_',' ')}`;
     if (when) line += ` (${when})`;
     if (comment) line += ` — ${comment}`;
     if (status === 'not_done' && inv.req) line += ' ⚠️ REQUIRED';
     r += line + '\n';
   });
-  const ssCheck = document.getElementById('safescript_checked')?.checked;
-  const ssClear = document.getElementById('safescript_clear')?.checked;
-  const ssNotes = document.getElementById('safescriptNotes')?.value?.trim();
+  const ssCheck = _v('safescript_checked','checked');
+  const ssClear = _v('safescript_clear','checked');
+  const ssNotes = _vt('safescriptNotes');
   r += `\nSafeScript/RTPM: ${ssCheck?'CHECKED':'NOT CHECKED ⚠️'}${ssClear?' — No concerning findings':''}`;
   if (ssNotes) r += ` — ${ssNotes}`;
   r += '\n';
 
   // Collateral
-  r += '\n───────────────────────────────────────────────────────\n';
-  r += '  COLLATERAL SUPPORT\n';
+  r += '\n\n═══════════════════════════════════════════════════════\n';
+  r += '  PART 5: COLLATERAL SUPPORT\n';
   r += '───────────────────────────────────────────────────────\n\n';
   const col2Sources = [
     {id:"col2_parent",label:"Parent/sibling/family"},{id:"col2_partner",label:"Partner/spouse/friend"},
@@ -1647,47 +1637,47 @@ function generateFullReport() {
     {id:"col2_other",label:"Other"}
   ];
   col2Sources.forEach(s => {
-    const val = document.getElementById(s.id)?.value || 'N/A';
+    const val = _v(s.id,'value') || 'N/A';
     r += `  ${s.label}: ${val}\n`;
   });
-  const col2Notes = document.getElementById('collateral2Notes')?.value?.trim();
+  const col2Notes = _vt('collateral2Notes');
   if (col2Notes) r += `  Notes: ${col2Notes}\n`;
 
   // MSE
-  r += '\n───────────────────────────────────────────────────────\n';
-  r += '  MENTAL STATE EXAMINATION\n';
+  r += '\n\n═══════════════════════════════════════════════════════\n';
+  r += '  PART 6: MENTAL STATE EXAMINATION\n';
   r += '───────────────────────────────────────────────────────\n\n';
   Object.keys(mseData).forEach(key => {
     const group = mseData[key];
     let checked = [];
-    group.items.forEach((item, i) => { if (document.getElementById(`mse_${key}_${i}`)?.checked) checked.push(item); });
-    const other = document.getElementById(`mse_${key}_other`)?.value?.trim();
+    group.items.forEach((item, i) => { if (_v(`mse_${key}_${i}`,'checked')) checked.push(item); });
+    const other = _vt(`mse_${key}_other`);
     if (other) checked.push(other);
     if (checked.length) {
       r += `${group.title}: ${checked.join('; ')}\n`;
     }
   });
-  const mseNotes = document.getElementById('mseNotes')?.value?.trim();
+  const mseNotes = _vt('mseNotes');
   if (mseNotes) r += `\nMSE Notes: ${mseNotes}\n`;
 
   // OUTCOME
   r += '\n╔═══════════════════════════════════════════════════════════╗\n';
-  r += '║   DIAGNOSTIC OUTCOME & SAFE PRESCRIBING SUMMARY         ║\n';
+  r += '║   PART 7: DIAGNOSTIC OUTCOME & SAFE PRESCRIBING          ║\n';
   r += '╚═══════════════════════════════════════════════════════════╝\n\n';
   const dxMap = {none:'No ADHD',combined:'314.01 (F90.2) Combined Presentation',inattentive:'314.00 (F90.0) Predominantly Inattentive',hyperactive:'314.01 (F90.1) Predominantly Hyperactive-Impulsive',partial:'ADHD — In Partial Remission',provisional:'Provisional Diagnosis — further information required',deferred:'Deferred — further assessment needed'};
   const finalDx = getRadio('finalDx');
   r += `PRIMARY DIAGNOSIS:  ${finalDx?dxMap[finalDx]:'Not specified'}\n`;
   r += `SEVERITY:           ${getRadio('finalSeverity')||'Not specified'}\n`;
-  const comorbDx = document.getElementById('comorbidDxSummary')?.value?.trim();
+  const comorbDx = _vt('comorbidDxSummary');
   if (comorbDx) r += `COMORBID DIAGNOSES: ${comorbDx}\n`;
   // Collateral summary for report
   const col2Src = ["col2_parent","col2_partner","col2_school","col2_employer","col2_gp","col2_prev_psych","col2_other"];
-  const divaColR = [document.getElementById('support1')?.value, document.getElementById('support2')?.value, document.getElementById('support3')?.value];
+  const divaColR = [_v('support1','value'), _v('support2','value'), _v('support3','value')];
   let allColR = [];
-  col2Src.forEach(id => { const v = document.getElementById(id)?.value; if (v && v !== 'N/A' && v !== 'not_obtained') allColR.push(parseInt(v)); });
+  col2Src.forEach(id => { const v = _v(id,'value'); if (v && v !== 'N/A' && v !== 'not_obtained') allColR.push(parseInt(v)); });
   divaColR.forEach(v => { if (v && v !== 'N/A') allColR.push(parseInt(v)); });
   let colSummaryR = 'No collateral provided';
-  if (allColR.length > 0) { const maxC = Math.max(...allColR); colSummaryR = maxC >= 2 ? 'Clear support' : maxC >= 1 ? 'Some support' : 'No support from collateral'; }
+  if (allColR.length > 0) { const maxC = Math.max.apply(null, allColR); colSummaryR = maxC >= 2 ? 'Clear support' : maxC >= 1 ? 'Some support' : 'No support from collateral'; }
   r += `COLLATERAL:         ${colSummaryR}\n`;
   r += '\nASRS Screen:        ' + (a.screenPositive?'POSITIVE':'Negative') + ` (${a.partAShaded}/6)\n`;
   r += 'DIVA-5:             ' + (d.allMet?d.presentation:'Criteria not met') + `\n`;
@@ -1698,7 +1688,7 @@ function generateFullReport() {
   r += '\nSAFE PRESCRIBING CHECKLIST:\n';
   const reqInvs = [{id:"inv_ecg",label:"ECG",req:true},{id:"inv_bp",label:"Blood Pressure",req:true},{id:"inv_pulse",label:"Resting Pulse",req:true},{id:"inv_uds",label:"Urine Drug Screen",req:true},{id:"inv_bloods",label:"Bloods",req:false},{id:"inv_weight",label:"Weight/BMI",req:true}];
   reqInvs.forEach(inv => {
-    const status = document.getElementById(inv.id+'_status')?.value || 'not_done';
+    const status = _v(inv.id+'_status','value') || 'not_done';
     if (status === 'not_done') r += `  ❌ ${inv.label} — NOT DONE\n`;
     else if (status === 'abnormal') r += `  ⚠️  ${inv.label} — ABNORMAL\n`;
     else if (status === 'normal') r += `  ✅ ${inv.label} — Normal\n`;
@@ -1706,14 +1696,14 @@ function generateFullReport() {
   });
   r += `  ${ssCheck?'✅':'❌'} SafeScript/RTPM — ${ssCheck?'Checked':'NOT CHECKED'}\n`;
 
-  const plan = document.getElementById('planNotes')?.value?.trim();
+  const plan = _vt('planNotes');
   if (plan) {
     r += '\nMANAGEMENT PLAN:\n';
     r += plan + '\n';
   }
 
   r += '\n═══════════════════════════════════════════════════════════\n';
-  r += 'Generated by Comprehensive ADHD Assessment Suite\n';
+  r += 'Generated by Structured Adult ADHD Assessment\n';
   r += 'For clinician use only — not a substitute for clinical judgement\n';
   r += '═══════════════════════════════════════════════════════════\n';
 
@@ -1733,8 +1723,13 @@ function initStructuredAssessment() {
 }
 
 
-initForm();
-initStructuredAssessment();
+try {
+  initForm();
+} catch(e) { console.error('initForm error:', e); }
+try {
+  initStructuredAssessment();
+} catch(e) { console.error('initStructuredAssessment error:', e); }
+
 </script>
 </body>
 </html>
