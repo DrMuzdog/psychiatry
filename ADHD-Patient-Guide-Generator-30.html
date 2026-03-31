@@ -1825,25 +1825,26 @@ function getSectionHTML(id) {
   const patientName = document.getElementById('patient-name').value || 'your patient';
   const sections = {
     s_what: `<div class="rich-h1">What Is ADHD?</div>
-<p class="rich-p">ADHD is not about attention — not really. It is about <em>regulation</em>. The ADHD brain has a fundamentally different way of managing effort, attention, emotion, and time. It is not a deficit of the ability to pay attention; it is a deficit of the ability to <strong>control</strong> which things get attention, for how long, and when.</p>
-<p class="rich-p">Think of it as a brain that runs on interest, urgency, and novelty rather than importance or intention. When something captures genuine interest, the ADHD brain can focus intensely — sometimes for hours. When something is dull, routine, or not immediately rewarding, starting it can feel genuinely impossible despite knowing it matters. This is not a choice. The brain's activation system simply does not fire in the same way.</p>
-<p class="rich-p">ADHD is a neurodevelopmental condition — present from early in life, with a strong genetic basis, and reflecting real, measurable differences in brain structure, chemistry, and connectivity. It is not caused by bad parenting, too much screen time, diet, or a lack of willpower. It is one of the most heritable conditions in medicine.</p>
-<p class="rich-p">It affects around 5% of children and 3–4% of adults worldwide. It presents differently across people: some are externally hyperactive and impulsive, others are internally restless and quietly overwhelmed. Many people — particularly women — go unrecognised until adulthood because their presentation did not match the stereotype. Late diagnosis is common, and the relief that comes with it is real.</p>
-<p class="rich-p">ADHD is also very treatable. With the right support, outcomes across every major life domain — work, relationships, health, and wellbeing — improve substantially.</p>`,
+<p class="rich-p">As you know ADHD is short of Attention Deficit Hyperactivity Disorder, but the name doesn't describe the condition well at all. It's not about attention deficit but more attention regulation. Hyperactivity is often internalised leading to inner restlessness in someone who doesn't "bounce off the walls". Plus, many symptoms like impulsivity, high novelty seeking, and emotional dysregulation aren't captured. The ADHD brain has a fundamentally different way of managing effort, attention, emotion, and time.</p>
+<p class="rich-p">Think of it as a brain that runs on interest, urgency, and novelty rather than importance or intention. When something captures genuine interest, the ADHD brain can focus well. When something is dull, routine, or not immediately rewarding, starting it can feel genuinely impossible despite knowing how much it matters. The brain's activation system simply does not fire in the same way.</p>
+<p class="rich-p">ADHD is a neurodevelopmental condition — present from early in life, with a strong genetic basis, and reflecting real, measurable differences in brain structure, chemistry, and connectivity. It is one of the most heritable conditions in medicine.</p>
+<p class="rich-p">It affects around 5% of children and 5-10% of adults worldwide. It presents differently across people: some are externally hyperactive and impulsive, others are internally restless and quietly overwhelmed. Many people go unrecognised until adulthood because their presentation did not match the stereotype.</p>
+<p class="rich-p">ADHD is very treatable! ADHD medications are some of the most effective in psychiatry.</p>`,
     s_brain: `<div class="rich-h1">What Is Happening in the Brain</div>
-<p class="rich-p">The part of the brain most involved in ADHD is the <strong>prefrontal cortex</strong> — the region behind your forehead responsible for planning, organising, prioritising, starting tasks, holding information in mind, and regulating emotion and impulse. In ADHD, this region is underactive and less well-connected to the rest of the brain.</p>
+<p class="rich-p">The part of the brain most involved in ADHD is the <strong>prefrontal cortex</strong>, which is the region behind your forehead responsible for planning, organising, prioritising, starting tasks, holding information in mind, and regulating emotion and impulse. In ADHD, this region is underactive and less well-connected to the rest of the brain.</p>
 <p class="rich-p">Two neurotransmitters are at the centre of this: <strong>dopamine</strong> and <strong>noradrenaline</strong>.</p>
-<div class="rich-h2">Dopamine — the "why bother" signal</div>
-<p class="rich-p">Dopamine's primary job is to signal that something is <em>worth the effort</em> — it drives motivation, initiates action, and makes the brain feel like a task will be rewarding enough to start. In ADHD, this signal in the prefrontal circuits is weaker and less consistent. This is why tasks that are intellectually straightforward can feel genuinely impossible to begin — not because the person lacks ability or desire, but because the brain's effort-activation system is not firing. It also explains hyperfocus: when something is genuinely novel or stimulating, dopamine fires normally and the person can concentrate extraordinarily well. The problem is <em>regulation</em>, not capacity.</p>
-<div class="rich-h2">Noradrenaline — the "stay locked in" signal</div>
-<p class="rich-p">Noradrenaline controls the brain's signal-to-noise ratio — it sharpens the relevant signal and suppresses background noise. It allows the prefrontal cortex to stay focused on a task despite distractions, and to hold a train of thought without losing it. In ADHD, reduced noradrenaline means the brain is more easily pulled off-task, thoughts are harder to hold, and irrelevant stimuli compete with whatever you are trying to do. It also drives emotional reactivity — emotions arrive louder and are harder to regulate because the prefrontal dampening system is underactive.</p>
+<div class="rich-h2">Dopamine (the "why bother" signal)</div>
+<p class="rich-p">Dopamine's primary job is to signal that something is <em>worth the effort</em>. It drives motivation, initiates action, and makes the brain feel like a task will be rewarding enough to start. In ADHD, this signal here is weaker and less consistent. This is why tasks that are intellectually straightforward can feel genuinely impossible to begin. This is not because the person lacks ability or desire, but because the brain's effort-activation system is not firing as expected. It also explains hyperfocus: when something is genuinely novel or stimulating, dopamine fires normally and the person can concentrate extraordinarily well. The problem is <em>regulation</em>, not capability.</p>
+<div class="rich-h2">Noradrenaline (the "stay locked in" signal)</div>
+<p class="rich-p">Noradrenaline controls the brain's signal-to-noise ratio. It sharpens the relevant signal and suppresses background noise. It allows the prefrontal cortex to stay focused on a task despite distractions and to hold a train of thought without losing it. In ADHD, reduced noradrenaline means the brain is more easily pulled off-task, thoughts are harder to hold, and irrelevant things compete with whatever you are trying to do. It also drives emotional reactivity. That is, emotions arrive louder and are harder to regulate because the prefrontal dampening system is underactive.</p>
 <div class="rich-h2">What this looks like day to day</div>
 <ul class="rich-ul">
-<li class="rich-li"><strong>Starting tasks:</strong> Low dopamine = the activation cost feels enormous, even for simple things</li>
+<li class="rich-li"><strong>Starting tasks:</strong> Low dopamine = simple straightforward tasks appear insurmountable</li>
 <li class="rich-li"><strong>Losing the thread mid-task:</strong> Low noradrenaline = the signal drops and something else captures attention</li>
 <li class="rich-li"><strong>Working memory gaps:</strong> Forgetting why you walked into a room; losing a thought mid-sentence</li>
 <li class="rich-li"><strong>Emotional intensity:</strong> Feelings arrive fast and hard because the prefrontal cortex is not adequately dampening the limbic response</li>
 <li class="rich-li"><strong>Impulsivity:</strong> The "wait, think first" brake is slower and weaker</li>
+<li class="rich-li"><strong>Inner restlessness:</strong> Often people internalise the hyperactive symptoms and carry a feeling of anxiety that doesn't seem to go away. It also may not fit the usual descriptions of what people with Generalised Anxiety Disorder experience; there may not be that much worry, yet still feeling 'anxious' or 'restless'.</li>
 <li class="rich-li"><strong>Time blindness:</strong> The prefrontal cortex manages time perception — when underactive, time feels abstract and deadlines feel unreal until imminent</li>
 </ul>
 <p class="rich-p">ADHD medication works by increasing the availability of dopamine and noradrenaline in the prefrontal cortex. When it works well, people describe it not as feeling medicated, but as finally having access to the version of themselves they always knew was there.</p>`,
@@ -1852,7 +1853,7 @@ function getSectionHTML(id) {
 <li class="rich-li"><strong>Inattention:</strong> difficulty sustaining attention, easily distracted, losing track in conversations or tasks</li>
 <li class="rich-li"><strong>Executive dysfunction:</strong> trouble organising, starting tasks, following through, managing time, and holding things in working memory</li>
 <li class="rich-li"><strong>Impulsivity:</strong> acting before thinking, interrupting, difficulty waiting, impulsive decision-making</li>
-<li class="rich-li"><strong>Hyperactivity:</strong> fidgeting and restlessness — in adults this often becomes an internal feeling of restlessness rather than visible overactivity</li>
+<li class="rich-li"><strong>Hyperactivity:</strong> fidgeting, pacing, and restlessness.</li>
 </ul>
 <p class="rich-p">Symptoms must cause impairment across at least two settings and have been present since childhood, even if never recognised at the time.</p>`,
     s_down: `<div class="rich-h1">What Else Does ADHD Cause?</div>
@@ -1925,23 +1926,11 @@ function getSectionHTML(id) {
 <p class="rich-p">Most are dose-dependent and settle within 1–2 weeks. If they do not, the dose may need adjusting.</p>
 
 <p class="rich-p"><strong>Common</strong></p>
-<ul class="rich-ul">
-<li class="rich-li">Reduced appetite — most noticeable at lunchtime</li>
-<li class="rich-li">Dry mouth</li>
-<li class="rich-li">Insomnia if taken too late in the day</li>
-<li class="rich-li">Increased heart rate</li>
-<li class="rich-li">Headache (usually settles within 2–3 weeks)</li>
-<li class="rich-li">Irritability or anxiety in a subset of people</li>
-<li class="rich-li">Jaw clenching (bruxism)</li>
-<li class="rich-li">Rebound: drop in mood or focus as medication wears off (more common with short-acting formulations)</li>
-</ul>
+<p class="rich-p">Reduced appetite and dry mouth, insomnia if taken too late in the day, increased heart rate, headache (usually settles within 2–3 weeks), irritability or anxiety in a subset of people, jaw clenching (bruxism), and rebound with a drop in mood or focus as the medication wears off (more common with short-acting formulations).
+</p>
 
 <p class="rich-p"><strong>Less Common</strong></p>
-<ul class="rich-ul">
-<li class="rich-li">Elevated blood pressure — monitored at appointments</li>
-<li class="rich-li">Emotional blunting at higher doses (reduce dose if this occurs)</li>
-<li class="rich-li">In people with bipolar disorder, stimulants can occasionally trigger mania — contact your doctor if you notice elevated mood, reduced sleep need, or rapid speech</li>
-</ul>
+<p class="rich-p">Elevated blood pressure (monitored at appointments), emotional blunting at higher doses (reduce dose if this occurs), and in people with bipolar disorder stimulants can occasionally trigger mania, contact your doctor if you notice elevated mood, reduced sleep need, or rapid speech.</p>
 
 <div class="rich-h2">Food and Drug Interactions</div>
 <ul class="rich-ul">
@@ -1968,21 +1957,14 @@ function getSectionHTML(id) {
 <p class="rich-p">Fewer peaks and troughs means side effects are often milder and more predictable. Most settle within 1–2 weeks.</p>
 
 <p class="rich-p"><strong>Common</strong></p>
-<ul class="rich-ul">
-<li class="rich-li">Reduced appetite — often improves after the first few weeks</li>
-<li class="rich-li">Dry mouth</li>
-<li class="rich-li">Insomnia if taken later in the morning (given 12–14 hour duration)</li>
-<li class="rich-li">Headache</li>
-<li class="rich-li">Irritability, usually as medication wears off in the evening</li>
-<li class="rich-li">Increased heart rate</li>
-</ul>
+<p class="rich-p">
+Reduced appetite (often improves after the first few weeks), dry mouth, insomnia if taken later in the morning (given 12–14 hour duration), headache, irritability usually as medication wears off in the evening, and increased heart rate.
+</p>
 
 <p class="rich-p"><strong>Less Common</strong></p>
-<ul class="rich-ul">
-<li class="rich-li">Elevated blood pressure</li>
-<li class="rich-li">Jaw clenching (bruxism)</li>
-<li class="rich-li">In people with bipolar disorder, stimulants can occasionally trigger mania</li>
-</ul>
+<p class="rich-p">
+Elevated blood pressure, jaw clenching (bruxism), and in people with bipolar disorder stimulants can occasionally trigger mania.
+</p>
 
 <div class="rich-h2">Food and Drug Interactions</div>
 <ul class="rich-ul">
