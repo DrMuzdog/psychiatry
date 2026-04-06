@@ -231,6 +231,8 @@
         .btn-secondary:hover { background: var(--gray-300); }
         .btn-success { background: var(--success); color: white; }
         .btn-success:hover { background: #22543d; }
+        .btn-word { background: #1f5c9e; color: white; }
+        .btn-word:hover { background: #174a80; }
 
         /* Report */
         #reportSection { display: none; }
@@ -916,7 +918,27 @@
 
         <div class="btn-row no-print">
             <button class="btn btn-success" onclick="window.print()">Print Report</button>
+            <button class="btn btn-primary" onclick="showPlainText()">Copy Plain Text</button>
+            <button class="btn btn-word" onclick="downloadWordDoc()">&#8595; Download Word</button>
             <button class="btn btn-secondary" onclick="document.getElementById('reportSection').style.display='none'; window.scrollTo(0,0);">Close Report</button>
+        </div>
+    </div>
+
+    <!-- Plain Text Modal -->
+    <div id="plainTextModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;overflow-y:auto;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+        <div style="max-width:720px;margin:40px auto;background:white;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.25);overflow:hidden;">
+            <div style="background:var(--primary);color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:600;font-size:1.1em;">Plain Text Report</span>
+                <button onclick="document.getElementById('plainTextModal').style.display='none'" style="background:none;border:none;color:white;font-size:1.5em;cursor:pointer;line-height:1;">&times;</button>
+            </div>
+            <div style="padding:20px;">
+                <p style="margin-bottom:12px;font-size:0.9em;color:var(--gray-600);">Select all and copy, or use the button below.</p>
+                <textarea id="plainTextOutput" readonly style="width:100%;height:420px;font-family:'Courier New',monospace;font-size:0.82em;padding:12px;border:1px solid var(--gray-300);border-radius:6px;resize:vertical;line-height:1.5;color:var(--gray-800);background:var(--gray-50);"></textarea>
+                <div style="margin-top:12px;display:flex;gap:10px;">
+                    <button class="btn btn-primary" onclick="copyPlainText()" id="copyBtn">Copy to Clipboard</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('plainTextModal').style.display='none'">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1156,6 +1178,303 @@ function escHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+}
+
+// ── Plain Text & Word export ──────────────────────────────────────────────
+
+function buildReportData() {
+    const name       = document.getElementById('patientName').value || 'Not specified';
+    const pid        = document.getElementById('patientId').value   || 'Not specified';
+    const date       = document.getElementById('assessmentDate').value || 'Not specified';
+    const rater      = document.getElementById('raterName').value   || 'Not specified';
+    const tObs       = document.getElementById('targetObsessions').value;
+    const tComp      = document.getElementById('targetCompulsions').value;
+    const tAvoid     = document.getElementById('targetAvoidance').value;
+    const notes      = document.getElementById('clinicianNotes').value;
+
+    const coreScores = [];
+    let obsTotal = 0, compTotal = 0;
+    for (let i = 1; i <= 5;  i++) { const v = getItemScore('item' + i); coreScores.push(v); obsTotal  += v; }
+    for (let i = 6; i <= 10; i++) { const v = getItemScore('item' + i); coreScores.push(v); compTotal += v; }
+    const totalScore = obsTotal + compTotal;
+    const sev = getSeverityInfo(totalScore);
+
+    const investScores = [];
+    for (let i = 11; i <= 19; i++) investScores.push(getItemScore('item' + i));
+
+    const checkedItems = [];
+    document.querySelectorAll('input[name="checklist"]:checked').forEach(cb => {
+        checkedItems.push(cb.parentElement.textContent.trim());
+    });
+
+    return { name, pid, date, rater, tObs, tComp, tAvoid, notes,
+             coreScores, obsTotal, compTotal, totalScore, sev,
+             investScores, checkedItems };
+}
+
+function buildPlainText(d) {
+    const severityLabels = ['None (0)', 'Mild (1)', 'Moderate (2)', 'Severe (3)', 'Extreme (4)'];
+    const line  = '='.repeat(60);
+    const line2 = '-'.repeat(60);
+    let t = '';
+
+    t += line + '\n';
+    t += 'YALE-BROWN OBSESSIVE COMPULSIVE SCALE (Y-BOCS)\n';
+    t += 'Clinical Assessment Report\n';
+    t += line + '\n\n';
+
+    t += 'PATIENT INFORMATION\n' + line2 + '\n';
+    t += 'Patient Name:      ' + d.name  + '\n';
+    t += 'Patient ID:        ' + d.pid   + '\n';
+    t += 'Date of Assessment:' + ' ' + d.date  + '\n';
+    t += 'Clinician / Rater: ' + d.rater + '\n\n';
+
+    if (d.tObs || d.tComp || d.tAvoid) {
+        t += 'TARGET SYMPTOMS\n' + line2 + '\n';
+        if (d.tObs)   t += 'Obsessions:  ' + d.tObs   + '\n';
+        if (d.tComp)  t += 'Compulsions: ' + d.tComp  + '\n';
+        if (d.tAvoid) t += 'Avoidance:   ' + d.tAvoid + '\n';
+        t += '\n';
+    }
+
+    t += 'SCORES\n' + line2 + '\n';
+    t += 'Y-BOCS Total Score:      ' + d.totalScore + ' / 40\n';
+    t += 'Severity Classification: ' + d.sev.level + '\n';
+    t += 'Obsession Subtotal:      ' + d.obsTotal  + ' / 20\n';
+    t += 'Compulsion Subtotal:     ' + d.compTotal + ' / 20\n\n';
+
+    t += 'ITEM-BY-ITEM BREAKDOWN\n' + line2 + '\n';
+    t += 'OBSESSIONS (Items 1-5)\n';
+    for (let i = 0; i < 5; i++) {
+        t += '  ' + (i+1) + '. ' + coreItemNames[i] + ': ' + d.coreScores[i] + ' — ' + severityLabels[d.coreScores[i]] + '\n';
+    }
+    t += '  Obsession Subtotal: ' + d.obsTotal + ' / 20\n\n';
+    t += 'COMPULSIONS (Items 6-10)\n';
+    for (let i = 5; i < 10; i++) {
+        t += '  ' + (i+1) + '. ' + coreItemNames[i] + ': ' + d.coreScores[i] + ' — ' + severityLabels[d.coreScores[i]] + '\n';
+    }
+    t += '  Compulsion Subtotal: ' + d.compTotal + ' / 20\n\n';
+
+    // Supplementary items
+    const hasInvest = d.investScores.some(v => v !== null);
+    if (hasInvest) {
+        t += 'SUPPLEMENTARY ITEMS (Not included in total score)\n' + line2 + '\n';
+        for (let i = 0; i < 9; i++) {
+            const v = d.investScores[i];
+            t += '  ' + (i+11) + '. ' + investItemNames[i] + ': ' + (v !== null ? v : 'Not rated') + '\n';
+        }
+        t += '\n';
+    }
+
+    if (d.checkedItems.length > 0) {
+        t += 'ENDORSED SYMPTOM CHECKLIST ITEMS\n' + line2 + '\n';
+        d.checkedItems.forEach(item => { t += '  \u2022 ' + item + '\n'; });
+        t += '\n';
+    }
+
+    t += 'INTERPRETATION & CLINICAL GUIDANCE\n' + line2 + '\n';
+    t += 'Severity Classification: ' + d.sev.level + ' (score ' + d.totalScore + '/40).\n';
+    t += d.sev.desc + '\n';
+
+    if (d.obsTotal > d.compTotal + 4) {
+        t += '\nNote: Obsession subscale score (' + d.obsTotal + ') is notably higher than compulsion subscale (' + d.compTotal + '), suggesting obsessions are the predominant source of impairment.\n';
+    } else if (d.compTotal > d.obsTotal + 4) {
+        t += '\nNote: Compulsion subscale score (' + d.compTotal + ') is notably higher than obsession subscale (' + d.obsTotal + '), suggesting compulsive behaviours are the predominant source of impairment.\n';
+    }
+
+    if (d.totalScore >= 16) {
+        const threshold35 = Math.round(d.totalScore * 0.65);
+        t += '\nTreatment Response Benchmark: A >=35% reduction from this baseline would correspond to a Y-BOCS total of <=' + threshold35 + ', representing a clinically meaningful response (Goodman et al., 1989).\n';
+    }
+
+    if (d.totalScore >= 28) {
+        t += '\nNote: Score of >=28 meets the threshold criterion for consideration of neurosurgical interventions in treatment-refractory cases (where applicable).\n';
+    }
+
+    const insightScore = d.investScores[0];
+    if (insightScore !== null && insightScore >= 3) {
+        t += '\nInsight: Patient demonstrates poor insight (Item 11 = ' + insightScore + '), which may be associated with poorer treatment response and should be considered in treatment planning.\n';
+    }
+
+    if (d.notes) {
+        t += '\nCLINICIAN NOTES\n' + line2 + '\n' + d.notes + '\n';
+    }
+
+    t += '\n' + line + '\n';
+    t += 'Disclaimer: The Y-BOCS is a clinician-rated semi-structured interview instrument\n';
+    t += 'developed by Goodman WK, Price LH, Rasmussen SA et al. (1989). Total score is\n';
+    t += 'derived from items 1-10 only. Items 11-19 are supplementary. This form is intended\n';
+    t += 'as a clinical aid and does not replace clinical judgement.\n';
+    t += line + '\n';
+
+    return t;
+}
+
+function showPlainText() {
+    const d = buildReportData();
+    document.getElementById('plainTextOutput').value = buildPlainText(d);
+    document.getElementById('plainTextModal').style.display = 'block';
+    document.getElementById('copyBtn').textContent = 'Copy to Clipboard';
+}
+
+function copyPlainText() {
+    const ta = document.getElementById('plainTextOutput');
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    try {
+        navigator.clipboard.writeText(ta.value).then(() => {
+            document.getElementById('copyBtn').textContent = 'Copied!';
+            setTimeout(() => { document.getElementById('copyBtn').textContent = 'Copy to Clipboard'; }, 2000);
+        });
+    } catch(e) {
+        document.execCommand('copy');
+        document.getElementById('copyBtn').textContent = 'Copied!';
+        setTimeout(() => { document.getElementById('copyBtn').textContent = 'Copy to Clipboard'; }, 2000);
+    }
+}
+
+function downloadWordDoc() {
+    const d = buildReportData();
+    const severityLabels = ['None', 'Mild', 'Moderate', 'Severe', 'Extreme'];
+
+    function row(label, value) {
+        return '<tr><td style="padding:2px 12px 2px 0;font-weight:bold;white-space:nowrap;">' + label + '</td><td style="padding:2px 0;">' + value + '</td></tr>';
+    }
+    function itemRow(num, name, score, domain) {
+        return '<tr><td style="padding:1px 8px 1px 0;">' + num + '. ' + name + '</td>' +
+               '<td style="padding:1px 8px 1px 0;text-align:center;font-weight:bold;">' + score + '</td>' +
+               '<td style="padding:1px 8px 1px 0;">' + domain + '</td>' +
+               '<td style="padding:1px 0;">' + severityLabels[score] + '</td></tr>';
+    }
+
+    let targetBlock = '';
+    if (d.tObs || d.tComp || d.tAvoid) {
+        targetBlock += '<p style="font-weight:bold;margin:10px 0 2px 0;">Target Symptoms</p>';
+        if (d.tObs)   targetBlock += '<p style="margin:1px 0;"><b>Obsessions:</b> ' + d.tObs + '</p>';
+        if (d.tComp)  targetBlock += '<p style="margin:1px 0;"><b>Compulsions:</b> ' + d.tComp + '</p>';
+        if (d.tAvoid) targetBlock += '<p style="margin:1px 0;"><b>Avoidance:</b> ' + d.tAvoid + '</p>';
+    }
+
+    let investBlock = '';
+    if (d.investScores.some(v => v !== null)) {
+        investBlock = '<p style="font-weight:bold;margin:10px 0 2px 0;">Supplementary Items (Not included in total score)</p>' +
+            '<table style="border-collapse:collapse;width:100%;">' +
+            '<tr style="border-bottom:1px solid #ccc;"><th style="text-align:left;padding:2px 8px 2px 0;">Item</th><th style="text-align:center;padding:2px 8px 2px 0;">Score</th></tr>';
+        for (let i = 0; i < 9; i++) {
+            const v = d.investScores[i];
+            investBlock += '<tr><td style="padding:1px 8px 1px 0;">' + (i+11) + '. ' + investItemNames[i] + '</td>' +
+                           '<td style="text-align:center;padding:1px 0;">' + (v !== null ? v : 'NR') + '</td></tr>';
+        }
+        investBlock += '</table>';
+    }
+
+    let checklistBlock = '';
+    if (d.checkedItems.length > 0) {
+        checklistBlock = '<p style="font-weight:bold;margin:10px 0 2px 0;">Endorsed Symptom Checklist Items</p><ul style="margin:2px 0 0 0;padding-left:20px;">';
+        d.checkedItems.forEach(item => { checklistBlock += '<li>' + item + '</li>'; });
+        checklistBlock += '</ul>';
+    }
+
+    let interpBlock = '<p style="font-weight:bold;margin:10px 0 2px 0;">Interpretation &amp; Clinical Guidance</p>';
+    interpBlock += '<p style="margin:2px 0;"><b>Severity Classification:</b> ' + d.sev.level + ' (score ' + d.totalScore + '/40).</p>';
+    interpBlock += '<p style="margin:2px 0;">' + d.sev.desc + '</p>';
+    if (d.obsTotal > d.compTotal + 4) {
+        interpBlock += '<p style="margin:4px 0;"><b>Note:</b> Obsession subscale score (' + d.obsTotal + ') is notably higher than compulsion subscale (' + d.compTotal + '), suggesting obsessions are the predominant source of impairment.</p>';
+    } else if (d.compTotal > d.obsTotal + 4) {
+        interpBlock += '<p style="margin:4px 0;"><b>Note:</b> Compulsion subscale score (' + d.compTotal + ') is notably higher than obsession subscale (' + d.obsTotal + '), suggesting compulsive behaviours are the predominant source of impairment.</p>';
+    }
+    if (d.totalScore >= 16) {
+        const t35 = Math.round(d.totalScore * 0.65);
+        interpBlock += '<p style="margin:4px 0;"><b>Treatment Response Benchmark:</b> A &ge;35% reduction from this baseline would correspond to a Y-BOCS total of &le;' + t35 + ', representing a clinically meaningful response (Goodman et al., 1989).</p>';
+    }
+    if (d.totalScore >= 28) {
+        interpBlock += '<p style="margin:4px 0;"><b>Note:</b> Score of &ge;28 meets the threshold criterion for consideration of neurosurgical interventions in treatment-refractory cases (where applicable).</p>';
+    }
+    const insightScore = d.investScores[0];
+    if (insightScore !== null && insightScore >= 3) {
+        interpBlock += '<p style="margin:4px 0;"><b>Insight:</b> Patient demonstrates poor insight (Item 11 = ' + insightScore + '), which may be associated with poorer treatment response and should be considered in treatment planning.</p>';
+    }
+
+    let notesBlock = '';
+    if (d.notes) {
+        notesBlock = '<p style="font-weight:bold;margin:10px 0 2px 0;">Clinician Notes</p>' +
+                     '<p style="margin:2px 0;">' + d.notes.replace(/\n/g, '<br>') + '</p>';
+    }
+
+    const html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<style>' +
+    'body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.2; margin: 2cm; color: #000; }' +
+    'h1 { font-size: 13pt; font-weight: bold; text-align: center; margin: 0 0 2px 0; }' +
+    'h2 { font-size: 11pt; font-weight: bold; text-align: center; margin: 0 0 10px 0; }' +
+    'p { margin: 0; }' +
+    'table { border-collapse: collapse; width: 100%; }' +
+    'th { text-align: left; }' +
+    '.divider { border: none; border-top: 1px solid #000; margin: 8px 0; }' +
+    '.section-title { font-weight: bold; margin: 10px 0 2px 0; border-bottom: 1px solid #999; }' +
+    '.score-box { text-align: center; border: 2px solid #000; padding: 6px; margin: 8px 0; }' +
+    '.score-big { font-size: 28pt; font-weight: bold; }' +
+    '.disclaimer { font-size: 8pt; margin-top: 12px; color: #555; border-top: 1px solid #ccc; padding-top: 6px; }' +
+    '</style></head><body>' +
+
+    '<h1>Yale-Brown Obsessive Compulsive Scale (Y-BOCS)</h1>' +
+    '<h2>Clinical Assessment Report</h2>' +
+    '<hr class="divider">' +
+
+    '<p class="section-title">Patient Information</p>' +
+    '<table><tbody>' +
+    row('Patient Name:', d.name) +
+    row('Patient ID:', d.pid) +
+    row('Date of Assessment:', d.date) +
+    row('Clinician / Rater:', d.rater) +
+    '</tbody></table>' +
+
+    targetBlock +
+
+    '<p class="section-title">Scores</p>' +
+    '<div class="score-box">' +
+    '<div class="score-big">' + d.totalScore + ' / 40</div>' +
+    '<div style="font-size:13pt;font-weight:bold;">' + d.sev.level + ' OCD</div>' +
+    '</div>' +
+    '<table><tbody>' +
+    row('Obsession Subtotal (Items 1–5):', d.obsTotal + ' / 20') +
+    row('Compulsion Subtotal (Items 6–10):', d.compTotal + ' / 20') +
+    '</tbody></table>' +
+
+    '<p class="section-title">Item-by-Item Breakdown</p>' +
+    '<table>' +
+    '<thead><tr>' +
+    '<th style="padding:2px 8px 2px 0;border-bottom:1px solid #000;">Item</th>' +
+    '<th style="padding:2px 8px 2px 0;border-bottom:1px solid #000;text-align:center;">Score</th>' +
+    '<th style="padding:2px 8px 2px 0;border-bottom:1px solid #000;">Domain</th>' +
+    '<th style="padding:2px 0;border-bottom:1px solid #000;">Severity</th>' +
+    '</tr></thead><tbody>' +
+    '<tr><td colspan="4" style="padding:3px 0;font-style:italic;font-weight:bold;">Obsessions</td></tr>';
+
+    let itemTableHtml = '';
+    for (let i = 0; i < 5; i++)  itemTableHtml += itemRow(i+1, coreItemNames[i], d.coreScores[i], 'Obsessions');
+    itemTableHtml += '<tr style="font-weight:bold;border-top:1px solid #999;"><td colspan="2" style="padding:2px 0;">Obsession Subtotal</td><td style="text-align:center;">' + d.obsTotal + '</td><td>/ 20</td></tr>';
+    itemTableHtml += '<tr><td colspan="4" style="padding:3px 0;font-style:italic;font-weight:bold;">Compulsions</td></tr>';
+    for (let i = 5; i < 10; i++) itemTableHtml += itemRow(i+1, coreItemNames[i], d.coreScores[i], 'Compulsions');
+    itemTableHtml += '<tr style="font-weight:bold;border-top:1px solid #999;"><td colspan="2" style="padding:2px 0;">Compulsion Subtotal</td><td style="text-align:center;">' + d.compTotal + '</td><td>/ 20</td></tr>';
+    itemTableHtml += '<tr style="font-weight:bold;border-top:2px solid #000;"><td colspan="2" style="padding:3px 0;">Y-BOCS TOTAL SCORE</td><td style="text-align:center;">' + d.totalScore + '</td><td>/ 40 — ' + d.sev.level + '</td></tr>';
+
+    const dateStr = d.date || new Date().toISOString().slice(0,10);
+    const safeName = (d.name !== 'Not specified' ? d.name : 'Patient').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/ /g, '_');
+
+    const fullHtml = html + itemTableHtml + '</tbody></table>' +
+        investBlock + checklistBlock + interpBlock + notesBlock +
+        '<p class="disclaimer">Disclaimer: The Y-BOCS is a clinician-rated semi-structured interview instrument developed by Goodman WK, Price LH, Rasmussen SA et al. (1989). Total score is derived from items 1–10 only. Items 11–19 are supplementary. This form is intended as a clinical aid and does not replace clinical judgement. A clinically meaningful treatment response is typically defined as ≥35% reduction from baseline Y-BOCS score.</p>' +
+        '</body></html>';
+
+    const blob = new Blob(['\ufeff' + fullHtml], { type: 'application/msword' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'YBOCS_' + safeName + '_' + dateStr + '.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 </script>
 </body>
