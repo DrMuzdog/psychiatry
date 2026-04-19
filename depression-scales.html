@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depression Scales — MADRS &amp; PHQ-9</title>
+<style>
+    :root {
+        --primary: #2c5282;
+        --primary-light: #ebf4ff;
+        --accent: #3182ce;
+        --success: #276749;
+        --warning: #c05621;
+        --danger: #c53030;
+        --extreme: #7b341e;
+        --gray-50: #f7fafc;
+        --gray-100: #edf2f7;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e0;
+        --gray-600: #718096;
+        --gray-700: #4a5568;
+        --gray-800: #2d3748;
+        --gray-900: #1a202c;
+        --border-radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--gray-50);
+        color: var(--gray-800);
+        line-height: 1.6;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+    .header {
+        background: linear-gradient(135deg, var(--primary), #1a365d);
+        color: white;
+        padding: 28px;
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .header h1 { font-size: 1.6em; margin-bottom: 6px; }
+    .header p { opacity: 0.9; font-size: 0.95em; }
+
+    .tab-row {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+        border-bottom: 2px solid var(--gray-200);
+    }
+    .tab-btn {
+        padding: 10px 22px;
+        background: none;
+        border: none;
+        font-size: 1em;
+        font-weight: 600;
+        color: var(--gray-600);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 22px;
+        margin-bottom: 18px;
+    }
+    .card-title {
+        font-size: 1.15em;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 14px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--primary-light);
+    }
+
+    .patient-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .patient-info label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9em; color: var(--gray-700); }
+    .patient-info input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--gray-300);
+        border-radius: 6px;
+        font-size: 0.95em;
+    }
+    .patient-info input:focus {
+        outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(49,130,206,0.15);
+    }
+
+    .item-block {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    .item-block:last-child { border-bottom: none; }
+    .item-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .item-number {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        min-width: 28px; height: 28px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 28px;
+        font-size: 0.85em;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+    .item-title { font-weight: 600; color: var(--gray-900); font-size: 1em; }
+    .item-sub {
+        font-style: italic;
+        color: var(--gray-600);
+        font-size: 0.88em;
+        margin: 0 0 10px 38px;
+    }
+    .radio-group { padding-left: 38px; display: flex; flex-direction: column; gap: 2px; }
+    .radio-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .radio-option:hover { background: var(--gray-100); }
+    .radio-option input[type="radio"] {
+        accent-color: var(--accent);
+        width: 18px; height: 18px;
+        margin-top: 2px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+    .radio-label { font-size: 0.9em; }
+    .radio-label .val { font-weight: 600; color: var(--gray-900); margin-right: 4px; }
+
+    .section-body {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 18px;
+    }
+
+    .score-bar {
+        background: var(--primary-light);
+        padding: 12px 20px;
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 1em;
+        text-align: right;
+        border-top: 2px solid var(--accent);
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+
+    .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 18px 0; }
+    .btn {
+        padding: 11px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95em;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #1a365d; }
+    .btn-secondary { background: var(--gray-200); color: var(--gray-700); }
+    .btn-secondary:hover { background: var(--gray-300); }
+
+    .output-card { display: none; }
+    .output-card.visible { display: block; }
+    .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .output-header h3 { color: var(--primary); font-size: 1.1em; }
+    textarea.output {
+        width: 100%;
+        height: 360px;
+        font-family: 'Courier New', Consolas, monospace;
+        font-size: 0.85em;
+        padding: 14px;
+        border: 1px solid var(--gray-300);
+        border-radius: 6px;
+        resize: vertical;
+        line-height: 1.5;
+        color: var(--gray-800);
+        background: var(--gray-50);
+    }
+
+    .severity-pill {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.82em;
+        font-weight: 600;
+    }
+    .sev-none     { background: #f0fff4; color: #276749; }
+    .sev-mild     { background: #fefcbf; color: #744210; }
+    .sev-moderate { background: #feebc8; color: #c05621; }
+    .sev-modsev   { background: #fed7d7; color: #c53030; }
+    .sev-severe   { background: #fff5f5; color: #7b341e; }
+
+    .disclaimer {
+        background: #ebf8ff;
+        border: 1px solid #90cdf4;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-size: 0.82em;
+        color: #2a4365;
+        margin-top: 12px;
+    }
+
+    @media (max-width: 600px) {
+        .patient-info { grid-template-columns: 1fr; }
+        .item-sub, .radio-group { padding-left: 0; margin-left: 0; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Depression Scales</h1>
+        <p>Montgomery-Åsberg Depression Rating Scale (MADRS) &amp; Patient Health Questionnaire (PHQ-9)</p>
+    </div>
+
+    <!-- PATIENT INFO -->
+    <div class="card">
+        <div class="card-title">Patient Information</div>
+        <div class="patient-info">
+            <div><label>Patient Name</label><input type="text" id="patientName" placeholder="Enter patient name"></div>
+            <div><label>Patient ID</label><input type="text" id="patientId" placeholder="Enter patient ID"></div>
+            <div><label>Date of Assessment</label><input type="date" id="assessmentDate"></div>
+            <div><label>Clinician / Rater</label><input type="text" id="raterName" placeholder="Enter clinician name"></div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-row">
+        <button class="tab-btn active" data-tab="madrs" onclick="switchTab('madrs')">MADRS</button>
+        <button class="tab-btn" data-tab="phq9" onclick="switchTab('phq9')">PHQ-9</button>
+    </div>
+
+    <!-- MADRS -->
+    <div class="tab-pane active" id="tab-madrs">
+        <div class="card">
+            <div class="card-title">MADRS Instructions</div>
+            <p style="font-size:0.9em;">Rate each item based on the <strong>past week</strong>. The rating should be based on a clinical interview, moving from broadly phrased questions about symptoms to more detailed ones. The rater must decide whether the rating lies on defined scale steps (0, 2, 4, 6) or between (1, 3, 5).</p>
+        </div>
+
+        <div class="section-body" id="madrsItems"></div>
+
+        <div class="score-bar">
+            MADRS Total: <span id="madrsTotal">0</span> / 60 &nbsp; — &nbsp; <span class="severity-pill" id="madrsSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('madrs')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('madrs')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="madrsOutput">
+            <div class="output-header">
+                <h3>MADRS Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('madrs')" id="madrsCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="madrsText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Montgomery SA, Åsberg M. A new depression scale designed to be sensitive to change. Br J Psychiatry. 1979;134:382-9. Total score thresholds (commonly used): 0–6 absent; 7–19 mild; 20–34 moderate; 35–60 severe.
+        </div>
+    </div>
+
+    <!-- PHQ-9 -->
+    <div class="tab-pane" id="tab-phq9">
+        <div class="card">
+            <div class="card-title">PHQ-9 Instructions</div>
+            <p style="font-size:0.9em;">Over the <strong>last 2 weeks</strong>, how often have you been bothered by any of the following problems?</p>
+        </div>
+
+        <div class="section-body" id="phq9Items"></div>
+
+        <div class="card" id="phq9FunctionCard">
+            <div class="card-title">Functional Impairment (not scored)</div>
+            <p style="font-size:0.9em; margin-bottom:10px;"><em>If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?</em></p>
+            <div class="radio-group" style="padding-left:0;">
+                <label class="radio-option"><input type="radio" name="phq9_function" value="Not difficult at all"><span class="radio-label">Not difficult at all</span></label>
+                <label class="radio-option"><input type="radio" name="phq9_function" value="Somewhat difficult"><span class="radio-label">Somewhat difficult</span></label>
+                <label class="radio-option"><input type="radio" name="phq9_function" value="Very difficult"><span class="radio-label">Very difficult</span></label>
+                <label class="radio-option"><input type="radio" name="phq9_function" value="Extremely difficult"><span class="radio-label">Extremely difficult</span></label>
+            </div>
+        </div>
+
+        <div class="score-bar">
+            PHQ-9 Total: <span id="phq9Total">0</span> / 27 &nbsp; — &nbsp; <span class="severity-pill" id="phq9SeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('phq9')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('phq9')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="phq9Output">
+            <div class="output-header">
+                <h3>PHQ-9 Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('phq9')" id="phq9CopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="phq9Text" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Kroenke K, Spitzer RL, Williams JBW. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med. 2001;16(9):606-13. Severity: 0–4 none/minimal; 5–9 mild; 10–14 moderate; 15–19 moderately severe; 20–27 severe. Item 9 (suicidality) requires separate clinical attention if endorsed.
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ---------- Date default ----------
+document.getElementById('assessmentDate').valueAsDate = new Date();
+
+// ---------- Tabs ----------
+function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+}
+
+// ---------- MADRS data ----------
+const MADRS_ITEMS = [
+    {
+        title: 'Apparent Sadness',
+        prompt: 'Representing despondency, gloom and despair reflected in speech, facial expression and posture.',
+        anchors: [
+            'No sadness',
+            '',
+            'Looks dispirited but does brighten up without difficulty',
+            '',
+            'Appears sad and unhappy most of the time',
+            '',
+            'Looks miserable all the time; extremely despondent'
+        ]
+    },
+    {
+        title: 'Reported Sadness',
+        prompt: 'Reports of depressed mood, regardless of whether it is reflected in appearance or not.',
+        anchors: [
+            'Occasional sadness in keeping with the circumstances',
+            '',
+            'Sad or low but brightens up without difficulty',
+            '',
+            'Pervasive feelings of sadness or gloominess; mood still influenced by external circumstances',
+            '',
+            'Continuous or unvarying sadness, misery or despondency'
+        ]
+    },
+    {
+        title: 'Inner Tension',
+        prompt: 'Feelings of ill-defined discomfort, edginess, inner turmoil, mental tension mounting to panic, dread or anguish.',
+        anchors: [
+            'Placid; only fleeting inner tension',
+            '',
+            'Occasional feelings of edginess and ill-defined discomfort',
+            '',
+            'Continuous feelings of inner tension or intermittent panic which the patient can only master with some difficulty',
+            '',
+            'Unrelenting dread or anguish; overwhelming panic'
+        ]
+    },
+    {
+        title: 'Reduced Sleep',
+        prompt: 'Reduced duration or depth of sleep compared to the subject\u2019s own normal pattern when well.',
+        anchors: [
+            'Sleeps as usual',
+            '',
+            'Slight difficulty dropping off to sleep or slightly reduced, light or fitful sleep',
+            '',
+            'Sleep reduced or broken by at least two hours',
+            '',
+            'Less than two or three hours\u2019 sleep'
+        ]
+    },
+    {
+        title: 'Reduced Appetite',
+        prompt: 'Feeling of a loss of appetite compared with when well.',
+        anchors: [
+            'Normal or increased appetite',
+            '',
+            'Slightly reduced appetite',
+            '',
+            'No appetite; food is tasteless',
+            '',
+            'Needs persuasion to eat at all'
+        ]
+    },
+    {
+        title: 'Concentration Difficulties',
+        prompt: 'Difficulties in collecting one\u2019s thoughts mounting to an incapacitating lack of concentration.',
+        anchors: [
+            'No difficulties in concentrating',
+            '',
+            'Occasional difficulties in collecting one\u2019s thoughts',
+            '',
+            'Difficulties in concentrating and sustaining thought which reduces ability to read or hold a conversation',
+            '',
+            'Unable to read or converse without great difficulty'
+        ]
+    },
+    {
+        title: 'Lassitude',
+        prompt: 'Difficulty in getting started or slowness in initiating and performing everyday activities.',
+        anchors: [
+            'Hardly any difficulty in getting started; no sluggishness',
+            '',
+            'Difficulties in starting activities',
+            '',
+            'Difficulties in starting simple routine activities which are carried out with effort',
+            '',
+            'Complete lassitude; unable to do anything without help'
+        ]
+    },
+    {
+        title: 'Inability to Feel',
+        prompt: 'The subjective experience of reduced interest in surroundings, or activities that normally give pleasure.',
+        anchors: [
+            'Normal interest in the surroundings and in other people',
+            '',
+            'Reduced ability to enjoy usual interests',
+            '',
+            'Loss of interest in the surroundings; loss of feelings for friends and acquaintances',
+            '',
+            'The experience of being emotionally paralysed; inability to feel anger, grief or pleasure and a complete or even painful failure to feel for close relatives and friends'
+        ]
+    },
+    {
+        title: 'Pessimistic Thoughts',
+        prompt: 'Thoughts of guilt, inferiority, self-reproach, sinfulness, remorse and ruin.',
+        anchors: [
+            'No pessimistic thoughts',
+            '',
+            'Fluctuating ideas of failure, self-reproach or self-depreciation',
+            '',
+            'Persistent self-accusations, or definite but still rational ideas of guilt or sin; increasingly pessimistic about the future',
+            '',
+            'Delusions of ruin, remorse or unredeemable sin; self-accusations which are absurd and unshakable'
+        ]
+    },
+    {
+        title: 'Suicidal Thoughts',
+        prompt: 'The feeling that life is not worth living, that a natural death would be welcome, suicidal thoughts, and preparations for suicide.',
+        anchors: [
+            'Enjoys life or takes it as it comes',
+            '',
+            'Weary of life; only fleeting suicidal thoughts',
+            '',
+            'Probably better off dead; suicidal thoughts are common and suicide is considered as a possible solution, but without specific plans or intention',
+            '',
+            'Explicit plans for suicide when there is an opportunity; active preparations for suicide'
+        ]
+    }
+];
+
+// ---------- PHQ-9 data ----------
+const PHQ9_ITEMS = [
+    'Little interest or pleasure in doing things',
+    'Feeling down, depressed, or hopeless',
+    'Trouble falling or staying asleep, or sleeping too much',
+    'Feeling tired or having little energy',
+    'Poor appetite or overeating',
+    'Feeling bad about yourself — or that you are a failure or have let yourself or your family down',
+    'Trouble concentrating on things, such as reading the newspaper or watching television',
+    'Moving or speaking so slowly that other people could have noticed. Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual',
+    'Thoughts that you would be better off dead, or of hurting yourself in some way'
+];
+
+const PHQ9_OPTIONS = [
+    { val: 0, label: 'Not at all' },
+    { val: 1, label: 'Several days' },
+    { val: 2, label: 'More than half the days' },
+    { val: 3, label: 'Nearly every day' }
+];
+
+// ---------- Build MADRS UI ----------
+(function buildMadrs() {
+    const container = document.getElementById('madrsItems');
+    let html = '';
+    MADRS_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + '</span></div>';
+        html += '<div class="item-sub">' + item.prompt + '</div>';
+        html += '<div class="radio-group">';
+        for (let v = 0; v <= 6; v++) {
+            const anchor = item.anchors[v];
+            const labelText = anchor ? anchor : '(intermediate)';
+            html += '<label class="radio-option"><input type="radio" name="madrs_' + n + '" value="' + v + '" onchange="updateMadrs()">' +
+                    '<span class="radio-label"><span class="val">' + v + '</span>' + labelText + '</span></label>';
+        }
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build PHQ-9 UI ----------
+(function buildPhq9() {
+    const container = document.getElementById('phq9Items');
+    let html = '';
+    PHQ9_ITEMS.forEach((prompt, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + prompt + '</span></div>';
+        html += '<div class="radio-group">';
+        PHQ9_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="phq9_' + n + '" value="' + opt.val + '" onchange="updatePhq9()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Score helpers ----------
+function getRadioVal(name) {
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+}
+function getRadioLabelText(name) {
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    if (!el) return null;
+    const labelSpan = el.parentElement.querySelector('.radio-label');
+    return labelSpan ? labelSpan.textContent.trim() : null;
+}
+
+function madrsSeverity(score) {
+    if (score <= 6)  return { level: 'Absent / Normal', css: 'sev-none' };
+    if (score <= 19) return { level: 'Mild',            css: 'sev-mild' };
+    if (score <= 34) return { level: 'Moderate',        css: 'sev-moderate' };
+    return            { level: 'Severe',          css: 'sev-severe' };
+}
+function phq9Severity(score) {
+    if (score <= 4)  return { level: 'None / Minimal',    css: 'sev-none' };
+    if (score <= 9)  return { level: 'Mild',              css: 'sev-mild' };
+    if (score <= 14) return { level: 'Moderate',          css: 'sev-moderate' };
+    if (score <= 19) return { level: 'Moderately Severe', css: 'sev-modsev' };
+    return            { level: 'Severe',            css: 'sev-severe' };
+}
+
+function updateMadrs() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('madrs_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('madrsTotal').textContent = total;
+    const pill = document.getElementById('madrsSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = madrsSeverity(total);
+        pill.textContent = sev.level + (rated < 10 ? ' (partial: ' + rated + '/10)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updatePhq9() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 9; i++) {
+        const v = getRadioVal('phq9_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('phq9Total').textContent = total;
+    const pill = document.getElementById('phq9SeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = phq9Severity(total);
+        pill.textContent = sev.level + (rated < 9 ? ' (partial: ' + rated + '/9)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+// ---------- Plain text output ----------
+function patientHeader() {
+    const name  = document.getElementById('patientName').value.trim() || 'Not specified';
+    const pid   = document.getElementById('patientId').value.trim() || 'Not specified';
+    const date  = document.getElementById('assessmentDate').value || 'Not specified';
+    const rater = document.getElementById('raterName').value.trim() || 'Not specified';
+    let t = '';
+    t += 'Patient:   ' + name + '\n';
+    t += 'ID:        ' + pid + '\n';
+    t += 'Date:      ' + date + '\n';
+    t += 'Clinician: ' + rater + '\n';
+    return t;
+}
+
+function buildMadrsText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'MONTGOMERY-ASBERG DEPRESSION RATING SCALE (MADRS)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0;
+    let rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('madrs_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        rows.push({
+            num: i,
+            title: MADRS_ITEMS[i-1].title,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : (MADRS_ITEMS[i-1].anchors[parseInt(v,10)] || '(intermediate)')
+        });
+    }
+
+    const sev = madrsSeverity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 60';
+    if (rated < 10) t += '  (partial: ' + rated + '/10 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'ITEM RESPONSES\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.title + '  [Score: ' + r.score + ']\n';
+        t += '    ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Scoring Thresholds: 0-6 absent/normal | 7-19 mild | 20-34 moderate | 35-60 severe.\n';
+    t += 'Reference: Montgomery SA, Asberg M. Br J Psychiatry. 1979;134:382-9.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildPhq9Text() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'PATIENT HEALTH QUESTIONNAIRE-9 (PHQ-9)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0;
+    let rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 9; i++) {
+        const v = getRadioVal('phq9_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        const label = v === null ? 'Not rated' : PHQ9_OPTIONS[parseInt(v,10)].label;
+        rows.push({
+            num: i,
+            prompt: PHQ9_ITEMS[i-1],
+            score: v === null ? 'NR' : v,
+            answer: label
+        });
+    }
+
+    const sev = phq9Severity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 27';
+    if (rated < 9) t += '  (partial: ' + rated + '/9 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+
+    // Item 9 safety flag
+    const item9 = getRadioVal('phq9_9');
+    if (item9 !== null && parseInt(item9, 10) > 0) {
+        t += 'SAFETY FLAG: Item 9 (self-harm/suicidality) endorsed at "' + PHQ9_OPTIONS[parseInt(item9,10)].label + '" — requires clinical review.\n';
+    }
+
+    const funcEl = document.querySelector('input[name="phq9_function"]:checked');
+    const funcLabel = funcEl ? funcEl.value : null;
+
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (over the last 2 weeks)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.prompt + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    if (funcLabel) {
+        t += thin + '\n';
+        t += 'Functional Impairment: ' + funcLabel + '\n';
+    }
+
+    t += thin + '\n';
+    t += 'Scoring: 0-4 none/minimal | 5-9 mild | 10-14 moderate | 15-19 moderately severe | 20-27 severe.\n';
+    t += 'Reference: Kroenke K, Spitzer RL, Williams JBW. J Gen Intern Med. 2001;16:606-13.\n';
+    t += line + '\n';
+    return t;
+}
+
+function generateOutput(which) {
+    if (which === 'madrs') {
+        document.getElementById('madrsText').value = buildMadrsText();
+        document.getElementById('madrsOutput').classList.add('visible');
+        document.getElementById('madrsOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        document.getElementById('phq9Text').value = buildPhq9Text();
+        document.getElementById('phq9Output').classList.add('visible');
+        document.getElementById('phq9Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function copyOutput(which) {
+    const ta = document.getElementById(which === 'madrs' ? 'madrsText' : 'phq9Text');
+    const btn = document.getElementById(which === 'madrs' ? 'madrsCopyBtn' : 'phq9CopyBtn');
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    const restore = () => { setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000); };
+    try {
+        navigator.clipboard.writeText(ta.value).then(() => {
+            btn.textContent = 'Copied!';
+            restore();
+        }, () => {
+            document.execCommand('copy');
+            btn.textContent = 'Copied!';
+            restore();
+        });
+    } catch (e) {
+        document.execCommand('copy');
+        btn.textContent = 'Copied!';
+        restore();
+    }
+}
+
+function resetScale(which) {
+    const prefix = which === 'madrs' ? 'madrs_' : 'phq9_';
+    const count  = which === 'madrs' ? 10 : 9;
+    for (let i = 1; i <= count; i++) {
+        document.querySelectorAll('input[name="' + prefix + i + '"]').forEach(r => r.checked = false);
+    }
+    if (which === 'phq9') {
+        document.querySelectorAll('input[name="phq9_function"]').forEach(r => r.checked = false);
+        updatePhq9();
+        document.getElementById('phq9Output').classList.remove('visible');
+    } else {
+        updateMadrs();
+        document.getElementById('madrsOutput').classList.remove('visible');
+    }
+}
+
+// Initialize totals display
+updateMadrs();
+updatePhq9();
+</script>
+</body>
+</html>
