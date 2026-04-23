@@ -347,7 +347,7 @@ select.inp{appearance:none}
   <button class="tab active" onclick="showTab('history',this)">Psych Hx <span class="tbadge" id="tb-history">--</span></button>
   <button class="tab" onclick="showTab('safety',this)">Medical Hx <span class="tbadge" id="tb-safety">--</span></button>
   <button class="tab" onclick="showTab('plan',this)">Plan</button>
-  <button class="tab" onclick="showTab('outputs',this)">Outputs</button>
+  <button class="tab" onclick="showTab('outputs',this)">Letters</button>
 </div>
 
 <div class="content">
@@ -1052,8 +1052,8 @@ select.inp{appearance:none}
 </div>
 </div>
 
-<!-- OUTPUTS -->
-<div class="section-header" id="sec-outputs"><span class="sh-num">4</span>Outputs</div>
+<!-- LETTERS -->
+<div class="section-header" id="sec-outputs"><span class="sh-num">4</span>Letters</div>
 <div class="panel active" id="panel-outputs">
 
   <!-- Script + Heidi (unchanged) -->
@@ -3859,12 +3859,38 @@ function refresh(){
   refreshDocPreview();
 }
 
+function setActiveTab(name){
+  document.querySelectorAll('.tab').forEach(function(b){
+    var onclick=b.getAttribute('onclick')||'';
+    var m=onclick.match(/showTab\('([^']+)'/);
+    if(m&&m[1]===name)b.classList.add('active');
+    else b.classList.remove('active');
+  });
+}
 function showTab(name,btn){
-  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
+  setActiveTab(name);
   if(name==='outputs')refresh();
   var target=document.getElementById('sec-'+name)||document.getElementById('panel-'+name);
   if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function initScrollSpy(){
+  var sections=['history','safety','plan','outputs'];
+  var els=sections.map(function(n){return document.getElementById('sec-'+n);}).filter(Boolean);
+  if(!els.length)return;
+  function onScroll(){
+    var tabsEl=document.querySelector('.tabs');
+    var offset=(tabsEl?tabsEl.getBoundingClientRect().bottom:0)+20;
+    var current=sections[0];
+    for(var i=0;i<els.length;i++){
+      var rect=els[i].getBoundingClientRect();
+      if(rect.top<=offset)current=els[i].id.replace(/^sec-/,'');
+      else break;
+    }
+    setActiveTab(current);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  onScroll();
 }
 
 function init(){
@@ -3880,6 +3906,7 @@ function init(){
   renderFuAppts();renderFuCustomMon();
   var dtEl=$('ptDate');if(dtEl&&!dtEl.value)dtEl.value=new Date().toISOString().slice(0,10);
   refresh();
+  initScrollSpy();
 }
 document.addEventListener('DOMContentLoaded',init);
 
