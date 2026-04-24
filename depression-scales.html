@@ -288,6 +288,7 @@
         <button class="tab-btn" data-tab="ymrs" onclick="switchTab('ymrs')">YMRS</button>
         <button class="tab-btn" data-tab="pcl5" onclick="switchTab('pcl5')">PCL-5</button>
         <button class="tab-btn" data-tab="iesr" onclick="switchTab('iesr')">IES-R</button>
+        <button class="tab-btn" data-tab="ybocs" onclick="switchTab('ybocs')">Y-BOCS</button>
         <button class="tab-btn" data-tab="bprs" onclick="switchTab('bprs')">BPRS</button>
         <button class="tab-btn" data-tab="k10" onclick="switchTab('k10')">K10</button>
         <button class="tab-btn" data-tab="msibpd" onclick="switchTab('msibpd')">MSI-BPD</button>
@@ -575,6 +576,66 @@
 
         <div class="disclaimer">
             <strong>Reference:</strong> Weiss DS, Marmar CR. The Impact of Event Scale – Revised. In: Wilson JP, Keane TM (eds). Assessing Psychological Trauma and PTSD. Guilford Press; 1997:399-411. Subscales: Intrusion (8 items), Avoidance (8 items), Hyperarousal (6 items). Commonly cited thresholds (total score): 0–23 subclinical; 24–32 clinical concern; 33–38 probable PTSD; ≥39 severe PTSD symptomatology.
+        </div>
+    </div>
+
+    <!-- Y-BOCS -->
+    <div class="tab-pane" id="tab-ybocs">
+        <div class="card">
+            <div class="card-title">Y-BOCS Instructions</div>
+            <p style="font-size:0.9em;">Clinician-rated semi-structured interview. Rate symptom severity during the <strong>prior week</strong> up to and including the time of interview. <strong>Total score (0–40)</strong> is derived from items 1–10 only. Items 11–19 are supplementary / investigational and are not included in the total.</p>
+            <p style="font-size:0.85em; color: var(--gray-600); margin-top:8px;">The full Y-BOCS symptom checklist (~60 item categories) is available in the separate <code>ybocs_scale.html</code> tool. This tab focuses on target symptoms and severity ratings.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Target Symptoms (optional)</div>
+            <div style="display:grid; gap: 10px;">
+                <div>
+                    <label style="display:block; font-weight:500; font-size:0.9em; color:var(--gray-700); margin-bottom:4px;">Target obsessions</label>
+                    <textarea id="ybocsTargetObs" rows="2" placeholder="Describe the most distressing obsessions"
+                              style="width:100%; padding:8px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:0.9em; resize:vertical; font-family:inherit;"></textarea>
+                </div>
+                <div>
+                    <label style="display:block; font-weight:500; font-size:0.9em; color:var(--gray-700); margin-bottom:4px;">Target compulsions</label>
+                    <textarea id="ybocsTargetComp" rows="2" placeholder="Describe the most time-consuming or distressing compulsions"
+                              style="width:100%; padding:8px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:0.9em; resize:vertical; font-family:inherit;"></textarea>
+                </div>
+                <div>
+                    <label style="display:block; font-weight:500; font-size:0.9em; color:var(--gray-700); margin-bottom:4px;">Target avoidance</label>
+                    <textarea id="ybocsTargetAvoid" rows="2" placeholder="Situations, people, places avoided due to OCD"
+                              style="width:100%; padding:8px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:0.9em; resize:vertical; font-family:inherit;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="color: var(--primary); font-size: 1.05em; margin: 18px 0 8px;">Core items (1–10) — obsessions and compulsions</h3>
+        <div class="section-body" id="ybocsCoreItems"></div>
+
+        <h3 style="color: var(--gray-700); font-size: 1.05em; margin: 18px 0 8px;">Supplementary / investigational items (11–19) — not included in total</h3>
+        <div class="section-body" id="ybocsInvestItems"></div>
+
+        <div class="score-bar">
+            Y-BOCS Total (items 1–10): <span id="ybocsTotal">0</span> / 40 &nbsp; — &nbsp; <span class="severity-pill" id="ybocsSeverityPill">Not rated</span>
+            <div style="text-align:right; font-size:0.85em; font-weight:400; color: var(--gray-600); margin-top:4px;">
+                Obsessions (1–5): <span id="ybocsObsSub">0</span>/20 &nbsp;&middot;&nbsp; Compulsions (6–10): <span id="ybocsCompSub">0</span>/20
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('ybocs')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('ybocs')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="ybocsOutput">
+            <div class="output-header">
+                <h3>Y-BOCS Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('ybocs')" id="ybocsCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="ybocsText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Goodman WK, Price LH, Rasmussen SA, et al. The Yale-Brown Obsessive Compulsive Scale. Arch Gen Psychiatry. 1989;46(11):1006-16. Total (items 1–10): 0–7 subclinical · 8–15 mild · 16–23 moderate · 24–31 severe · 32–40 extreme. A ≥35% reduction in total score is a commonly-used benchmark for clinically meaningful treatment response.
         </div>
     </div>
 
@@ -1356,6 +1417,149 @@ const CGII_OPTIONS = [
     { val: 7, label: 'Very much worse' }
 ];
 
+// ---------- Y-BOCS data ----------
+const YBOCS_CORE_ITEMS = [
+    { title: 'Time Occupied by Obsessive Thoughts', domain: 'Obsessions', anchors: [
+        'None.',
+        'Mild: <1 hr/day or occasional intrusion.',
+        'Moderate: 1–3 hrs/day or frequent intrusion.',
+        'Severe: >3 and up to 8 hrs/day or very frequent intrusion.',
+        'Extreme: >8 hrs/day or near-constant intrusion.'
+    ]},
+    { title: 'Interference Due to Obsessive Thoughts', domain: 'Obsessions', anchors: [
+        'None.',
+        'Mild: slight interference with social or occupational activities, overall performance not impaired.',
+        'Moderate: definite interference with social or occupational performance, but still manageable.',
+        'Severe: causes substantial impairment in social or occupational performance.',
+        'Extreme: incapacitating.'
+    ]},
+    { title: 'Distress Associated with Obsessive Thoughts', domain: 'Obsessions', anchors: [
+        'None.',
+        'Mild: not too disturbing.',
+        'Moderate: disturbing, but still manageable.',
+        'Severe: very disturbing.',
+        'Extreme: near-constant and disabling distress.'
+    ]},
+    { title: 'Resistance Against Obsessions', domain: 'Obsessions', anchors: [
+        'Makes an effort to always resist, or symptoms so minimal no active resistance needed.',
+        'Tries to resist most of the time.',
+        'Makes some effort to resist.',
+        'Yields to all obsessions without attempting to control them, but does so with some reluctance.',
+        'Completely and willingly yields to all obsessions.'
+    ]},
+    { title: 'Degree of Control Over Obsessive Thoughts', domain: 'Obsessions', anchors: [
+        'Complete control.',
+        'Much control: usually able to stop or divert obsessions with some effort and concentration.',
+        'Moderate control: sometimes able to stop or divert obsessions.',
+        'Little control: rarely successful in stopping or dismissing obsessions; can only divert attention with difficulty.',
+        'No control: experienced as completely involuntary; rarely able to even momentarily alter obsessive thinking.'
+    ]},
+    { title: 'Time Spent Performing Compulsive Behaviours', domain: 'Compulsions', anchors: [
+        'None.',
+        'Mild: <1 hr/day performing compulsions, or occasional performance.',
+        'Moderate: 1–3 hrs/day performing compulsions, or frequent performance.',
+        'Severe: >3 and up to 8 hrs/day performing compulsions, or very frequent performance.',
+        'Extreme: >8 hrs/day performing compulsions, or near-constant performance.'
+    ]},
+    { title: 'Interference Due to Compulsive Behaviours', domain: 'Compulsions', anchors: [
+        'None.',
+        'Mild: slight interference with social or occupational activities, overall performance not impaired.',
+        'Moderate: definite interference with social or occupational performance, but still manageable.',
+        'Severe: causes substantial impairment in social or occupational performance.',
+        'Extreme: incapacitating.'
+    ]},
+    { title: 'Distress Associated with Compulsive Behaviour', domain: 'Compulsions', anchors: [
+        'None.',
+        'Mild: only slightly anxious if compulsions prevented, or only slight anxiety during performance.',
+        'Moderate: anxiety would mount but remain manageable if compulsions prevented.',
+        'Severe: prominent and very disturbing increase in anxiety if compulsions interrupted.',
+        'Extreme: incapacitating anxiety from any intervention aimed at modifying activity.'
+    ]},
+    { title: 'Resistance Against Compulsions', domain: 'Compulsions', anchors: [
+        'Makes an effort to always resist, or symptoms so minimal no active resistance needed.',
+        'Tries to resist most of the time.',
+        'Makes some effort to resist.',
+        'Yields to almost all compulsions without attempting to control them, but does so with some reluctance.',
+        'Completely and willingly yields to all compulsions.'
+    ]},
+    { title: 'Degree of Control Over Compulsive Behaviour', domain: 'Compulsions', anchors: [
+        'Complete control.',
+        'Much control: experiences pressure to perform the behaviour but usually able to exercise voluntary control.',
+        'Moderate control: strong pressure to perform behaviour; can control it only with difficulty.',
+        'Little control: very strong drive to perform behaviour; must be carried to completion; can only delay with difficulty.',
+        'No control: drive to perform behaviour experienced as completely involuntary and overpowering.'
+    ]}
+];
+
+const YBOCS_INVEST_ITEMS = [
+    { title: 'Insight into Obsessions and Compulsions', anchors: [
+        'Excellent insight, fully rational.',
+        'Good insight. Readily acknowledges absurdity or excessiveness but has lingering doubts.',
+        'Fair insight. Reluctantly admits thoughts seem unreasonable but wavers.',
+        'Poor insight. Maintains thoughts are not unreasonable but acknowledges validity of contrary evidence (overvalued ideas).',
+        'Lacks insight / delusional. Convinced concerns and behaviour are reasonable, unresponsive to contrary evidence.'
+    ]},
+    { title: 'Avoidance', anchors: [
+        'No deliberate avoidance.',
+        'Mild, minimal avoidance.',
+        'Moderate, some avoidance; clearly present.',
+        'Severe, much avoidance; avoidance prominent.',
+        'Extreme, very extensive avoidance; does almost everything to avoid triggering symptoms.'
+    ]},
+    { title: 'Degree of Indecisiveness', anchors: [
+        'None.',
+        'Mild: some trouble making decisions about minor things.',
+        'Moderate: significant trouble making decisions others would not think twice about.',
+        'Severe: continual weighing of pros and cons about non-essentials.',
+        'Extreme: unable to make any decisions. Disabling.'
+    ]},
+    { title: 'Overvalued Sense of Responsibility', anchors: [
+        'None.',
+        'Mild: slight sense of over-responsibility.',
+        'Moderate: significant sense of over-responsibility for events outside reasonable control.',
+        'Severe: prominent and pervasive; deeply concerned about responsibility for events clearly outside control.',
+        'Extreme: delusional sense of responsibility.'
+    ]},
+    { title: 'Pervasive Slowness / Disturbance of Inertia', anchors: [
+        'None.',
+        'Mild: occasional delay in starting or finishing.',
+        'Moderate: frequent prolongation of routine activities but tasks usually completed.',
+        'Severe: pervasive and marked difficulty initiating and completing routine tasks.',
+        'Extreme: unable to start or complete routine tasks without full assistance.'
+    ]},
+    { title: 'Pathological Doubting', anchors: [
+        'None.',
+        'Mild: slight pathological doubt.',
+        'Moderate: significant pathological doubt. Some effect on performance but still manageable.',
+        'Severe: uncertainty about perceptions or memory prominent; frequently affects performance.',
+        'Extreme: uncertainty about perceptions constantly present; substantially affects almost all activities.'
+    ]},
+    { title: 'Global Severity (investigator-rated)', anchors: [
+        'No illness.',
+        'Illness slight, doubtful, transient; no functional impairment.',
+        'Mild symptoms, little functional impairment.',
+        'Moderate symptoms, functions with effort.',
+        'Moderate–severe symptoms, limited functioning.',
+        'Severe symptoms, functions mainly with assistance.',
+        'Extremely severe symptoms, completely non-functional.'
+    ]},
+    { title: 'Global Improvement (since baseline)', anchors: [
+        'Very much worse.',
+        'Much worse.',
+        'Minimally worse.',
+        'No change.',
+        'Minimally improved.',
+        'Much improved.',
+        'Very much improved.'
+    ]},
+    { title: 'Reliability of Ratings', anchors: [
+        'Excellent — no reason to suspect data unreliable.',
+        'Good — factor(s) present that may adversely affect reliability.',
+        'Fair — factor(s) present that definitely reduce reliability.',
+        'Poor — very low reliability.'
+    ]}
+];
+
 // ---------- AUDIT data ----------
 // Items 1-8 use 5-option set; items 9-10 use 3-option set (0, 2, 4).
 const AUDIT_ITEMS = [
@@ -1723,6 +1927,45 @@ const HAMA_ITEMS = [
     container.innerHTML = html;
 })();
 
+// ---------- Build Y-BOCS UI ----------
+(function buildYbocs() {
+    const coreEl = document.getElementById('ybocsCoreItems');
+    let coreHtml = '';
+    let lastDomain = '';
+    YBOCS_CORE_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        if (item.domain !== lastDomain) {
+            coreHtml += '<div style="padding:10px 18px; background:var(--primary-light); color:var(--primary); font-weight:600; font-size:0.92em; text-transform:uppercase; letter-spacing:0.4px;">' + item.domain + ' (items ' + (item.domain === 'Obsessions' ? '1–5' : '6–10') + ')</div>';
+            lastDomain = item.domain;
+        }
+        coreHtml += '<div class="item-block">';
+        coreHtml += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + '</span></div>';
+        coreHtml += '<div class="radio-group">';
+        for (let v = 0; v <= 4; v++) {
+            coreHtml += '<label class="radio-option"><input type="radio" name="ybocs_' + n + '" value="' + v + '" onchange="updateYbocs()">' +
+                        '<span class="radio-label"><span class="val">' + v + '</span>' + item.anchors[v] + '</span></label>';
+        }
+        coreHtml += '</div></div>';
+    });
+    coreEl.innerHTML = coreHtml;
+
+    const investEl = document.getElementById('ybocsInvestItems');
+    let iHtml = '';
+    YBOCS_INVEST_ITEMS.forEach((item, idx) => {
+        const n = idx + 11;
+        const max = item.anchors.length - 1;
+        iHtml += '<div class="item-block">';
+        iHtml += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + ' <span style="font-weight:400;color:var(--gray-600);font-size:0.85em;">(0–' + max + ')</span></span></div>';
+        iHtml += '<div class="radio-group">';
+        for (let v = 0; v <= max; v++) {
+            iHtml += '<label class="radio-option"><input type="radio" name="ybocs_' + n + '" value="' + v + '" onchange="updateYbocs()">' +
+                     '<span class="radio-label"><span class="val">' + v + '</span>' + item.anchors[v] + '</span></label>';
+        }
+        iHtml += '</div></div>';
+    });
+    investEl.innerHTML = iHtml;
+})();
+
 // ---------- Build AUDIT UI ----------
 (function buildAudit() {
     const container = document.getElementById('auditItems');
@@ -1934,6 +2177,14 @@ function msibpdSeverity(score) {
     if (score < 7) return { level: 'Below screening cut-off', css: 'sev-none' };
     return          { level: 'Positive screen (≥7) — further assessment recommended', css: 'sev-modsev' };
 }
+function ybocsSeverity(score) {
+    if (score <= 7)  return { level: 'Subclinical', css: 'sev-none' };
+    if (score <= 15) return { level: 'Mild',        css: 'sev-mild' };
+    if (score <= 23) return { level: 'Moderate',    css: 'sev-moderate' };
+    if (score <= 31) return { level: 'Severe',      css: 'sev-modsev' };
+    return            { level: 'Extreme',     css: 'sev-severe' };
+}
+
 function auditSeverity(score) {
     if (score <= 7)  return { level: 'Low-risk drinking',       css: 'sev-none' };
     if (score <= 15) return { level: 'Hazardous / risky',       css: 'sev-mild' };
@@ -2123,6 +2374,31 @@ function updateMsibpd() {
     } else {
         const sev = msibpdSeverity(total);
         pill.textContent = sev.level + (rated < 10 ? ' (partial: ' + rated + '/10)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateYbocs() {
+    let obsTotal = 0, compTotal = 0, coreRated = 0;
+    for (let i = 1; i <= 5; i++) {
+        const v = getRadioVal('ybocs_' + i);
+        if (v !== null) { obsTotal += parseInt(v, 10); coreRated++; }
+    }
+    for (let i = 6; i <= 10; i++) {
+        const v = getRadioVal('ybocs_' + i);
+        if (v !== null) { compTotal += parseInt(v, 10); coreRated++; }
+    }
+    const total = obsTotal + compTotal;
+    document.getElementById('ybocsTotal').textContent = total;
+    document.getElementById('ybocsObsSub').textContent = obsTotal;
+    document.getElementById('ybocsCompSub').textContent = compTotal;
+    const pill = document.getElementById('ybocsSeverityPill');
+    if (coreRated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = ybocsSeverity(total);
+        pill.textContent = sev.level + (coreRated < 10 ? ' (partial: ' + coreRated + '/10 core items)' : '');
         pill.className = 'severity-pill ' + sev.css;
     }
 }
@@ -2608,6 +2884,95 @@ function buildMsibpdText() {
     t += thin + '\n';
     t += 'Scoring: 1 point per "Yes". Cut-off >=7 suggests positive screen.\n';
     t += 'Reference: Zanarini MC et al. J Pers Disord. 2003;17:568-73.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildYbocsText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'YALE-BROWN OBSESSIVE COMPULSIVE SCALE (Y-BOCS)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    const tObs   = (document.getElementById('ybocsTargetObs').value   || '').trim();
+    const tComp  = (document.getElementById('ybocsTargetComp').value  || '').trim();
+    const tAvoid = (document.getElementById('ybocsTargetAvoid').value || '').trim();
+    if (tObs || tComp || tAvoid) {
+        t += 'TARGET SYMPTOMS\n';
+        if (tObs)   t += '  Obsessions:  ' + tObs + '\n';
+        if (tComp)  t += '  Compulsions: ' + tComp + '\n';
+        if (tAvoid) t += '  Avoidance:   ' + tAvoid + '\n';
+        t += thin + '\n';
+    }
+
+    let obsTotal = 0, compTotal = 0, coreRated = 0;
+    const coreRows = [];
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('ybocs_' + i);
+        if (v !== null) {
+            const n = parseInt(v, 10);
+            if (i <= 5) obsTotal += n; else compTotal += n;
+            coreRated++;
+        }
+        coreRows.push({
+            num: i,
+            title: YBOCS_CORE_ITEMS[i-1].title,
+            domain: YBOCS_CORE_ITEMS[i-1].domain,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : YBOCS_CORE_ITEMS[i-1].anchors[parseInt(v,10)]
+        });
+    }
+    const total = obsTotal + compTotal;
+    const sev = ybocsSeverity(total);
+
+    t += 'TOTAL SCORE (items 1-10): ' + total + ' / 40';
+    if (coreRated < 10) t += '  (partial: ' + coreRated + '/10 core items rated)';
+    t += '\n';
+    t += 'SEVERITY:                 ' + sev.level + '\n';
+    t += 'Obsession subtotal (1-5):  ' + obsTotal + ' / 20\n';
+    t += 'Compulsion subtotal (6-10):' + compTotal + ' / 20\n';
+    t += thin + '\n';
+    t += 'CORE ITEM RESPONSES (past week)\n';
+    t += thin + '\n';
+    coreRows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. [' + r.domain[0] + '] ' + r.title + '  [Score: ' + r.score + ']\n';
+        t += '    ' + r.answer + '\n';
+    });
+
+    // Supplementary items
+    let anyInvest = false;
+    const investRows = [];
+    for (let i = 11; i <= 19; i++) {
+        const v = getRadioVal('ybocs_' + i);
+        if (v !== null) anyInvest = true;
+        const item = YBOCS_INVEST_ITEMS[i - 11];
+        const max = item.anchors.length - 1;
+        investRows.push({
+            num: i,
+            title: item.title,
+            max: max,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : item.anchors[parseInt(v, 10)]
+        });
+    }
+    if (anyInvest) {
+        t += thin + '\n';
+        t += 'SUPPLEMENTARY ITEMS (11-19, NOT included in total)\n';
+        t += thin + '\n';
+        investRows.forEach(r => {
+            t += r.num + '. ' + r.title + '  [Score: ' + r.score + ' / ' + r.max + ']\n';
+            t += '    ' + r.answer + '\n';
+        });
+    }
+
+    t += thin + '\n';
+    t += 'Scoring: 0-7 subclinical | 8-15 mild | 16-23 moderate | 24-31 severe | 32-40 extreme.\n';
+    t += '>=35% reduction in total commonly used as benchmark for treatment response.\n';
+    t += 'Reference: Goodman WK et al. Arch Gen Psychiatry. 1989;46:1006-16.\n';
     t += line + '\n';
     return t;
 }
@@ -3125,6 +3490,10 @@ function generateOutput(which) {
         document.getElementById('iesrText').value = buildIesrText();
         document.getElementById('iesrOutput').classList.add('visible');
         document.getElementById('iesrOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'ybocs') {
+        document.getElementById('ybocsText').value = buildYbocsText();
+        document.getElementById('ybocsOutput').classList.add('visible');
+        document.getElementById('ybocsOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (which === 'ymrs') {
         document.getElementById('ymrsText').value = buildYmrsText();
         document.getElementById('ymrsOutput').classList.add('visible');
@@ -3187,7 +3556,7 @@ function copyOutput(which) {
 }
 
 function resetScale(which) {
-    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14, ymrs: 11, pcl5: 20, iesr: 22, bprs: 18, k10: 10, msibpd: 10, audit: 10, dast: 10, wsas: 5, sds: 3 };
+    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14, ymrs: 11, pcl5: 20, iesr: 22, ybocs: 19, bprs: 18, k10: 10, msibpd: 10, audit: 10, dast: 10, wsas: 5, sds: 3 };
     if (which === 'cgi') {
         document.querySelectorAll('input[name="cgis"]').forEach(r => r.checked = false);
         document.querySelectorAll('input[name="cgii"]').forEach(r => r.checked = false);
@@ -3208,8 +3577,14 @@ function resetScale(which) {
         const a = document.getElementById('sdsDaysLost'); if (a) a.value = '';
         const b = document.getElementById('sdsDaysUnprod'); if (b) b.value = '';
     }
+    if (which === 'ybocs') {
+        ['ybocsTargetObs','ybocsTargetComp','ybocsTargetAvoid'].forEach(id => {
+            const e = document.getElementById(id); if (e) e.value = '';
+        });
+    }
     const updaters = { madrs: updateMadrs, hamd: updateHamd, phq9: updatePhq9, gad7: updateGad7,
                        hama: updateHama, ymrs: updateYmrs, pcl5: updatePcl5, iesr: updateIesr,
+                       ybocs: updateYbocs,
                        bprs: updateBprs, k10: updateK10, msibpd: updateMsibpd,
                        audit: updateAudit, dast: updateDast, wsas: updateWsas, sds: updateSds };
     if (updaters[which]) updaters[which]();
@@ -3232,6 +3607,7 @@ updateAudit();
 updateDast();
 updateWsas();
 updateSds();
+updateYbocs();
 </script>
 </body>
 </html>
