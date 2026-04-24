@@ -337,7 +337,7 @@ select.inp{appearance:none}
 
 <div class="topbar">
   <div class="tb-row">
-    <span class="topbar-title">ADHD <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:normal;text-transform:none;margin-left:2px">v5.6</span></span>
+    <span class="topbar-title">ADHD <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:normal;text-transform:none;margin-left:2px">v5.7</span></span>
     <input class="ti" id="drName" placeholder="Psychiatrist name" oninput="save();refresh()" style="flex:1 1 130px;min-width:100px">
     <input class="ti" id="drQuals" placeholder="FRANZCP / RANZCP" oninput="save();refresh()" style="flex:0 1 130px;min-width:80px">
     <input class="ti" id="ptDate" type="date" style="flex:0 0 120px" oninput="save();refresh()">
@@ -1076,6 +1076,19 @@ select.inp{appearance:none}
       <button class="cbtn" onclick="event.stopPropagation();copyOut('out-heidi',this)">Copy full report</button>
     </div>
     <div class="out-text" id="out-heidi" style="display:none">--</div>
+  </div>
+
+  <!-- Full Assessment Report (official formatted version) -->
+  <div class="out-panel" id="report-panel">
+    <div class="out-head" onclick="toggleReport(event)" style="cursor:pointer;flex-wrap:wrap;gap:5px;row-gap:6px">
+      <span class="out-title">Full Assessment Report <span id="report-arrow" style="display:inline-block;margin-left:4px;font-size:9px;color:#64748b;transition:transform .15s">▶</span></span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-left:auto" onclick="event.stopPropagation()">
+        <button class="cbtn" onclick="copyReportFormatted()">Copy formatted</button>
+        <button class="cbtn" onclick="copyReportPlain()">Copy plain</button>
+        <button class="cbtn" onclick="dlReportDocx()">Download Word</button>
+      </div>
+    </div>
+    <div id="out-report" style="display:none;background:#fff;color:#000;padding:22px 26px;max-height:560px;overflow-y:auto;font-family:Arial,sans-serif;font-size:11pt;line-height:1.5"></div>
   </div>
 
   <!-- PATIENT DOCUMENT BUILDER -->
@@ -1917,6 +1930,7 @@ function refreshTitOutputs(){
   if(pp)pp.textContent=titBuildPlain();
   var se=$('out-script');if(se)se.textContent=buildScript();
   var he=$('out-heidi');if(he)he.textContent=buildHeidi();
+  if(typeof refreshReport==='function')refreshReport();
   if(typeof refreshDocPreview==='function')refreshDocPreview();
 }
 
@@ -2838,6 +2852,275 @@ function toggleHeidi(e){
   var open=box.style.display!=='none';
   box.style.display=open?'none':'block';
   if(arrow)arrow.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+function toggleReport(e){
+  if(e&&e.target&&e.target.closest('button'))return;
+  var box=$('out-report'),arrow=$('report-arrow');
+  if(!box)return;
+  var open=box.style.display!=='none';
+  box.style.display=open?'none':'block';
+  if(arrow)arrow.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+
+// ─── FULL ASSESSMENT REPORT (formatted) ───────────────────────────────────────
+function buildFullReport(){
+  var name=f('ptName')||'[Patient Name]',age=f('ptAge'),g=f('ptGender'),occ=f('ptOcc');
+  var dr=f('drName'),drQuals=f('drQuals'),gp=f('gpName');
+  var dv=f('ptDate');
+  var ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  var F='font-family:Arial,sans-serif;color:#000;';
+  var h='';
+
+  // Title block
+  h+='<div style="'+F+'text-align:center;margin:0 0 14pt 0;">';
+  h+='<div style="'+F+'font-size:16pt;font-weight:bold;letter-spacing:.02em;">PSYCHIATRIC ASSESSMENT REPORT</div>';
+  h+='<div style="'+F+'font-size:11pt;color:#444;margin-top:2pt;">Adult Attention-Deficit / Hyperactivity Disorder Assessment</div>';
+  h+='</div>';
+
+  // Identifier block
+  function row(a,av,b,bv){
+    return '<tr>'
+      +'<td style="'+F+'padding:3pt 8pt 3pt 0;width:22%;vertical-align:top;"><strong>'+a+'</strong></td>'
+      +'<td style="'+F+'padding:3pt 14pt 3pt 0;width:28%;vertical-align:top;">'+av+'</td>'
+      +'<td style="'+F+'padding:3pt 8pt 3pt 0;width:22%;vertical-align:top;"><strong>'+b+'</strong></td>'
+      +'<td style="'+F+'padding:3pt 0 3pt 0;width:28%;vertical-align:top;">'+bv+'</td>'
+      +'</tr>';
+  }
+  h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">';
+  h+=row('Patient', esc(name)+(age?' ('+esc(age)+' y)':'')+(g?' · '+esc(g):''), 'Date of assessment', ds);
+  if(occ||f('ptLiving')) h+=row('Occupation', esc(occ||'—'), 'Living situation', esc(f('ptLiving')||'—'));
+  if(dr||gp) h+=row('Psychiatrist', dr?esc(dr)+(drQuals?' '+esc(drQuals):''):'—', 'Referring GP', gp?esc(gp):'—');
+  h+='</table>';
+
+  function sec(t){return '<div style="'+F+'font-size:12pt;font-weight:bold;margin:16pt 0 6pt 0;padding-bottom:2pt;border-bottom:.5pt solid #888;">'+t+'</div>';}
+  function p(t){return '<div style="'+F+'font-size:11pt;line-height:1.5;margin:0 0 8pt 0;">'+t+'</div>';}
+  function list(items){
+    return '<ul style="'+F+'font-size:11pt;line-height:1.5;margin:0 0 10pt 20pt;padding:0;">'
+      +items.map(function(i){return '<li style="margin-bottom:2pt;">'+i+'</li>';}).join('')
+      +'</ul>';
+  }
+  function nl(t){return esc(t).replace(/\n/g,'<br>');}
+
+  // 1. Referral & Presenting Concerns
+  h+=sec('1. Referral and Presenting Concerns');
+  var refBits=[];
+  if(f('referralReason')) refBits.push('<strong>Referral reason:</strong> '+esc(f('referralReason')));
+  if(S.consultType) refBits.push('<strong>Consultation type:</strong> '+esc(S.consultType));
+  if(refBits.length) h+=p(refBits.join(' &nbsp;·&nbsp; '));
+  var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
+  if(diffs.length){ h+=p('<strong>Difficulties endorsed:</strong>'); h+=list(diffs.map(esc)); }
+  if(f('presentNotes')) h+=p(nl(f('presentNotes')));
+
+  // 2. Screening & Collateral
+  var screenItems=[];
+  if(S.screening.asrs&&S.screening.asrs!=='N/A') screenItems.push('<strong>Patient ASRS:</strong> '+esc(S.screening.asrs)+(S.screening.asrsMode?' ('+esc(S.screening.asrsMode)+')':''));
+  if(S.screening.diva&&S.screening.diva!=='N/A') screenItems.push('<strong>DIVA-5:</strong> '+esc(S.screening.diva)+(S.screening.divaMode?' ('+esc(S.screening.divaMode)+')':''));
+  var inatt=f('diva-inatt'),hi=f('diva-hi');
+  if(inatt||hi) screenItems.push('<strong>DIVA-5 symptom count:</strong> Inattention '+(inatt||'?')+'/9, Hyperactivity-Impulsivity '+(hi||'?')+'/9');
+  if(f('otherScreening')) screenItems.push('<strong>Other screening:</strong> '+esc(f('otherScreening')));
+  if(S.screening.obs) screenItems.push('<strong>Observer ASRS:</strong> '+esc(S.screening.obs));
+  if(S.screening.gpReferral) screenItems.push('<strong>GP referral:</strong> '+esc(S.screening.gpReferral));
+  if(S.screening.schoolReports) screenItems.push('<strong>School reports:</strong> '+esc(S.screening.schoolReports)+(f('schoolNotes')?' — '+esc(f('schoolNotes')):''));
+  if(S.screening.psychReport) screenItems.push('<strong>Psychologist report:</strong> '+esc(S.screening.psychReport)+(f('psychReportNotes')?' — '+esc(f('psychReportNotes')):''));
+  if(S.screening.vanderbiltParent&&S.screening.vanderbiltParent!=='Not provided') screenItems.push('<strong>Vanderbilt (parents):</strong> '+esc(S.screening.vanderbiltParent));
+  if(S.screening.vanderbiltTeacher&&S.screening.vanderbiltTeacher!=='Not provided') screenItems.push('<strong>Vanderbilt (teacher):</strong> '+esc(S.screening.vanderbiltTeacher));
+  if(f('screenNotes')) screenItems.push('<strong>Other collateral:</strong> '+esc(f('screenNotes')));
+  if(screenItems.length){ h+=sec('2. Screening and Collateral'); h+=list(screenItems); }
+
+  // 3. Developmental / symptom history
+  var devYes=DEV.filter(function(d){return S.dev[d.id]&&d.type!=='label';});
+  if(devYes.length||f('devNotes')){
+    h+=sec('3. Developmental and Symptom History');
+    var devNorm=devYes.filter(function(d){return d.type!=='sym';});
+    var inattSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0;});
+    var hiSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0;});
+    if(devNorm.length) h+=list(devNorm.map(function(d){return esc(d.label);}));
+    if(inattSx.length){ h+=p('<strong>Core inattention symptoms ('+inattSx.length+'/9):</strong>'); h+=list(inattSx.map(function(d){return esc(d.label);})); }
+    if(hiSx.length){ h+=p('<strong>Core hyperactivity / impulsivity symptoms ('+hiSx.length+'/9):</strong>'); h+=list(hiSx.map(function(d){return esc(d.label);})); }
+    if(f('devNotes')) h+=p(nl(f('devNotes')));
+  }
+
+  // 4. Family psychiatric history
+  if(S.fam){
+    var famPresent=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Present';});
+    var famAllNil=FAM_PSYCH.every(function(item){return S.fam[item.id]==='Nil';});
+    if(famPresent.length){
+      h+=sec('4. Family Psychiatric History');
+      h+=list(famPresent.map(function(item){return esc(item.label);}));
+      if(f('famNotes')) h+=p('<strong>Details:</strong> '+nl(f('famNotes')));
+    } else if(famAllNil){
+      h+=sec('4. Family Psychiatric History');
+      h+=p('Nil significant family psychiatric history reported.');
+    }
+  }
+
+  // 5. Medical history and medications
+  var medFlagged=MEDICAL.filter(function(m){return S.medical[m.id];});
+  if(medFlagged.length||f('medHistory')||f('currentMeds')||f('allergies')||f('medNotes')){
+    h+=sec('5. Medical History and Medications');
+    var medItems=[];
+    if(medFlagged.length) medItems.push('<strong>Medical conditions:</strong> '+medFlagged.map(function(m){return esc(m.label);}).join(', '));
+    if(f('medHistory')) medItems.push('<strong>Past medical / psychiatric history:</strong> '+esc(f('medHistory')));
+    if(f('currentMeds')) medItems.push('<strong>Current medications:</strong> '+esc(f('currentMeds')));
+    if(f('allergies')) medItems.push('<strong>Allergies:</strong> '+esc(f('allergies')));
+    if(medItems.length) h+=list(medItems);
+    if(f('medNotes')) h+=p(nl(f('medNotes')));
+  }
+
+  // 6. Substance use
+  var currSubs=SUBS.filter(function(s){return S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';});
+  var pastSubs=SUBS.filter(function(s){return S.substances['sub_'+s.replace(/\W/g,'_')]==='Past';});
+  if(currSubs.length||pastSubs.length||f('subNotes')){
+    h+=sec('6. Substance Use');
+    var subItems=[];
+    if(currSubs.length) subItems.push('<strong>Current:</strong> '+currSubs.map(esc).join(', '));
+    if(pastSubs.length) subItems.push('<strong>Past:</strong> '+pastSubs.map(esc).join(', '));
+    if(subItems.length) h+=list(subItems);
+    if(f('subNotes')) h+=p(nl(f('subNotes')));
+  }
+
+  // 7. Mental State Examination
+  var mseItems=[];
+  MSE.forEach(function(sectn){var v=mseVals(sectn.id);if(v.length)mseItems.push('<strong>'+esc(sectn.label)+':</strong> '+v.map(esc).join(', '));});
+  if(mseItems.length||f('mseNotes')){
+    h+=sec('7. Mental State Examination');
+    if(mseItems.length) h+=list(mseItems);
+    if(f('mseNotes')) h+=p(nl(f('mseNotes')));
+  }
+
+  // 8. Safety and prescribing screen
+  var safeItems=[];
+  safeItems.push('<strong>SafeScript:</strong> '+esc(S.safeScript||'Not checked')+(f('ssDetail')?' — '+esc(f('ssDetail')):''));
+  safeItems.push('<strong>Drug-dependent status:</strong> '+esc(S.drugDep||'Not assessed'));
+  safeItems.push('<strong>SUD differential:</strong> '+esc(S.sudDiff||'Not rated'));
+  safeItems.push('<strong>UDS:</strong> '+esc(S.uds||'Not done')+(f('udsDetail')?' ('+esc(f('udsDetail'))+')':''));
+  safeItems.push('<strong>ECG:</strong> '+esc(S.ecg||'Not done'));
+  if(f('bpReading')) safeItems.push('<strong>BP:</strong> '+esc(f('bpReading')));
+  if(f('hrReading')) safeItems.push('<strong>HR:</strong> '+esc(f('hrReading')));
+  if(f('ptWeight')) safeItems.push('<strong>Weight:</strong> '+esc(f('ptWeight'))+' kg');
+  if(f('ptHeight')) safeItems.push('<strong>Height:</strong> '+esc(f('ptHeight'))+' cm');
+  var cardFlagged=CARDIAC.filter(function(c){return c.flag&&S.cardiac[c.id];});
+  if(cardFlagged.length) safeItems.push('<strong>Cardiac flags:</strong> '+cardFlagged.map(function(c){return esc(c.label);}).join('; '));
+  h+=sec('8. Safety and Prescribing Screen');
+  h+=list(safeItems);
+  if(f('cardiacNotes')) h+=p('<strong>Cardiac notes:</strong> '+nl(f('cardiacNotes')));
+
+  // 9. Validity concerns
+  var malFlagged=MAL.filter(function(m){return S.malingering[m.id];});
+  if(malFlagged.length){
+    h+=sec('9. Validity Considerations');
+    h+=list(malFlagged.map(function(m){return esc(m.label);}));
+  }
+
+  // 10. Diagnosis and formulation
+  h+=sec((malFlagged.length?'10':'9')+'. Diagnosis and Formulation');
+  var dsmMet=DSM.filter(function(d){return S.dsm[d.id];});
+  if(dsmMet.length){
+    h+=p('<strong>DSM-5-TR criteria met:</strong>');
+    h+=list(dsmMet.map(function(d){return esc(d.label);}));
+  }
+  var betterEx=DIFFS.filter(function(d){return S.differentials[d.id]==='Better explanation';});
+  var comorbid=DIFFS.filter(function(d){return S.differentials[d.id]==='Current'||S.differentials[d.id]==='Past';});
+  var notPres=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
+  if(betterEx.length){ h+=p('<strong>Considered as better explanation:</strong>'); h+=list(betterEx.map(function(d){return esc(d.label);})); }
+  if(comorbid.length){ h+=p('<strong>Comorbid conditions:</strong>'); h+=list(comorbid.map(function(d){return esc(d.label);})); }
+  if(notPres.length){ h+=p('<strong>Differentials excluded:</strong> '+notPres.map(function(d){return esc(d.label);}).join(', ')); }
+  if(f('diffNotes')) h+=p(nl(f('diffNotes')));
+  var dx=(typeof dxFull==='function')?dxFull():'';
+  if(dx) h+=p('<strong>Diagnosis:</strong> '+esc(dx));
+  if(f('dxNotes')) h+=p('<strong>Formulation:</strong> '+nl(f('dxNotes')));
+
+  // 11. Management plan
+  var mgmtN=(malFlagged.length?11:10);
+  if(titMeds.length||f('rationaleNotes')||f('rxNotes')){
+    h+=sec(mgmtN+'. Management Plan');
+    if(f('rationaleNotes')) h+=p('<strong>Rationale:</strong> '+nl(f('rationaleNotes')));
+    if(titMeds.length){
+      titMeds.forEach(function(m){
+        var nm=m.key==='other'&&m.customName?m.customName:m.def.name;
+        h+=p('<strong>'+esc(nm)+'</strong>'+(m.def.auth?' <em style="color:#555">('+esc(m.def.auth)+')</em>':''));
+        var stepItems=m.steps.map(function(st,si){
+          var lbl=titAutoLabel(m.steps,si);
+          var parts=st.doses.map(function(d){return esc(d.t)+': '+esc(titGetDoseDisplay(d));}).join(', ');
+          return '<strong>'+esc(lbl)+':</strong> '+(parts||'<em>no dose entered</em>')+(st.note?' <em>['+esc(st.note)+']</em>':'');
+        });
+        if(stepItems.length) h+=list(stepItems);
+      });
+    }
+    if(f('rxNotes')) h+=p('<strong>Prescribing notes:</strong> '+nl(f('rxNotes')));
+  }
+
+  // 12. Follow-up
+  var fuN=mgmtN+(titMeds.length||f('rationaleNotes')||f('rxNotes')?1:0);
+  var fuApptStr=(typeof getFuApptStr==='function')?getFuApptStr():'';
+  var fuMonStr=(typeof getFuMonStr==='function')?getFuMonStr():'';
+  var fuNPList=(typeof getFuNPList==='function')?getFuNPList():[];
+  if(fuApptStr||fuMonStr||fuNPList.length||f('fuNotes')){
+    h+=sec(fuN+'. Follow-Up and Monitoring');
+    var fuItems=[];
+    if(fuApptStr) fuItems.push('<strong>Appointments:</strong> '+esc(fuApptStr));
+    if(fuMonStr) fuItems.push('<strong>GP monitoring:</strong> '+esc(fuMonStr));
+    if(fuNPList.length) fuItems.push('<strong>Non-pharmacological:</strong> '+fuNPList.map(esc).join(', '));
+    var provideList=(typeof getFuProvideList==='function')?getFuProvideList():[];
+    var provideOther=f('fu-provide-other'),provideTF=f('fu-provide-timeframe');
+    if(provideList.length||provideOther) fuItems.push('<strong>Patient to provide:</strong> '+provideList.concat(provideOther?[provideOther]:[]).map(esc).join(', ')+(provideTF?' (by '+esc(provideTF)+')':''));
+    if(fuItems.length) h+=list(fuItems);
+    if(f('fuNotes')) h+=p(nl(f('fuNotes')));
+    fuN++;
+  } else { fuN = null; }
+
+  // Educational material
+  var peDone=(typeof getPEDoneItems==='function')?getPEDoneItems():[];
+  if(peDone.length){
+    var eduN=fuN||mgmtN+1;
+    h+=sec(eduN+'. Educational Material Provided');
+    h+=list(peDone.map(esc));
+  }
+
+  // Signature
+  h+='<div style="'+F+'margin-top:28pt;padding-top:12pt;border-top:.5pt solid #888;font-size:11pt;">';
+  h+='<div style="'+F+'margin:0 0 2pt 0;">Yours sincerely,</div>';
+  h+='<div style="'+F+'margin:32pt 0 0 0;font-weight:bold;">'+esc(dr||'[Psychiatrist Name]')+(drQuals?', '+esc(drQuals):'')+'</div>';
+  h+='<div style="'+F+'margin:2pt 0 0 0;color:#555;">Consultant Psychiatrist</div>';
+  h+='</div>';
+
+  return h;
+}
+
+function refreshReport(){
+  var el=$('out-report');
+  if(el)el.innerHTML=buildFullReport();
+}
+
+function copyReportFormatted(){
+  var html=buildFullReport();
+  var fullHtml='<html><body style="font-family:Arial,sans-serif;color:#000;margin:0;padding:0;">'+html+'</body></html>';
+  try{
+    var htmlBlob=new Blob([fullHtml],{type:'text/html'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob})]).then(function(){
+      flashBtn('[onclick="copyReportFormatted()"]');
+    }).catch(function(){navigator.clipboard.writeText(fullHtml);});
+  }catch(e){navigator.clipboard.writeText(fullHtml);}
+}
+
+function copyReportPlain(){
+  var html=buildFullReport();
+  var txt=htmlToPlainText(html);
+  navigator.clipboard.writeText(txt).then(function(){
+    flashBtn('[onclick="copyReportPlain()"]');
+  });
+}
+
+function dlReportDocx(){
+  var body=buildFullReport();
+  var wh='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.2cm}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#000}</style></head><body>'+body+'</body></html>';
+  var pat=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
+  var blob=new Blob(['﻿'+wh],{type:'application/msword;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='ADHD_Report_'+pat+'.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
 }
 function copyLetterText(){var el=$('out-letter');if(!el)return;navigator.clipboard.writeText(el.innerText);}
 
