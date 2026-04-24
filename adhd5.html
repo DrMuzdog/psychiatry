@@ -337,7 +337,7 @@ select.inp{appearance:none}
 
 <div class="topbar">
   <div class="tb-row">
-    <span class="topbar-title">ADHD <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:normal;text-transform:none;margin-left:2px">v5.8</span></span>
+    <span class="topbar-title">ADHD <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:normal;text-transform:none;margin-left:2px">v5.9</span></span>
     <input class="ti" id="drName" placeholder="Psychiatrist name" oninput="save();refresh()" style="flex:1 1 130px;min-width:100px">
     <input class="ti" id="drQuals" placeholder="FRANZCP / RANZCP" oninput="save();refresh()" style="flex:0 1 130px;min-width:80px">
     <input class="ti" id="ptDate" type="date" style="flex:0 0 120px" oninput="save();refresh()">
@@ -502,10 +502,7 @@ select.inp{appearance:none}
 <div class="card" data-followup-only style="display:none">
   <div class="ch teal">Follow-Up Assessment</div>
   <div class="cb">
-    <label class="fl" style="margin-top:0">Reason for this review</label>
-    <textarea class="nf" id="reviewReason" oninput="save();refresh()" rows="2" placeholder="Purpose of today's visit, recent events..."></textarea>
-
-    <label class="fl">Medication response / efficacy</label>
+    <label class="fl" style="margin-top:0">Medication response / efficacy</label>
     <div class="rbtns" id="med-response-btns">
       <button class="rb" onclick="setFuRating('medResponse','Good',this,'ay')">Good</button>
       <button class="rb" onclick="setFuRating('medResponse','Partial',this,'ap')">Partial</button>
@@ -514,10 +511,6 @@ select.inp{appearance:none}
       <button class="rb" onclick="setFuRating('medResponse','Too early',this,'ap')">Too early</button>
     </div>
 
-    <label class="fl">Side effects (tap any that apply)</label>
-    <div id="side-fx-chips" class="inner-2col-sm"></div>
-    <textarea class="nf" id="sideFxNotes" oninput="save();refresh()" rows="2" placeholder="Side effect details, severity, duration..."></textarea>
-
     <label class="fl">Adherence</label>
     <div class="rbtns" id="adherence-btns">
       <button class="rb" onclick="setFuRating('adherence','Full',this,'ay')">Full</button>
@@ -525,14 +518,11 @@ select.inp{appearance:none}
       <button class="rb" onclick="setFuRating('adherence','Non-adherent',this,'an')">Non-adherent</button>
     </div>
 
-    <label class="fl">Issues or concerns raised</label>
-    <textarea class="nf" id="followupConcerns" oninput="save();refresh()" rows="3" placeholder="Sleep, appetite, work, mood, social..."></textarea>
+    <label class="fl">Side effects (tap any that apply)</label>
+    <div id="side-fx-chips" class="inner-2col-sm"></div>
 
-    <label class="fl">MSE changes since last visit</label>
-    <textarea class="nf" id="mseChanges" oninput="save();refresh()" rows="3" placeholder="Mood, affect, cognition, behaviour, thought content..."></textarea>
-
-    <label class="fl">Additional notes</label>
-    <textarea class="nf" id="reviewNotes" oninput="save();refresh()" rows="2" placeholder="Other relevant observations..."></textarea>
+    <label class="fl">Session notes</label>
+    <textarea class="nf" id="reviewNotes" oninput="save();refresh()" rows="8" placeholder="Reason for review, issues raised, MSE changes, side-effect detail, and any other observations..."></textarea>
   </div>
 </div>
 
@@ -857,7 +847,7 @@ select.inp{appearance:none}
       <input class="inp" id="otherInvest" placeholder="e.g. Bloods, neuropsychological testing, neuroimaging..." oninput="save();refresh()">
     </div>
   </div>
-<div class="card" data-initial-only>
+<div class="card">
     <div class="ch warning">SafeScript / RTPM (NSW)</div>
     <div class="cb">
       <div class="rrow" style="padding-top:0">
@@ -2435,26 +2425,30 @@ function openDrawer(e,id,type){
 function closeDrawer(e){if(!e||e.target===$('drawer-overlay'))$('drawer-overlay').classList.remove('open');}
 
 // ─── FLAGS & GAPS ─────────────────────────────────────────────────────────────
+function isFu(){return !!(S.reviewType&&S.reviewType!=='Initial');}
 function getFlags(){
   var flags=[];
-  CARDIAC.forEach(function(c){if(c.flag&&S.cardiac[c.id])flags.push({text:c.label,level:c.id==='c_maoi'?'red':'warn'});});
+  // SafeScript applies to every review type
+  if(!S.safeScript||S.safeScript==='Not checked')flags.push({text:'SafeScript / RTPM not checked',level:'warn'});
+  if(S.safeScript==='Checked -- concern')flags.push({text:'SafeScript concern found - document details',level:'warn'});
+  // ECG abnormal remains relevant whenever vitals are entered
   if(S.ecg==='Abnormal')flags.push({text:'ECG abnormal - review before prescribing',level:'warn'});
   var bW=parseFloat(f('ptWeight')),bH=parseFloat(f('ptHeight'));
   if(bW&&bH&&bH>0){var bmiV=bW/((bH/100)*(bH/100));if(bmiV<18.5)flags.push({text:'BMI '+bmiV.toFixed(1)+' — underweight. Caution with appetite-suppressing medications.',level:'red'});}
-  MEDICAL.filter(function(m){return m.flag;}).forEach(function(m){if(S.medical[m.id])flags.push({text:m.label,level:'warn'});});
-  if(!S.safeScript||S.safeScript==='Not checked')flags.push({text:'SafeScript / RTPM not checked',level:'warn'});
-  if(S.safeScript==='Checked -- concern')flags.push({text:'SafeScript concern found - document details',level:'warn'});
-  SUBS.forEach(function(s){var k='sub_'+s.replace(/\W/g,'_');if(S.substances[k]==='Current')flags.push({text:'Current '+s+' use',level:'warn'});});
-  if(S.drugDep==='Yes')flags.push({text:'Assessed as drug dependent',level:'warn'});
-  if(S.sudDiff==='Current')flags.push({text:'SUD: current',level:'warn'});
-  
-  if(S.uds==='Positive')flags.push({text:'UDS positive',level:'warn'});
-  var DIFF_FLAGS2={bipolar:1,schizophrenia:1,suicidality:1,anorexia:1,bulimia:1,tbi:1,substance_induced:1,neurodegen:1,medical:1};
-  DIFFS.forEach(function(d){if(S.differentials[d.id]==='Current'&&DIFF_FLAGS2[d.id])flags.push({text:d.label+': current',level:d.id==='suicidality'||d.id==='schizophrenia'?'red':'warn'});});
-  var malCount=MAL.filter(function(m){return S.malingering[m.id];}).length;
-  if(malCount)flags.push({text:malCount+' validity/malingering concern'+(malCount>1?'s':'')+' flagged',level:'warn'});
-  var suicideV=mseVals('suicide');if(suicideV.length&&!suicideV.every(function(v){return v.indexOf('Nil')>=0;}))flags.push({text:'Suicidality: '+suicideV.join(', '),level:'red'});
-  var harmV=mseVals('harm_others');if(harmV.length&&!harmV.every(function(v){return v.indexOf('Nil')>=0;}))flags.push({text:'Risk to others flagged',level:'red'});
+  if(!isFu()){
+    CARDIAC.forEach(function(c){if(c.flag&&S.cardiac[c.id])flags.push({text:c.label,level:c.id==='c_maoi'?'red':'warn'});});
+    MEDICAL.filter(function(m){return m.flag;}).forEach(function(m){if(S.medical[m.id])flags.push({text:m.label,level:'warn'});});
+    SUBS.forEach(function(s){var k='sub_'+s.replace(/\W/g,'_');if(S.substances[k]==='Current')flags.push({text:'Current '+s+' use',level:'warn'});});
+    if(S.drugDep==='Yes')flags.push({text:'Assessed as drug dependent',level:'warn'});
+    if(S.sudDiff==='Current')flags.push({text:'SUD: current',level:'warn'});
+    if(S.uds==='Positive')flags.push({text:'UDS positive',level:'warn'});
+    var DIFF_FLAGS2={bipolar:1,schizophrenia:1,suicidality:1,anorexia:1,bulimia:1,tbi:1,substance_induced:1,neurodegen:1,medical:1};
+    DIFFS.forEach(function(d){if(S.differentials[d.id]==='Current'&&DIFF_FLAGS2[d.id])flags.push({text:d.label+': current',level:d.id==='suicidality'||d.id==='schizophrenia'?'red':'warn'});});
+    var malCount=MAL.filter(function(m){return S.malingering[m.id];}).length;
+    if(malCount)flags.push({text:malCount+' validity/malingering concern'+(malCount>1?'s':'')+' flagged',level:'warn'});
+    var suicideV=mseVals('suicide');if(suicideV.length&&!suicideV.every(function(v){return v.indexOf('Nil')>=0;}))flags.push({text:'Suicidality: '+suicideV.join(', '),level:'red'});
+    var harmV=mseVals('harm_others');if(harmV.length&&!harmV.every(function(v){return v.indexOf('Nil')>=0;}))flags.push({text:'Risk to others flagged',level:'red'});
+  }
   var mbs=f('mbsItem'),prev=S.prevPsych||'';
   if((mbs==='291'||mbs==='92435'||mbs==='293'||mbs==='92436')&&prev==='Yes')
     flags.push({text:'Billing: '+mbs+' — 291/92435 already claimed in past 12 months. Check eligibility.',level:'red'});
@@ -2466,14 +2460,17 @@ function getGaps(){
 function getGapsClinician(){
   var gaps=[];
   if(!f('ptName'))gaps.push('Patient name missing');
-  if(!f('ptGender'))gaps.push('Gender not recorded');
   if(!f('drName'))gaps.push('Psychiatrist name not entered');
-  if(!S.dx)gaps.push('Diagnosis decision not confirmed');
-  if(!S.drugDep)gaps.push('Drug dependent status not recorded');
   if(!S.safeScript||S.safeScript==='Not checked')gaps.push('SafeScript / RTPM not checked');
+  if(!isFu()){
+    if(!f('ptGender'))gaps.push('Gender not recorded');
+    if(!S.dx)gaps.push('Diagnosis decision not confirmed');
+    if(!S.drugDep)gaps.push('Drug dependent status not recorded');
+  }
   return gaps;
 }
 function getGapsPatient(){
+  if(isFu())return [];
   var gaps=[];
   // Collateral: flag if nothing selected in any collateral item
   var collateralItems=['obs','gpReferral','schoolReports','psychReport','vanderbiltParent','vanderbiltTeacher'];
@@ -2522,6 +2519,7 @@ function renderFlags(){
   }
 }
 function getPsychFlags(){
+  if(isFu())return 0;
   // Flags that belong to Psych Hx panel
   var f2=[];
   SUBS.forEach(function(s){var k='sub_'+s.replace(/\W/g,'_');if(S.substances[k]==='Current')f2.push(1);});
@@ -2538,15 +2536,17 @@ function getPsychFlags(){
 function getMedicalFlags(){
   // Flags that belong to Medical Hx panel
   var f2=[];
-  CARDIAC.forEach(function(c){if(c.flag&&S.cardiac[c.id])f2.push(1);});
-  if(S.ecg==='Abnormal')f2.push(1);
-  var bmiW=parseFloat(f('ptWeight')),bmiH=parseFloat(f('ptHeight'));if(bmiW&&bmiH&&bmiH>0&&(bmiW/((bmiH/100)*(bmiH/100)))<18.5)f2.push(1);
-  MEDICAL.filter(function(m){return m.flag;}).forEach(function(m){if(S.medical[m.id])f2.push(1);});
   if(!S.safeScript||S.safeScript==='Not checked')f2.push(1);
   if(S.safeScript==='Checked -- concern')f2.push(1);
-  if(S.uds==='Positive')f2.push(1);
-  var mbs=f('mbsItem'),prev=S.prevPsych||'';
-  if((mbs==='291'||mbs==='92435'||mbs==='293'||mbs==='92436')&&prev==='Yes')f2.push(1);
+  if(S.ecg==='Abnormal')f2.push(1);
+  var bmiW=parseFloat(f('ptWeight')),bmiH=parseFloat(f('ptHeight'));if(bmiW&&bmiH&&bmiH>0&&(bmiW/((bmiH/100)*(bmiH/100)))<18.5)f2.push(1);
+  if(!isFu()){
+    CARDIAC.forEach(function(c){if(c.flag&&S.cardiac[c.id])f2.push(1);});
+    MEDICAL.filter(function(m){return m.flag;}).forEach(function(m){if(S.medical[m.id])f2.push(1);});
+    if(S.uds==='Positive')f2.push(1);
+    var mbs=f('mbsItem'),prev=S.prevPsych||'';
+    if((mbs==='291'||mbs==='92435'||mbs==='293'||mbs==='92436')&&prev==='Yes')f2.push(1);
+  }
   return f2.length;
 }
 function updateBadges(){
@@ -2575,16 +2575,14 @@ function buildHeidiFollowUp(rt){
   if(gp)o+='Referring GP: '+gp+'\n';
   if(S.consultType)o+='Consultation type: '+S.consultType+'\n';
   if(mbs)o+='MBS item: '+mbs+'\n';
-  o+='Review type: '+rt+'\n\n';
-  if(f('reviewReason'))o+='REVIEW REASON:\n'+f('reviewReason')+'\n\n';
+  o+='Review type: '+rt+'\n';
+  o+='SafeScript: '+(S.safeScript||'Not checked')+(f('ssDetail')?' ('+f('ssDetail')+')':'')+'\n\n';
   if(S.medResponse)o+='MEDICATION RESPONSE: '+S.medResponse+'\n';
   if(S.adherence)o+='ADHERENCE: '+S.adherence+'\n';
   var sfx=SIDE_FX.filter(function(s){return S.sideFx&&S.sideFx[s.id];});
   if(sfx.length){o+='SIDE EFFECTS:\n';sfx.forEach(function(s){o+='- '+s.label+'\n';});}
-  if(f('sideFxNotes'))o+='Side effect detail: '+f('sideFxNotes')+'\n';
-  if(S.medResponse||S.adherence||sfx.length||f('sideFxNotes'))o+='\n';
-  if(f('followupConcerns'))o+='ISSUES / CONCERNS:\n'+f('followupConcerns')+'\n\n';
-  if(f('mseChanges'))o+='MSE CHANGES SINCE LAST VISIT:\n'+f('mseChanges')+'\n\n';
+  if(S.medResponse||S.adherence||sfx.length)o+='\n';
+  if(f('reviewNotes'))o+='SESSION NOTES:\n'+f('reviewNotes')+'\n\n';
   var invItems=[];
   if(f('bpReading'))invItems.push('BP: '+f('bpReading'));
   if(f('hrReading'))invItems.push('HR: '+f('hrReading'));
@@ -3051,34 +3049,27 @@ function buildFullReportFollowUp(rt){
 
   var n=1;
 
-  // Review reason
-  if(f('reviewReason')){
-    h+=sec(n+++'. Reason for Review');
-    h+=p(nl(f('reviewReason')));
-  }
-
   // Medication response + adherence + side effects
   var sfx=SIDE_FX.filter(function(s){return S.sideFx&&S.sideFx[s.id];});
-  if(S.medResponse||S.adherence||sfx.length||f('sideFxNotes')){
+  if(S.medResponse||S.adherence||sfx.length){
     h+=sec(n+++'. Medication Response and Tolerability');
     var rItems=[];
     if(S.medResponse) rItems.push('<strong>Response / efficacy:</strong> '+esc(S.medResponse));
     if(S.adherence) rItems.push('<strong>Adherence:</strong> '+esc(S.adherence));
     if(rItems.length) h+=list(rItems);
     if(sfx.length){ h+=p('<strong>Side effects reported:</strong>'); h+=list(sfx.map(function(s){return esc(s.label);})); }
-    if(f('sideFxNotes')) h+=p(nl(f('sideFxNotes')));
   }
 
-  // Issues / concerns
-  if(f('followupConcerns')){
-    h+=sec(n+++'. Issues and Concerns');
-    h+=p(nl(f('followupConcerns')));
-  }
+  // SafeScript / RTPM (prescribing)
+  h+=sec(n+++'. SafeScript / RTPM Check');
+  var ssLine='<strong>Status:</strong> '+esc(S.safeScript||'Not checked');
+  if(f('ssDetail')) ssLine+=' — '+esc(f('ssDetail'));
+  h+=p(ssLine);
 
-  // MSE changes
-  if(f('mseChanges')){
-    h+=sec(n+++'. Mental State Examination — Changes Since Last Visit');
-    h+=p(nl(f('mseChanges')));
+  // Session notes
+  if(f('reviewNotes')){
+    h+=sec(n+++'. Session Notes');
+    h+=p(nl(f('reviewNotes')));
   }
 
   // Investigations / vitals
