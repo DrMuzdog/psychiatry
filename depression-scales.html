@@ -230,8 +230,8 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>Depression Scales</h1>
-        <p>Montgomery-Åsberg Depression Rating Scale (MADRS) &amp; Patient Health Questionnaire (PHQ-9)</p>
+        <h1>Psychometric Scales</h1>
+        <p>MADRS &nbsp;·&nbsp; PHQ-9 &nbsp;·&nbsp; GAD-7</p>
     </div>
 
     <!-- PATIENT INFO -->
@@ -249,6 +249,7 @@
     <div class="tab-row">
         <button class="tab-btn active" data-tab="madrs" onclick="switchTab('madrs')">MADRS</button>
         <button class="tab-btn" data-tab="phq9" onclick="switchTab('phq9')">PHQ-9</button>
+        <button class="tab-btn" data-tab="gad7" onclick="switchTab('gad7')">GAD-7</button>
     </div>
 
     <!-- MADRS -->
@@ -321,6 +322,48 @@
 
         <div class="disclaimer">
             <strong>Reference:</strong> Kroenke K, Spitzer RL, Williams JBW. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med. 2001;16(9):606-13. Severity: 0–4 none/minimal; 5–9 mild; 10–14 moderate; 15–19 moderately severe; 20–27 severe. Item 9 (suicidality) requires separate clinical attention if endorsed.
+        </div>
+    </div>
+
+    <!-- GAD-7 -->
+    <div class="tab-pane" id="tab-gad7">
+        <div class="card">
+            <div class="card-title">GAD-7 Instructions</div>
+            <p style="font-size:0.9em;">Over the <strong>last 2 weeks</strong>, how often have you been bothered by the following problems?</p>
+        </div>
+
+        <div class="section-body" id="gad7Items"></div>
+
+        <div class="card" id="gad7FunctionCard">
+            <div class="card-title">Functional Impairment (not scored)</div>
+            <p style="font-size:0.9em; margin-bottom:10px;"><em>If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?</em></p>
+            <div class="radio-group" style="padding-left:0;">
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Not difficult at all"><span class="radio-label">Not difficult at all</span></label>
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Somewhat difficult"><span class="radio-label">Somewhat difficult</span></label>
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Very difficult"><span class="radio-label">Very difficult</span></label>
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Extremely difficult"><span class="radio-label">Extremely difficult</span></label>
+            </div>
+        </div>
+
+        <div class="score-bar">
+            GAD-7 Total: <span id="gad7Total">0</span> / 21 &nbsp; — &nbsp; <span class="severity-pill" id="gad7SeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('gad7')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('gad7')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="gad7Output">
+            <div class="output-header">
+                <h3>GAD-7 Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('gad7')" id="gad7CopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="gad7Text" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Spitzer RL, Kroenke K, Williams JBW, Löwe B. A brief measure for assessing generalized anxiety disorder: the GAD-7. Arch Intern Med. 2006;166(10):1092-7. Severity: 0–4 minimal; 5–9 mild; 10–14 moderate; 15–21 severe. A cut-point of ≥10 has good sensitivity/specificity for GAD.
         </div>
     </div>
 
@@ -490,6 +533,18 @@ const PHQ9_OPTIONS = [
     { val: 3, label: 'Nearly every day' }
 ];
 
+// ---------- GAD-7 data ----------
+const GAD7_ITEMS = [
+    'Feeling nervous, anxious, or on edge',
+    'Not being able to stop or control worrying',
+    'Worrying too much about different things',
+    'Trouble relaxing',
+    'Being so restless that it is hard to sit still',
+    'Becoming easily annoyed or irritable',
+    'Feeling afraid as if something awful might happen'
+];
+// GAD-7 uses the same 0-3 response set as PHQ-9
+
 // ---------- Build MADRS UI ----------
 (function buildMadrs() {
     const container = document.getElementById('madrsItems');
@@ -529,6 +584,24 @@ const PHQ9_OPTIONS = [
     container.innerHTML = html;
 })();
 
+// ---------- Build GAD-7 UI ----------
+(function buildGad7() {
+    const container = document.getElementById('gad7Items');
+    let html = '';
+    GAD7_ITEMS.forEach((prompt, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + prompt + '</span></div>';
+        html += '<div class="radio-group">';
+        PHQ9_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="gad7_' + n + '" value="' + opt.val + '" onchange="updateGad7()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
 // ---------- Score helpers ----------
 function getRadioVal(name) {
     const el = document.querySelector('input[name="' + name + '"]:checked');
@@ -553,6 +626,12 @@ function phq9Severity(score) {
     if (score <= 14) return { level: 'Moderate',          css: 'sev-moderate' };
     if (score <= 19) return { level: 'Moderately Severe', css: 'sev-modsev' };
     return            { level: 'Severe',            css: 'sev-severe' };
+}
+function gad7Severity(score) {
+    if (score <= 4)  return { level: 'Minimal',  css: 'sev-none' };
+    if (score <= 9)  return { level: 'Mild',     css: 'sev-mild' };
+    if (score <= 14) return { level: 'Moderate', css: 'sev-moderate' };
+    return            { level: 'Severe',   css: 'sev-severe' };
 }
 
 function updateMadrs() {
@@ -587,6 +666,24 @@ function updatePhq9() {
     } else {
         const sev = phq9Severity(total);
         pill.textContent = sev.level + (rated < 9 ? ' (partial: ' + rated + '/9)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateGad7() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 7; i++) {
+        const v = getRadioVal('gad7_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('gad7Total').textContent = total;
+    const pill = document.getElementById('gad7SeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = gad7Severity(total);
+        pill.textContent = sev.level + (rated < 7 ? ' (partial: ' + rated + '/7)' : '');
         pill.className = 'severity-pill ' + sev.css;
     }
 }
@@ -711,21 +808,80 @@ function buildPhq9Text() {
     return t;
 }
 
+function buildGad7Text() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'GENERALIZED ANXIETY DISORDER 7-ITEM SCALE (GAD-7)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0;
+    let rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 7; i++) {
+        const v = getRadioVal('gad7_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        const label = v === null ? 'Not rated' : PHQ9_OPTIONS[parseInt(v,10)].label;
+        rows.push({
+            num: i,
+            prompt: GAD7_ITEMS[i-1],
+            score: v === null ? 'NR' : v,
+            answer: label
+        });
+    }
+
+    const sev = gad7Severity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 21';
+    if (rated < 7) t += '  (partial: ' + rated + '/7 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+
+    const funcEl = document.querySelector('input[name="gad7_function"]:checked');
+    const funcLabel = funcEl ? funcEl.value : null;
+
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (over the last 2 weeks)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.prompt + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    if (funcLabel) {
+        t += thin + '\n';
+        t += 'Functional Impairment: ' + funcLabel + '\n';
+    }
+
+    t += thin + '\n';
+    t += 'Scoring: 0-4 minimal | 5-9 mild | 10-14 moderate | 15-21 severe.\n';
+    t += 'Reference: Spitzer RL, Kroenke K, Williams JBW, Lowe B. Arch Intern Med. 2006;166:1092-7.\n';
+    t += line + '\n';
+    return t;
+}
+
 function generateOutput(which) {
     if (which === 'madrs') {
         document.getElementById('madrsText').value = buildMadrsText();
         document.getElementById('madrsOutput').classList.add('visible');
         document.getElementById('madrsOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
+    } else if (which === 'phq9') {
         document.getElementById('phq9Text').value = buildPhq9Text();
         document.getElementById('phq9Output').classList.add('visible');
         document.getElementById('phq9Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'gad7') {
+        document.getElementById('gad7Text').value = buildGad7Text();
+        document.getElementById('gad7Output').classList.add('visible');
+        document.getElementById('gad7Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
 function copyOutput(which) {
-    const ta = document.getElementById(which === 'madrs' ? 'madrsText' : 'phq9Text');
-    const btn = document.getElementById(which === 'madrs' ? 'madrsCopyBtn' : 'phq9CopyBtn');
+    const ta = document.getElementById(which + 'Text');
+    const btn = document.getElementById(which + 'CopyBtn');
     ta.select();
     ta.setSelectionRange(0, 99999);
     const restore = () => { setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000); };
@@ -746,24 +902,24 @@ function copyOutput(which) {
 }
 
 function resetScale(which) {
-    const prefix = which === 'madrs' ? 'madrs_' : 'phq9_';
-    const count  = which === 'madrs' ? 10 : 9;
+    const counts = { madrs: 10, phq9: 9, gad7: 7 };
+    const count = counts[which];
     for (let i = 1; i <= count; i++) {
-        document.querySelectorAll('input[name="' + prefix + i + '"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="' + which + '_' + i + '"]').forEach(r => r.checked = false);
     }
-    if (which === 'phq9') {
-        document.querySelectorAll('input[name="phq9_function"]').forEach(r => r.checked = false);
-        updatePhq9();
-        document.getElementById('phq9Output').classList.remove('visible');
-    } else {
-        updateMadrs();
-        document.getElementById('madrsOutput').classList.remove('visible');
+    if (which === 'phq9' || which === 'gad7') {
+        document.querySelectorAll('input[name="' + which + '_function"]').forEach(r => r.checked = false);
     }
+    if (which === 'madrs') updateMadrs();
+    if (which === 'phq9') updatePhq9();
+    if (which === 'gad7') updateGad7();
+    document.getElementById(which + 'Output').classList.remove('visible');
 }
 
 // Initialize totals display
 updateMadrs();
 updatePhq9();
+updateGad7();
 </script>
 </body>
 </html>
