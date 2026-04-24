@@ -24,13 +24,14 @@
         --border-radius: 8px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; }
     body {
         font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         background: var(--gray-50);
         color: var(--gray-800);
         line-height: 1.6;
     }
-    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    .container { max-width: 960px; width: 100%; margin: 0 auto; padding: 20px; }
 
     .header {
         background: linear-gradient(135deg, var(--primary), #1a365d);
@@ -45,21 +46,26 @@
 
     .tab-row {
         display: flex;
-        gap: 6px;
+        flex-wrap: wrap;
+        gap: 4px;
         margin-bottom: 16px;
         border-bottom: 2px solid var(--gray-200);
+        padding-bottom: 0;
     }
     .tab-btn {
-        padding: 10px 22px;
+        padding: 9px 16px;
         background: none;
         border: none;
-        font-size: 1em;
+        font-size: 0.95em;
         font-weight: 600;
         color: var(--gray-600);
         cursor: pointer;
         border-bottom: 3px solid transparent;
         margin-bottom: -2px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
+    .tab-btn:hover:not(.active) { color: var(--primary); background: var(--primary-light); border-radius: 4px 4px 0 0; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
@@ -116,12 +122,21 @@
         font-weight: 600;
         flex-shrink: 0;
     }
-    .item-title { font-weight: 600; color: var(--gray-900); font-size: 1em; }
+    .item-title {
+        font-weight: 600;
+        color: var(--gray-900);
+        font-size: 1em;
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
     .item-sub {
         font-style: italic;
         color: var(--gray-600);
         font-size: 0.88em;
         margin: 0 0 10px 38px;
+        word-wrap: break-word;
     }
     .radio-group { padding-left: 38px; display: flex; flex-direction: column; gap: 2px; }
     .radio-option {
@@ -140,7 +155,13 @@
         flex-shrink: 0;
         cursor: pointer;
     }
-    .radio-label { font-size: 0.9em; }
+    .radio-label {
+        font-size: 0.9em;
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
     .radio-label .val { font-weight: 600; color: var(--gray-900); margin-right: 4px; }
 
     .section-body {
@@ -159,6 +180,8 @@
         text-align: right;
         border-top: 2px solid var(--accent);
         border-radius: 0 0 var(--border-radius) var(--border-radius);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 18px 0; }
@@ -222,8 +245,18 @@
     }
 
     @media (max-width: 600px) {
+        .container { padding: 12px; }
+        .header { padding: 20px; }
+        .header h1 { font-size: 1.3em; }
+        .card { padding: 16px; }
         .patient-info { grid-template-columns: 1fr; }
-        .item-sub, .radio-group { padding-left: 0; margin-left: 0; }
+        .item-block { padding: 14px 12px; }
+        .item-sub { padding-left: 0; margin-left: 0; }
+        .radio-group { padding-left: 0; }
+        .tab-btn { padding: 8px 12px; font-size: 0.88em; }
+        .score-bar { padding: 10px 14px; text-align: center; }
+        .btn { padding: 10px 18px; font-size: 0.9em; }
+        .output-header { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
 </style>
 </head>
@@ -231,7 +264,7 @@
 <div class="container">
     <div class="header">
         <h1>Psychometric Scales</h1>
-        <p>MADRS &nbsp;·&nbsp; HAM-D &nbsp;·&nbsp; PHQ-9 &nbsp;·&nbsp; GAD-7 &nbsp;·&nbsp; HAM-A</p>
+        <p>Clinician-rated and self-report scales for mood, anxiety, and trauma</p>
     </div>
 
     <!-- PATIENT INFO -->
@@ -252,6 +285,8 @@
         <button class="tab-btn" data-tab="phq9" onclick="switchTab('phq9')">PHQ-9</button>
         <button class="tab-btn" data-tab="gad7" onclick="switchTab('gad7')">GAD-7</button>
         <button class="tab-btn" data-tab="hama" onclick="switchTab('hama')">HAM-A</button>
+        <button class="tab-btn" data-tab="pcl5" onclick="switchTab('pcl5')">PCL-5</button>
+        <button class="tab-btn" data-tab="iesr" onclick="switchTab('iesr')">IES-R</button>
     </div>
 
     <!-- MADRS -->
@@ -428,6 +463,78 @@
 
         <div class="disclaimer">
             <strong>Reference:</strong> Hamilton M. The assessment of anxiety states by rating. Br J Med Psychol. 1959;32:50-5. Commonly used severity thresholds: &lt;17 mild; 18–24 mild-to-moderate; 25–30 moderate-to-severe; &gt;30 severe. A cut-point of ≥14 is often used to define clinically significant anxiety.
+        </div>
+    </div>
+
+    <!-- PCL-5 -->
+    <div class="tab-pane" id="tab-pcl5">
+        <div class="card">
+            <div class="card-title">PCL-5 Instructions</div>
+            <p style="font-size:0.9em; margin-bottom:10px;">Below is a list of problems that people sometimes have in response to a very stressful experience. Please read each problem carefully and rate how much you have been bothered by that problem <strong>in the past month</strong>.</p>
+            <div style="margin-top:10px;">
+                <label style="display:block; font-weight:500; font-size:0.9em; color:var(--gray-700); margin-bottom:4px;">Identified stressful experience (optional):</label>
+                <input type="text" id="pcl5Event" placeholder="e.g. MVA 2022, combat deployment, assault"
+                       style="width:100%; padding:8px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:0.95em;">
+            </div>
+        </div>
+
+        <div class="section-body" id="pcl5Items"></div>
+
+        <div class="score-bar">
+            PCL-5 Total: <span id="pcl5Total">0</span> / 80 &nbsp; — &nbsp; <span class="severity-pill" id="pcl5SeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('pcl5')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('pcl5')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="pcl5Output">
+            <div class="output-header">
+                <h3>PCL-5 Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('pcl5')" id="pcl5CopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="pcl5Text" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Weathers FW, Litz BT, Keane TM, Palmieri PA, Marx BP, Schnurr PP. The PTSD Checklist for DSM-5 (PCL-5). National Center for PTSD, 2013. A cut-off of <strong>≥31–33</strong> has been suggested as indicating probable PTSD. Provisional DSM-5 PTSD diagnosis requires ≥1 item from cluster B (1–5), ≥1 from C (6–7), ≥2 from D (8–14), and ≥2 from E (15–20), each rated ≥2.
+        </div>
+    </div>
+
+    <!-- IES-R -->
+    <div class="tab-pane" id="tab-iesr">
+        <div class="card">
+            <div class="card-title">IES-R Instructions</div>
+            <p style="font-size:0.9em; margin-bottom:10px;">The following is a list of difficulties people sometimes have after stressful life events. Please read each item, and indicate how distressing each difficulty has been for you <strong>during the past 7 days</strong>.</p>
+            <div style="margin-top:10px;">
+                <label style="display:block; font-weight:500; font-size:0.9em; color:var(--gray-700); margin-bottom:4px;">Identified stressful event (optional):</label>
+                <input type="text" id="iesrEvent" placeholder="e.g. MVA 2022, combat deployment, assault"
+                       style="width:100%; padding:8px 12px; border:1px solid var(--gray-300); border-radius:6px; font-size:0.95em;">
+            </div>
+        </div>
+
+        <div class="section-body" id="iesrItems"></div>
+
+        <div class="score-bar">
+            IES-R Total: <span id="iesrTotal">0</span> / 88 &nbsp; — &nbsp; <span class="severity-pill" id="iesrSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('iesr')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('iesr')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="iesrOutput">
+            <div class="output-header">
+                <h3>IES-R Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('iesr')" id="iesrCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="iesrText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Weiss DS, Marmar CR. The Impact of Event Scale – Revised. In: Wilson JP, Keane TM (eds). Assessing Psychological Trauma and PTSD. Guilford Press; 1997:399-411. Subscales: Intrusion (8 items), Avoidance (8 items), Hyperarousal (6 items). Commonly cited thresholds (total score): 0–23 subclinical; 24–32 clinical concern; 33–38 probable PTSD; ≥39 severe PTSD symptomatology.
         </div>
     </div>
 
@@ -750,6 +857,70 @@ const GAD7_ITEMS = [
 ];
 // GAD-7 uses the same 0-3 response set as PHQ-9
 
+// ---------- Shared 0-4 "Not at all / Extremely" response set (PCL-5, IES-R) ----------
+const TRAUMA_OPTIONS = [
+    { val: 0, label: 'Not at all' },
+    { val: 1, label: 'A little bit' },
+    { val: 2, label: 'Moderately' },
+    { val: 3, label: 'Quite a bit' },
+    { val: 4, label: 'Extremely' }
+];
+
+// ---------- PCL-5 data ----------
+const PCL5_ITEMS = [
+    // Cluster B: Intrusion (items 1-5)
+    { cluster: 'B', text: 'Repeated, disturbing, and unwanted memories of the stressful experience' },
+    { cluster: 'B', text: 'Repeated, disturbing dreams of the stressful experience' },
+    { cluster: 'B', text: 'Suddenly feeling or acting as if the stressful experience were actually happening again (as if you were actually back there reliving it)' },
+    { cluster: 'B', text: 'Feeling very upset when something reminded you of the stressful experience' },
+    { cluster: 'B', text: 'Having strong physical reactions when something reminded you of the stressful experience (for example, heart pounding, trouble breathing, sweating)' },
+    // Cluster C: Avoidance (items 6-7)
+    { cluster: 'C', text: 'Avoiding memories, thoughts, or feelings related to the stressful experience' },
+    { cluster: 'C', text: 'Avoiding external reminders of the stressful experience (for example, people, places, conversations, activities, objects, or situations)' },
+    // Cluster D: Negative alterations in cognition and mood (items 8-14)
+    { cluster: 'D', text: 'Trouble remembering important parts of the stressful experience' },
+    { cluster: 'D', text: 'Having strong negative beliefs about yourself, other people, or the world (for example, I am bad, there is something seriously wrong with me, no one can be trusted, the world is completely dangerous)' },
+    { cluster: 'D', text: 'Blaming yourself or someone else for the stressful experience or what happened after it' },
+    { cluster: 'D', text: 'Having strong negative feelings such as fear, horror, anger, guilt, or shame' },
+    { cluster: 'D', text: 'Loss of interest in activities that you used to enjoy' },
+    { cluster: 'D', text: 'Feeling distant or cut off from other people' },
+    { cluster: 'D', text: 'Trouble experiencing positive feelings (for example, being unable to feel happiness or have loving feelings for people close to you)' },
+    // Cluster E: Hyperarousal / reactivity (items 15-20)
+    { cluster: 'E', text: 'Irritable behavior, angry outbursts, or acting aggressively' },
+    { cluster: 'E', text: 'Taking too many risks or doing things that could cause you harm' },
+    { cluster: 'E', text: 'Being "superalert" or watchful or on guard' },
+    { cluster: 'E', text: 'Feeling jumpy or easily startled' },
+    { cluster: 'E', text: 'Having difficulty concentrating' },
+    { cluster: 'E', text: 'Trouble falling or staying asleep' }
+];
+
+// ---------- IES-R data ----------
+// Subscale index: I=Intrusion, A=Avoidance, H=Hyperarousal
+const IESR_ITEMS = [
+    { sub: 'I', text: 'Any reminder brought back feelings about it' },
+    { sub: 'I', text: 'I had trouble staying asleep' },
+    { sub: 'I', text: 'Other things kept making me think about it' },
+    { sub: 'H', text: 'I felt irritable and angry' },
+    { sub: 'A', text: 'I avoided letting myself get upset when I thought about it or was reminded of it' },
+    { sub: 'I', text: 'I thought about it when I did not mean to' },
+    { sub: 'A', text: 'I felt as if it had not happened or was not real' },
+    { sub: 'A', text: 'I stayed away from reminders about it' },
+    { sub: 'I', text: 'Pictures about it popped into my mind' },
+    { sub: 'H', text: 'I was jumpy and easily startled' },
+    { sub: 'A', text: 'I tried not to think about it' },
+    { sub: 'A', text: 'I was aware that I still had a lot of feelings about it, but I did not deal with them' },
+    { sub: 'A', text: 'My feelings about it were kind of numb' },
+    { sub: 'I', text: 'I found myself acting or feeling like I was back at that time' },
+    { sub: 'H', text: 'I had trouble falling asleep' },
+    { sub: 'I', text: 'I had waves of strong feelings about it' },
+    { sub: 'A', text: 'I tried to remove it from my memory' },
+    { sub: 'H', text: 'I had trouble concentrating' },
+    { sub: 'H', text: 'Reminders of it caused me to have physical reactions, such as sweating, trouble breathing, nausea, or a pounding heart' },
+    { sub: 'I', text: 'I had dreams about it' },
+    { sub: 'H', text: 'I felt watchful and on-guard' },
+    { sub: 'A', text: 'I tried not to talk about it' }
+];
+
 // ---------- HAM-A data ----------
 const HAMA_OPTIONS = [
     { val: 0, label: 'Not present' },
@@ -852,6 +1023,42 @@ const HAMA_ITEMS = [
     container.innerHTML = html;
 })();
 
+// ---------- Build PCL-5 UI ----------
+(function buildPcl5() {
+    const container = document.getElementById('pcl5Items');
+    let html = '';
+    PCL5_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.text + '</span></div>';
+        html += '<div class="radio-group">';
+        TRAUMA_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="pcl5_' + n + '" value="' + opt.val + '" onchange="updatePcl5()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build IES-R UI ----------
+(function buildIesr() {
+    const container = document.getElementById('iesrItems');
+    let html = '';
+    IESR_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.text + '</span></div>';
+        html += '<div class="radio-group">';
+        TRAUMA_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="iesr_' + n + '" value="' + opt.val + '" onchange="updateIesr()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
 // ---------- Build HAM-A UI ----------
 (function buildHama() {
     const container = document.getElementById('hamaItems');
@@ -910,6 +1117,20 @@ function gad7Severity(score) {
     if (score <= 14) return { level: 'Moderate', css: 'sev-moderate' };
     return            { level: 'Severe',   css: 'sev-severe' };
 }
+function pcl5Severity(score) {
+    if (score < 20) return { level: 'Below threshold',         css: 'sev-none' };
+    if (score < 31) return { level: 'Subthreshold symptoms',   css: 'sev-mild' };
+    if (score < 40) return { level: 'Probable PTSD (≥31–33 cut-off)', css: 'sev-moderate' };
+    if (score < 60) return { level: 'Severe symptoms',         css: 'sev-modsev' };
+    return           { level: 'Very severe',             css: 'sev-severe' };
+}
+function iesrSeverity(score) {
+    if (score <= 23) return { level: 'Subclinical',              css: 'sev-none' };
+    if (score <= 32) return { level: 'Clinical concern for PTSD',css: 'sev-mild' };
+    if (score <= 38) return { level: 'Probable PTSD',            css: 'sev-moderate' };
+    return            { level: 'Severe PTSD symptomatology',css: 'sev-severe' };
+}
+
 function hamaSeverity(score) {
     if (score <= 7)  return { level: 'No / minimal anxiety',    css: 'sev-none' };
     if (score <= 17) return { level: 'Mild',                    css: 'sev-mild' };
@@ -986,6 +1207,42 @@ function updateGad7() {
     } else {
         const sev = gad7Severity(total);
         pill.textContent = sev.level + (rated < 7 ? ' (partial: ' + rated + '/7)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updatePcl5() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 20; i++) {
+        const v = getRadioVal('pcl5_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('pcl5Total').textContent = total;
+    const pill = document.getElementById('pcl5SeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = pcl5Severity(total);
+        pill.textContent = sev.level + (rated < 20 ? ' (partial: ' + rated + '/20)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateIesr() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 22; i++) {
+        const v = getRadioVal('iesr_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('iesrTotal').textContent = total;
+    const pill = document.getElementById('iesrSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = iesrSeverity(total);
+        pill.textContent = sev.level + (rated < 22 ? ' (partial: ' + rated + '/22)' : '');
         pill.className = 'severity-pill ' + sev.css;
     }
 }
@@ -1182,6 +1439,146 @@ function buildHamdText() {
     return t;
 }
 
+function buildPcl5Text() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'PTSD CHECKLIST FOR DSM-5 (PCL-5)\n';
+    t += line + '\n';
+    t += patientHeader();
+    const event = (document.getElementById('pcl5Event').value || '').trim();
+    if (event) t += 'Event:     ' + event + '\n';
+    t += thin + '\n';
+
+    let total = 0, rated = 0;
+    const clusterTotal = { B: 0, C: 0, D: 0, E: 0 };
+    const clusterEndorsed = { B: 0, C: 0, D: 0, E: 0 };
+    const rows = [];
+    for (let i = 1; i <= 20; i++) {
+        const v = getRadioVal('pcl5_' + i);
+        const item = PCL5_ITEMS[i-1];
+        if (v !== null) {
+            const n = parseInt(v, 10);
+            total += n; rated++;
+            clusterTotal[item.cluster] += n;
+            if (n >= 2) clusterEndorsed[item.cluster]++;
+        }
+        rows.push({
+            num: i,
+            cluster: item.cluster,
+            text: item.text,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : TRAUMA_OPTIONS[parseInt(v,10)].label
+        });
+    }
+
+    const sev = pcl5Severity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 80';
+    if (rated < 20) t += '  (partial: ' + rated + '/20 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'CLUSTER SUBSCORES (DSM-5)\n';
+    t += '  B (Intrusion, items 1-5):       ' + clusterTotal.B + ' / 20\n';
+    t += '  C (Avoidance, items 6-7):       ' + clusterTotal.C + ' / 8\n';
+    t += '  D (Negative cognition/mood, 8-14): ' + clusterTotal.D + ' / 28\n';
+    t += '  E (Arousal/reactivity, 15-20):  ' + clusterTotal.E + ' / 24\n';
+    t += thin + '\n';
+
+    if (rated === 20) {
+        const meetsB = clusterEndorsed.B >= 1;
+        const meetsC = clusterEndorsed.C >= 1;
+        const meetsD = clusterEndorsed.D >= 2;
+        const meetsE = clusterEndorsed.E >= 2;
+        const provisional = meetsB && meetsC && meetsD && meetsE;
+        t += 'PROVISIONAL DSM-5 PTSD DIAGNOSIS (items rated >=2)\n';
+        t += '  B: ' + clusterEndorsed.B + ' endorsed (need >=1) ' + (meetsB ? 'MET' : 'not met') + '\n';
+        t += '  C: ' + clusterEndorsed.C + ' endorsed (need >=1) ' + (meetsC ? 'MET' : 'not met') + '\n';
+        t += '  D: ' + clusterEndorsed.D + ' endorsed (need >=2) ' + (meetsD ? 'MET' : 'not met') + '\n';
+        t += '  E: ' + clusterEndorsed.E + ' endorsed (need >=2) ' + (meetsE ? 'MET' : 'not met') + '\n';
+        t += '  Result: ' + (provisional ? 'PROVISIONAL DIAGNOSTIC CRITERIA MET' : 'criteria NOT met') + '\n';
+        t += thin + '\n';
+    }
+
+    t += 'ITEM RESPONSES (past month)\n';
+    t += thin + '\n';
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. [' + r.cluster + '] ' + r.text + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Cut-off: total >=31-33 suggests probable PTSD. Provisional DSM-5 diagnosis\n';
+    t += 'requires >=1 B, >=1 C, >=2 D, >=2 E items rated 2 or higher.\n';
+    t += 'Reference: Weathers et al. PCL-5. National Center for PTSD, 2013.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildIesrText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'IMPACT OF EVENT SCALE - REVISED (IES-R)\n';
+    t += line + '\n';
+    t += patientHeader();
+    const event = (document.getElementById('iesrEvent').value || '').trim();
+    if (event) t += 'Event:     ' + event + '\n';
+    t += thin + '\n';
+
+    let total = 0, rated = 0;
+    const subTotal = { I: 0, A: 0, H: 0 };
+    const subCount = { I: 0, A: 0, H: 0 };
+    const rows = [];
+    for (let i = 1; i <= 22; i++) {
+        const v = getRadioVal('iesr_' + i);
+        const item = IESR_ITEMS[i-1];
+        if (v !== null) {
+            const n = parseInt(v, 10);
+            total += n; rated++;
+            subTotal[item.sub] += n;
+        }
+        subCount[item.sub]++;
+        rows.push({
+            num: i,
+            sub: item.sub,
+            text: item.text,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : TRAUMA_OPTIONS[parseInt(v,10)].label
+        });
+    }
+
+    const sev = iesrSeverity(total);
+    const subLabel = { I: 'Intrusion', A: 'Avoidance', H: 'Hyperarousal' };
+    t += 'TOTAL SCORE: ' + total + ' / 88';
+    if (rated < 22) t += '  (partial: ' + rated + '/22 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'SUBSCALE SCORES (sum and mean)\n';
+    ['I', 'A', 'H'].forEach(k => {
+        const max = subCount[k] * 4;
+        const mean = subCount[k] ? (subTotal[k] / subCount[k]).toFixed(2) : '0';
+        t += '  ' + subLabel[k].padEnd(14) + ': ' + subTotal[k] + ' / ' + max + '   (mean ' + mean + ')\n';
+    });
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (past 7 days)\n';
+    t += thin + '\n';
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. [' + r.sub + '] ' + r.text + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Subscale legend: I=Intrusion, A=Avoidance, H=Hyperarousal.\n';
+    t += 'Total cut-offs: 0-23 subclinical | 24-32 clinical concern | 33-38 probable PTSD | >=39 severe.\n';
+    t += 'Reference: Weiss DS, Marmar CR. The Impact of Event Scale - Revised, 1997.\n';
+    t += line + '\n';
+    return t;
+}
+
 function buildHamaText() {
     const line = '='.repeat(66);
     const thin = '-'.repeat(66);
@@ -1304,6 +1701,14 @@ function generateOutput(which) {
         document.getElementById('hamdText').value = buildHamdText();
         document.getElementById('hamdOutput').classList.add('visible');
         document.getElementById('hamdOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'pcl5') {
+        document.getElementById('pcl5Text').value = buildPcl5Text();
+        document.getElementById('pcl5Output').classList.add('visible');
+        document.getElementById('pcl5Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'iesr') {
+        document.getElementById('iesrText').value = buildIesrText();
+        document.getElementById('iesrOutput').classList.add('visible');
+        document.getElementById('iesrOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
@@ -1330,7 +1735,7 @@ function copyOutput(which) {
 }
 
 function resetScale(which) {
-    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14 };
+    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14, pcl5: 20, iesr: 22 };
     const count = counts[which];
     for (let i = 1; i <= count; i++) {
         document.querySelectorAll('input[name="' + which + '_' + i + '"]').forEach(r => r.checked = false);
@@ -1338,11 +1743,15 @@ function resetScale(which) {
     if (which === 'phq9' || which === 'gad7') {
         document.querySelectorAll('input[name="' + which + '_function"]').forEach(r => r.checked = false);
     }
+    if (which === 'pcl5') { const e = document.getElementById('pcl5Event'); if (e) e.value = ''; }
+    if (which === 'iesr') { const e = document.getElementById('iesrEvent'); if (e) e.value = ''; }
     if (which === 'madrs') updateMadrs();
     if (which === 'hamd') updateHamd();
     if (which === 'phq9') updatePhq9();
     if (which === 'gad7') updateGad7();
     if (which === 'hama') updateHama();
+    if (which === 'pcl5') updatePcl5();
+    if (which === 'iesr') updateIesr();
     document.getElementById(which + 'Output').classList.remove('visible');
 }
 
@@ -1352,6 +1761,8 @@ updateHamd();
 updatePhq9();
 updateGad7();
 updateHama();
+updatePcl5();
+updateIesr();
 </script>
 </body>
 </html>
