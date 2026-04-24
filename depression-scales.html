@@ -285,8 +285,13 @@
         <button class="tab-btn" data-tab="phq9" onclick="switchTab('phq9')">PHQ-9</button>
         <button class="tab-btn" data-tab="gad7" onclick="switchTab('gad7')">GAD-7</button>
         <button class="tab-btn" data-tab="hama" onclick="switchTab('hama')">HAM-A</button>
+        <button class="tab-btn" data-tab="ymrs" onclick="switchTab('ymrs')">YMRS</button>
         <button class="tab-btn" data-tab="pcl5" onclick="switchTab('pcl5')">PCL-5</button>
         <button class="tab-btn" data-tab="iesr" onclick="switchTab('iesr')">IES-R</button>
+        <button class="tab-btn" data-tab="bprs" onclick="switchTab('bprs')">BPRS</button>
+        <button class="tab-btn" data-tab="k10" onclick="switchTab('k10')">K10</button>
+        <button class="tab-btn" data-tab="msibpd" onclick="switchTab('msibpd')">MSI-BPD</button>
+        <button class="tab-btn" data-tab="cgi" onclick="switchTab('cgi')">CGI</button>
     </div>
 
     <!-- MADRS -->
@@ -466,6 +471,37 @@
         </div>
     </div>
 
+    <!-- YMRS -->
+    <div class="tab-pane" id="tab-ymrs">
+        <div class="card">
+            <div class="card-title">YMRS Instructions</div>
+            <p style="font-size:0.9em;">Clinician-rated. Rate each of the 11 items based on the patient's subjective report and behavior observed during the interview (<strong>past 48 hours</strong>). Items 5, 6, and 9 are <strong>double-weighted</strong> (scored 0–8) to reflect the greater difficulty eliciting cooperation for those items in severely ill patients. Other items are 0–4. Total range 0–60.</p>
+        </div>
+
+        <div class="section-body" id="ymrsItems"></div>
+
+        <div class="score-bar">
+            YMRS Total: <span id="ymrsTotal">0</span> / 60 &nbsp; — &nbsp; <span class="severity-pill" id="ymrsSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('ymrs')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('ymrs')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="ymrsOutput">
+            <div class="output-header">
+                <h3>YMRS Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('ymrs')" id="ymrsCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="ymrsText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Young RC, Biggs JT, Ziegler VE, Meyer DA. A rating scale for mania: reliability, validity and sensitivity. Br J Psychiatry. 1978;133:429-35. Commonly used severity thresholds: ≤12 remission; 13–19 minimal; 20–25 mild; 26–37 moderate; ≥38 severe.
+        </div>
+    </div>
+
     <!-- PCL-5 -->
     <div class="tab-pane" id="tab-pcl5">
         <div class="card">
@@ -535,6 +571,136 @@
 
         <div class="disclaimer">
             <strong>Reference:</strong> Weiss DS, Marmar CR. The Impact of Event Scale – Revised. In: Wilson JP, Keane TM (eds). Assessing Psychological Trauma and PTSD. Guilford Press; 1997:399-411. Subscales: Intrusion (8 items), Avoidance (8 items), Hyperarousal (6 items). Commonly cited thresholds (total score): 0–23 subclinical; 24–32 clinical concern; 33–38 probable PTSD; ≥39 severe PTSD symptomatology.
+        </div>
+    </div>
+
+    <!-- BPRS -->
+    <div class="tab-pane" id="tab-bprs">
+        <div class="card">
+            <div class="card-title">BPRS Instructions</div>
+            <p style="font-size:0.9em;">Clinician-rated. 18 items rated 1–7 based on observation and interview (<strong>past week</strong>). Total range 18–126. Useful for tracking broad psychiatric symptom severity, particularly in psychotic and affective disorders.</p>
+        </div>
+
+        <div class="section-body" id="bprsItems"></div>
+
+        <div class="score-bar">
+            BPRS Total: <span id="bprsTotal">0</span> / 126 &nbsp; — &nbsp; <span class="severity-pill" id="bprsSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('bprs')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('bprs')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="bprsOutput">
+            <div class="output-header">
+                <h3>BPRS Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('bprs')" id="bprsCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="bprsText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Overall JE, Gorham DR. The Brief Psychiatric Rating Scale. Psychol Rep. 1962;10:799-812. Indicative thresholds: &lt;31 mild; 31–40 moderate; 41–52 marked; &gt;52 severe. BPRS has no universally accepted severity cut-off — interpret item profile alongside total.
+        </div>
+    </div>
+
+    <!-- K10 -->
+    <div class="tab-pane" id="tab-k10">
+        <div class="card">
+            <div class="card-title">K10 Instructions</div>
+            <p style="font-size:0.9em;">During the <strong>past 30 days</strong>, about how often did you feel the following? 10 items rated 1–5. Total range 10–50. A rapid screen for non-specific psychological distress.</p>
+        </div>
+
+        <div class="section-body" id="k10Items"></div>
+
+        <div class="score-bar">
+            K10 Total: <span id="k10Total">0</span> / 50 &nbsp; — &nbsp; <span class="severity-pill" id="k10SeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('k10')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('k10')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="k10Output">
+            <div class="output-header">
+                <h3>K10 Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('k10')" id="k10CopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="k10Text" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Kessler RC et al. Short screening scales to monitor population prevalences and trends in non-specific psychological distress. Psychol Med. 2002;32(6):959-76. Australian (ABS) cut-offs: 10–19 likely well; 20–24 mild; 25–29 moderate; 30–50 severe mental disorder.
+        </div>
+    </div>
+
+    <!-- MSI-BPD -->
+    <div class="tab-pane" id="tab-msibpd">
+        <div class="card">
+            <div class="card-title">MSI-BPD Instructions</div>
+            <p style="font-size:0.9em;">Clinician-administered screening instrument for borderline personality disorder. 10 yes/no items. A score of <strong>≥7</strong> is the suggested cut-off for a positive screen — a positive result indicates that a full diagnostic assessment for BPD is warranted, not a diagnosis.</p>
+        </div>
+
+        <div class="section-body" id="msibpdItems"></div>
+
+        <div class="score-bar">
+            MSI-BPD Score: <span id="msibpdTotal">0</span> / 10 &nbsp; — &nbsp; <span class="severity-pill" id="msibpdSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('msibpd')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('msibpd')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="msibpdOutput">
+            <div class="output-header">
+                <h3>MSI-BPD Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('msibpd')" id="msibpdCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="msibpdText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Zanarini MC, Vujanovic AA, Parachini EA, Boulanger JL, Frankenburg FR, Hennen J. A screening measure for BPD: the McLean Screening Instrument for Borderline Personality Disorder (MSI-BPD). J Pers Disord. 2003;17(6):568-73. A cut-off of ≥7 is commonly recommended; screen only — not diagnostic.
+        </div>
+    </div>
+
+    <!-- CGI-S and CGI-I -->
+    <div class="tab-pane" id="tab-cgi">
+        <div class="card">
+            <div class="card-title">CGI Instructions</div>
+            <p style="font-size:0.9em;">Clinician Global Impression. Two independent 7-point items — Severity (CGI-S, rated at every visit) and Improvement (CGI-I, rated from the second visit onward, anchored to the initial assessment). Either or both can be left blank.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">CGI-S &mdash; Severity of Illness</div>
+            <p style="font-size:0.9em; margin-bottom:10px;"><em>Considering your total clinical experience with this particular population, how mentally ill is the patient at this time?</em></p>
+            <div class="radio-group" id="cgisOptions" style="padding-left:0;"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">CGI-I &mdash; Global Improvement</div>
+            <p style="font-size:0.9em; margin-bottom:10px;"><em>Compared to the patient's condition at admission to the project (or start of treatment), this patient's condition is:</em></p>
+            <div class="radio-group" id="cgiiOptions" style="padding-left:0;"></div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('cgi')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('cgi')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="cgiOutput">
+            <div class="output-header">
+                <h3>CGI Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('cgi')" id="cgiCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="cgiText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Guy W. ECDEU Assessment Manual for Psychopharmacology, Revised. NIMH, 1976. Single-item global ratings; widely used in research and clinical practice alongside symptom-specific scales.
         </div>
     </div>
 
@@ -857,6 +1023,190 @@ const GAD7_ITEMS = [
 ];
 // GAD-7 uses the same 0-3 response set as PHQ-9
 
+// ---------- YMRS data ----------
+// Items 5, 6, 9 are double-weighted (0-8). Rest are 0-4.
+const YMRS_ITEMS = [
+    { title: 'Elevated mood', anchors: [
+        'Absent',
+        'Mildly or possibly increased on questioning',
+        'Definite subjective elevation; optimistic, self-confident; cheerful; appropriate to content',
+        'Elevated, inappropriate to content; humorous',
+        'Euphoric; inappropriate laughter; singing'
+    ]},
+    { title: 'Increased motor activity / energy', anchors: [
+        'Absent',
+        'Subjectively increased',
+        'Animated; gestures increased',
+        'Excessive energy; hyperactive at times; restless (can be calmed)',
+        'Motor excitement; continuous hyperactivity (cannot be calmed)'
+    ]},
+    { title: 'Sexual interest', anchors: [
+        'Normal; not increased',
+        'Mildly or possibly increased',
+        'Definite subjective increase on questioning',
+        'Spontaneous sexual content; elaborates on sexual matters; hypersexual by self-report',
+        'Overt sexual acts (toward patients, staff, or interviewer)'
+    ]},
+    { title: 'Sleep', anchors: [
+        'Reports no decrease in sleep',
+        'Sleeping less than normal amount by up to one hour',
+        'Sleeping less than normal by more than one hour',
+        'Reports decreased need for sleep',
+        'Denies need for sleep'
+    ]},
+    { title: 'Irritability (×2)', weight: 2, anchors: [
+        'Absent',
+        '(intermediate)',
+        'Subjectively increased',
+        '(intermediate)',
+        'Irritable at times during interview; recent episodes of anger or annoyance on ward',
+        '(intermediate)',
+        'Frequently irritable during interview; short, curt throughout',
+        '(intermediate)',
+        'Hostile, uncooperative; interview impossible'
+    ]},
+    { title: 'Speech — rate and amount (×2)', weight: 2, anchors: [
+        'No increase',
+        '(intermediate)',
+        'Feels talkative',
+        '(intermediate)',
+        'Increased rate or amount at times; verbose at times',
+        '(intermediate)',
+        'Push of speech; consistently increased rate and amount; difficult to interrupt',
+        '(intermediate)',
+        'Pressured; uninterruptible; continuous speech'
+    ]},
+    { title: 'Language — thought disorder', anchors: [
+        'Absent',
+        'Circumstantial; mild distractibility; quick thoughts',
+        'Distractible; loses goal of thought; changes topics frequently; racing thoughts',
+        'Flight of ideas; tangentiality; difficult to follow; rhyming, echolalia',
+        'Incoherent; communication impossible'
+    ]},
+    { title: 'Content', anchors: [
+        'Normal',
+        'Questionable plans, new interests',
+        'Special project(s); hyperreligious',
+        'Grandiose or paranoid ideas; ideas of reference',
+        'Delusions; hallucinations'
+    ]},
+    { title: 'Disruptive / aggressive behaviour (×2)', weight: 2, anchors: [
+        'Absent; cooperative',
+        '(intermediate)',
+        'Sarcastic; loud at times; guarded',
+        '(intermediate)',
+        'Demanding; threats on ward',
+        '(intermediate)',
+        'Threatens interviewer; shouting; interview difficult',
+        '(intermediate)',
+        'Assaultive; destructive; interview impossible'
+    ]},
+    { title: 'Appearance', anchors: [
+        'Appropriate dress and grooming',
+        'Minimally unkempt',
+        'Poorly groomed; moderately dishevelled; overdressed',
+        'Dishevelled; partly clothed; garish make-up',
+        'Completely unkempt; decorated; bizarre garb'
+    ]},
+    { title: 'Insight', anchors: [
+        'Present; admits illness; agrees with need for treatment',
+        'Possibly ill',
+        'Admits behaviour change but denies illness',
+        'Admits possible change in behaviour but denies illness',
+        'Denies any behaviour change'
+    ]}
+];
+
+// ---------- BPRS data ----------
+const BPRS_OPTIONS = [
+    { val: 1, label: 'Not present' },
+    { val: 2, label: 'Very mild' },
+    { val: 3, label: 'Mild' },
+    { val: 4, label: 'Moderate' },
+    { val: 5, label: 'Moderately severe' },
+    { val: 6, label: 'Severe' },
+    { val: 7, label: 'Extremely severe' }
+];
+const BPRS_ITEMS = [
+    { title: 'Somatic Concern',           desc: 'Degree of concern over present bodily health.' },
+    { title: 'Anxiety',                   desc: 'Worry, fear, or overconcern for present or future.' },
+    { title: 'Emotional Withdrawal',      desc: 'Deficiency in relating to the interviewer and to the interview situation.' },
+    { title: 'Conceptual Disorganisation',desc: 'Degree to which thought processes are confused, disconnected or disorganised.' },
+    { title: 'Guilt Feelings',            desc: 'Overconcern or remorse for past behaviour.' },
+    { title: 'Tension',                   desc: 'Physical and motor manifestations of tension — nervousness and heightened activation.' },
+    { title: 'Mannerisms and Posturing',  desc: 'Unusual and unnatural motor behaviour — behaviour that causes the patient to stand out.' },
+    { title: 'Grandiosity',               desc: 'Exaggerated self-opinion, self-enhancing conviction of unusual ability or powers.' },
+    { title: 'Depressive Mood',           desc: 'Sorrow, sadness, despondency, pessimism.' },
+    { title: 'Hostility',                 desc: 'Animosity, contempt, belligerence, disdain for others.' },
+    { title: 'Suspiciousness',            desc: 'Belief that others have now, or have had in the past, malicious or discriminatory intent toward the patient.' },
+    { title: 'Hallucinatory Behaviour',   desc: 'Perceptions without normal external stimulus correspondence.' },
+    { title: 'Motor Retardation',         desc: 'Reduction in energy level evidenced in slowed movements. Rate on basis of observed behaviour.' },
+    { title: 'Uncooperativeness',         desc: 'Resistance, guardedness, rejection of authority. Rate on basis of observed behaviour.' },
+    { title: 'Unusual Thought Content',   desc: 'Unusual, odd, strange, or bizarre thought content.' },
+    { title: 'Blunted Affect',            desc: 'Reduced emotional tone, reduction in normal intensity of feelings, flatness.' },
+    { title: 'Excitement',                desc: 'Heightened emotional tone, agitation, increased reactivity.' },
+    { title: 'Disorientation',            desc: 'Confusion or lack of proper association for person, place, or time.' }
+];
+
+// ---------- K10 data ----------
+const K10_OPTIONS = [
+    { val: 1, label: 'None of the time' },
+    { val: 2, label: 'A little of the time' },
+    { val: 3, label: 'Some of the time' },
+    { val: 4, label: 'Most of the time' },
+    { val: 5, label: 'All of the time' }
+];
+const K10_ITEMS = [
+    'About how often did you feel tired out for no good reason?',
+    'About how often did you feel nervous?',
+    'About how often did you feel so nervous that nothing could calm you down?',
+    'About how often did you feel hopeless?',
+    'About how often did you feel restless or fidgety?',
+    'About how often did you feel so restless you could not sit still?',
+    'About how often did you feel depressed?',
+    'About how often did you feel that everything was an effort?',
+    'About how often did you feel so sad that nothing could cheer you up?',
+    'About how often did you feel worthless?'
+];
+
+// ---------- MSI-BPD data ----------
+const YESNO_OPTIONS = [
+    { val: 0, label: 'No' },
+    { val: 1, label: 'Yes' }
+];
+const MSI_BPD_ITEMS = [
+    'Have any of your closest relationships been troubled by a lot of arguments or repeated break-ups?',
+    'Have you deliberately hurt yourself physically (e.g., punched yourself, cut yourself, burned yourself)? Or made a suicide attempt?',
+    'Have you had at least two other problems with impulsivity (e.g., eating binges and spending sprees, drinking too much and verbal outbursts)?',
+    'Have you been extremely moody?',
+    'Have you felt very angry a lot of the time, or often acted in an angry or sarcastic manner?',
+    'Have you often been distrustful of other people?',
+    'Have you frequently felt unreal or as if things around you were unreal?',
+    'Have you chronically felt empty?',
+    'Have you often felt that you had no idea of who you are, or that you have no identity?',
+    'Have you made desperate efforts to avoid feeling abandoned or being abandoned (e.g., repeatedly calling somebody to reassure yourself that they still cared, begging them not to leave you, clinging to them physically)?'
+];
+
+// ---------- CGI data ----------
+const CGIS_OPTIONS = [
+    { val: 1, label: 'Normal, not at all ill' },
+    { val: 2, label: 'Borderline mentally ill' },
+    { val: 3, label: 'Mildly ill' },
+    { val: 4, label: 'Moderately ill' },
+    { val: 5, label: 'Markedly ill' },
+    { val: 6, label: 'Severely ill' },
+    { val: 7, label: 'Among the most extremely ill' }
+];
+const CGII_OPTIONS = [
+    { val: 1, label: 'Very much improved' },
+    { val: 2, label: 'Much improved' },
+    { val: 3, label: 'Minimally improved' },
+    { val: 4, label: 'No change' },
+    { val: 5, label: 'Minimally worse' },
+    { val: 6, label: 'Much worse' },
+    { val: 7, label: 'Very much worse' }
+];
+
 // ---------- Shared 0-4 "Not at all / Extremely" response set (PCL-5, IES-R) ----------
 const TRAUMA_OPTIONS = [
     { val: 0, label: 'Not at all' },
@@ -1023,6 +1373,98 @@ const HAMA_ITEMS = [
     container.innerHTML = html;
 })();
 
+// ---------- Build YMRS UI ----------
+(function buildYmrs() {
+    const container = document.getElementById('ymrsItems');
+    let html = '';
+    YMRS_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        const maxScore = item.anchors.length - 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + ' <span style="font-weight:400;color:var(--gray-600);font-size:0.85em;">(0–' + maxScore + ')</span></span></div>';
+        html += '<div class="radio-group">';
+        for (let v = 0; v <= maxScore; v++) {
+            html += '<label class="radio-option"><input type="radio" name="ymrs_' + n + '" value="' + v + '" onchange="updateYmrs()">' +
+                    '<span class="radio-label"><span class="val">' + v + '</span>' + item.anchors[v] + '</span></label>';
+        }
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build BPRS UI ----------
+(function buildBprs() {
+    const container = document.getElementById('bprsItems');
+    let html = '';
+    BPRS_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + '</span></div>';
+        html += '<div class="item-sub">' + item.desc + '</div>';
+        html += '<div class="radio-group">';
+        BPRS_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="bprs_' + n + '" value="' + opt.val + '" onchange="updateBprs()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build K10 UI ----------
+(function buildK10() {
+    const container = document.getElementById('k10Items');
+    let html = '';
+    K10_ITEMS.forEach((prompt, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + prompt + '</span></div>';
+        html += '<div class="radio-group">';
+        K10_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="k10_' + n + '" value="' + opt.val + '" onchange="updateK10()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build MSI-BPD UI ----------
+(function buildMsibpd() {
+    const container = document.getElementById('msibpdItems');
+    let html = '';
+    MSI_BPD_ITEMS.forEach((prompt, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + prompt + '</span></div>';
+        html += '<div class="radio-group">';
+        YESNO_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="msibpd_' + n + '" value="' + opt.val + '" onchange="updateMsibpd()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build CGI UI ----------
+(function buildCgi() {
+    const sev = document.getElementById('cgisOptions');
+    const imp = document.getElementById('cgiiOptions');
+    let sH = '';
+    CGIS_OPTIONS.forEach(opt => {
+        sH += '<label class="radio-option"><input type="radio" name="cgis" value="' + opt.val + '" onchange="updateCgi()">' +
+              '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+    });
+    let iH = '';
+    CGII_OPTIONS.forEach(opt => {
+        iH += '<label class="radio-option"><input type="radio" name="cgii" value="' + opt.val + '" onchange="updateCgi()">' +
+              '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+    });
+    sev.innerHTML = sH;
+    imp.innerHTML = iH;
+})();
+
 // ---------- Build PCL-5 UI ----------
 (function buildPcl5() {
     const container = document.getElementById('pcl5Items');
@@ -1117,6 +1559,30 @@ function gad7Severity(score) {
     if (score <= 14) return { level: 'Moderate', css: 'sev-moderate' };
     return            { level: 'Severe',   css: 'sev-severe' };
 }
+function ymrsSeverity(score) {
+    if (score <= 12) return { level: 'Remission',  css: 'sev-none' };
+    if (score <= 19) return { level: 'Minimal',    css: 'sev-mild' };
+    if (score <= 25) return { level: 'Mild',       css: 'sev-mild' };
+    if (score <= 37) return { level: 'Moderate',   css: 'sev-moderate' };
+    return            { level: 'Severe',     css: 'sev-severe' };
+}
+function bprsSeverity(score) {
+    if (score < 31)  return { level: 'Mild',     css: 'sev-mild' };
+    if (score <= 40) return { level: 'Moderate', css: 'sev-moderate' };
+    if (score <= 52) return { level: 'Marked',   css: 'sev-modsev' };
+    return            { level: 'Severe',   css: 'sev-severe' };
+}
+function k10Severity(score) {
+    if (score <= 19) return { level: 'Likely well', css: 'sev-none' };
+    if (score <= 24) return { level: 'Mild',        css: 'sev-mild' };
+    if (score <= 29) return { level: 'Moderate',    css: 'sev-moderate' };
+    return            { level: 'Severe',      css: 'sev-severe' };
+}
+function msibpdSeverity(score) {
+    if (score < 7) return { level: 'Below screening cut-off', css: 'sev-none' };
+    return          { level: 'Positive screen (≥7) — further assessment recommended', css: 'sev-modsev' };
+}
+
 function pcl5Severity(score) {
     if (score < 20) return { level: 'Below threshold',         css: 'sev-none' };
     if (score < 31) return { level: 'Subthreshold symptoms',   css: 'sev-mild' };
@@ -1209,6 +1675,82 @@ function updateGad7() {
         pill.textContent = sev.level + (rated < 7 ? ' (partial: ' + rated + '/7)' : '');
         pill.className = 'severity-pill ' + sev.css;
     }
+}
+
+function updateYmrs() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 11; i++) {
+        const v = getRadioVal('ymrs_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('ymrsTotal').textContent = total;
+    const pill = document.getElementById('ymrsSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = ymrsSeverity(total);
+        pill.textContent = sev.level + (rated < 11 ? ' (partial: ' + rated + '/11)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateBprs() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 18; i++) {
+        const v = getRadioVal('bprs_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('bprsTotal').textContent = total;
+    const pill = document.getElementById('bprsSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = bprsSeverity(total);
+        pill.textContent = sev.level + (rated < 18 ? ' (partial: ' + rated + '/18)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateK10() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('k10_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('k10Total').textContent = total;
+    const pill = document.getElementById('k10SeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = k10Severity(total);
+        pill.textContent = sev.level + (rated < 10 ? ' (partial: ' + rated + '/10)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateMsibpd() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('msibpd_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('msibpdTotal').textContent = total;
+    const pill = document.getElementById('msibpdSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = msibpdSeverity(total);
+        pill.textContent = sev.level + (rated < 10 ? ' (partial: ' + rated + '/10)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateCgi() {
+    // CGI has no running total display; rating is captured at output generation time.
 }
 
 function updatePcl5() {
@@ -1435,6 +1977,230 @@ function buildHamdText() {
     t += thin + '\n';
     t += 'Scoring: 0-7 normal | 8-13 mild | 14-18 moderate | 19-22 severe | >=23 very severe.\n';
     t += 'Reference: Hamilton M. J Neurol Neurosurg Psychiatry. 1960;23:56-62.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildYmrsText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'YOUNG MANIA RATING SCALE (YMRS)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0, rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 11; i++) {
+        const v = getRadioVal('ymrs_' + i);
+        const item = YMRS_ITEMS[i-1];
+        const max = item.anchors.length - 1;
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        rows.push({
+            num: i,
+            title: item.title,
+            max: max,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : item.anchors[parseInt(v,10)]
+        });
+    }
+
+    const sev = ymrsSeverity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 60';
+    if (rated < 11) t += '  (partial: ' + rated + '/11 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (items 5, 6, 9 double-weighted 0-8)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.title + '  [Score: ' + r.score + ' / ' + r.max + ']\n';
+        t += '    ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Scoring: <=12 remission | 13-19 minimal | 20-25 mild | 26-37 moderate | >=38 severe.\n';
+    t += 'Reference: Young RC et al. Br J Psychiatry. 1978;133:429-35.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildBprsText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'BRIEF PSYCHIATRIC RATING SCALE (BPRS, 18-item)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0, rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 18; i++) {
+        const v = getRadioVal('bprs_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        rows.push({
+            num: i,
+            title: BPRS_ITEMS[i-1].title,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : BPRS_OPTIONS[parseInt(v,10) - 1].label
+        });
+    }
+
+    const sev = bprsSeverity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 126';
+    if (rated < 18) t += '  (partial: ' + rated + '/18 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (past week, 1=Not present, 7=Extremely severe)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.title + '  [Score: ' + r.score + ']\n';
+        t += '    ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Indicative thresholds: <31 mild | 31-40 moderate | 41-52 marked | >52 severe.\n';
+    t += 'Reference: Overall JE, Gorham DR. Psychol Rep. 1962;10:799-812.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildK10Text() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'KESSLER PSYCHOLOGICAL DISTRESS SCALE (K10)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0, rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('k10_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        rows.push({
+            num: i,
+            prompt: K10_ITEMS[i-1],
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : K10_OPTIONS[parseInt(v,10) - 1].label
+        });
+    }
+
+    const sev = k10Severity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 50';
+    if (rated < 10) t += '  (partial: ' + rated + '/10 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (past 30 days)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.prompt + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'ABS cut-offs: 10-19 likely well | 20-24 mild | 25-29 moderate | 30-50 severe.\n';
+    t += 'Reference: Kessler RC et al. Psychol Med. 2002;32:959-76.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildMsibpdText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'McLEAN SCREENING INSTRUMENT FOR BPD (MSI-BPD)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0, rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 10; i++) {
+        const v = getRadioVal('msibpd_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        rows.push({
+            num: i,
+            prompt: MSI_BPD_ITEMS[i-1],
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : YESNO_OPTIONS[parseInt(v,10)].label
+        });
+    }
+
+    const sev = msibpdSeverity(total);
+    t += 'SCORE:    ' + total + ' / 10';
+    if (rated < 10) t += '  (partial: ' + rated + '/10 items rated)';
+    t += '\n';
+    t += 'RESULT:   ' + sev.level + '\n';
+    if (total >= 7) {
+        t += 'NOTE:     Positive screen is NOT a diagnosis. A full diagnostic assessment\n';
+        t += '          (DSM/ICD criteria review, corroborative history, impact on function)\n';
+        t += '          is required before applying a BPD diagnosis.\n';
+    }
+    t += thin + '\n';
+    t += 'ITEM RESPONSES\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.prompt + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Scoring: 1 point per "Yes". Cut-off >=7 suggests positive screen.\n';
+    t += 'Reference: Zanarini MC et al. J Pers Disord. 2003;17:568-73.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildCgiText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'CLINICAL GLOBAL IMPRESSION (CGI-S / CGI-I)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    const sEl = document.querySelector('input[name="cgis"]:checked');
+    const iEl = document.querySelector('input[name="cgii"]:checked');
+
+    t += 'CGI-S (Severity of Illness)\n';
+    if (sEl) {
+        const sVal = parseInt(sEl.value, 10);
+        const sLabel = CGIS_OPTIONS[sVal - 1].label;
+        t += '  Score:  ' + sVal + ' / 7\n';
+        t += '  Rating: ' + sLabel + '\n';
+    } else {
+        t += '  Not rated\n';
+    }
+    t += thin + '\n';
+
+    t += 'CGI-I (Global Improvement — relative to baseline)\n';
+    if (iEl) {
+        const iVal = parseInt(iEl.value, 10);
+        const iLabel = CGII_OPTIONS[iVal - 1].label;
+        t += '  Score:  ' + iVal + ' / 7\n';
+        t += '  Rating: ' + iLabel + '\n';
+    } else {
+        t += '  Not rated\n';
+    }
+
+    t += thin + '\n';
+    t += 'Reference: Guy W. ECDEU Assessment Manual for Psychopharmacology. NIMH, 1976.\n';
     t += line + '\n';
     return t;
 }
@@ -1709,6 +2475,26 @@ function generateOutput(which) {
         document.getElementById('iesrText').value = buildIesrText();
         document.getElementById('iesrOutput').classList.add('visible');
         document.getElementById('iesrOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'ymrs') {
+        document.getElementById('ymrsText').value = buildYmrsText();
+        document.getElementById('ymrsOutput').classList.add('visible');
+        document.getElementById('ymrsOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'bprs') {
+        document.getElementById('bprsText').value = buildBprsText();
+        document.getElementById('bprsOutput').classList.add('visible');
+        document.getElementById('bprsOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'k10') {
+        document.getElementById('k10Text').value = buildK10Text();
+        document.getElementById('k10Output').classList.add('visible');
+        document.getElementById('k10Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'msibpd') {
+        document.getElementById('msibpdText').value = buildMsibpdText();
+        document.getElementById('msibpdOutput').classList.add('visible');
+        document.getElementById('msibpdOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'cgi') {
+        document.getElementById('cgiText').value = buildCgiText();
+        document.getElementById('cgiOutput').classList.add('visible');
+        document.getElementById('cgiOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
@@ -1735,7 +2521,13 @@ function copyOutput(which) {
 }
 
 function resetScale(which) {
-    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14, pcl5: 20, iesr: 22 };
+    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14, ymrs: 11, pcl5: 20, iesr: 22, bprs: 18, k10: 10, msibpd: 10 };
+    if (which === 'cgi') {
+        document.querySelectorAll('input[name="cgis"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="cgii"]').forEach(r => r.checked = false);
+        document.getElementById('cgiOutput').classList.remove('visible');
+        return;
+    }
     const count = counts[which];
     for (let i = 1; i <= count; i++) {
         document.querySelectorAll('input[name="' + which + '_' + i + '"]').forEach(r => r.checked = false);
@@ -1745,13 +2537,10 @@ function resetScale(which) {
     }
     if (which === 'pcl5') { const e = document.getElementById('pcl5Event'); if (e) e.value = ''; }
     if (which === 'iesr') { const e = document.getElementById('iesrEvent'); if (e) e.value = ''; }
-    if (which === 'madrs') updateMadrs();
-    if (which === 'hamd') updateHamd();
-    if (which === 'phq9') updatePhq9();
-    if (which === 'gad7') updateGad7();
-    if (which === 'hama') updateHama();
-    if (which === 'pcl5') updatePcl5();
-    if (which === 'iesr') updateIesr();
+    const updaters = { madrs: updateMadrs, hamd: updateHamd, phq9: updatePhq9, gad7: updateGad7,
+                       hama: updateHama, ymrs: updateYmrs, pcl5: updatePcl5, iesr: updateIesr,
+                       bprs: updateBprs, k10: updateK10, msibpd: updateMsibpd };
+    if (updaters[which]) updaters[which]();
     document.getElementById(which + 'Output').classList.remove('visible');
 }
 
@@ -1761,8 +2550,12 @@ updateHamd();
 updatePhq9();
 updateGad7();
 updateHama();
+updateYmrs();
 updatePcl5();
 updateIesr();
+updateBprs();
+updateK10();
+updateMsibpd();
 </script>
 </body>
 </html>
