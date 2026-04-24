@@ -230,8 +230,8 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>Depression Scales</h1>
-        <p>Montgomery-Åsberg Depression Rating Scale (MADRS) &amp; Patient Health Questionnaire (PHQ-9)</p>
+        <h1>Psychometric Scales</h1>
+        <p>MADRS &nbsp;·&nbsp; HAM-D &nbsp;·&nbsp; PHQ-9 &nbsp;·&nbsp; GAD-7 &nbsp;·&nbsp; HAM-A</p>
     </div>
 
     <!-- PATIENT INFO -->
@@ -248,7 +248,10 @@
     <!-- TABS -->
     <div class="tab-row">
         <button class="tab-btn active" data-tab="madrs" onclick="switchTab('madrs')">MADRS</button>
+        <button class="tab-btn" data-tab="hamd" onclick="switchTab('hamd')">HAM-D</button>
         <button class="tab-btn" data-tab="phq9" onclick="switchTab('phq9')">PHQ-9</button>
+        <button class="tab-btn" data-tab="gad7" onclick="switchTab('gad7')">GAD-7</button>
+        <button class="tab-btn" data-tab="hama" onclick="switchTab('hama')">HAM-A</button>
     </div>
 
     <!-- MADRS -->
@@ -279,6 +282,37 @@
 
         <div class="disclaimer">
             <strong>Reference:</strong> Montgomery SA, Åsberg M. A new depression scale designed to be sensitive to change. Br J Psychiatry. 1979;134:382-9. Total score thresholds (commonly used): 0–6 absent; 7–19 mild; 20–34 moderate; 35–60 severe.
+        </div>
+    </div>
+
+    <!-- HAM-D -->
+    <div class="tab-pane" id="tab-hamd">
+        <div class="card">
+            <div class="card-title">HAM-D-17 Instructions</div>
+            <p style="font-size:0.9em;">Clinician-rated. Rate the patient's condition over the <strong>past week</strong> (or since last visit). 17 items with varying scales — some items are scored 0–4, others 0–2. Total range 0–52. Item 3 (suicide) triggers a safety flag if endorsed.</p>
+        </div>
+
+        <div class="section-body" id="hamdItems"></div>
+
+        <div class="score-bar">
+            HAM-D-17 Total: <span id="hamdTotal">0</span> / 52 &nbsp; — &nbsp; <span class="severity-pill" id="hamdSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('hamd')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('hamd')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="hamdOutput">
+            <div class="output-header">
+                <h3>HAM-D-17 Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('hamd')" id="hamdCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="hamdText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Hamilton M. A rating scale for depression. J Neurol Neurosurg Psychiatry. 1960;23:56-62. Commonly used severity thresholds: 0–7 normal / no depression; 8–13 mild; 14–18 moderate; 19–22 severe; ≥23 very severe.
         </div>
     </div>
 
@@ -321,6 +355,79 @@
 
         <div class="disclaimer">
             <strong>Reference:</strong> Kroenke K, Spitzer RL, Williams JBW. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med. 2001;16(9):606-13. Severity: 0–4 none/minimal; 5–9 mild; 10–14 moderate; 15–19 moderately severe; 20–27 severe. Item 9 (suicidality) requires separate clinical attention if endorsed.
+        </div>
+    </div>
+
+    <!-- GAD-7 -->
+    <div class="tab-pane" id="tab-gad7">
+        <div class="card">
+            <div class="card-title">GAD-7 Instructions</div>
+            <p style="font-size:0.9em;">Over the <strong>last 2 weeks</strong>, how often have you been bothered by the following problems?</p>
+        </div>
+
+        <div class="section-body" id="gad7Items"></div>
+
+        <div class="card" id="gad7FunctionCard">
+            <div class="card-title">Functional Impairment (not scored)</div>
+            <p style="font-size:0.9em; margin-bottom:10px;"><em>If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?</em></p>
+            <div class="radio-group" style="padding-left:0;">
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Not difficult at all"><span class="radio-label">Not difficult at all</span></label>
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Somewhat difficult"><span class="radio-label">Somewhat difficult</span></label>
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Very difficult"><span class="radio-label">Very difficult</span></label>
+                <label class="radio-option"><input type="radio" name="gad7_function" value="Extremely difficult"><span class="radio-label">Extremely difficult</span></label>
+            </div>
+        </div>
+
+        <div class="score-bar">
+            GAD-7 Total: <span id="gad7Total">0</span> / 21 &nbsp; — &nbsp; <span class="severity-pill" id="gad7SeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('gad7')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('gad7')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="gad7Output">
+            <div class="output-header">
+                <h3>GAD-7 Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('gad7')" id="gad7CopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="gad7Text" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Spitzer RL, Kroenke K, Williams JBW, Löwe B. A brief measure for assessing generalized anxiety disorder: the GAD-7. Arch Intern Med. 2006;166(10):1092-7. Severity: 0–4 minimal; 5–9 mild; 10–14 moderate; 15–21 severe. A cut-point of ≥10 has good sensitivity/specificity for GAD.
+        </div>
+    </div>
+
+    <!-- HAM-A -->
+    <div class="tab-pane" id="tab-hama">
+        <div class="card">
+            <div class="card-title">HAM-A Instructions</div>
+            <p style="font-size:0.9em;">Clinician-rated. Rate each of the 14 items on the severity experienced by the patient <strong>over the past week</strong> (or since last visit). Each item is scored on a 0–4 scale: 0 = not present, 1 = mild, 2 = moderate, 3 = severe, 4 = very severe / incapacitating. Total range 0–56.</p>
+        </div>
+
+        <div class="section-body" id="hamaItems"></div>
+
+        <div class="score-bar">
+            HAM-A Total: <span id="hamaTotal">0</span> / 56 &nbsp; — &nbsp; <span class="severity-pill" id="hamaSeverityPill">Not rated</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateOutput('hama')">Generate Plain Text Summary</button>
+            <button class="btn btn-secondary" onclick="resetScale('hama')">Reset</button>
+        </div>
+
+        <div class="card output-card" id="hamaOutput">
+            <div class="output-header">
+                <h3>HAM-A Plain Text Summary</h3>
+                <button class="btn btn-primary" onclick="copyOutput('hama')" id="hamaCopyBtn">Copy to Clipboard</button>
+            </div>
+            <textarea class="output" id="hamaText" readonly></textarea>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Reference:</strong> Hamilton M. The assessment of anxiety states by rating. Br J Med Psychol. 1959;32:50-5. Commonly used severity thresholds: &lt;17 mild; 18–24 mild-to-moderate; 25–30 moderate-to-severe; &gt;30 severe. A cut-point of ≥14 is often used to define clinically significant anxiety.
         </div>
     </div>
 
@@ -470,6 +577,147 @@ const MADRS_ITEMS = [
     }
 ];
 
+// ---------- HAM-D-17 data ----------
+const HAMD_ITEMS = [
+    { title: 'Depressed mood',
+      desc: 'Sadness, hopelessness, helplessness, worthlessness.',
+      anchors: [
+        'Absent',
+        'Feeling states indicated only on questioning',
+        'Feeling states spontaneously reported verbally',
+        'Communicates feeling states non-verbally (facial expression, posture, voice, tendency to weep)',
+        'Virtually only these feeling states in spontaneous verbal and non-verbal communication'
+      ] },
+    { title: 'Feelings of guilt',
+      desc: '',
+      anchors: [
+        'Absent',
+        'Self-reproach; feels he has let people down',
+        'Ideas of guilt or rumination over past errors or sinful deeds',
+        'Present illness is a punishment; delusions of guilt',
+        'Hears accusatory or denunciatory voices and/or experiences threatening visual hallucinations'
+      ] },
+    { title: 'Suicide',
+      desc: '',
+      anchors: [
+        'Absent',
+        'Feels life is not worth living',
+        'Wishes he were dead, or any thoughts of possible death to self',
+        'Suicidal ideas or gestures',
+        'Attempts at suicide (any serious attempt rated 4)'
+      ] },
+    { title: 'Insomnia: early',
+      desc: '',
+      anchors: [
+        'No difficulty falling asleep',
+        'Complains of occasional difficulty falling asleep — i.e. more than half an hour',
+        'Complains of nightly difficulty falling asleep'
+      ] },
+    { title: 'Insomnia: middle',
+      desc: '',
+      anchors: [
+        'No difficulty',
+        'Patient complains of being restless and disturbed during the night',
+        'Waking during the night — any getting out of bed rates 2 (except to void)'
+      ] },
+    { title: 'Insomnia: late',
+      desc: '',
+      anchors: [
+        'No difficulty',
+        'Waking in early hours of the morning but goes back to sleep',
+        'Unable to fall asleep again if gets out of bed'
+      ] },
+    { title: 'Work and activities',
+      desc: '',
+      anchors: [
+        'No difficulty',
+        'Thoughts and feelings of incapacity, fatigue or weakness related to activities, work or hobbies',
+        'Loss of interest in activity, hobbies or work — directly reported or indirect via listlessness, indecision, vacillation',
+        'Decrease in actual time spent in activities or decrease in productivity',
+        'Stopped working because of present illness'
+      ] },
+    { title: 'Retardation (psychomotor)',
+      desc: 'Slowness of thought and speech; impaired ability to concentrate; decreased motor activity.',
+      anchors: [
+        'Normal speech and thought',
+        'Slight retardation at interview',
+        'Obvious retardation at interview',
+        'Interview difficult',
+        'Complete stupor'
+      ] },
+    { title: 'Agitation',
+      desc: '',
+      anchors: [
+        'None',
+        'Fidgetiness',
+        'Playing with hands, hair, etc.',
+        'Moving about, cannot sit still',
+        'Hand-wringing, nail-biting, hair-pulling, biting of lips'
+      ] },
+    { title: 'Anxiety psychic',
+      desc: '',
+      anchors: [
+        'No difficulty',
+        'Subjective tension and irritability',
+        'Worrying about minor matters',
+        'Apprehensive attitude apparent in face or speech',
+        'Fears expressed without questioning'
+      ] },
+    { title: 'Anxiety somatic',
+      desc: 'GI (dry mouth, wind, indigestion, diarrhoea, cramps, belching); cardiovascular (palpitations, headaches); respiratory (hyperventilation, sighing); urinary frequency; sweating.',
+      anchors: [
+        'Absent',
+        'Mild',
+        'Moderate',
+        'Severe',
+        'Incapacitating'
+      ] },
+    { title: 'Somatic symptoms: gastrointestinal',
+      desc: '',
+      anchors: [
+        'None',
+        'Loss of appetite but eating without encouragement; heavy feelings in abdomen',
+        'Difficulty eating without urging; requests or requires laxatives / medication for bowels or GI symptoms'
+      ] },
+    { title: 'Somatic symptoms: general',
+      desc: '',
+      anchors: [
+        'None',
+        'Heaviness in limbs, back, or head; backaches, headaches, muscle aches; loss of energy and fatigability',
+        'Any clear-cut symptom rates 2'
+      ] },
+    { title: 'Genital symptoms',
+      desc: 'Loss of libido; menstrual disturbances.',
+      anchors: [
+        'Absent',
+        'Mild',
+        'Severe'
+      ] },
+    { title: 'Hypochondriasis',
+      desc: '',
+      anchors: [
+        'Not present',
+        'Self-absorption (bodily)',
+        'Preoccupation with health',
+        'Frequent complaints, requests for help, etc.',
+        'Hypochondriacal delusions'
+      ] },
+    { title: 'Loss of weight',
+      desc: 'Rate by history.',
+      anchors: [
+        'No weight loss',
+        'Probable weight loss associated with present illness',
+        'Definite weight loss (according to patient)'
+      ] },
+    { title: 'Insight',
+      desc: '',
+      anchors: [
+        'Acknowledges being depressed and ill',
+        'Acknowledges illness but attributes cause to bad food, climate, overwork, virus, need for rest, etc.',
+        'Denies being ill at all'
+      ] }
+];
+
 // ---------- PHQ-9 data ----------
 const PHQ9_ITEMS = [
     'Little interest or pleasure in doing things',
@@ -488,6 +736,43 @@ const PHQ9_OPTIONS = [
     { val: 1, label: 'Several days' },
     { val: 2, label: 'More than half the days' },
     { val: 3, label: 'Nearly every day' }
+];
+
+// ---------- GAD-7 data ----------
+const GAD7_ITEMS = [
+    'Feeling nervous, anxious, or on edge',
+    'Not being able to stop or control worrying',
+    'Worrying too much about different things',
+    'Trouble relaxing',
+    'Being so restless that it is hard to sit still',
+    'Becoming easily annoyed or irritable',
+    'Feeling afraid as if something awful might happen'
+];
+// GAD-7 uses the same 0-3 response set as PHQ-9
+
+// ---------- HAM-A data ----------
+const HAMA_OPTIONS = [
+    { val: 0, label: 'Not present' },
+    { val: 1, label: 'Mild' },
+    { val: 2, label: 'Moderate' },
+    { val: 3, label: 'Severe' },
+    { val: 4, label: 'Very severe / incapacitating' }
+];
+const HAMA_ITEMS = [
+    { title: 'Anxious mood',           desc: 'Worries, anticipation of the worst, fearful anticipation, irritability.' },
+    { title: 'Tension',                desc: 'Feelings of tension, fatigability, startle response, moved to tears easily, trembling, feelings of restlessness, inability to relax.' },
+    { title: 'Fears',                  desc: 'Of dark, of strangers, of being left alone, of animals, of traffic, of crowds.' },
+    { title: 'Insomnia',               desc: 'Difficulty falling asleep, broken sleep, unsatisfying sleep and fatigue on waking, dreams, nightmares, night terrors.' },
+    { title: 'Intellectual (cognitive)', desc: 'Difficulty concentrating, poor memory.' },
+    { title: 'Depressed mood',         desc: 'Loss of interest, lack of pleasure in hobbies, depression, early waking, diurnal mood swing.' },
+    { title: 'Somatic (muscular)',     desc: 'Pains and aches, twitching, stiffness, myoclonic jerks, grinding of teeth, unsteady voice, increased muscular tone.' },
+    { title: 'Somatic (sensory)',      desc: 'Tinnitus, blurring of vision, hot and cold flushes, feelings of weakness, pricking sensation.' },
+    { title: 'Cardiovascular symptoms',desc: 'Tachycardia, palpitations, pain in chest, throbbing of vessels, fainting feelings, missing beats.' },
+    { title: 'Respiratory symptoms',   desc: 'Pressure or constriction in chest, choking feelings, sighing, dyspnoea.' },
+    { title: 'Gastrointestinal symptoms', desc: 'Difficulty swallowing, wind, abdominal pain, burning sensations, abdominal fullness, nausea, vomiting, borborygmi, looseness of bowels, loss of weight, constipation.' },
+    { title: 'Genitourinary symptoms', desc: 'Frequency / urgency of micturition, amenorrhoea, menorrhagia, frigidity, premature ejaculation, loss of libido, impotence.' },
+    { title: 'Autonomic symptoms',     desc: 'Dry mouth, flushing, pallor, tendency to sweat, giddiness, tension headache, piloerection.' },
+    { title: 'Behaviour at interview', desc: 'Fidgeting, restlessness or pacing, tremor of hands, furrowed brow, strained face, sighing or rapid respiration, facial pallor, swallowing, etc.' }
 ];
 
 // ---------- Build MADRS UI ----------
@@ -511,6 +796,26 @@ const PHQ9_OPTIONS = [
     container.innerHTML = html;
 })();
 
+// ---------- Build HAM-D UI ----------
+(function buildHamd() {
+    const container = document.getElementById('hamdItems');
+    let html = '';
+    HAMD_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        const maxScore = item.anchors.length - 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + ' <span style="font-weight:400;color:var(--gray-600);font-size:0.85em;">(0–' + maxScore + ')</span></span></div>';
+        if (item.desc) html += '<div class="item-sub">' + item.desc + '</div>';
+        html += '<div class="radio-group">';
+        for (let v = 0; v <= maxScore; v++) {
+            html += '<label class="radio-option"><input type="radio" name="hamd_' + n + '" value="' + v + '" onchange="updateHamd()">' +
+                    '<span class="radio-label"><span class="val">' + v + '</span>' + item.anchors[v] + '</span></label>';
+        }
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
 // ---------- Build PHQ-9 UI ----------
 (function buildPhq9() {
     const container = document.getElementById('phq9Items');
@@ -522,6 +827,43 @@ const PHQ9_OPTIONS = [
         html += '<div class="radio-group">';
         PHQ9_OPTIONS.forEach(opt => {
             html += '<label class="radio-option"><input type="radio" name="phq9_' + n + '" value="' + opt.val + '" onchange="updatePhq9()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build GAD-7 UI ----------
+(function buildGad7() {
+    const container = document.getElementById('gad7Items');
+    let html = '';
+    GAD7_ITEMS.forEach((prompt, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + prompt + '</span></div>';
+        html += '<div class="radio-group">';
+        PHQ9_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="gad7_' + n + '" value="' + opt.val + '" onchange="updateGad7()">' +
+                    '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+})();
+
+// ---------- Build HAM-A UI ----------
+(function buildHama() {
+    const container = document.getElementById('hamaItems');
+    let html = '';
+    HAMA_ITEMS.forEach((item, idx) => {
+        const n = idx + 1;
+        html += '<div class="item-block">';
+        html += '<div class="item-header"><span class="item-number">' + n + '</span><span class="item-title">' + item.title + '</span></div>';
+        html += '<div class="item-sub">' + item.desc + '</div>';
+        html += '<div class="radio-group">';
+        HAMA_OPTIONS.forEach(opt => {
+            html += '<label class="radio-option"><input type="radio" name="hama_' + n + '" value="' + opt.val + '" onchange="updateHama()">' +
                     '<span class="radio-label"><span class="val">' + opt.val + '</span>' + opt.label + '</span></label>';
         });
         html += '</div></div>';
@@ -547,12 +889,33 @@ function madrsSeverity(score) {
     if (score <= 34) return { level: 'Moderate',        css: 'sev-moderate' };
     return            { level: 'Severe',          css: 'sev-severe' };
 }
+function hamdSeverity(score) {
+    if (score <= 7)  return { level: 'Normal / No depression', css: 'sev-none' };
+    if (score <= 13) return { level: 'Mild',                   css: 'sev-mild' };
+    if (score <= 18) return { level: 'Moderate',               css: 'sev-moderate' };
+    if (score <= 22) return { level: 'Severe',                 css: 'sev-modsev' };
+    return            { level: 'Very Severe',             css: 'sev-severe' };
+}
+
 function phq9Severity(score) {
     if (score <= 4)  return { level: 'None / Minimal',    css: 'sev-none' };
     if (score <= 9)  return { level: 'Mild',              css: 'sev-mild' };
     if (score <= 14) return { level: 'Moderate',          css: 'sev-moderate' };
     if (score <= 19) return { level: 'Moderately Severe', css: 'sev-modsev' };
     return            { level: 'Severe',            css: 'sev-severe' };
+}
+function gad7Severity(score) {
+    if (score <= 4)  return { level: 'Minimal',  css: 'sev-none' };
+    if (score <= 9)  return { level: 'Mild',     css: 'sev-mild' };
+    if (score <= 14) return { level: 'Moderate', css: 'sev-moderate' };
+    return            { level: 'Severe',   css: 'sev-severe' };
+}
+function hamaSeverity(score) {
+    if (score <= 7)  return { level: 'No / minimal anxiety',    css: 'sev-none' };
+    if (score <= 17) return { level: 'Mild',                    css: 'sev-mild' };
+    if (score <= 24) return { level: 'Mild to Moderate',        css: 'sev-moderate' };
+    if (score <= 30) return { level: 'Moderate to Severe',      css: 'sev-modsev' };
+    return            { level: 'Severe',                   css: 'sev-severe' };
 }
 
 function updateMadrs() {
@@ -573,6 +936,24 @@ function updateMadrs() {
     }
 }
 
+function updateHamd() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 17; i++) {
+        const v = getRadioVal('hamd_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('hamdTotal').textContent = total;
+    const pill = document.getElementById('hamdSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = hamdSeverity(total);
+        pill.textContent = sev.level + (rated < 17 ? ' (partial: ' + rated + '/17)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
 function updatePhq9() {
     let total = 0, rated = 0;
     for (let i = 1; i <= 9; i++) {
@@ -587,6 +968,42 @@ function updatePhq9() {
     } else {
         const sev = phq9Severity(total);
         pill.textContent = sev.level + (rated < 9 ? ' (partial: ' + rated + '/9)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateGad7() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 7; i++) {
+        const v = getRadioVal('gad7_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('gad7Total').textContent = total;
+    const pill = document.getElementById('gad7SeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = gad7Severity(total);
+        pill.textContent = sev.level + (rated < 7 ? ' (partial: ' + rated + '/7)' : '');
+        pill.className = 'severity-pill ' + sev.css;
+    }
+}
+
+function updateHama() {
+    let total = 0, rated = 0;
+    for (let i = 1; i <= 14; i++) {
+        const v = getRadioVal('hama_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+    }
+    document.getElementById('hamaTotal').textContent = total;
+    const pill = document.getElementById('hamaSeverityPill');
+    if (rated === 0) {
+        pill.textContent = 'Not rated';
+        pill.className = 'severity-pill';
+    } else {
+        const sev = hamaSeverity(total);
+        pill.textContent = sev.level + (rated < 14 ? ' (partial: ' + rated + '/14)' : '');
         pill.className = 'severity-pill ' + sev.css;
     }
 }
@@ -711,21 +1128,188 @@ function buildPhq9Text() {
     return t;
 }
 
+function buildHamdText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'HAMILTON DEPRESSION RATING SCALE (HAM-D-17)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0;
+    let rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 17; i++) {
+        const v = getRadioVal('hamd_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        const item = HAMD_ITEMS[i-1];
+        const max = item.anchors.length - 1;
+        rows.push({
+            num: i,
+            title: item.title,
+            max: max,
+            score: v === null ? 'NR' : v,
+            answer: v === null ? 'Not rated' : item.anchors[parseInt(v,10)]
+        });
+    }
+
+    const sev = hamdSeverity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 52';
+    if (rated < 17) t += '  (partial: ' + rated + '/17 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+
+    const item3 = getRadioVal('hamd_3');
+    if (item3 !== null && parseInt(item3, 10) > 0) {
+        t += 'SAFETY FLAG: Item 3 (suicide) endorsed at "' + HAMD_ITEMS[2].anchors[parseInt(item3,10)] + '" — requires clinical review.\n';
+    }
+
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (past week)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.title + '  [Score: ' + r.score + ' / ' + r.max + ']\n';
+        t += '    ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Scoring: 0-7 normal | 8-13 mild | 14-18 moderate | 19-22 severe | >=23 very severe.\n';
+    t += 'Reference: Hamilton M. J Neurol Neurosurg Psychiatry. 1960;23:56-62.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildHamaText() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'HAMILTON ANXIETY RATING SCALE (HAM-A)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0;
+    let rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 14; i++) {
+        const v = getRadioVal('hama_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        const label = v === null ? 'Not rated' : HAMA_OPTIONS[parseInt(v,10)].label;
+        rows.push({
+            num: i,
+            title: HAMA_ITEMS[i-1].title,
+            score: v === null ? 'NR' : v,
+            answer: label
+        });
+    }
+
+    const sev = hamaSeverity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 56';
+    if (rated < 14) t += '  (partial: ' + rated + '/14 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (past week)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.title + '  [Score: ' + r.score + ']\n';
+        t += '    ' + r.answer + '\n';
+    });
+
+    t += thin + '\n';
+    t += 'Scoring: <17 mild | 18-24 mild-moderate | 25-30 moderate-severe | >30 severe.\n';
+    t += 'Reference: Hamilton M. Br J Med Psychol. 1959;32:50-5.\n';
+    t += line + '\n';
+    return t;
+}
+
+function buildGad7Text() {
+    const line = '='.repeat(66);
+    const thin = '-'.repeat(66);
+    let t = '';
+    t += line + '\n';
+    t += 'GENERALIZED ANXIETY DISORDER 7-ITEM SCALE (GAD-7)\n';
+    t += line + '\n';
+    t += patientHeader();
+    t += thin + '\n';
+
+    let total = 0;
+    let rated = 0;
+    const rows = [];
+    for (let i = 1; i <= 7; i++) {
+        const v = getRadioVal('gad7_' + i);
+        if (v !== null) { total += parseInt(v, 10); rated++; }
+        const label = v === null ? 'Not rated' : PHQ9_OPTIONS[parseInt(v,10)].label;
+        rows.push({
+            num: i,
+            prompt: GAD7_ITEMS[i-1],
+            score: v === null ? 'NR' : v,
+            answer: label
+        });
+    }
+
+    const sev = gad7Severity(total);
+    t += 'TOTAL SCORE: ' + total + ' / 21';
+    if (rated < 7) t += '  (partial: ' + rated + '/7 items rated)';
+    t += '\n';
+    t += 'SEVERITY:    ' + sev.level + '\n';
+
+    const funcEl = document.querySelector('input[name="gad7_function"]:checked');
+    const funcLabel = funcEl ? funcEl.value : null;
+
+    t += thin + '\n';
+    t += 'ITEM RESPONSES (over the last 2 weeks)\n';
+    t += thin + '\n';
+
+    rows.forEach(r => {
+        t += r.num.toString().padStart(2, ' ') + '. ' + r.prompt + '\n';
+        t += '    [Score: ' + r.score + ']  ' + r.answer + '\n';
+    });
+
+    if (funcLabel) {
+        t += thin + '\n';
+        t += 'Functional Impairment: ' + funcLabel + '\n';
+    }
+
+    t += thin + '\n';
+    t += 'Scoring: 0-4 minimal | 5-9 mild | 10-14 moderate | 15-21 severe.\n';
+    t += 'Reference: Spitzer RL, Kroenke K, Williams JBW, Lowe B. Arch Intern Med. 2006;166:1092-7.\n';
+    t += line + '\n';
+    return t;
+}
+
 function generateOutput(which) {
     if (which === 'madrs') {
         document.getElementById('madrsText').value = buildMadrsText();
         document.getElementById('madrsOutput').classList.add('visible');
         document.getElementById('madrsOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
+    } else if (which === 'phq9') {
         document.getElementById('phq9Text').value = buildPhq9Text();
         document.getElementById('phq9Output').classList.add('visible');
         document.getElementById('phq9Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'gad7') {
+        document.getElementById('gad7Text').value = buildGad7Text();
+        document.getElementById('gad7Output').classList.add('visible');
+        document.getElementById('gad7Output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'hama') {
+        document.getElementById('hamaText').value = buildHamaText();
+        document.getElementById('hamaOutput').classList.add('visible');
+        document.getElementById('hamaOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (which === 'hamd') {
+        document.getElementById('hamdText').value = buildHamdText();
+        document.getElementById('hamdOutput').classList.add('visible');
+        document.getElementById('hamdOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
 function copyOutput(which) {
-    const ta = document.getElementById(which === 'madrs' ? 'madrsText' : 'phq9Text');
-    const btn = document.getElementById(which === 'madrs' ? 'madrsCopyBtn' : 'phq9CopyBtn');
+    const ta = document.getElementById(which + 'Text');
+    const btn = document.getElementById(which + 'CopyBtn');
     ta.select();
     ta.setSelectionRange(0, 99999);
     const restore = () => { setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000); };
@@ -746,24 +1330,28 @@ function copyOutput(which) {
 }
 
 function resetScale(which) {
-    const prefix = which === 'madrs' ? 'madrs_' : 'phq9_';
-    const count  = which === 'madrs' ? 10 : 9;
+    const counts = { madrs: 10, hamd: 17, phq9: 9, gad7: 7, hama: 14 };
+    const count = counts[which];
     for (let i = 1; i <= count; i++) {
-        document.querySelectorAll('input[name="' + prefix + i + '"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="' + which + '_' + i + '"]').forEach(r => r.checked = false);
     }
-    if (which === 'phq9') {
-        document.querySelectorAll('input[name="phq9_function"]').forEach(r => r.checked = false);
-        updatePhq9();
-        document.getElementById('phq9Output').classList.remove('visible');
-    } else {
-        updateMadrs();
-        document.getElementById('madrsOutput').classList.remove('visible');
+    if (which === 'phq9' || which === 'gad7') {
+        document.querySelectorAll('input[name="' + which + '_function"]').forEach(r => r.checked = false);
     }
+    if (which === 'madrs') updateMadrs();
+    if (which === 'hamd') updateHamd();
+    if (which === 'phq9') updatePhq9();
+    if (which === 'gad7') updateGad7();
+    if (which === 'hama') updateHama();
+    document.getElementById(which + 'Output').classList.remove('visible');
 }
 
 // Initialize totals display
 updateMadrs();
+updateHamd();
 updatePhq9();
+updateGad7();
+updateHama();
 </script>
 </body>
 </html>
