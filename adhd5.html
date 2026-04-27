@@ -329,12 +329,16 @@ select.inp{appearance:none}
 .tit-ps{font-size:10px;color:var(--muted);display:block;margin-top:1px}
 .tit-pb.on .tit-ps{color:rgba(255,255,255,.75)}
 .tit-empty{text-align:center;padding:14px;color:var(--muted);font-size:12px;border:1px dashed var(--border);border-radius:8px;background:#fafbfc;margin:6px 0}
-.tit-med-block{background:#fafbfc;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:8px}
-.tit-med-head{display:flex;align-items:center;gap:7px;padding:8px 12px;background:#f3f5f9;border-bottom:1px solid var(--border)}
+.tit-med-block{--med-color:var(--primary);background:#fafbfc;border:1px solid var(--med-color);border-radius:9px;overflow:hidden;margin-bottom:8px}
+.tit-med-head{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--med-color);color:#fff;border-bottom:1px solid rgba(0,0,0,.08)}
+.tit-med-head select{color:#fff !important;border-bottom-color:rgba(255,255,255,.5) !important}
+.tit-med-head select option{color:var(--text)}
+.tit-med-block .tit-step-dot{background:var(--med-color);box-shadow:0 0 0 2px var(--med-color)}
+.tit-med-block .tit-step-dot.ongoing{background:var(--green);box-shadow:0 0 0 2px var(--green)}
 .tit-med-title{font-size:13px;font-weight:700;flex:1;color:var(--text)}
 .tit-med-auth{font-size:10px;color:var(--muted);background:#eef1f8;border-radius:5px;padding:2px 7px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help}
-.tit-med-rm{background:none;border:none;color:#c8cdd9;font-size:14px;padding:2px 4px;cursor:pointer}
-.tit-med-rm:hover{color:var(--red)}
+.tit-med-rm{background:none;border:none;color:rgba(255,255,255,.75);font-size:14px;padding:2px 4px;cursor:pointer}
+.tit-med-rm:hover{color:#fff}
 .tit-step-list{padding:6px 12px;display:flex;flex-direction:column;gap:0}
 .tit-step-row{display:flex;align-items:stretch;gap:0}
 .tit-step-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:24px}
@@ -1573,11 +1577,9 @@ const TIT_MEDS={
           {label:'Ongoing - max 70mg',dur:0,unit:'days',ongoing:true,note:'Stay at lowest effective dose.',doses:[{t:'morning',type:'str',s:70,q:1,l:'1 cap (70mg)'}]}
         ]},
       {key:'guided_30',label:'30mg guided',
-        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Review every 2-3 weeks; titrate up by 10-20mg per review.',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Review every 2-3 weeks; titrate up by 10-20mg per review based on response and tolerance.',
         steps:[
-          {label:'Days 1-21',dur:21,unit:'days',ongoing:false,note:'Take 30mg each morning. Review at 2-3 weeks; titrate up 10-20mg per review.',doses:[{t:'morning',type:'str',s:30,q:1,l:'1 cap (30mg)'}]},
-          {label:'Days 22-42',dur:21,unit:'days',ongoing:false,note:'Increase by 10-20mg if tolerating but not fully effective.',doses:[{t:'morning',type:'str',s:50,q:1,l:'1 cap (50mg)'}]},
-          {label:'Ongoing - up to 70mg',dur:0,unit:'days',ongoing:true,note:'Continue increasing to lowest effective dose, max 70mg.',doses:[{t:'morning',type:'str',s:70,q:1,l:'1 cap (70mg)'}]}
+          {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'Start 30mg. Review every 2-3 weeks and titrate up by 10-20mg per review based on response and tolerance.',doses:[{t:'morning',type:'str',s:30,q:1,l:'1 cap (30mg)'}]}
         ]},
       {key:'flex_3040',label:'30 + 40 (flexible)',
         auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Two scripts: 30mg AND 40mg, no repeats. Review at 4 weeks.',
@@ -1605,19 +1607,22 @@ const TIT_MEDS={
   strattera:{name:'Atomoxetine',brand:'Atomoxetine hydrochloride (Strattera)',auth:'Streamlined 7876 (initiation), 7890 (continuation). NOT a controlled substance. Full effect 4-12 weeks.',
     unit:'mg',form:'cap',strengths:[10,18,25,40,60,80],
     steps:[{label:'Week 1',dur:7,unit:'days',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
-      {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Allow 4 weeks at 80mg to assess effect.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
+      {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Increase if tolerating.',doses:[{t:'morning',type:'str',s:60,q:1,l:'1 cap (60mg)'}]},
+      {label:'Weeks 6-9',dur:28,unit:'days',ongoing:false,note:'Allow 4 weeks at 80mg to assess effect.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
       {label:'Ongoing - max 80mg',dur:0,unit:'days',ongoing:true,note:'Do not exceed without review.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]}],
     protocols:[
       {key:'standard_80',label:'Standard — up to 80mg',
         steps:[
           {label:'Week 1',dur:7,unit:'days',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
-          {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Allow 4 weeks at 80mg to assess effect.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
+          {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Increase if tolerating.',doses:[{t:'morning',type:'str',s:60,q:1,l:'1 cap (60mg)'}]},
+          {label:'Weeks 6-9',dur:28,unit:'days',ongoing:false,note:'Allow 4 weeks at 80mg to assess effect.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
           {label:'Ongoing - max 80mg',dur:0,unit:'days',ongoing:true,note:'Do not exceed without review.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]}
         ]},
       {key:'extend_100',label:'Extension — up to 100mg (40+60 caps)',
         steps:[
           {label:'Week 1',dur:7,unit:'days',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
-          {label:'Weeks 2-7',dur:42,unit:'days',ongoing:false,note:'6 weeks at 80mg before considering increase. Take with food.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
+          {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Increase if tolerating.',doses:[{t:'morning',type:'str',s:60,q:1,l:'1 cap (60mg)'}]},
+          {label:'Weeks 6-11',dur:42,unit:'days',ongoing:false,note:'6 weeks at 80mg before considering increase. Take with food.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
           {label:'Ongoing - 100mg (40+60)',dur:0,unit:'days',ongoing:true,note:'Increase if tolerating.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'},{t:'morning',type:'str',s:60,q:1,l:'1 cap (60mg)'}]}
         ]}
     ]},
@@ -2257,6 +2262,18 @@ function renderTitStep(m,st,si,mi){
     '</div></div>';
 }
 
+var MED_COLORS={
+  dex:'#2563eb',         // blue
+  ritalinIR:'#16a34a',   // green
+  ritalinLA:'#14532d',   // dark green
+  concerta:'#0ea5e9',    // light blue / sky
+  vyvanse:'#7c3aed',     // purple
+  strattera:'#ea580c',   // orange (atomoxetine)
+  intuniv:'#0d9488',     // teal (guanfacine)
+  catnanight:'#475569',  // grey (clonidine)
+  catnaday:'#475569',    // grey (clonidine)
+  other:'#374151'
+};
 function renderTitMedBlock(m,mi){
   var steps=m.steps.map(function(st,si){return renderTitStep(m,st,si,mi);}).join('');
   // Build med selector dropdown for header
@@ -2271,11 +2288,12 @@ function renderTitMedBlock(m,mi){
     g.keys.forEach(function(k){allMedOpts+='<option value="'+k+'"'+(m.key===k?' selected':'')+'>'+TIT_MEDS[k].name+'</option>';});
     allMedOpts+='</optgroup>';
   });
-  var nameEl='<select style="flex:1;background:transparent;border:none;border-bottom:1px solid #93c5fd;color:var(--text);font:700 13px var(--sans);outline:none;cursor:pointer;min-width:0" onchange="titSwitchMed('+mi+',this.value)">'+allMedOpts+'</select>';
+  var color=MED_COLORS[m.key]||'var(--primary)';
+  var nameEl='<select style="flex:1;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.5);font:700 13px var(--sans);outline:none;cursor:pointer;min-width:0" onchange="titSwitchMed('+mi+',this.value)">'+allMedOpts+'</select>';
   if(m.key==='other'){
-    nameEl+='<input style="flex:1;background:transparent;border:none;color:var(--muted);font:12px var(--sans);outline:none;border-bottom:1px solid var(--border);margin-left:6px;min-width:80px" type="text" value="'+esc(m.customName||'')+'" placeholder="Custom name" oninput="titMeds['+mi+'].customName=this.value">';
+    nameEl+='<input style="flex:1;background:transparent;border:none;color:#fff;font:12px var(--sans);outline:none;border-bottom:1px solid rgba(255,255,255,.5);margin-left:6px;min-width:80px" type="text" value="'+esc(m.customName||'')+'" placeholder="Custom name" oninput="titMeds['+mi+'].customName=this.value">';
   }
-  return '<div class="tit-med-block"><div class="tit-med-head">'+nameEl+'<button class="tit-med-rm" onclick="titRemoveMed('+mi+')">x</button></div><div class="tit-step-list">'+steps+'</div></div>';
+  return '<div class="tit-med-block" style="--med-color:'+color+'"><div class="tit-med-head">'+nameEl+'<button class="tit-med-rm" onclick="titRemoveMed('+mi+')">x</button></div><div class="tit-step-list">'+steps+'</div></div>';
 }
 
 // ─── SCRIPT DETAILS ───────────────────────────────────────────────────────────
@@ -5523,8 +5541,38 @@ function _refStepDosing(st, def){
     return label+': '+totals.join(' + ')+' ('+sum+unit+' total)';
   }).join(' · ');
 }
+function _refScriptsLine(def, proto){
+  // Build a "Scripts: ..." summary line from the strengths used in the protocol + scriptOverride.
+  var key=null;
+  for(var k in TIT_MEDS){if(TIT_MEDS[k]===def){key=k;break;}}
+  if(!key)return '';
+  var sd=SCRIPT_DEFAULTS[key]||SCRIPT_DEFAULTS.other;
+  var unit=def.unit||sd.unit||'mg';
+  var form=def.form||sd.form||'tab';
+  // Collect distinct strengths used in this protocol's steps
+  var seen={},used=[];
+  (proto.steps||[]).forEach(function(st){
+    (st.doses||[]).forEach(function(d){
+      if(d.type==='str'&&d.s!=null&&!seen[d.s]){seen[d.s]=true;used.push(d.s);}
+    });
+  });
+  used.sort(function(a,b){return a-b;});
+  if(!used.length)return '';
+  // perStrength meds get one script per used strength; otherwise a single script (use last/highest).
+  var entries=sd.perStrength?used.slice():[used[used.length-1]];
+  var ov=proto.scriptOverride||{};
+  function descFor(s){
+    var rep=sd.repeats;
+    if(ov.perStrength&&ov.perStrength[s]&&ov.perStrength[s].repeats!=null)rep=ov.perStrength[s].repeats;
+    else if(ov.repeats!=null)rep=ov.repeats;
+    var repTxt=rep===0?'no repeats':rep+' rpt'+(rep===1?'':'s');
+    return s+unit+' '+form+' ('+repTxt+')';
+  }
+  return entries.map(descFor).join(' · ');
+}
 function _refTitCard(def, proto){
   var heading=def.name+(proto.label&&proto.label!=='Standard'?' — '+proto.label:'');
+  var scriptsLine=_refScriptsLine(def,proto);
   var rowsHtml='<tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>';
   proto.steps.forEach(function(st,si){
     var lbl=titAutoLabel(proto.steps,si);
@@ -5535,6 +5583,7 @@ function _refTitCard(def, proto){
   });
   return '<div class="tit-pg-card">'
     +'<div class="tit-pg-head">'+esc(heading)+'</div>'
+    +(scriptsLine?'<div style="background:#dbeafe;color:#1e3a5f;padding:6px 12px;font-size:.78rem;border-bottom:1px solid #bfdbfe"><strong style="text-transform:uppercase;letter-spacing:.04em;font-size:.7rem">Scripts:</strong> '+esc(scriptsLine)+'</div>':'')
     +'<table class="tit-pg-table">'+rowsHtml+'</table>'
     +'</div>';
 }
@@ -6306,17 +6355,50 @@ function renderHandoverReference(){
       <p style="background:#eff6ff;border-left:3px solid #3b82f6;padding:10px 14px;border-radius:6px;margin-bottom:14px;font-size:13px;color:#1e3a5f">A reference for choosing review cadences once a patient is started on treatment. Tailor to the individual.</p>
 
       <details class="pg-details" open>
-        <summary>Standard titration follow-up (4–6 weeks)</summary>
+        <summary>Close review (2–3 weeks)</summary>
         <div class="pg-content">
-          <p>For a patient newly started on a stimulant. Review at <strong>4 weeks</strong> for short-acting agents (Dex IR, Ritalin IR) where dose adjustments happen weekly — or at <strong>6 weeks</strong> for long-acting agents where steps are slower.</p>
-          <ul style="margin-left:18px"><li>Confirm response, tolerability, and adherence</li><li>BP, HR, weight</li><li>Adjust dose, reduce interdose gap, or switch class as needed</li><li>If stable, move to 3-monthly</li></ul>
+          <p>Tighter cadence for patients who are <strong>concerning, sensitive, or anxious</strong> — e.g. ASD, OPMH, history of side-effect sensitivity, prior mental health concerns, or anyone you want to keep eyes on early.</p>
+          <ul style="margin-left:18px">
+            <li>First review at <strong>2–3 weeks</strong> after commencement, then 2–3-weekly until stable</li>
+            <li>Tight surveillance of side effects, mood, sleep, appetite, BP/HR</li>
+            <li>Small dose increments (e.g. Vyvanse 30mg guided, Dex BD slow, Atomoxetine standard)</li>
+            <li>Move to standard cadence once tolerated and effective</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="pg-details" open>
+        <summary>Standard cadence</summary>
+        <div class="pg-content">
+          <p>Default for the majority of patients without complicating factors.</p>
+          <ul style="margin-left:18px">
+            <li><strong>First titration follow-up:</strong> 4–6 weeks after starting</li>
+            <li><strong>Then:</strong> review every 3–5 months until clearly stable</li>
+            <li><strong>Then:</strong> consider stretching to ~5-monthly</li>
+            <li><strong>If stable long-term:</strong> handover of care (HOC) to GP</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="pg-details" open>
+        <summary>Go-to shared care (hands-off)</summary>
+        <div class="pg-content">
+          <p>For experienced clinicians who are comfortable with brief specialist input. Recommended once you and the patient know each other's pace.</p>
+          <ul style="margin-left:18px">
+            <li>Initial appointment to set up the titration plan</li>
+            <li>Issue the script with <strong>5 repeats</strong> + a clear titration plan handed to the GP</li>
+            <li>Patient sees the GP in between for routine prescribing and monitoring</li>
+            <li>Specialist review at <strong>3–6 months</strong></li>
+            <li>If stable: full handover of care (HOC)</li>
+          </ul>
+          <p style="font-size:12px;color:#64748b;margin-top:6px"><em>Best paired with a thorough GP handover letter (see Handover overlay).</em></p>
         </div>
       </details>
 
       <details class="pg-details">
         <summary>Stable patient (3-monthly)</summary>
         <div class="pg-content">
-          <p>Once dose is settled and tolerated. Review every <strong>3 months</strong> for the first year, then consider stretching to 6-monthly if completely stable.</p>
+          <p>Once dose is settled and tolerated. Review every 3 months for the first year, then consider stretching to 6-monthly if completely stable.</p>
           <ul style="margin-left:18px"><li>Confirm continued benefit and absence of side effects</li><li>Vitals each visit</li><li>Discuss substance use, mental state, and life context</li><li>Document continued indication for ongoing prescribing</li></ul>
         </div>
       </details>
@@ -6330,15 +6412,7 @@ function renderHandoverReference(){
       </details>
 
       <details class="pg-details">
-        <summary>GP shared care</summary>
-        <div class="pg-content">
-          <p>Once stable, GP manages day-to-day prescribing while psychiatrist remains available for review.</p>
-          <ul style="margin-left:18px"><li>Annual psychiatrist review (or sooner if needed)</li><li>GP handles routine scripts under their state framework</li><li>GP refers back for dose changes, new symptoms, or significant side effects</li><li>Provide a GP handover letter — see the Handover overlay</li></ul>
-        </div>
-      </details>
-
-      <details class="pg-details">
-        <summary>Full handover to GP</summary>
+        <summary>Full handover to GP (HOC)</summary>
         <div class="pg-content">
           <p>Patient is stable, happy, and the GP is willing and able to take over ongoing prescribing under the relevant state framework. The patient remains on your books and can be re-engaged at any time.</p>
           <ul style="margin-left:18px"><li>Provide GP handover letter (see Handover overlay)</li><li>Confirm GP has applied for the relevant authority/permit/notification in their state</li><li>Patient knows to ask the GP to re-refer if any concerns</li></ul>
