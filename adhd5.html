@@ -65,6 +65,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .diff-card-btns .rb{flex:1;text-align:center;font-size:10px;padding:3px 4px}
 .inner-2col{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0}
 .inner-2col-sm{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
+.inner-2col-sm.force-2col{grid-template-columns:1fr 1fr}
+.fu-sub{border:1px solid var(--border);border-radius:8px;background:#fafbfc;overflow:hidden}
+.fu-sub-head{padding:7px 12px;font:600 11.5px var(--sans);color:var(--text);background:#f3f5f9;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;-webkit-tap-highlight-color:transparent}
+.fu-sub-head:hover{background:#e8ecf3}
+.fu-sub-chev{font-size:11px;color:var(--muted);transition:transform .15s}
+.fu-sub.collapsed .fu-sub-chev{transform:rotate(-90deg)}
+.fu-sub-body{padding:8px 10px}
+.fu-sub.collapsed .fu-sub-body{display:none}
 /* Split: left side / right side at wide screens */
 .inner-split{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:0;align-items:start}
 .inner-split>*{border-right:1px solid var(--border)}
@@ -243,8 +251,9 @@ select.inp{appearance:none}
 .rat-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;border-radius:9px;padding:3px;transition:box-shadow .15s,background .15s}
 .rat-row:has(.rat-btn:nth-child(3)){grid-template-columns:1fr 1fr 1fr}
 .rat-row.active{box-shadow:0 0 0 2px var(--green);background:var(--green-bg)}
-.rat-btn{padding:6px 9px;border-radius:8px;border:1.5px solid var(--border);background:#fafbfc;color:var(--muted);font:500 11px var(--sans);cursor:pointer;transition:all .13s;text-align:center;line-height:1.3}
-.rat-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-bg)}
+.rat-btn{padding:6px 9px;border-radius:8px;border:1.5px solid var(--border);background:#fafbfc;color:var(--muted);font:500 11px var(--sans);cursor:pointer;transition:all .13s;text-align:center;line-height:1.3;-webkit-tap-highlight-color:transparent}
+.rat-btn:focus{outline:none}
+@media(hover:hover){.rat-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-bg)}}
 .rat-btn.rat-yes.on{background:var(--green-bg);border-color:var(--green);color:var(--green);font-weight:700}
 .rat-btn.rat-no.on{background:var(--red-bg);border-color:var(--red);color:var(--red);font-weight:700}
 .rat-btn.rat-opt.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary);font-weight:700}
@@ -559,25 +568,44 @@ select.inp{appearance:none}
   <div class="cb">
     <label class="fl" style="margin-top:0">Medication response / efficacy</label>
     <div class="rbtns" id="med-response-btns">
+      <button class="rb" onclick="setFuRating('medResponse','Excellent',this,'ay')">Excellent</button>
       <button class="rb" onclick="setFuRating('medResponse','Good',this,'ay')">Good</button>
       <button class="rb" onclick="setFuRating('medResponse','Partial',this,'ap')">Partial</button>
-      <button class="rb" onclick="setFuRating('medResponse','Poor',this,'an')">Poor</button>
-      <button class="rb" onclick="setFuRating('medResponse','Adverse',this,'af')">Adverse</button>
-      <button class="rb" onclick="setFuRating('medResponse','Too early',this,'ap')">Too early</button>
+      <button class="rb" onclick="setFuRating('medResponse','Minimal',this,'an')">Minimal</button>
+      <button class="rb" onclick="setFuRating('medResponse','Negative',this,'af')">Negative</button>
+    </div>
+
+    <label class="fl">Sufficient coverage during the day?</label>
+    <div class="rbtns" id="coverage-btns">
+      <button class="rb" onclick="setFuRating('coverage','Yes',this,'ay')">Yes</button>
+      <button class="rb" onclick="setFuRating('coverage','Partial',this,'ap')">Partial</button>
+      <button class="rb" onclick="setFuRating('coverage','No',this,'an')">No</button>
     </div>
 
     <label class="fl">Adherence</label>
     <div class="rbtns" id="adherence-btns">
-      <button class="rb" onclick="setFuRating('adherence','Full',this,'ay')">Full</button>
-      <button class="rb" onclick="setFuRating('adherence','Partial',this,'ap')">Partial</button>
-      <button class="rb" onclick="setFuRating('adherence','Non-adherent',this,'an')">Non-adherent</button>
+      <button class="rb" onclick="setFuRating('adherence','Good',this,'ay')">Good</button>
+      <button class="rb" onclick="setFuRating('adherence','Mixed',this,'ap')">Mixed</button>
+      <button class="rb" onclick="setFuRating('adherence','Poor',this,'an')">Poor</button>
     </div>
 
-    <label class="fl">Side effects (tap any that apply)</label>
-    <div id="side-fx-chips" class="inner-2col-sm"></div>
+    <label class="fl">Side effects</label>
+    <div class="rbtns" id="sidefx-rating-btns">
+      <button class="rb" onclick="setSideFxRating('Nil',this,'ay')">Nil</button>
+      <button class="rb" onclick="setSideFxRating('Minimal',this,'ap')">Minimal</button>
+      <button class="rb" onclick="setSideFxRating('Moderate',this,'an')">Moderate</button>
+      <button class="rb" onclick="setSideFxRating('Severe',this,'af')">Severe</button>
+    </div>
 
-    <label class="fl">Session notes</label>
-    <textarea class="nf" id="reviewNotes" oninput="save();refresh()" rows="8" placeholder="Reason for review, issues raised, MSE changes, side-effect detail, and any other observations..."></textarea>
+    <div id="sidefx-details" class="fu-sub collapsed" style="margin-top:8px">
+      <div class="fu-sub-head" onclick="toggleSideFxDetails()">Side-effect specifics<span class="fu-sub-chev">▾</span></div>
+      <div class="fu-sub-body">
+        <div id="side-fx-chips" class="inner-2col-sm force-2col"></div>
+      </div>
+    </div>
+
+    <label class="fl">Additional information</label>
+    <textarea class="nf" id="reviewNotes" oninput="save();refresh()" rows="6" placeholder="Reason for review, MSE changes, side-effect detail, observations..."></textarea>
   </div>
 </div>
 
@@ -1720,7 +1748,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:''};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:''};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -3178,10 +3206,12 @@ function buildHeidiFollowUp(rt){
   o+='Review type: '+rt+'\n';
   o+='SafeScript: '+(S.safeScript||'Not checked')+(f('ssDetail')?' ('+f('ssDetail')+')':'')+'\n\n';
   if(S.medResponse)o+='MEDICATION RESPONSE: '+S.medResponse+'\n';
+  if(S.coverage)o+='DAYTIME COVERAGE: '+S.coverage+'\n';
   if(S.adherence)o+='ADHERENCE: '+S.adherence+'\n';
+  if(S.sideFxRating)o+='SIDE-EFFECT BURDEN: '+S.sideFxRating+'\n';
   var sfx=SIDE_FX.filter(function(s){return S.sideFx&&S.sideFx[s.id];});
   if(sfx.length){o+='SIDE EFFECTS:\n';sfx.forEach(function(s){o+='- '+s.label+'\n';});}
-  if(S.medResponse||S.adherence||sfx.length)o+='\n';
+  if(S.medResponse||S.coverage||S.adherence||S.sideFxRating||sfx.length)o+='\n';
   if(f('reviewNotes'))o+='SESSION NOTES:\n'+f('reviewNotes')+'\n\n';
   var invItems=[];
   if(f('bpReading'))invItems.push('BP: '+f('bpReading'));
@@ -3600,6 +3630,23 @@ function setFuRating(key,val,btn,cls){
   btn.classList.add(cls||'ay');
   save();refresh();
 }
+function setSideFxRating(val,btn,cls){
+  S.sideFxRating=val;
+  var parent=btn.parentElement;
+  if(parent)parent.querySelectorAll('.rb').forEach(function(b){b.className='rb';});
+  btn.classList.add(cls||'ay');
+  // Auto-open the side-effect specifics box on Minimal/Moderate/Severe
+  var box=document.getElementById('sidefx-details');
+  if(box){
+    var open=val==='Minimal'||val==='Moderate'||val==='Severe';
+    box.classList.toggle('collapsed',!open);
+  }
+  save();refresh();
+}
+function toggleSideFxDetails(){
+  var box=document.getElementById('sidefx-details');
+  if(box)box.classList.toggle('collapsed');
+}
 function toggleReport(e){
   if(e&&e.target&&e.target.closest('button'))return;
   var box=$('out-report'),arrow=$('report-arrow');
@@ -3663,11 +3710,13 @@ function buildFullReportFollowUp(rt){
 
   // Medication response + adherence + side effects
   var sfx=SIDE_FX.filter(function(s){return S.sideFx&&S.sideFx[s.id];});
-  if(S.medResponse||S.adherence||sfx.length){
+  if(S.medResponse||S.coverage||S.adherence||S.sideFxRating||sfx.length){
     h+=sec('Medication Response and Tolerability');
     var rItems=[];
     if(S.medResponse) rItems.push('<strong>Response / efficacy:</strong> '+esc(S.medResponse));
+    if(S.coverage) rItems.push('<strong>Daytime coverage:</strong> '+esc(S.coverage));
     if(S.adherence) rItems.push('<strong>Adherence:</strong> '+esc(S.adherence));
+    if(S.sideFxRating) rItems.push('<strong>Side-effect burden:</strong> '+esc(S.sideFxRating));
     if(rItems.length) h+=list(rItems);
     if(sfx.length){ h+=p('<strong>Side effects reported:</strong>'); h+=list(sfx.map(function(s){return esc(s.label);})); }
   }
@@ -4171,6 +4220,8 @@ function selectRat(btn){
   updateRatContras();
   // Reveal/highlight rows based on what's been answered
   updateRatProgression();
+  // Clear the touch/focus state so the button doesn't appear stuck-on
+  if(btn.blur)btn.blur();
   var ta=$('rationaleNotes');
   if(ta){ta.value=buildRationaleFromChips();save();refresh();}
 }
@@ -4213,6 +4264,10 @@ function updateRatProgression(){
   Object.keys(visible).forEach(function(g){
     var row=document.getElementById('rat-row-'+g);
     if(!row)return;
+    if(!visible[g]){
+      // Hidden because prerequisite isn't answered — clear any stale selection
+      row.querySelectorAll('.rat-btn.on').forEach(function(b){b.classList.remove('on');});
+    }
     row.style.display=visible[g]?'':'none';
     row.classList.remove('active');
   });
