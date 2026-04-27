@@ -459,14 +459,6 @@ select.inp{appearance:none}
           </select>
         </div>
         <div>
-          <label class="fl" style="margin-top:0">Occupation</label>
-          <input class="inp" id="ptOcc" placeholder="e.g. Nurse, teacher, IT..." oninput="save();refresh()">
-        </div>
-        <div>
-          <label class="fl" style="margin-top:0">Living situation</label>
-          <input class="inp" id="ptLiving" placeholder="e.g. Lives with partner, two children..." oninput="save();refresh()">
-        </div>
-        <div>
           <label class="fl" style="margin-top:0">Anyone else present?</label>
           <input class="inp" id="ptOtherPresent" placeholder="e.g. Partner, parent..." oninput="save();refresh()">
         </div>
@@ -550,16 +542,13 @@ select.inp{appearance:none}
           </select>
         </div>
       </div>
-      <div style="margin-top:6px">
-        <label class="fl" style="margin-top:0">Consultation type</label>
-        <div class="rbtns" id="consult-type-btns" style="gap:5px">
-          <button class="rb" onclick="setConsultType('Telehealth',this)">Telehealth</button>
-          <button class="rb" onclick="setConsultType('In person',this)">In person</button>
-        </div>
-      </div>
       <div style="margin-top:8px">
         <label class="fl" style="margin-top:0">Referring GP</label>
         <input class="inp" id="gpName" placeholder="GP name" oninput="save();refresh()">
+      </div>
+      <div style="margin-top:8px">
+        <label class="fl" style="margin-top:0">Other demographic details</label>
+        <textarea class="nf" id="ptDemo" rows="2" placeholder="e.g. Living situation, relationship, occupation, studying, hobbies..." oninput="save();refresh()"></textarea>
       </div>
     </div>
   </div>
@@ -1731,7 +1720,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',consultType:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:''};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:''};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -2903,20 +2892,6 @@ function togglePrevPsych(val, btn){
   }
   save();refresh();
 }
-function setConsultType(val,btn){
-  S.consultType=val;
-  btn.closest('.rbtns').querySelectorAll('.rb').forEach(function(b){b.className='rb';});
-  btn.classList.add('ay');
-  save();refresh();
-}
-function renderConsultType(){
-  var btns=document.getElementById('consult-type-btns');
-  if(!btns)return;
-  btns.querySelectorAll('.rb').forEach(function(b){
-    b.className='rb';
-    if(b.textContent.trim()===S.consultType)b.classList.add('ay');
-  });
-}
 function setPrevPsychFromSel(val){
   S.prevPsych=val;
   save();refresh();
@@ -3072,8 +3047,10 @@ function getFlags(){
     var harmV=mseVals('harm_others');if(harmV.length&&!harmV.every(function(v){return v.indexOf('Nil')>=0;}))flags.push({text:'Risk to others flagged',level:'red'});
   }
   var mbs=f('mbsItem'),prev=S.prevPsych||'';
-  if((mbs==='291'||mbs==='92435'||mbs==='293'||mbs==='92436')&&prev==='Yes')
-    flags.push({text:'Billing: '+mbs+' — 291/92435 already claimed in past 12 months. Check eligibility.',level:'red'});
+  if((mbs==='291'||mbs==='92435')&&prev==='Yes')
+    flags.push({text:'Billing: '+mbs+' — 291/92435 already claimed in past 12 months. Cannot be billed again until 13 months have passed.',level:'red'});
+  if((mbs==='293'||mbs==='92436')&&prev==='No')
+    flags.push({text:'Billing: '+mbs+' — review item requires a 291/92435 to have been billed in the past 12 months. Use 296/92437 if no prior plan.',level:'red'});
   return flags;
 }
 function getGaps(){
@@ -3167,7 +3144,8 @@ function getMedicalFlags(){
     MEDICAL.filter(function(m){return m.flag;}).forEach(function(m){if(S.medical[m.id])f2.push(1);});
     if(S.uds==='Positive')f2.push(1);
     var mbs=f('mbsItem'),prev=S.prevPsych||'';
-    if((mbs==='291'||mbs==='92435'||mbs==='293'||mbs==='92436')&&prev==='Yes')f2.push(1);
+    if((mbs==='291'||mbs==='92435')&&prev==='Yes')f2.push(1);
+    if((mbs==='293'||mbs==='92436')&&prev==='No')f2.push(1);
   }
   return f2.length;
 }
@@ -3188,14 +3166,14 @@ function setShBadge(id,txt,cls){var el=$(id);if(!el)return;el.textContent=txt||'
 
 // ─── HEIDI / AI CONTEXT - FOLLOW-UP VARIANT ──────────────────────────────────
 function buildHeidiFollowUp(rt){
-  var name=f('ptName')||'[Name]',age=f('ptAge'),g=f('ptGender'),occ=f('ptOcc');
+  var name=f('ptName')||'[Name]',age=f('ptAge'),g=f('ptGender');
   var dr=f('drName'),gp=f('gpName'),mbs=f('mbsItem');
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
   var o='ADHD '+rt.toUpperCase()+' REVIEW - '+ds+'\n';
-  o+='Patient: '+name+(age?' | Age: '+age:'')+(g?' | '+g:'')+(occ?' | '+occ:'')+'\n';
+  o+='Patient: '+name+(age?' | Age: '+age:'')+(g?' | '+g:'')+'\n';
+  if(f('ptDemo'))o+='Demographics: '+f('ptDemo').replace(/\n/g,'; ')+'\n';
   if(dr)o+='Psychiatrist: '+dr+(f('drQuals')?' ('+f('drQuals')+')':'')+'\n';
   if(gp)o+='Referring GP: '+gp+'\n';
-  if(S.consultType)o+='Consultation type: '+S.consultType+'\n';
   if(mbs)o+='MBS item: '+mbs+'\n';
   o+='Review type: '+rt+'\n';
   o+='SafeScript: '+(S.safeScript||'Not checked')+(f('ssDetail')?' ('+f('ssDetail')+')':'')+'\n\n';
@@ -3250,14 +3228,15 @@ function buildHeidiFollowUp(rt){
 function buildHeidi(){
   var rt=S.reviewType||'Initial';
   if(rt!=='Initial')return buildHeidiFollowUp(rt);
-  var name=f('ptName')||'[Name]',age=f('ptAge'),g=f('ptGender'),occ=f('ptOcc');
+  var name=f('ptName')||'[Name]',age=f('ptAge'),g=f('ptGender');
   var dr=f('drName'),gp=f('gpName'),mbs=f('mbsItem'),prev=f('prevPsych');
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
   var o='ADHD PSYCHIATRIC ASSESSMENT - '+ds+'\n';
-  o+='Patient: '+name+(age?' | Age: '+age:'')+(g?' | '+g:'')+(occ?' | '+occ:'')+'\n';
+  o+='Patient: '+name+(age?' | Age: '+age:'')+(g?' | '+g:'')+'\n';
+  if(f('ptDemo'))o+='Demographics: '+f('ptDemo').replace(/\n/g,'; ')+'\n';
   if(dr)o+='Psychiatrist: '+dr+(f('drQuals')?' ('+f('drQuals')+')':'')+'\n';if(gp)o+='Referring GP: '+gp+'\n';
   if(f('ptOtherPresent'))o+='Others present: '+f('ptOtherPresent')+'\n';
-  if(S.consultType)o+='Consultation type: '+S.consultType+'\n';if(mbs)o+='MBS item: '+mbs+'\n';if(S.prevPsych)o+='291/92435 in past 12 months: '+S.prevPsych+'\n';
+  if(mbs)o+='MBS item: '+mbs+'\n';if(S.prevPsych)o+='291/92435 in past 12 months: '+S.prevPsych+'\n';
   if(f('referralReason'))o+='Referral reason: '+f('referralReason')+'\n';o+='\n';
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length){o+='PRESENTING DIFFICULTIES:\n';diffs.forEach(function(d){o+='- '+d+'\n';});}
@@ -3632,7 +3611,7 @@ function toggleReport(e){
 
 // ─── FULL ASSESSMENT REPORT (formatted) ───────────────────────────────────────
 function buildFullReportFollowUp(rt){
-  var name=f('ptName')||'[Patient Name]',age=f('ptAge'),g=f('ptGender'),occ=f('ptOcc');
+  var name=f('ptName')||'[Patient Name]',age=f('ptAge'),g=f('ptGender');
   var dr=f('drName'),drQuals=f('drQuals'),gp=f('gpName');
   var dv=f('ptDate');
   var ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
@@ -3667,8 +3646,7 @@ function buildFullReportFollowUp(rt){
   idItems.push(['Patient', esc(name)+(age?' ('+esc(age)+' y)':'')+(g?' · '+esc(g):'')]);
   idItems.push(['Date of review', ds]);
   idItems.push(['Review type', esc(rt)]);
-  if(occ) idItems.push(['Occupation', esc(occ)]);
-  if(f('ptLiving')) idItems.push(['Living situation', esc(f('ptLiving'))]);
+  if(f('ptDemo')) idItems.push(['Demographics', esc(f('ptDemo')).replace(/\n/g,'<br>')]);
   if(dr) idItems.push(['Psychiatrist', esc(dr)+(drQuals?' '+esc(drQuals):'')]);
   if(gp) idItems.push(['Referring GP', esc(gp)]);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
@@ -3790,7 +3768,7 @@ function buildFullReportFollowUp(rt){
 function buildFullReport(){
   var rt=S.reviewType||'Initial';
   if(rt!=='Initial')return buildFullReportFollowUp(rt);
-  var name=f('ptName')||'[Patient Name]',age=f('ptAge'),g=f('ptGender'),occ=f('ptOcc');
+  var name=f('ptName')||'[Patient Name]',age=f('ptAge'),g=f('ptGender');
   var dr=f('drName'),drQuals=f('drQuals'),gp=f('gpName');
   var dv=f('ptDate');
   var ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
@@ -3824,8 +3802,7 @@ function buildFullReport(){
   var idItems=[];
   idItems.push(['Patient', esc(name)+(age?' ('+esc(age)+' y)':'')+(g?' · '+esc(g):'')]);
   idItems.push(['Date of assessment', ds]);
-  if(occ) idItems.push(['Occupation', esc(occ)]);
-  if(f('ptLiving')) idItems.push(['Living situation', esc(f('ptLiving'))]);
+  if(f('ptDemo')) idItems.push(['Demographics', esc(f('ptDemo')).replace(/\n/g,'<br>')]);
   if(dr) idItems.push(['Psychiatrist', esc(dr)+(drQuals?' '+esc(drQuals):'')]);
   if(gp) idItems.push(['Referring GP', esc(gp)]);
   if(f('ptOtherPresent')) idItems.push(['Others present', esc(f('ptOtherPresent'))]);
@@ -3845,7 +3822,6 @@ function buildFullReport(){
   h+=sec('Referral and Presenting Concerns');
   var refBits=[];
   if(f('referralReason')) refBits.push('<strong>Referral reason:</strong> '+esc(f('referralReason')));
-  if(S.consultType) refBits.push('<strong>Consultation type:</strong> '+esc(S.consultType));
   if(refBits.length) h+=p(refBits.join(' &nbsp;·&nbsp; '));
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length){ h+=p('<strong>Difficulties endorsed:</strong>'); h+=list(diffs.map(esc)); }
@@ -5254,7 +5230,6 @@ function init(){
   autoDSM();renderMSE();renderCardiac();renderMedical();renderSubs();renderMal();renderPE();renderFam();renderPrevPsych();
   renderTitMeds();
   calcBMI();
-  renderConsultType();
   renderSideFx();initCollapsibleCards();applyReviewType();updateRatProgression();updateRatContras();
   renderFuAppts();renderFuCustomMon();
   var dtEl=$('ptDate');if(dtEl&&!dtEl.value)dtEl.value=new Date().toISOString().slice(0,10);
