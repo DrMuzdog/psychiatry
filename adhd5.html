@@ -1571,13 +1571,56 @@ const TIT_MEDS={
           {label:'Week 3',dur:7,unit:'days',ongoing:false,note:'50mL.',doses:[{t:'morning',type:'str',s:70,q:1,l:'1 cap (70mg) — 50mL'}]},
           {label:'Week 4',dur:7,unit:'days',ongoing:false,note:'60mL.',doses:[{t:'morning',type:'str',s:70,q:1,l:'1 cap (70mg) — 60mL'}]},
           {label:'Ongoing - max 70mg',dur:0,unit:'days',ongoing:true,note:'Stay at lowest effective dose.',doses:[{t:'morning',type:'str',s:70,q:1,l:'1 cap (70mg)'}]}
+        ]},
+      {key:'guided_30',label:'30mg guided',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Review every 2-3 weeks; titrate up by 10-20mg per review.',
+        steps:[
+          {label:'Days 1-21',dur:21,unit:'days',ongoing:false,note:'Take 30mg each morning. Review at 2-3 weeks; titrate up 10-20mg per review.',doses:[{t:'morning',type:'str',s:30,q:1,l:'1 cap (30mg)'}]},
+          {label:'Days 22-42',dur:21,unit:'days',ongoing:false,note:'Increase by 10-20mg if tolerating but not fully effective.',doses:[{t:'morning',type:'str',s:50,q:1,l:'1 cap (50mg)'}]},
+          {label:'Ongoing - up to 70mg',dur:0,unit:'days',ongoing:true,note:'Continue increasing to lowest effective dose, max 70mg.',doses:[{t:'morning',type:'str',s:70,q:1,l:'1 cap (70mg)'}]}
+        ]},
+      {key:'flex_3040',label:'30 + 40 (flexible)',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Two scripts: 30mg AND 40mg, no repeats. Review at 4 weeks.',
+        scriptOverride:{perStrength:{30:{repeats:0},40:{repeats:0}}},
+        steps:[
+          {label:'Weeks 1-2',dur:14,unit:'days',ongoing:false,note:'If effective and tolerated, remain on 30mg.',doses:[{t:'morning',type:'str',s:30,q:1,l:'1 cap (30mg)'}]},
+          {label:'Ongoing - 40mg if needed',dur:0,unit:'days',ongoing:true,note:'Try 40mg only if 30mg not effective. If tolerated, remain. If not, return to 30mg. Review at 4 weeks.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]}
+        ]},
+      {key:'flex_304050',label:'30 + 40 + 50 (flexible)',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Three scripts: 30mg, 40mg, 50mg — no repeats. Increase every 2 weeks. Review at ~6 weeks.',
+        scriptOverride:{perStrength:{30:{repeats:0},40:{repeats:0},50:{repeats:0}}},
+        steps:[
+          {label:'Weeks 1-2',dur:14,unit:'days',ongoing:false,note:'If effective and tolerated, stay on 30mg.',doses:[{t:'morning',type:'str',s:30,q:1,l:'1 cap (30mg)'}]},
+          {label:'Weeks 3-4',dur:14,unit:'days',ongoing:false,note:'Try 40mg if 30mg not effective. If tolerated, stay. If not, return to 30mg.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
+          {label:'Ongoing - 50mg if needed',dur:0,unit:'days',ongoing:true,note:'Try 50mg only if 40mg tolerated but inadequate. Stay at lowest effective dose. Review at ~6 weeks.',doses:[{t:'morning',type:'str',s:50,q:1,l:'1 cap (50mg)'}]}
+        ]},
+      {key:'sensitive',label:'Sensitive (ASD, OPMH)',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. 20mg cap with 1 repeat; 30mg cap with 0 repeats. Review at 6 weeks.',
+        scriptOverride:{perStrength:{20:{repeats:1},30:{repeats:0}}},
+        steps:[
+          {label:'Weeks 1-4',dur:28,unit:'days',ongoing:false,note:'Stay at 20mg if effective and tolerated.',doses:[{t:'morning',type:'str',s:20,q:1,l:'1 cap (20mg)'}]},
+          {label:'Ongoing - 30mg if needed',dur:0,unit:'days',ongoing:true,note:'Increase to 30mg only if 20mg minimal effect but tolerated. Review at 6 weeks.',doses:[{t:'morning',type:'str',s:30,q:1,l:'1 cap (30mg)'}]}
         ]}
     ]},
   strattera:{name:'Atomoxetine',brand:'Atomoxetine hydrochloride (Strattera)',auth:'Streamlined 7876 (initiation), 7890 (continuation). NOT a controlled substance. Full effect 4-12 weeks.',
     unit:'mg',form:'cap',strengths:[10,18,25,40,60,80],
     steps:[{label:'Week 1',dur:7,unit:'days',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
       {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Allow 4 weeks at 80mg to assess effect.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
-      {label:'Ongoing - max 100mg',dur:0,unit:'days',ongoing:true,note:'Do not exceed without review.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]}]},
+      {label:'Ongoing - max 80mg',dur:0,unit:'days',ongoing:true,note:'Do not exceed without review.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]}],
+    protocols:[
+      {key:'standard_80',label:'Standard — up to 80mg',
+        steps:[
+          {label:'Week 1',dur:7,unit:'days',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
+          {label:'Weeks 2-5',dur:28,unit:'days',ongoing:false,note:'Allow 4 weeks at 80mg to assess effect.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
+          {label:'Ongoing - max 80mg',dur:0,unit:'days',ongoing:true,note:'Do not exceed without review.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]}
+        ]},
+      {key:'extend_100',label:'Extension — up to 100mg (40+60 caps)',
+        steps:[
+          {label:'Week 1',dur:7,unit:'days',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'}]},
+          {label:'Weeks 2-7',dur:42,unit:'days',ongoing:false,note:'6 weeks at 80mg before considering increase. Take with food.',doses:[{t:'morning',type:'str',s:80,q:1,l:'1 cap (80mg)'}]},
+          {label:'Ongoing - 100mg (40+60)',dur:0,unit:'days',ongoing:true,note:'Increase if tolerating.',doses:[{t:'morning',type:'str',s:40,q:1,l:'1 cap (40mg)'},{t:'morning',type:'str',s:60,q:1,l:'1 cap (60mg)'}]}
+        ]}
+    ]},
   intuniv:{name:'Guanfacine XR',brand:'Intuniv',auth:'Not a controlled drug. Do NOT stop abruptly - taper on cessation. Monitor BP regularly.',
     unit:'mg',form:'tab',strengths:[1,2,3,4],
     steps:[{label:'Weeks 1-2',dur:14,unit:'days',ongoing:false,note:'Take nightly. Monitor BP.',doses:[{t:'evening',type:'str',s:1,q:1,l:'1 tab (1mg)'}]},
@@ -1678,7 +1721,7 @@ const SCRIPT_DEFAULTS={
   concerta:{tabs:30,repeats:5,interval:20,form:'tab',unit:'mg'},
   vyvanse:{tabs:30,repeats:5,interval:20,form:'cap',unit:'mg',perStrength:true},
   intuniv:{tabs:30,repeats:5,interval:20,form:'tab',unit:'mg'},
-  strattera:{tabs:30,repeats:5,interval:20,form:'cap',unit:'mg'},
+  strattera:{tabs:30,repeats:5,interval:20,form:'cap',unit:'mg',perStrength:true},
   catnanight:{tabs:100,repeats:5,interval:20,form:'tab',unit:'mcg',strengthOpts:[100,150]},
   catnaday:{tabs:100,repeats:5,interval:20,form:'tab',unit:'mcg',strengthOpts:[100,150]},
   other:{tabs:30,repeats:5,interval:20,form:'tab',unit:''}
@@ -1699,17 +1742,17 @@ function _bdProtocolSteps(s,name){
       {label:'Days 1-2',dur:2,unit:'days',ongoing:false,note:'Start low. Take on waking.',doses:[_d('morning',s,0.5),_d('midday',s,0.5)]},
       {label:'Days 3-9',dur:7,unit:'days',ongoing:false,note:'',doses:[_d('morning',s,1),_d('midday',s,1)]},
       {label:'Days 10-16',dur:7,unit:'days',ongoing:false,note:'Good tolerability required.',doses:[_d('morning',s,2),_d('midday',s,1)]},
-      {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'Continue until next review.',doses:[_d('morning',s,2),_d('midday',s,2)]}
+      {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'At follow-up review, consider adding 1-2 tabs in the afternoon.',doses:[_d('morning',s,2),_d('midday',s,2)]}
     ],
     bd_fast:[
       {label:'Week 1',dur:7,unit:'days',ongoing:false,note:'',doses:[_d('morning',s,1),_d('midday',s,1)]},
-      {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'',doses:[_d('morning',s,2),_d('midday',s,2)]}
+      {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'At follow-up review, consider adding 1-2 tabs in the afternoon.',doses:[_d('morning',s,2),_d('midday',s,2)]}
     ],
     bd_slow:[
       {label:'Week 1',dur:7,unit:'days',ongoing:false,note:'',doses:[_d('morning',s,0.5),_d('midday',s,0.5)]},
       {label:'Week 2',dur:7,unit:'days',ongoing:false,note:'',doses:[_d('morning',s,1),_d('midday',s,1)]},
       {label:'Week 3',dur:7,unit:'days',ongoing:false,note:'',doses:[_d('morning',s,1.5),_d('midday',s,1.5)]},
-      {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'',doses:[_d('morning',s,2),_d('midday',s,2)]}
+      {label:'Ongoing',dur:0,unit:'days',ongoing:true,note:'At follow-up review, consider adding 1-2 tabs in the afternoon.',doses:[_d('morning',s,2),_d('midday',s,2)]}
     ],
     bd_to_tds:[
       {label:'Days 1-2',dur:2,unit:'days',ongoing:false,note:'Start low.',doses:[_d('morning',s,0.5),_d('midday',s,0.5)]},
@@ -2357,13 +2400,29 @@ function deriveScriptInstructions(m,strength){
 function ensureScripts(m){
   if(m.scripts&&m.scripts.length)return;
   var def=SCRIPT_DEFAULTS[m.key]||SCRIPT_DEFAULTS.other;
+  // If the active protocol provides per-strength script overrides, honour them
+  var protoOverride=null;
+  if(m.proto&&m.def&&m.def.protocols){
+    var proto=m.def.protocols.filter(function(p){return p.key===m.proto;})[0];
+    if(proto&&proto.scriptOverride)protoOverride=proto.scriptOverride;
+  }
+  function applyOverride(scriptObj){
+    if(!protoOverride)return scriptObj;
+    if(protoOverride.perStrength&&protoOverride.perStrength[scriptObj.strength]){
+      var ov=protoOverride.perStrength[scriptObj.strength];
+      Object.keys(ov).forEach(function(k){scriptObj[k]=ov[k];});
+    } else if(protoOverride.repeats!=null){
+      scriptObj.repeats=protoOverride.repeats;
+    }
+    return scriptObj;
+  }
   if(def.perStrength){
     var used=getUsedStrengths(m);
     if(!used.length)used=[m.def.strengths&&m.def.strengths[0]||null];
-    m.scripts=used.map(function(s){return {strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true};});
+    m.scripts=used.map(function(s){return applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true});});
   } else {
     var s=getDefaultStrength(m);
-    m.scripts=[{strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true}];
+    m.scripts=[applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true})];
   }
 }
 function setScript(mi,si,key,val){
@@ -5496,6 +5555,21 @@ function renderTitReference(){
         html+=_refTitCard(def,proto);
       });
     });
+    if(g.label==='Stimulants — Methylphenidate'){
+      html+='<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin-bottom:14px">'
+        +'<p style="font-size:.8rem;font-weight:700;color:#92400e;margin:0 0 6px">Methylphenidate IR → Long-Acting Conversion</p>'
+        +'<p style="font-size:.76rem;color:#374151;margin:0 0 8px;font-style:italic">Ritalin LA available: 10, 20, 30, 40, 60mg. Concerta available: 18, 27, 36, 54mg. * = nearest available dose — reassess at follow-up.</p>'
+        +'<table style="width:100%;border-collapse:collapse;font-size:.78rem">'
+        +'<tr><th style="background:#1e3a5f;color:#fff;padding:5px 8px;text-align:left;font-size:.75rem;font-weight:600">Daily IR dose</th><th style="background:#1e3a5f;color:#fff;padding:5px 8px;text-align:left;font-size:.75rem;font-weight:600">Ritalin LA</th><th style="background:#1e3a5f;color:#fff;padding:5px 8px;text-align:left;font-size:.75rem;font-weight:600">Concerta</th></tr>'
+        +'<tr><td style="padding:5px 8px;border-bottom:1px solid #dbeafe"><strong>10mg/day</strong></td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">10mg once daily</td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">18mg once daily</td></tr>'
+        +'<tr style="background:#eff6ff"><td style="padding:5px 8px;border-bottom:1px solid #dbeafe"><strong>20mg/day</strong></td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">20mg once daily</td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">18mg once daily *</td></tr>'
+        +'<tr><td style="padding:5px 8px;border-bottom:1px solid #dbeafe"><strong>30mg/day</strong></td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">30mg once daily</td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">27mg once daily</td></tr>'
+        +'<tr style="background:#eff6ff"><td style="padding:5px 8px;border-bottom:1px solid #dbeafe"><strong>40mg/day</strong></td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">40mg once daily</td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">36mg once daily</td></tr>'
+        +'<tr><td style="padding:5px 8px;border-bottom:1px solid #dbeafe"><strong>50mg/day</strong></td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">40mg once daily *</td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">54mg once daily *</td></tr>'
+        +'<tr style="background:#eff6ff"><td style="padding:5px 8px;border-bottom:1px solid #dbeafe"><strong>60mg/day</strong></td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">60mg once daily</td><td style="padding:5px 8px;border-bottom:1px solid #dbeafe">54mg once daily</td></tr>'
+        +'<tr><td style="padding:5px 8px"><strong>80mg/day</strong></td><td style="padding:5px 8px">60mg once daily *</td><td style="padding:5px 8px">54mg once daily *</td></tr>'
+        +'</table></div>';
+    }
   });
   el.innerHTML=html;
 }
