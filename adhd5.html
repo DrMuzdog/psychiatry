@@ -2527,8 +2527,27 @@ function renderScripts(){
   refreshTitOutputs();
 }
 
+function buildMedSchedule(m){
+  // Natural-language day-by-day titration schedule for multi-step meds.
+  // Returns array of HTML strings ready for list().
+  if(!m||!m.steps||!m.steps.length)return [];
+  var lines=[],day=0;
+  m.steps.forEach(function(st){
+    var dur=st.ongoing?null:(st.unit==='weeks'?(st.dur||1)*7:(st.dur||1));
+    var start=day+1;
+    if(!st.ongoing&&dur)day+=dur;
+    if(!st.doses||!st.doses.length)return;
+    var sig=formatStepSig(m,st);
+    if(!sig)return;
+    var cleanSig=sig.replace(/^take /,'');
+    var range=st.ongoing?'Day '+start+' onwards':(start===day?'Day '+start:'Day '+start+'-'+day);
+    lines.push('<strong>'+esc(range)+':</strong> '+esc(cleanSig));
+  });
+  return lines;
+}
 function buildOneScriptLine(m,s){
-  // "Med Xmg, Q form, R rpt, [instructions]" — instructions go last.
+  // "Med Xmg, Q form, R rpt" — directions only included if the user has manually
+  // edited the dose textarea away from the auto-derived schedule.
   var def=SCRIPT_DEFAULTS[m.key]||SCRIPT_DEFAULTS.other;
   var nm=m.key==='other'&&m.customName?m.customName:(def.scriptName||m.def.name);
   var unit=def.unit||m.def.unit||'';
@@ -2537,7 +2556,9 @@ function buildOneScriptLine(m,s){
   var bits=[head];
   if(s.tabs)bits.push(s.tabs+' '+form+(s.tabs===1?'':'s'));
   bits.push((s.repeats||0)+' rpt'+((s.repeats||0)===1?'':'s'));
-  if(s.dose)bits.push(s.dose);
+  var auto=deriveScriptInstructions(m,s.strength);
+  var dose=(s.dose||'').trim();
+  if(dose&&dose!==(auto||'').trim())bits.push(s.dose);
   return bits.join(', ');
 }
 function buildScriptLines(){
@@ -3937,15 +3958,10 @@ function buildFullReportFollowUp(rt){
           var sig=st.doses.length?formatStepSig(m,st):'';
           h+=p('<strong>'+esc(nm)+(total?' ('+total+unit+')':'')+'</strong>'+(sig?': '+esc(sig):''));
         } else {
-          // Multi-step titration — the Scripts section below already shows the full
-          // day-by-day schedule, so just print the med name and any unique clinical notes.
-          h+=p('<strong>'+esc(nm)+'</strong> <span style="color:#555;font-size:.9em">— see schedule below.</span>');
-          var seen={},notes=[];
-          m.steps.forEach(function(st){
-            var n=(st.note||'').trim();
-            if(n&&!seen[n]){seen[n]=true;notes.push(n);}
-          });
-          if(notes.length) h+=p('<em style="color:#555">'+notes.map(esc).join(' · ')+'</em>');
+          // Multi-step titration — show natural-language day-by-day schedule.
+          h+=p('<strong>'+esc(nm)+'</strong>');
+          var sched=buildMedSchedule(m);
+          if(sched.length) h+=list(sched);
         }
       });
     }
@@ -4193,15 +4209,10 @@ function buildFullReport(){
           var sig=st.doses.length?formatStepSig(m,st):'';
           h+=p('<strong>'+esc(nm)+(total?' ('+total+unit+')':'')+'</strong>'+(sig?': '+esc(sig):''));
         } else {
-          // Multi-step titration — the Scripts section below already shows the full
-          // day-by-day schedule, so just print the med name and any unique clinical notes.
-          h+=p('<strong>'+esc(nm)+'</strong> <span style="color:#555;font-size:.9em">— see schedule below.</span>');
-          var seen={},notes=[];
-          m.steps.forEach(function(st){
-            var n=(st.note||'').trim();
-            if(n&&!seen[n]){seen[n]=true;notes.push(n);}
-          });
-          if(notes.length) h+=p('<em style="color:#555">'+notes.map(esc).join(' · ')+'</em>');
+          // Multi-step titration — show natural-language day-by-day schedule.
+          h+=p('<strong>'+esc(nm)+'</strong>');
+          var sched=buildMedSchedule(m);
+          if(sched.length) h+=list(sched);
         }
       });
     }
