@@ -5626,13 +5626,56 @@ function _refTitCard(def, proto){
     var dosing=_refStepDosing(st,def);
     rowsHtml+='<tr><td style="white-space:nowrap">'+esc(dur)+'</td><td style="min-width:220px">'+esc(dosing)+'</td></tr>';
   });
-  var noteHtml=lastNote?'<div style="font-style:italic;color:#1f2937;font-size:.75rem;padding:4px 12px 8px">'+esc(lastNote)+'</div>':'';
+  var noteHtml=lastNote?'<div style="font-style:italic;color:#1f2937;font-size:.75rem;padding:4px 12px 4px">'+esc(lastNote)+'</div>':'';
+  var copyBtnHtml='<div style="padding:6px 10px 8px;display:flex;justify-content:flex-end"><button type="button" onclick="_copyTitProtocol(this,\''+key+'\',\''+proto.key+'\')" style="font-size:.7rem;background:transparent;color:'+color+';border:1px solid '+color+'66;border-radius:4px;padding:3px 10px;cursor:pointer;font-weight:600">Copy</button></div>';
   return '<div class="tit-pg-card" style="border-color:'+color+'33;background:'+color+'0d">'
     +'<div class="tit-pg-head" style="background:'+color+'">'+esc(heading)+'</div>'
     +(scriptsLine?'<div style="background:'+color+'1a;color:#0f172a;padding:6px 12px;font-size:.78rem;border-bottom:1px solid '+color+'33"><strong style="text-transform:uppercase;letter-spacing:.04em;font-size:.7rem;color:'+color+'">Scripts:</strong> '+esc(scriptsLine)+'</div>':'')
     +'<table class="tit-pg-table">'+rowsHtml+'</table>'
     +noteHtml
+    +copyBtnHtml
     +'</div>';
+}
+function _copyTextWithFeedback(btn, text){
+  var orig=btn.textContent;
+  function done(){btn.textContent='✓ Copied';setTimeout(function(){btn.textContent=orig;},1500);}
+  function fb(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done,function(){fb();done();});
+  } else {fb();done();}
+}
+function _copyTitProtocol(btn, key, protoKey){
+  var def=TIT_MEDS[key]; if(!def)return;
+  var protos=getProtocols(key);
+  var proto=protos.filter(function(p){return p.key===protoKey;})[0];
+  if(!proto)return;
+  var heading=def.name+(proto.label&&proto.label!=='Standard'?' — '+proto.label:'');
+  var scriptsLine=_refScriptsLine(def,proto);
+  var lastNote='';
+  proto.steps.forEach(function(st){if(st.note&&st.note.trim())lastNote=st.note.trim();});
+  var lines=[heading];
+  if(scriptsLine)lines.push('Scripts: '+scriptsLine);
+  lines.push('');
+  proto.steps.forEach(function(st){
+    var dur=st.ongoing?'Ongoing':(st.dur?st.dur+' '+st.unit:'');
+    var dosing=_refStepDosing(st,def);
+    lines.push((dur?dur+' — ':'')+dosing);
+  });
+  if(lastNote){lines.push('');lines.push(lastNote);}
+  _copyTextWithFeedback(btn, lines.join('\n'));
+}
+function _copyHOSection(btn, id){
+  var el=document.getElementById(id); if(!el)return;
+  var text=(el.innerText||el.textContent||'').replace(/\n{3,}/g,'\n\n').trim();
+  _copyTextWithFeedback(btn, text);
+}
+function _copyHOFull(btn){
+  var l=document.getElementById('ho-letter-content');
+  var g=document.getElementById('ho-guide-content');
+  var lt=l?(l.innerText||l.textContent||''):'';
+  var gt=g?(g.innerText||g.textContent||''):'';
+  var text=(lt+'\n\n'+gt).replace(/\n{3,}/g,'\n\n').trim();
+  _copyTextWithFeedback(btn, text);
 }
 function _mphConversionTable(){
   return '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin-bottom:14px">'
@@ -5719,7 +5762,7 @@ function renderHandoverReference(){
   html+='<p style="font-size:13px;line-height:1.6;color:#1f2937">Each Australian state has its own rules — the prescribing-guide section below covers all of them, plus practical guidance for managing common issues. GPs see far more ADHD patients than private psychiatrists once you add up the patients they refer <em>and</em> the patients they manage themselves. Empowering the GP helps everybody.</p>';
   html+='<p style="font-size:13px;line-height:1.6;color:#1f2937;margin-bottom:14px"><strong>Handover is not discharge.</strong> Handing over care means the GP continues prescribing, but the patient stays on your books and can be re-referred at any time. Discharging means ending the therapeutic relationship. In day-to-day practice these can look the same, but the patient&rsquo;s availability to come back to you is very different.</p>';
   html+='<details class="pg-details" open><summary>GP Handover Letter (template)</summary><div class="pg-content"><p style="font-size:12px;color:#64748b;margin-bottom:8px">Below is the template the tool generates as part of the Patient Document. Fields auto-populate from the active session — names, doses, comorbidities, monitoring requirements.</p>';
-  html+='<div style="background:#fff;border:1px solid #e2e6ed;border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.55;color:#1f2937">';
+  html+='<div id="ho-letter-content" style="background:#fff;border:1px solid #e2e6ed;border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.55;color:#1f2937">';
   html+='<p><strong>Re: [Patient Name]</strong></p>';
   html+='<p>Thank you for your ongoing care of <strong>[Patient]</strong>. I am writing to confirm their diagnosis, current treatment, and to provide my written specialist recommendation supporting you as the ongoing prescriber of their stimulant medication, in accordance with your state or territory prescribing framework.</p>';
   html+='<p><strong>Diagnosis:</strong> [Patient] meets DSM-5-TR criteria for [Diagnosis], established following a comprehensive psychiatric assessment.</p>';
@@ -5727,9 +5770,14 @@ function renderHandoverReference(){
   html+='<p><strong>Specialist recommendation:</strong> I support [Dr GP] taking over ongoing prescribing under the applicable state framework. This letter confirms specialist diagnosis, initiation and stabilisation, and serves as the written specialist recommendation required for any state authority, permit, notification, or approval.</p>';
   html+='<p><strong>Recommended monitoring:</strong> therapeutic benefit, adherence, adverse effects, mental state, substance use risk, BP/HR/weight at least 6&ndash;12 monthly, ECG as clinically indicated.</p>';
   html+='<p style="font-size:12px;color:#64748b;font-style:italic">The full letter (auto-populated with the patient&rsquo;s details) is generated when the &ldquo;+ GP handover letter&rdquo; toggle is enabled in the Patient Document section of the Letters tab.</p>';
-  html+='</div></div></details>';
+  html+='</div>';
+  html+='<div style="margin-top:8px;display:flex;justify-content:flex-end"><button type="button" onclick="_copyHOSection(this,\'ho-letter-content\')" style="font-size:.75rem;background:#1e3a5f;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;font-weight:600">Copy letter</button></div>';
+  html+='</div></details>';
   // GP prescribing guide content from buildGPGuide()
-  html+='<details class="pg-details"><summary>State-by-state prescribing guide + side-effect & insomnia management</summary><div class="pg-content">'+buildGPGuide()+'</div></details>';
+  html+='<details class="pg-details"><summary>State-by-state prescribing guide + side-effect & insomnia management</summary><div class="pg-content"><div id="ho-guide-content">'+buildGPGuide()+'</div>';
+  html+='<div style="margin-top:8px;display:flex;justify-content:flex-end"><button type="button" onclick="_copyHOSection(this,\'ho-guide-content\')" style="font-size:.75rem;background:#1e3a5f;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;font-weight:600">Copy guide</button></div>';
+  html+='</div></details>';
+  html+='<div style="margin-top:14px;padding:10px 12px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:#475569">Copy the letter and prescribing guide together</span><button type="button" onclick="_copyHOFull(this)" style="font-size:.8rem;background:#1e3a5f;color:#fff;border:none;border-radius:4px;padding:6px 14px;cursor:pointer;font-weight:600">Copy letter + guide</button></div>';
   el.innerHTML=html;
 }
 
