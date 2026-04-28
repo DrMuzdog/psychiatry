@@ -2280,16 +2280,16 @@ function renderTitStep(m,st,si,mi){
 }
 
 var MED_COLORS={
-  dex:'#1d4ed8',         // blue-700
-  ritalinIR:'#15803d',   // green-700
-  ritalinLA:'#14532d',   // green-900
-  concerta:'#0369a1',    // sky-700
-  vyvanse:'#6d28d9',     // violet-700
-  strattera:'#c2410c',   // orange-700
-  intuniv:'#0f766e',     // teal-700
-  catnanight:'#334155',  // slate-700
-  catnaday:'#334155',    // slate-700
-  other:'#374151'
+  dex:'#1e3a8a',         // blue-900
+  ritalinIR:'#14532d',   // green-900
+  ritalinLA:'#052e16',   // green-950
+  concerta:'#0c4a6e',    // sky-900
+  vyvanse:'#4c1d95',     // violet-900
+  strattera:'#7c2d12',   // orange-900
+  intuniv:'#134e4a',     // teal-900
+  catnanight:'#0f172a',  // slate-950
+  catnaday:'#0f172a',    // slate-950
+  other:'#111827'
 };
 function renderTitMedBlock(m,mi){
   var steps=m.steps.map(function(st,si){return renderTitStep(m,st,si,mi);}).join('');
@@ -5626,7 +5626,7 @@ function _refTitCard(def, proto){
     var dosing=_refStepDosing(st,def);
     rowsHtml+='<tr><td style="white-space:nowrap">'+esc(dur)+'</td><td style="min-width:220px">'+esc(dosing)+'</td></tr>';
   });
-  var noteHtml=lastNote?'<div style="font-style:italic;color:#555;font-size:.75rem;padding:4px 12px 8px">'+esc(lastNote)+'</div>':'';
+  var noteHtml=lastNote?'<div style="font-style:italic;color:#1f2937;font-size:.75rem;padding:4px 12px 8px">'+esc(lastNote)+'</div>':'';
   return '<div class="tit-pg-card" style="border-color:'+color+'33;background:'+color+'0d">'
     +'<div class="tit-pg-head" style="background:'+color+'">'+esc(heading)+'</div>'
     +(scriptsLine?'<div style="background:'+color+'1a;color:#0f172a;padding:6px 12px;font-size:.78rem;border-bottom:1px solid '+color+'33"><strong style="text-transform:uppercase;letter-spacing:.04em;font-size:.7rem;color:'+color+'">Scripts:</strong> '+esc(scriptsLine)+'</div>':'')
