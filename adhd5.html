@@ -527,7 +527,7 @@ select.inp{appearance:none}
       <option value="">MBS item —</option>
       <optgroup label="Telehealth — GP management plan">
         <option value="92435">92435 — GP mgmt plan, video — $455.60</option>
-        <option value="92436">92436 — GP mgmt plan follow-up, video — $227.80</option>
+        <option value="92436">92436 — GP mgmt plan follow-up, video — $284.80</option>
       </optgroup>
       <optgroup label="Telehealth — Initial">
         <option value="92437">92437 — Initial, ongoing reviews, video (296 equiv) — $262.10</option>
@@ -562,7 +562,7 @@ select.inp{appearance:none}
       </optgroup>
       <optgroup label="In-person — GP management plan">
         <option value="291">291 — GP mgmt plan, in-person — $455.60</option>
-        <option value="293">293 — GP mgmt plan follow-up, in-person — $227.80</option>
+        <option value="293">293 — GP mgmt plan follow-up, in-person — $284.80</option>
       </optgroup>
       <optgroup label="In-person — Initial">
         <option value="296">296 — Initial, ongoing reviews, rooms — $262.10</option>
@@ -2280,15 +2280,15 @@ function renderTitStep(m,st,si,mi){
 }
 
 var MED_COLORS={
-  dex:'#2563eb',         // blue
-  ritalinIR:'#16a34a',   // green
-  ritalinLA:'#14532d',   // dark green
-  concerta:'#0ea5e9',    // light blue / sky
-  vyvanse:'#7c3aed',     // purple
-  strattera:'#ea580c',   // orange (atomoxetine)
-  intuniv:'#0d9488',     // teal (guanfacine)
-  catnanight:'#475569',  // grey (clonidine)
-  catnaday:'#475569',    // grey (clonidine)
+  dex:'#1d4ed8',         // blue-700
+  ritalinIR:'#15803d',   // green-700
+  ritalinLA:'#14532d',   // green-900
+  concerta:'#0369a1',    // sky-700
+  vyvanse:'#6d28d9',     // violet-700
+  strattera:'#c2410c',   // orange-700
+  intuniv:'#0f766e',     // teal-700
+  catnanight:'#334155',  // slate-700
+  catnaday:'#334155',    // slate-700
   other:'#374151'
 };
 function renderTitMedBlock(m,mi){
@@ -5618,18 +5618,20 @@ function _refTitCard(def, proto){
   var color=(typeof MED_COLORS!=='undefined'&&MED_COLORS[key])||'#1e3a5f';
   var heading=def.name+(proto.label&&proto.label!=='Standard'?' — '+proto.label:'');
   var scriptsLine=_refScriptsLine(def,proto);
-  var rowsHtml='<tr><th style="background:'+color+'">Phase</th><th style="background:'+color+'">Duration</th><th style="background:'+color+'">Dosing</th><th style="background:'+color+'">Note</th></tr>';
+  var lastNote='';
+  proto.steps.forEach(function(st){if(st.note&&st.note.trim())lastNote=st.note.trim();});
+  var rowsHtml='<tr><th style="background:'+color+'">Duration</th><th style="background:'+color+';min-width:220px">Dosing</th></tr>';
   proto.steps.forEach(function(st,si){
-    var lbl=titAutoLabel(proto.steps,si);
-    var dur=st.ongoing?'—':(st.dur?st.dur+' '+st.unit:'');
+    var dur=st.ongoing?'Ongoing':(st.dur?st.dur+' '+st.unit:'');
     var dosing=_refStepDosing(st,def);
-    var note=st.note?'<td class="tit-pg-note-cell">'+esc(st.note)+'</td>':'<td></td>';
-    rowsHtml+='<tr><td class="tit-pg-phase" style="color:'+color+'">'+esc(lbl)+'</td><td>'+esc(dur)+'</td><td>'+esc(dosing)+'</td>'+note+'</tr>';
+    rowsHtml+='<tr><td style="white-space:nowrap">'+esc(dur)+'</td><td style="min-width:220px">'+esc(dosing)+'</td></tr>';
   });
+  var noteHtml=lastNote?'<div style="font-style:italic;color:#555;font-size:.75rem;padding:4px 12px 8px">'+esc(lastNote)+'</div>':'';
   return '<div class="tit-pg-card" style="border-color:'+color+'33;background:'+color+'0d">'
     +'<div class="tit-pg-head" style="background:'+color+'">'+esc(heading)+'</div>'
     +(scriptsLine?'<div style="background:'+color+'1a;color:#0f172a;padding:6px 12px;font-size:.78rem;border-bottom:1px solid '+color+'33"><strong style="text-transform:uppercase;letter-spacing:.04em;font-size:.7rem;color:'+color+'">Scripts:</strong> '+esc(scriptsLine)+'</div>':'')
     +'<table class="tit-pg-table">'+rowsHtml+'</table>'
+    +noteHtml
     +'</div>';
 }
 function _mphConversionTable(){
