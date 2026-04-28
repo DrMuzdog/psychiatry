@@ -1855,8 +1855,16 @@ var titMeds=[];
 var titCurTab='rich';
 
 // ─── UTILITY ──────────────────────────────────────────────────────────────────
-function save(){try{localStorage.setItem('adhd_drname',(document.getElementById('drName')||{}).value||'');}catch(e){}}
-function loadSaved(){try{var dr=localStorage.getItem('adhd_drname')||'';if(dr){var el=document.getElementById('drName');if(el)el.value=dr;}}catch(e){}}
+function save(){try{
+  localStorage.setItem('adhd_drname',(document.getElementById('drName')||{}).value||'');
+  localStorage.setItem('adhd_drquals',(document.getElementById('drQuals')||{}).value||'');
+}catch(e){}}
+function loadSaved(){try{
+  var dr=localStorage.getItem('adhd_drname')||'';
+  if(dr){var el=document.getElementById('drName');if(el)el.value=dr;}
+  var dq=localStorage.getItem('adhd_drquals')||'';
+  if(dq){var eq=document.getElementById('drQuals');if(eq)eq.value=dq;}
+}catch(e){}}
 function $(id){return document.getElementById(id);}
 function f(id){var el=document.getElementById(id);return el?(el.value||'').trim():'';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
