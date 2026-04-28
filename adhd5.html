@@ -3937,13 +3937,15 @@ function buildFullReportFollowUp(rt){
           var sig=st.doses.length?formatStepSig(m,st):'';
           h+=p('<strong>'+esc(nm)+(total?' ('+total+unit+')':'')+'</strong>'+(sig?': '+esc(sig):''));
         } else {
-          h+=p('<strong>'+esc(nm)+'</strong>');
-          var stepItems=m.steps.map(function(st,si){
-            var lbl=titAutoLabel(m.steps,si);
-            var parts=st.doses.map(function(d){return esc(d.t)+': '+esc(titGetDoseDisplay(d));}).join(', ');
-            return '<strong>'+esc(lbl)+':</strong> '+(parts||'<em>no dose entered</em>')+(st.note?' <em>['+esc(st.note)+']</em>':'');
+          // Multi-step titration — the Scripts section below already shows the full
+          // day-by-day schedule, so just print the med name and any unique clinical notes.
+          h+=p('<strong>'+esc(nm)+'</strong> <span style="color:#555;font-size:.9em">— see schedule below.</span>');
+          var seen={},notes=[];
+          m.steps.forEach(function(st){
+            var n=(st.note||'').trim();
+            if(n&&!seen[n]){seen[n]=true;notes.push(n);}
           });
-          if(stepItems.length) h+=list(stepItems);
+          if(notes.length) h+=p('<em style="color:#555">'+notes.map(esc).join(' · ')+'</em>');
         }
       });
     }
@@ -4191,13 +4193,15 @@ function buildFullReport(){
           var sig=st.doses.length?formatStepSig(m,st):'';
           h+=p('<strong>'+esc(nm)+(total?' ('+total+unit+')':'')+'</strong>'+(sig?': '+esc(sig):''));
         } else {
-          h+=p('<strong>'+esc(nm)+'</strong>');
-          var stepItems=m.steps.map(function(st,si){
-            var lbl=titAutoLabel(m.steps,si);
-            var parts=st.doses.map(function(d){return esc(d.t)+': '+esc(titGetDoseDisplay(d));}).join(', ');
-            return '<strong>'+esc(lbl)+':</strong> '+(parts||'<em>no dose entered</em>')+(st.note?' <em>['+esc(st.note)+']</em>':'');
+          // Multi-step titration — the Scripts section below already shows the full
+          // day-by-day schedule, so just print the med name and any unique clinical notes.
+          h+=p('<strong>'+esc(nm)+'</strong> <span style="color:#555;font-size:.9em">— see schedule below.</span>');
+          var seen={},notes=[];
+          m.steps.forEach(function(st){
+            var n=(st.note||'').trim();
+            if(n&&!seen[n]){seen[n]=true;notes.push(n);}
           });
-          if(stepItems.length) h+=list(stepItems);
+          if(notes.length) h+=p('<em style="color:#555">'+notes.map(esc).join(' · ')+'</em>');
         }
       });
     }
