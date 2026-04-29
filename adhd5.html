@@ -1108,7 +1108,7 @@ select.inp{appearance:none}
 
 
 
-<div class="g2-flow">
+<div>
 <div class="card">
     <div class="ch emerald">Medication &amp; Titration Plan</div>
     <div class="cb" style="padding:0">
@@ -1726,16 +1726,16 @@ const REGULAR_REGIMENS={
 // Per-medication script defaults: tabs, repeats (0-5), prescription interval (days)
 // perStrength = generate one script per distinct strength used in titration
 const SCRIPT_DEFAULTS={
-  dex:{tabs:100,repeats:5,interval:20,form:'tab',unit:'mg',fixedStrength:5,scriptName:'Dexamfetamine IR'},
-  ritalinIR:{tabs:100,repeats:5,interval:20,form:'tab',unit:'mg',fixedStrength:10,scriptName:'Methylphenidate IR'},
-  ritalinLA:{tabs:30,repeats:5,interval:20,form:'cap',unit:'mg'},
-  concerta:{tabs:30,repeats:5,interval:20,form:'tab',unit:'mg'},
-  vyvanse:{tabs:30,repeats:5,interval:20,form:'cap',unit:'mg',perStrength:true},
-  intuniv:{tabs:30,repeats:5,interval:20,form:'tab',unit:'mg',perStrength:true},
-  strattera:{tabs:30,repeats:5,interval:20,form:'cap',unit:'mg',perStrength:true},
-  catnanight:{tabs:100,repeats:5,interval:20,form:'tab',unit:'mcg',strengthOpts:[100,150]},
-  catnaday:{tabs:100,repeats:5,interval:20,form:'tab',unit:'mcg',strengthOpts:[100,150]},
-  other:{tabs:30,repeats:5,interval:20,form:'tab',unit:''}
+  dex:{tabs:100,repeats:0,interval:20,form:'tab',unit:'mg',fixedStrength:5,scriptName:'Dexamfetamine IR'},
+  ritalinIR:{tabs:100,repeats:0,interval:20,form:'tab',unit:'mg',fixedStrength:10,scriptName:'Methylphenidate IR'},
+  ritalinLA:{tabs:30,repeats:0,interval:20,form:'cap',unit:'mg'},
+  concerta:{tabs:30,repeats:0,interval:20,form:'tab',unit:'mg'},
+  vyvanse:{tabs:30,repeats:0,interval:20,form:'cap',unit:'mg',perStrength:true},
+  intuniv:{tabs:30,repeats:0,interval:20,form:'tab',unit:'mg',perStrength:true},
+  strattera:{tabs:30,repeats:0,interval:20,form:'cap',unit:'mg',perStrength:true},
+  catnanight:{tabs:100,repeats:0,interval:20,form:'tab',unit:'mcg',strengthOpts:[100,150]},
+  catnaday:{tabs:100,repeats:0,interval:20,form:'tab',unit:'mcg',strengthOpts:[100,150]},
+  other:{tabs:30,repeats:0,interval:20,form:'tab',unit:''}
 };
 
 // Helpers to build dose entries for protocol step lists
@@ -2173,12 +2173,27 @@ function titConfirmAdd(){
   var sel=$('tit-med-picker-sel');if(!sel||!sel.value)return;
   var key=sel.value;
   var def=TIT_MEDS[key];if(!def)return;
-  // Manual add = blank slate (one empty step, no preset titration)
-  var blankStep={label:'Step 1',dur:7,unit:'days',ongoing:false,note:'',doses:[]};
+  // Manual add = blank slate (one step with a default morning dose)
+  var blankStep={label:'Step 1',dur:1,unit:'weeks',ongoing:false,note:'',doses:[]};
+  if(def.strengths&&def.strengths.length){
+    var s=def.strengths[0];
+    var dose={t:'morning',type:'str',s:s,q:1};
+    dose.l=buildDoseLabel({def:def},dose);
+    blankStep.doses.push(dose);
+  } else {
+    blankStep.doses.push({t:'morning',type:'free',l:''});
+  }
   titMeds.push({key:key,def:def,customName:key==='other'?'':def.name,steps:[blankStep]});
   renderTitMeds();
 }
-function titAddStep(mi){var m=titMeds[mi];var last=m.steps[m.steps.length-1];m.steps.push({label:'Next step',dur:7,unit:'days',ongoing:false,note:'',doses:last?JSON.parse(JSON.stringify(last.doses)):[]});renderTitMeds();}
+function titAddStep(mi, si){
+  var m=titMeds[mi];
+  var srcIdx=(typeof si==='number')?si:m.steps.length-1;
+  var src=m.steps[srcIdx];
+  var newStep={label:'Next step',dur:1,unit:'weeks',ongoing:false,note:'',doses:src?JSON.parse(JSON.stringify(src.doses)):[]};
+  m.steps.splice(srcIdx+1,0,newStep);
+  renderTitMeds();
+}
 function titRemoveStep(mi,si){titMeds[mi].steps.splice(si,1);renderTitMeds();}
 function titStepOpt(mi,si,di,dir){var dose=titMeds[mi].steps[si].doses[di];var opts=titMeds[mi].def.doseOpts;if(!opts)return;var idx=opts.findIndex(function(o){return Math.abs(o.q-(dose.q||0))<.01;});var ni=Math.max(0,Math.min(opts.length-1,(idx<0?0:idx)+dir));dose.q=opts[ni].q;dose.l=opts[ni].l;renderTitMeds();}
 function titStepStr(mi,si,di,dir){var dose=titMeds[mi].steps[si].doses[di];var strs=titMeds[mi].def.strengths;if(!strs||!strs.length)return;var idx=strs.indexOf(dose.s||strs[0]);var ni=Math.max(0,Math.min(strs.length-1,(idx<0?0:idx)+dir));var u=titMeds[mi].def.unit||'',fm=titMeds[mi].def.form||'';dose.s=strs[ni];dose.l=strs[ni]+' '+u+' x '+(dose.q||1)+' '+fm;renderTitMeds();}
@@ -2207,6 +2222,7 @@ function migrateDose(m,dose){
 function renderTitDose(m,dose,di,si,mi){
   migrateDose(m,dose);
   var ctrl='';
+  var freeBtn='';
   if(dose.type==='str'){
     var unit=m.def.unit||'mg';
     var form=m.def.form||'tab';
@@ -2230,12 +2246,30 @@ function renderTitDose(m,dose,di,si,mi){
     }
     var totalStr=Math.round((dose.q||0)*(dose.s||0)*100)/100;
     ctrl='<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">'+stepper+strengthCtrl+'<span style="font-size:10px;color:var(--muted)">= '+totalStr+unit+'</span></div>';
+    freeBtn='<button onclick="titDoseToFree('+mi+','+si+','+di+')" title="Custom text (ranges, fractions, etc.)" style="padding:1px 5px;border-radius:4px;font-size:11px;border:1.5px solid #cbd5e1;background:transparent;color:#64748b;cursor:pointer;white-space:nowrap">✎</button>';
   } else {
-    ctrl='<input class="tit-dose-free" type="text" value="'+esc(dose.l||'')+'" placeholder="e.g. half tab (50mcg)" onchange="titMeds['+mi+'].steps['+si+'].doses['+di+'].l=this.value;refreshTitOutputs()">';
+    ctrl='<input class="tit-dose-free" type="text" value="'+esc(dose.l||'')+'" placeholder="e.g. 0.5–1 tab (2.5–5mg) PRN" oninput="titMeds['+mi+'].steps['+si+'].doses['+di+'].l=this.value;refreshTitOutputs()">';
+    freeBtn='<button onclick="titDoseToStr('+mi+','+si+','+di+')" title="Switch back to stepper" style="padding:1px 5px;border-radius:4px;font-size:11px;border:1.5px solid #cbd5e1;background:transparent;color:#64748b;cursor:pointer;white-space:nowrap">↺</button>';
   }
   var prnOn=dose.prn?true:false;
   var prnBtn='<button onclick="titMeds['+mi+'].steps['+si+'].doses['+di+'].prn=!titMeds['+mi+'].steps['+si+'].doses['+di+'].prn;renderTitMeds()" style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;border:1.5px solid '+(prnOn?'#b45309':'#cbd5e1')+';background:'+(prnOn?'#fff7ed':'transparent')+';color:'+(prnOn?'#b45309':'#94a3b8')+';cursor:pointer;white-space:nowrap">PRN</button>';
-  return '<div class="tit-dose-item"><input class="tit-dose-time" type="text" value="'+esc(dose.t||'morning')+'" onchange="titMeds['+mi+'].steps['+si+'].doses['+di+'].t=this.value"><div style="flex:1;min-width:0">'+ctrl+'</div>'+prnBtn+'<button class="tit-dose-rm" onclick="titRemoveDose('+mi+','+si+','+di+')">x</button></div>';
+  return '<div class="tit-dose-item"><input class="tit-dose-time" type="text" value="'+esc(dose.t||'morning')+'" onchange="titMeds['+mi+'].steps['+si+'].doses['+di+'].t=this.value;refreshTitOutputs()"><div style="flex:1;min-width:0">'+ctrl+'</div>'+freeBtn+prnBtn+'<button class="tit-dose-rm" onclick="titRemoveDose('+mi+','+si+','+di+')">x</button></div>';
+}
+function titDoseToFree(mi,si,di){
+  var m=titMeds[mi]; if(!m)return;
+  var d=m.steps[si].doses[di]; if(!d)return;
+  var label=d.l||'';
+  if(d.type==='str')label=buildDoseLabel(m,d);
+  d.type='free'; d.l=label;
+  delete d.q; delete d.s;
+  renderTitMeds();
+}
+function titDoseToStr(mi,si,di){
+  var m=titMeds[mi]; if(!m)return;
+  var d=m.steps[si].doses[di]; if(!d)return;
+  var s=(m.def.strengths&&m.def.strengths[0])||0;
+  d.type='str'; d.s=s; d.q=1; d.l=buildDoseLabel(m,d);
+  renderTitMeds();
 }
 function titChangeQ(mi,si,di,dir){
   var m=titMeds[mi];var dose=m.steps[si].doses[di];
@@ -2261,7 +2295,7 @@ function renderTitStep(m,st,si,mi){
     '<div class="tit-step-content">'+
       '<div class="tit-step-header">'+
         '<span class="tit-step-badge'+(isOngoing?' ongoing':'')+'">'+esc(autoLbl)+'</span>'+
-        '<input class="tit-dur-inp" type="number" min="1" max="365" value="'+(isOngoing?'':st.dur||7)+'" '+(isOngoing?'disabled':'')+' onchange="titMeds['+mi+'].steps['+si+'].dur=parseInt(this.value)||1;renderTitMeds()">'+
+        '<input class="tit-dur-inp" type="number" min="1" max="365" value="'+(isOngoing?'':st.dur||1)+'" '+(isOngoing?'disabled':'')+' oninput="titMeds['+mi+'].steps['+si+'].dur=parseInt(this.value)||1;refreshTitOutputs()">'+
         '<select class="tit-dur-sel" '+(isOngoing?'disabled':'')+' onchange="titMeds['+mi+'].steps['+si+'].unit=this.value;renderTitMeds()">'+
           '<option value="days" '+(st.unit==='days'?'selected':'')+'>days</option>'+
           '<option value="weeks" '+(st.unit==='weeks'?'selected':'')+'>weeks</option>'+
@@ -2273,9 +2307,9 @@ function renderTitStep(m,st,si,mi){
       '<div class="tit-step-foot">'+
         '<select class="tit-time-sel" id="tdsel-'+mi+'-'+si+'" onchange="if(this.value){titAddDose('+mi+','+si+');this.selectedIndex=0;}"><option value="" disabled selected>+ add timing</option>'+tOpts+'</select>'+
         ''+
-        '<button class="tit-add-step" onclick="titAddStep('+mi+')">+ Add step</button>'+
+        '<button class="tit-add-step" onclick="titAddStep('+mi+','+si+')">+ Add step below</button>'+
       '</div>'+
-      '<input class="tit-step-note" type="text" value="'+esc(st.note)+'" placeholder="Step note" onchange="titMeds['+mi+'].steps['+si+'].note=this.value;refreshTitOutputs()">'+
+      '<input class="tit-step-note" type="text" value="'+esc(st.note)+'" placeholder="Step note" oninput="titMeds['+mi+'].steps['+si+'].note=this.value;refreshTitOutputs()">'+
     '</div></div>';
 }
 
@@ -2432,8 +2466,25 @@ function deriveScriptInstructions(m,strength){
   });
   return lines.join('\n');
 }
+var SCRIPT_REPEATS_PREF=(function(){try{return JSON.parse(localStorage.getItem('scriptRepeatsPref')||'{}');}catch(e){return {};}})();
+function _rememberRepeats(key,val){
+  if(val==null||isNaN(val))return;
+  SCRIPT_REPEATS_PREF[key]=val;
+  try{localStorage.setItem('scriptRepeatsPref',JSON.stringify(SCRIPT_REPEATS_PREF));}catch(e){}
+}
+function _defaultRepeats(key){
+  if(SCRIPT_REPEATS_PREF[key]!=null)return SCRIPT_REPEATS_PREF[key];
+  var def=SCRIPT_DEFAULTS[key]||SCRIPT_DEFAULTS.other;
+  return def.repeats!=null?def.repeats:0;
+}
+function refreshAutoScriptDoses(m){
+  if(!m||!m.scripts)return;
+  m.scripts.forEach(function(s){
+    if(!s._manualDose){s.dose=deriveScriptInstructions(m,s.strength);}
+  });
+}
 function ensureScripts(m){
-  if(m.scripts&&m.scripts.length)return;
+  if(m.scripts&&m.scripts.length){refreshAutoScriptDoses(m);return;}
   var def=SCRIPT_DEFAULTS[m.key]||SCRIPT_DEFAULTS.other;
   // If the active protocol provides per-strength script overrides, honour them
   var protoOverride=null;
@@ -2455,19 +2506,22 @@ function ensureScripts(m){
     }
     return scriptObj;
   }
+  var defRep=_defaultRepeats(m.key);
   if(def.perStrength){
     var used=getUsedStrengths(m);
     if(!used.length)used=[m.def.strengths&&m.def.strengths[0]||null];
-    m.scripts=used.map(function(s){return applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true});});
+    m.scripts=used.map(function(s){return applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:defRep,interval:def.interval,escript:true});});
   } else {
     var s=getDefaultStrength(m);
-    m.scripts=[applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true})];
+    m.scripts=[applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:defRep,interval:def.interval,escript:true})];
   }
 }
 function setScript(mi,si,key,val){
   var s=titMeds[mi].scripts[si];
   if(key==='tabs'||key==='interval'||key==='repeats')val=parseInt(val);
-  if(key==='strength'){s.strength=isNaN(parseFloat(val))?val:parseFloat(val);s.dose=deriveScriptInstructions(titMeds[mi],s.strength);renderScripts();return;}
+  if(key==='strength'){s.strength=isNaN(parseFloat(val))?val:parseFloat(val);if(!s._manualDose)s.dose=deriveScriptInstructions(titMeds[mi],s.strength);renderScripts();return;}
+  if(key==='dose'){s._manualDose=true;}
+  if(key==='repeats')_rememberRepeats(titMeds[mi].key,val);
   s[key]=val;
   refreshTitOutputs();
 }
@@ -2475,12 +2529,12 @@ function addScript(mi){
   var m=titMeds[mi];ensureScripts(m);
   var def=SCRIPT_DEFAULTS[m.key]||SCRIPT_DEFAULTS.other;
   var s=getDefaultStrength(m);
-  m.scripts.push({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true});
+  m.scripts.push({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:_defaultRepeats(m.key),interval:def.interval,escript:true});
   renderScripts();
 }
 function removeScript(mi,si){
   titMeds[mi].scripts.splice(si,1);
-  if(!titMeds[mi].scripts.length){var def=SCRIPT_DEFAULTS[titMeds[mi].key]||SCRIPT_DEFAULTS.other;var s=getDefaultStrength(titMeds[mi]);titMeds[mi].scripts.push({strength:s,dose:deriveScriptInstructions(titMeds[mi],s),tabs:def.tabs,repeats:def.repeats,interval:def.interval,escript:true});}
+  if(!titMeds[mi].scripts.length){var def=SCRIPT_DEFAULTS[titMeds[mi].key]||SCRIPT_DEFAULTS.other;var s=getDefaultStrength(titMeds[mi]);titMeds[mi].scripts.push({strength:s,dose:deriveScriptInstructions(titMeds[mi],s),tabs:def.tabs,repeats:_defaultRepeats(titMeds[mi].key),interval:def.interval,escript:true});}
   renderScripts();
 }
 function renderScriptRow(m,mi,s,si){
@@ -2503,7 +2557,7 @@ function renderScriptRow(m,mi,s,si){
     +'<span class="script-lbl">Interval</span><input class="script-inp" type="number" min="1" value="'+(s.interval||'')+'" onchange="setScript('+mi+','+si+',\'interval\',this.value)" style="width:54px"><span class="script-lbl-suf">d</span>'
     +'<label class="script-escript"><input type="checkbox" '+(s.escript?'checked':'')+' onchange="setScript('+mi+','+si+',\'escript\',this.checked)"> eScript</label>'
     +'<button class="script-rm" onclick="removeScript('+mi+','+si+')" title="Remove this script">×</button>'
-    +'<div class="script-dose-row"><textarea class="script-inp script-dose" rows="'+Math.min(6,Math.max(1,(s.dose||'').split(/\n/).length))+'" placeholder="e.g. 1 cap in the morning" onchange="setScript('+mi+','+si+',\'dose\',this.value)">'+esc(s.dose||'')+'</textarea></div>'
+    +'<div class="script-dose-row"><textarea class="script-inp script-dose" rows="'+Math.min(6,Math.max(1,(s.dose||'').split(/\n/).length))+'" placeholder="e.g. 1 cap in the morning" oninput="setScript('+mi+','+si+',\'dose\',this.value)">'+esc(s.dose||'')+'</textarea></div>'
     +'<div class="script-actions">'
       +'<button class="script-copy-btn" onclick="copyScriptInstructions('+mi+','+si+',this)" title="Copy just the directions for pasting into eScript">Copy instructions</button>'
       +'<button class="script-copy-btn" onclick="copyScriptFull('+mi+','+si+',this)" title="Copy the full script line">Copy full script</button>'
@@ -2812,8 +2866,8 @@ function dlTitDoc(){
   var body=titCurTab==='plain'?'<pre style="white-space:pre-wrap;font-family:Courier New;font-size:10pt;">'+pane.textContent+'</pre>':pane.innerHTML;
   var wh='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2cm;}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.4;}table{border-collapse:collapse;width:100%;font-size:9pt;}th,td{border:1pt solid #ccc;padding:3pt 6pt;}</style></head><body>'+body+'</body></html>';
   var pat=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
-  var blob=new Blob(['\ufeff'+wh],{type:'application/msword;charset=utf-8'});
-  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='ADHD_TitrationPlan_'+pat+'.doc';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  var blob=new Blob(['\ufeff'+wh],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'});
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='ADHD_TitrationPlan_'+pat+'.docx';document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
 }
 
@@ -4285,10 +4339,10 @@ function dlReportDocx(){
   var body=buildFullReport();
   var wh='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.2cm}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#000}</style></head><body>'+body+'</body></html>';
   var pat=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
-  var blob=new Blob(['﻿'+wh],{type:'application/msword;charset=utf-8'});
+  var blob=new Blob(['﻿'+wh],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download='ADHD_Report_'+pat+'.doc';
+  a.href=url;a.download='ADHD_Report_'+pat+'.docx';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
 }
@@ -5231,10 +5285,10 @@ function dlDocx(){
   var body = buildDocHtmlBody();
   var wh = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2cm}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.6}h2{font-size:13pt;font-weight:bold;margin:18pt 0 6pt 0}h3{font-size:9pt;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;color:#555;margin:14pt 0 4pt;border-bottom:1pt solid #ccc;padding-bottom:2pt}p{margin:0 0 8pt 0}ul{margin:2pt 0 10pt 18pt}li{margin-bottom:3pt}table{border-collapse:collapse;width:100%;font-size:9pt;margin:4pt 0 14pt 0}th,td{border:1pt solid #ccc;padding:4pt 7pt}th{background:#f3f4f6;font-weight:bold}hr{border:none;border-top:1pt solid #e5e7eb}div[style*="page-break-before"]{page-break-before:always;mso-break-type:page-break}</style></head><body>'+body+'</body></html>';
   var pat = (f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
-  var blob = new Blob(['﻿'+wh],{type:'application/msword;charset=utf-8'});
+  var blob = new Blob(['﻿'+wh],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href=url; a.download='ADHD_'+pat+'.doc';
+  a.href=url; a.download='ADHD_'+pat+'.docx';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
 }
