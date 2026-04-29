@@ -2484,7 +2484,6 @@ function refreshAutoScriptDoses(m){
   });
 }
 function ensureScripts(m){
-  if(m.scripts&&m.scripts.length){refreshAutoScriptDoses(m);return;}
   var def=SCRIPT_DEFAULTS[m.key]||SCRIPT_DEFAULTS.other;
   // If the active protocol provides per-strength script overrides, honour them
   var protoOverride=null;
@@ -2506,15 +2505,32 @@ function ensureScripts(m){
     }
     return scriptObj;
   }
-  var defRep=_defaultRepeats(m.key);
-  if(def.perStrength){
-    var used=getUsedStrengths(m);
-    if(!used.length)used=[m.def.strengths&&m.def.strengths[0]||null];
-    m.scripts=used.map(function(s){return applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:defRep,interval:def.interval,escript:true});});
-  } else {
-    var s=getDefaultStrength(m);
-    m.scripts=[applyOverride({strength:s,dose:deriveScriptInstructions(m,s),tabs:def.tabs,repeats:defRep,interval:def.interval,escript:true})];
+  function makeScript(strength){
+    return applyOverride({strength:strength,dose:deriveScriptInstructions(m,strength),tabs:def.tabs,repeats:_defaultRepeats(m.key),interval:def.interval,escript:true});
   }
+  if(def.perStrength){
+    // For each strength used in titration, ensure at least one script exists.
+    // Never remove or deduplicate — user-added scripts (extra qty, different repeats)
+    // are preserved.
+    var used=getUsedStrengths(m);
+    if(!m.scripts)m.scripts=[];
+    if(!used.length){
+      if(!m.scripts.length){
+        var fb=(m.def.strengths&&m.def.strengths[0])||null;
+        if(fb!=null)m.scripts=[makeScript(fb)];
+      }
+    } else {
+      var hasStrength={};
+      m.scripts.forEach(function(s){if(s.strength!=null)hasStrength[s.strength]=true;});
+      used.forEach(function(str){if(!hasStrength[str])m.scripts.push(makeScript(str));});
+    }
+  } else {
+    if(!m.scripts||!m.scripts.length){
+      var s=getDefaultStrength(m);
+      m.scripts=[makeScript(s)];
+    }
+  }
+  refreshAutoScriptDoses(m);
 }
 function setScript(mi,si,key,val){
   var s=titMeds[mi].scripts[si];
