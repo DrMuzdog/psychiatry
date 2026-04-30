@@ -284,6 +284,12 @@ select.inp{appearance:none}
 .fu-tmpl-btn{padding:6px 5px;border:1.5px solid var(--border);border-radius:7px;background:#fafbfc;color:var(--muted);font:600 11px var(--sans);cursor:pointer;transition:all .13s;text-align:center}
 .fu-tmpl-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-bg)}
 .fu-tmpl-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.fu-q-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.fu-q-lbl{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:#64748b;flex:0 0 70px}
+.fu-q-btn{padding:8px 12px;border-radius:8px;font:600 13px var(--sans);border:1.5px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer;min-height:38px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .12s}
+.fu-q-btn:hover{border-color:var(--primary);color:var(--primary)}
+.fu-q-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.fu-q-btn.fu-q-num{padding:6px 0;width:34px;text-align:center;font-size:13px}
 .fu-chip{padding:5px 10px;border-radius:15px;font:500 11px var(--sans);border:1.5px solid var(--border);background:#fafbfc;color:var(--muted);cursor:pointer;transition:all .12s}
 .fu-chip:hover{border-color:var(--primary);color:var(--primary)}
 .fu-chip.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary);font-weight:700}
@@ -1080,9 +1086,42 @@ select.inp{appearance:none}
         </div>
       </div>
       <div style="padding:0 13px 8px;border-top:1px solid var(--border)">
-        <div class="fl" style="margin-top:8px">Appointments <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--muted)">one per line</span></div>
+        <div class="fl" style="margin-top:8px">Quick add appointment</div>
+        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:9px 10px;display:flex;flex-direction:column;gap:7px">
+          <div class="fu-q-row">
+            <span class="fu-q-lbl">With</span>
+            <button type="button" class="fu-q-btn on" data-q="who" data-v="me" onclick="fuQuickPick(this,'who','me')">Me</button>
+            <button type="button" class="fu-q-btn" data-q="who" data-v="gp" onclick="fuQuickPick(this,'who','gp')">Your GP</button>
+            <button type="button" class="fu-q-btn" data-q="who" data-v="other" onclick="fuQuickPick(this,'who','other')">Other</button>
+            <input id="fuq-other" type="text" placeholder="Custom name" style="display:none;font:13px var(--sans);padding:8px 10px;border:1.5px solid #cbd5e1;border-radius:8px;background:#fff;flex:1 1 140px;min-height:38px" oninput="fuQuickDraft.whoText=this.value;fuQuickPreview()">
+          </div>
+          <div class="fu-q-row">
+            <span class="fu-q-lbl">In</span>
+            <span id="fuq-num-row" style="display:flex;flex-wrap:wrap;gap:4px;flex:1"></span>
+          </div>
+          <div class="fu-q-row">
+            <span class="fu-q-lbl">Unit</span>
+            <button type="button" class="fu-q-btn" data-q="unit" data-v="days" onclick="fuQuickPick(this,'unit','days')">Days</button>
+            <button type="button" class="fu-q-btn on" data-q="unit" data-v="weeks" onclick="fuQuickPick(this,'unit','weeks')">Weeks</button>
+            <button type="button" class="fu-q-btn" data-q="unit" data-v="months" onclick="fuQuickPick(this,'unit','months')">Months</button>
+          </div>
+          <div class="fu-q-row">
+            <span class="fu-q-lbl">Length</span>
+            <button type="button" class="fu-q-btn" data-q="duration" data-v="15" onclick="fuQuickPick(this,'duration',15)">15 min</button>
+            <button type="button" class="fu-q-btn on" data-q="duration" data-v="30" onclick="fuQuickPick(this,'duration',30)">30 min</button>
+            <button type="button" class="fu-q-btn" data-q="duration" data-v="45" onclick="fuQuickPick(this,'duration',45)">45 min</button>
+            <button type="button" class="fu-q-btn" data-q="duration" data-v="60" onclick="fuQuickPick(this,'duration',60)">60 min</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap">
+            <span id="fuq-preview" style="flex:1 1 200px;font:500 12px var(--sans);color:#475569;line-height:1.4"></span>
+            <button type="button" onclick="fuQuickAdd()" style="padding:9px 16px;border-radius:8px;background:var(--primary);color:#fff;border:none;font:700 13px var(--sans);cursor:pointer;min-height:38px">+ Add appointment</button>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 13px 8px;border-top:1px solid var(--border)">
+        <div class="fl" style="margin-top:8px">Appointments <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--muted)">edit / remove</span></div>
         <div id="fu-appt-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:5px"></div>
-        <button onclick="fuAddAppt()" class="abtn" style="font-size:11px;width:100%;border-style:dashed">+ Add appointment</button>
+        <button onclick="fuAddAppt()" class="abtn" style="font-size:11px;width:100%;border-style:dashed">+ Add blank row (advanced)</button>
       </div>
       <div style="padding:0 13px 10px;border-top:1px solid var(--border)">
         <div class="fl" style="margin-top:8px">Patient to arrange / provide</div>
@@ -1847,6 +1886,59 @@ function loadFUTemplate(key, btn) {
 function fuAddAppt(obj) {
   fuAppts.push(obj || {with:'',num:4,unit:'weeks',duration:30}); renderFuAppts();
 }
+
+// ─── QUICK-ADD APPOINTMENT ──────────────────────────────────────────────────
+var fuQuickDraft = {who:'me', whoText:'', num:4, unit:'weeks', duration:30};
+function _fuResolveWho(){
+  if(fuQuickDraft.who==='me') return f('drName') || 'your psychiatrist';
+  if(fuQuickDraft.who==='gp') return f('fu-gp-name') || f('gpName') || 'your GP';
+  return (fuQuickDraft.whoText||'').trim() || 'someone';
+}
+function fuQuickPick(btn, group, val){
+  fuQuickDraft[group] = val;
+  document.querySelectorAll('.fu-q-btn[data-q="'+group+'"]').forEach(function(b){
+    b.classList.toggle('on', b===btn);
+  });
+  if(group==='who'){
+    var inp=$('fuq-other');
+    if(inp){
+      inp.style.display = (val==='other'?'inline-block':'none');
+      if(val==='other') setTimeout(function(){inp.focus();},0);
+    }
+  }
+  fuQuickPreview();
+}
+function fuQuickPickNum(val){
+  fuQuickDraft.num = val;
+  document.querySelectorAll('.fu-q-btn[data-q="num"]').forEach(function(b){
+    b.classList.toggle('on', parseInt(b.getAttribute('data-v'))===val);
+  });
+  fuQuickPreview();
+}
+function fuQuickRenderNumRow(){
+  var row=$('fuq-num-row'); if(!row) return;
+  var html='';
+  for(var n=1;n<=12;n++){
+    html+='<button type="button" class="fu-q-btn fu-q-num'+(n===fuQuickDraft.num?' on':'')+'" data-q="num" data-v="'+n+'" onclick="fuQuickPickNum('+n+')">'+n+'</button>';
+  }
+  row.innerHTML=html;
+}
+function fuQuickPreview(){
+  var p=$('fuq-preview'); if(!p) return;
+  p.textContent='Review with '+_fuResolveWho()+' in '+fuQuickDraft.num+' '+fuQuickDraft.unit+' ('+fuQuickDraft.duration+' min)';
+}
+function fuQuickAdd(){
+  fuAppts.push({with:_fuResolveWho(), num:fuQuickDraft.num, unit:fuQuickDraft.unit, duration:fuQuickDraft.duration});
+  renderFuAppts(); save(); refresh();
+  // Brief visual confirmation
+  var btn=document.querySelector('button[onclick="fuQuickAdd()"]');
+  if(btn){var t=btn.textContent;btn.textContent='✓ Added';setTimeout(function(){btn.textContent=t;},900);}
+}
+function fuQuickInit(){
+  fuQuickRenderNumRow();
+  fuQuickPreview();
+}
+
 function fuRemoveAppt(i) {
   fuAppts.splice(i, 1); renderFuAppts(); save(); refresh();
 }
@@ -5525,7 +5617,7 @@ function init(){
   renderTitMeds();
   calcBMI();
   renderSideFx();initCollapsibleCards();applyReviewType();updateRatProgression();updateRatContras();
-  renderFuAppts();renderFuCustomMon();
+  renderFuAppts();renderFuCustomMon();fuQuickInit();
   var dtEl=$('ptDate');if(dtEl&&!dtEl.value)dtEl.value=new Date().toISOString().slice(0,10);
   refresh();
   initScrollSpy();
