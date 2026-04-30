@@ -25,6 +25,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .pill.red{background:#450a0a;color:#fca5a5}
 .pill.amber{background:#431407;color:#fcd34d}
 .tabs{background:#1e293b;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid #334155;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.tabs.tabs-plan{background:#064e3b;border-bottom:1px solid #065f46;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.tabs.tabs-plan .tab:hover{color:#a7f3d0}
+.tabs.tabs-plan .tab.active{color:#ecfdf5;border-bottom-color:#10b981}
 .sticky-headerbar{position:sticky;top:0;z-index:50;flex-shrink:0}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:10px 15px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;font-family:var(--sans);flex-shrink:0}
@@ -479,6 +482,8 @@ select.inp{appearance:none}
   <button class="tab active" onclick="showTab('history',this)">Psych Hx <span class="tbadge" id="tb-history">--</span></button>
   <button class="tab" onclick="showTab('safety',this)">Medical Hx <span class="tbadge" id="tb-safety">--</span></button>
   <button class="tab" onclick="showTab('alerts',this)">Alerts <span class="tbadge" id="tb-alerts">--</span></button>
+</div>
+<div class="tabs tabs-plan">
   <button class="tab" onclick="showTab('education',this)">Education</button>
   <button class="tab" onclick="showTab('medplan',this)">Med Plan</button>
   <button class="tab" onclick="showTab('followup',this)">Follow-up</button>
