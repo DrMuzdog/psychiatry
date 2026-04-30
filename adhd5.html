@@ -359,21 +359,31 @@ select.inp{appearance:none}
 .tit-ongoing-lbl{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);cursor:pointer}
 .tit-rm-step{background:none;border:none;color:#c8cdd9;font-size:11px;padding:0;cursor:pointer}
 .tit-rm-step:hover{color:var(--red)}
-.tit-dose-rows{display:flex;flex-direction:column;gap:3px}
-.tit-dose-item{display:flex;align-items:center;gap:5px}
-.tit-dose-time{width:62px;border:1px solid var(--border);border-radius:5px;color:var(--muted);padding:3px 5px;font:500 11px var(--sans);background:#fff}
-.tit-stepper{flex:1;display:flex;align-items:center;background:#fff;border:1px solid var(--border);border-radius:5px;overflow:hidden;min-width:0}
-.tit-ds-btn{background:#f3f5f9;border:none;color:#374151;font-size:14px;font-weight:700;width:28px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;line-height:1}
-.tit-ds-btn:hover{background:var(--primary);color:#fff}
-.tit-ds-lbl{flex:1;text-align:center;font:600 11px var(--sans);color:var(--text);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tit-dose-free{flex:1;border:1px solid var(--border);border-radius:5px;color:var(--text);padding:3px 7px;font:11px var(--sans);background:#fff}
-.tit-cap-area{flex:1;display:flex;flex-wrap:wrap;align-items:center;gap:3px;background:#fff;border:1px solid var(--border);border-radius:5px;padding:3px 5px;min-width:0}
-.tit-cap-tag{background:var(--primary);color:#fff;font:700 10px var(--sans);padding:1px 6px;border-radius:8px;display:flex;align-items:center;gap:2px;white-space:nowrap}
-.tit-cap-x{background:none;border:none;color:rgba(255,255,255,.75);font-size:10px;padding:0;cursor:pointer}
-.tit-cap-sel{background:#f3f5f9;border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 4px;font:10px var(--sans)}
-.tit-cap-add{background:var(--primary-bg);border:1px solid #93c5fd;color:#1e40af;border-radius:4px;padding:2px 6px;font:600 10px var(--sans);cursor:pointer}
-.tit-dose-rm{background:none;border:none;color:#c8cdd9;font-size:12px;padding:1px 2px;cursor:pointer}
-.tit-dose-rm:hover{color:var(--red)}
+.tit-dose-rows{display:flex;flex-direction:column;gap:6px}
+.tit-dose-item{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tit-dose-time{flex:0 0 76px;width:76px;border:1px solid var(--border);border-radius:6px;color:#1e293b;padding:6px 8px;font:600 12px var(--sans);background:#fff}
+.tit-dose-ctrl{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;flex-wrap:wrap}
+.tit-stepper{flex:0 0 auto;display:grid;grid-template-columns:36px 44px 36px;background:#fff;border:1px solid #cbd5e1;border-radius:7px;overflow:hidden;align-items:stretch;height:36px}
+.tit-ds-btn{background:#eef2f7;border:none;color:#0f172a;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;padding:0;min-height:36px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tit-ds-btn:hover,.tit-ds-btn:active{background:#1e3a5f;color:#fff}
+.tit-ds-lbl{display:flex;align-items:center;justify-content:center;font:700 16px var(--sans);color:#0f172a;background:#fff;border-left:1px solid #cbd5e1;border-right:1px solid #cbd5e1;padding:0 4px}
+.tit-form-lbl{font:600 12px var(--sans);color:#475569;white-space:nowrap}
+.tit-dose-free{flex:1 1 160px;min-width:0;border:1px solid var(--border);border-radius:6px;color:#0f172a;padding:7px 9px;font:13px var(--sans);background:#fff}
+.tit-cap-sel{background:#fff;border:1px solid #cbd5e1;border-radius:6px;color:#0f172a;padding:7px 8px;font:600 13px var(--sans);height:36px}
+.tit-fixed-strength{background:#1e3a5f;border:1px solid #1e3a5f;border-radius:6px;color:#fff;padding:8px 11px;font:700 12px var(--sans);white-space:nowrap;height:36px;display:inline-flex;align-items:center}
+.tit-dose-actions{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.tit-icon-btn{padding:0;width:30px;height:30px;border-radius:6px;font-size:14px;border:1.5px solid #cbd5e1;background:#fff;color:#475569;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tit-icon-btn:hover,.tit-icon-btn:active{border-color:#1e3a5f;color:#1e3a5f;background:#eef2f7}
+.tit-prn-btn{padding:0 9px;height:30px;border-radius:6px;font:700 11px var(--sans);border:1.5px solid #cbd5e1;background:#fff;color:#94a3b8;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tit-prn-btn.on{border-color:#b45309;background:#fff7ed;color:#b45309}
+.tit-dose-rm{background:none;border:none;color:#94a3b8;font-size:18px;line-height:1;padding:0;width:28px;height:30px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.tit-dose-rm:hover,.tit-dose-rm:active{color:var(--red)}
+.tit-step-total{margin-top:6px;padding:5px 10px;background:#f0f6ff;border:1px dashed #93c5fd;border-radius:6px;font:600 11px var(--sans);color:#1e3a5f;display:inline-block}
+@media(max-width:520px){
+  .tit-dose-time{flex:1 1 100%;width:100%}
+  .tit-dose-ctrl{flex:1 1 100%}
+  .tit-dose-actions{flex:1 1 100%;justify-content:flex-end}
+}
 .tit-step-note{font-size:10px;color:var(--muted);background:transparent;border:none;outline:none;width:100%;margin-top:2px}
 .tit-step-note::placeholder{color:#c0c5d4}
 .tit-step-foot{display:flex;align-items:center;gap:4px;padding:3px 0 0;flex-wrap:wrap}
@@ -2126,7 +2136,9 @@ function titAddDose(mi,si){var sel=$('tdsel-'+mi+'-'+si);if(!sel||!sel.value)ret
 function titRemoveDose(mi,si,di){titMeds[mi].steps[si].doses.splice(di,1);renderTitMeds();}
 
 function migrateDose(m,dose){
-  // Lazy migration of legacy 'opt' / 'cap' / 'free' dose types to unified 'str'
+  // Lazy migration of legacy 'opt' / 'cap' dose types to unified 'str'.
+  // 'free' is intentional (user toggles to it via the ✎ pencil for ranges/fractions)
+  // so we leave it alone.
   if(dose.type==='opt'){
     var fixed=(m.def.strengths&&m.def.strengths[0])||5;
     dose.type='str';dose.s=fixed;dose.q=dose.q||1;
@@ -2135,10 +2147,6 @@ function migrateDose(m,dose){
     dose.type='str';
     dose.s=c[0]||(m.def.strengths&&m.def.strengths[0])||0;
     dose.q=c.filter(function(x){return x===dose.s;}).length||1;
-  } else if(dose.type==='free'&&(m.def.strengths&&m.def.strengths.length)){
-    dose.type='str';
-    dose.s=m.def.strengths[0];
-    dose.q=1;
   }
   if(dose.type==='str')dose.l=buildDoseLabel(m,dose);
 }
@@ -2153,10 +2161,11 @@ function renderTitDose(m,dose,di,si,mi){
     var qIdx=qSteps.indexOf(dose.q);
     if(qIdx<0){var nearest=qSteps[0],bestDiff=Math.abs(dose.q-nearest);qSteps.forEach(function(v){var d=Math.abs(dose.q-v);if(d<bestDiff){bestDiff=d;nearest=v;}});dose.q=nearest;qIdx=qSteps.indexOf(nearest);}
     var stepper='<div class="tit-stepper">'
-      +'<button class="tit-ds-btn" onclick="titChangeQ('+mi+','+si+','+di+',-1)">-</button>'
-      +'<span class="tit-ds-lbl">'+fmtQ(dose.q)+' '+(form+((dose.q===1||dose.q===0.5||dose.q===0.25)?'':'s'))+'</span>'
-      +'<button class="tit-ds-btn" onclick="titChangeQ('+mi+','+si+','+di+',1)">+</button>'
+      +'<button type="button" class="tit-ds-btn" onclick="titChangeQ('+mi+','+si+','+di+',-1)">−</button>'
+      +'<span class="tit-ds-lbl">'+fmtQ(dose.q)+'</span>'
+      +'<button type="button" class="tit-ds-btn" onclick="titChangeQ('+mi+','+si+','+di+',1)">+</button>'
       +'</div>';
+    var formLbl='<span class="tit-form-lbl">'+(form+((dose.q===1||dose.q===0.5||dose.q===0.25)?'':'s'))+'</span>';
     var strengths=m.def.strengths||[];
     var strengthCtrl;
     if(strengths.length>1){
@@ -2167,16 +2176,19 @@ function renderTitDose(m,dose,di,si,mi){
       var fixedStr=strengths[0]||dose.s||0;
       strengthCtrl='<span class="tit-fixed-strength">'+fixedStr+unit+'</span>';
     }
-    var totalStr=Math.round((dose.q||0)*(dose.s||0)*100)/100;
-    ctrl='<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">'+stepper+strengthCtrl+'<span style="font-size:10px;color:var(--muted)">= '+totalStr+unit+'</span></div>';
-    freeBtn='<button onclick="titDoseToFree('+mi+','+si+','+di+')" title="Custom text (ranges, fractions, etc.)" style="padding:1px 5px;border-radius:4px;font-size:11px;border:1.5px solid #cbd5e1;background:transparent;color:#64748b;cursor:pointer;white-space:nowrap">✎</button>';
+    ctrl='<div class="tit-dose-ctrl">'+stepper+formLbl+strengthCtrl+'</div>';
+    freeBtn='<button type="button" class="tit-icon-btn" onclick="titDoseToFree('+mi+','+si+','+di+')" title="Custom text (ranges, fractions, etc.)">✎</button>';
   } else {
     ctrl='<input class="tit-dose-free" type="text" value="'+esc(dose.l||'')+'" placeholder="e.g. 0.5–1 tab (2.5–5mg) PRN" oninput="titMeds['+mi+'].steps['+si+'].doses['+di+'].l=this.value;refreshTitOutputs()">';
-    freeBtn='<button onclick="titDoseToStr('+mi+','+si+','+di+')" title="Switch back to stepper" style="padding:1px 5px;border-radius:4px;font-size:11px;border:1.5px solid #cbd5e1;background:transparent;color:#64748b;cursor:pointer;white-space:nowrap">↺</button>';
+    freeBtn='<button type="button" class="tit-icon-btn" onclick="titDoseToStr('+mi+','+si+','+di+')" title="Switch back to stepper">↺</button>';
   }
   var prnOn=dose.prn?true:false;
-  var prnBtn='<button onclick="titMeds['+mi+'].steps['+si+'].doses['+di+'].prn=!titMeds['+mi+'].steps['+si+'].doses['+di+'].prn;renderTitMeds()" style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;border:1.5px solid '+(prnOn?'#b45309':'#cbd5e1')+';background:'+(prnOn?'#fff7ed':'transparent')+';color:'+(prnOn?'#b45309':'#94a3b8')+';cursor:pointer;white-space:nowrap">PRN</button>';
-  return '<div class="tit-dose-item"><input class="tit-dose-time" type="text" value="'+esc(dose.t||'morning')+'" onchange="titMeds['+mi+'].steps['+si+'].doses['+di+'].t=this.value;refreshTitOutputs()"><div style="flex:1;min-width:0">'+ctrl+'</div>'+freeBtn+prnBtn+'<button class="tit-dose-rm" onclick="titRemoveDose('+mi+','+si+','+di+')">x</button></div>';
+  var prnBtn='<button type="button" class="tit-prn-btn'+(prnOn?' on':'')+'" onclick="titMeds['+mi+'].steps['+si+'].doses['+di+'].prn=!titMeds['+mi+'].steps['+si+'].doses['+di+'].prn;renderTitMeds()">PRN</button>';
+  return '<div class="tit-dose-item">'
+    +'<input class="tit-dose-time" type="text" value="'+esc(dose.t||'morning')+'" onchange="titMeds['+mi+'].steps['+si+'].doses['+di+'].t=this.value;refreshTitOutputs()">'
+    +ctrl
+    +'<div class="tit-dose-actions">'+freeBtn+prnBtn+'<button type="button" class="tit-dose-rm" onclick="titRemoveDose('+mi+','+si+','+di+')">×</button></div>'
+    +'</div>';
 }
 function titDoseToFree(mi,si,di){
   var m=titMeds[mi]; if(!m)return;
@@ -2227,6 +2239,7 @@ function renderTitStep(m,st,si,mi){
         '<button class="tit-rm-step" onclick="titRemoveStep('+mi+','+si+')">x</button>'+
       '</div>'+
       '<div class="tit-dose-rows">'+doses+'</div>'+
+      (st.doses.length>1?'<div class="tit-step-total">Total/day: '+totalDailyDose(m,st)+(m.def.unit||'mg')+'</div>':'')+
       '<div class="tit-step-foot">'+
         '<select class="tit-time-sel" id="tdsel-'+mi+'-'+si+'" onchange="if(this.value){titAddDose('+mi+','+si+');this.selectedIndex=0;}"><option value="" disabled selected>+ add timing</option>'+tOpts+'</select>'+
         ''+
