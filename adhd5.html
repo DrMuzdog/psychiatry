@@ -65,6 +65,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .section-header .sh-badge.ok{background:#14532d;color:#86efac}
 .section-header .sh-badge.warn{background:#78350f;color:#fcd34d}
 .section-header .sh-badge.rd{background:#7f1d1d;color:#fca5a5}
+.section-header.section-divider{background:#475569;border-left:4px solid #94a3b8;font-size:11px;letter-spacing:.18em;color:#cbd5e1;padding:6px 14px;margin-top:24px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:640px){.g2{grid-template-columns:1fr}}
 /* Interleaved left-right flow: odd cards col 1, even cards col 2 */
@@ -477,8 +478,11 @@ select.inp{appearance:none}
 <div class="tabs">
   <button class="tab active" onclick="showTab('history',this)">Psych Hx <span class="tbadge" id="tb-history">--</span></button>
   <button class="tab" onclick="showTab('safety',this)">Medical Hx <span class="tbadge" id="tb-safety">--</span></button>
-  <button class="tab" onclick="showTab('plan',this)">Plan</button>
-  <button class="tab" onclick="showTab('outputs',this)">Letters</button>
+  <button class="tab" onclick="showTab('alerts',this)">Alerts <span class="tbadge" id="tb-alerts">--</span></button>
+  <button class="tab" onclick="showTab('education',this)">Education</button>
+  <button class="tab" onclick="showTab('medplan',this)">Med Plan</button>
+  <button class="tab" onclick="showTab('followup',this)">Follow-up</button>
+  <button class="tab" onclick="showTab('outputs',this)">Reports</button>
 </div>
 </div>
 
@@ -995,121 +999,31 @@ select.inp{appearance:none}
 </div>
 </div>
 
-<!-- PLAN -->
-<div class="section-header" id="sec-plan"><span class="sh-num">3</span>Plan</div>
-<div class="panel active" id="panel-plan">
+<!-- PLAN GROUP DIVIDER -->
+<div class="section-header section-divider">PLAN</div>
+
+<!-- ALERTS -->
+<div class="section-header" id="sec-alerts"><span class="sh-num">3</span>Alerts<span class="sh-badge" id="sh-badge-alerts">--</span></div>
+<div class="panel active" id="panel-alerts">
   <div id="flags-panel"></div>
   <div id="gaps-panel"></div>
+</div>
 
+<!-- EDUCATION -->
+<div class="section-header" id="sec-education"><span class="sh-num">4</span>Education</div>
+<div class="panel active" id="panel-education">
   <div class="card" id="card-pe">
     <div class="ch purple">Psychoeducation &amp; Handout<span id="pe-count" style="font-size:10px;font-weight:600;opacity:0.75;background:rgba(255,255,255,0.15);padding:1px 8px;border-radius:999px;margin-left:8px">0 selected</span></div>
     <div class="cb" style="padding:8px 10px" id="pe-list">
       <!-- rendered by renderPE() -->
     </div>
   </div>
+</div>
 
-  <div class="card" id="card-rationale">
-    <div class="ch indigo">Treatment Rationale</div>
-    <div class="cb" style="padding:0">
-
-      <!-- Decision grid -->
-      <div style="padding:0 13px 8px;border-top:1px solid var(--border)">
-        <div class="fl" style="margin-top:8px">Clinical decision <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--muted)">— tap to select</span></div>
-        <div id="rationale-chips" style="display:flex;flex-direction:column;gap:5px">
-
-          <!-- Row: consent -->
-          <div class="rat-row" id="rat-row-consent">
-            <button class="rat-btn rat-yes" data-group="consent" data-val="yes" onclick="selectRat(this)">Consenting to medication</button>
-            <button class="rat-btn rat-no"  data-group="consent" data-val="no" onclick="selectRat(this)">Not wanting medication</button>
-          </div>
-
-          <!-- Row: cardiac -->
-          <div class="rat-row" id="rat-row-cardiac">
-            <button class="rat-btn rat-yes" data-group="cardiac" data-val="neg" onclick="selectRat(this)">Cardiac screen negative</button>
-            <button class="rat-btn rat-no"  data-group="cardiac" data-val="pos" onclick="selectRat(this)">Cardiac screen positive</button>
-            <button class="rat-btn rat-opt" data-group="cardiac" data-val="cleared" onclick="selectRat(this)">Cleared from cardio</button>
-          </div>
-
-          <!-- Row: medical -->
-          <div class="rat-row" id="rat-row-medical">
-            <button class="rat-btn rat-yes" data-group="medical" data-val="ok" onclick="selectRat(this)">Medical screen sufficient</button>
-            <button class="rat-btn rat-no"  data-group="medical" data-val="outstanding" onclick="selectRat(this)">Outstanding medical requirements</button>
-          </div>
-
-          <!-- Row: breastfeeding / pregnancy -->
-          <div class="rat-row" id="rat-row-bf">
-            <button class="rat-btn rat-opt" data-group="bf" data-val="na" onclick="selectRat(this)">N/A</button>
-            <button class="rat-btn rat-no"  data-group="bf" data-val="pregnant" onclick="selectRat(this)">Breastfeeding</button>
-            <button class="rat-btn rat-no"  data-group="bf" data-val="preg" onclick="selectRat(this)">Pregnant</button>
-          </div>
-
-          <!-- Row: contraindications -->
-          <div class="rat-row" id="rat-row-contras">
-            <button class="rat-btn rat-yes" data-group="contras" data-val="none" onclick="selectRat(this)">Can have stimulants (no contraindications)</button>
-            <button class="rat-btn rat-no"  data-group="contras" data-val="shouldnt" onclick="selectRat(this)">Shouldn't have stimulants (possible issues identified)</button>
-            <button class="rat-btn rat-no"  data-group="contras" data-val="cannot" onclick="selectRat(this)">Cannot have stimulants (second opinion required)</button>
-          </div>
-
-          <!-- Row: line -->
-          <div class="rat-row" id="rat-row-line">
-            <button class="rat-btn rat-yes" data-group="line" data-val="first" onclick="selectRat(this)">First-line — stimulant</button>
-            <button class="rat-btn rat-no"  data-group="line" data-val="second" onclick="selectRat(this)">Second-line — non-stimulant</button>
-            <button class="rat-btn rat-opt" data-group="line" data-val="third" onclick="selectRat(this)">Third-line</button>
-          </div>
-
-          <!-- Row: duration (3-way) -->
-          <div class="rat-row" id="rat-row-duration">
-            <button class="rat-btn rat-opt" data-group="duration" data-val="short" onclick="selectRat(this)">Short-acting preferred</button>
-            <button class="rat-btn rat-opt" data-group="duration" data-val="long" onclick="selectRat(this)">Long-acting preferred</button>
-            <button class="rat-btn rat-opt" data-group="duration" data-val="either" onclick="selectRat(this)">Either acceptable</button>
-          </div>
-
-          <!-- Row: stimulant class (3-way) -->
-          <div class="rat-row" id="rat-row-stimclass">
-            <button class="rat-btn rat-opt" data-group="stimclass" data-val="mph" onclick="selectRat(this)">Methylphenidate</button>
-            <button class="rat-btn rat-opt" data-group="stimclass" data-val="amp" onclick="selectRat(this)">Amphetamine-based</button>
-          </div>
-
-          <!-- Row: non-stimulant class -->
-          <div class="rat-row" id="rat-row-nsclass">
-            <button class="rat-btn rat-opt" data-group="nsclass" data-val="nri" onclick="selectRat(this)">Atomoxetine</button>
-            <button class="rat-btn rat-opt" data-group="nsclass" data-val="guanfacine" onclick="selectRat(this)">Guanfacine</button>
-            <button class="rat-btn rat-opt" data-group="nsclass" data-val="clonidine" onclick="selectRat(this)">Clonidine</button>
-          </div>
-
-          <!-- Row: third-line class -->
-          <div class="rat-row" id="rat-row-tlclass">
-            <button class="rat-btn rat-opt" data-group="tlclass" data-val="bupropion" onclick="selectRat(this)">Bupropion</button>
-            <button class="rat-btn rat-opt" data-group="tlclass" data-val="modafinil" onclick="selectRat(this)">Modafinil</button>
-            <button class="rat-btn rat-opt" data-group="tlclass" data-val="reboxetine" onclick="selectRat(this)">Reboxetine</button>
-            <button class="rat-btn rat-opt" data-group="tlclass" data-val="venlafaxine" onclick="selectRat(this)">Venlafaxine</button>
-            <button class="rat-btn rat-opt" data-group="tlclass" data-val="aripiprazole" onclick="selectRat(this)">Aripiprazole</button>
-            <button class="rat-btn rat-opt" data-group="tlclass" data-val="lamotrigine" onclick="selectRat(this)">Lamotrigine</button>
-          </div>
-
-          <!-- Row: plan -->
-          <div class="rat-row" id="rat-row-plan">
-            <button class="rat-btn rat-yes" data-group="plan" data-val="see_plan" onclick="selectRat(this)">See treatment plan</button>
-            <button class="rat-btn rat-no"  data-group="plan" data-val="deferred" onclick="selectRat(this)">Medication decision deferred</button>
-            <button class="rat-btn rat-opt" data-group="plan" data-val="non_pharm" onclick="selectRat(this)">Non-pharmacotherapy only</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Free text -->
-      <div style="padding:0 13px 10px;border-top:1px solid var(--border)">
-        <label class="fl" style="margin-top:8px">Rationale notes</label>
-        <textarea class="nf" id="rationaleNotes" placeholder="Additional clinical reasoning, algorithm step, considerations..." oninput="save();refresh()" rows="3"></textarea>
-      </div>
-
-    </div>
-  </div>
-
-
-
-<div>
-<div class="card">
+<!-- MED PLAN -->
+<div class="section-header" id="sec-medplan"><span class="sh-num">5</span>Med Plan</div>
+<div class="panel active" id="panel-medplan">
+  <div class="card">
     <div class="ch emerald">Medication &amp; Titration Plan</div>
     <div class="cb" style="padding:0">
       <!-- Protocol Picker -->
@@ -1131,7 +1045,12 @@ select.inp{appearance:none}
       </div>
     </div>
   </div>
-<div class="card">
+</div>
+
+<!-- FOLLOW-UP -->
+<div class="section-header" id="sec-followup"><span class="sh-num">6</span>Follow-up</div>
+<div class="panel active" id="panel-followup">
+  <div class="card">
     <div class="ch teal">Follow-Up Plan</div>
     <div class="cb" style="padding:0">
       <div style="padding:10px 13px 8px">
@@ -1214,10 +1133,9 @@ select.inp{appearance:none}
     </div>
   </div>
 </div>
-</div>
 
-<!-- LETTERS -->
-<div class="section-header" id="sec-outputs"><span class="sh-num">4</span>Letters</div>
+<!-- REPORTS -->
+<div class="section-header" id="sec-outputs"><span class="sh-num">7</span>Reports</div>
 <div class="panel active" id="panel-outputs">
 
   <!-- Script + Heidi (unchanged) -->
@@ -3444,6 +3362,9 @@ function updateBadges(){
   else{setBadge('tb-history','','');setShBadge('sh-badge-history','','');}
   if(medF){setBadge('tb-safety',String(medF),'rd');setShBadge('sh-badge-safety',String(medF),'rd');}
   else{setBadge('tb-safety','','');setShBadge('sh-badge-safety','','');}
+  var totalAlerts=flags.length;
+  if(totalAlerts){setBadge('tb-alerts',String(totalAlerts),'rd');setShBadge('sh-badge-alerts',String(totalAlerts),'rd');}
+  else{setBadge('tb-alerts','','');setShBadge('sh-badge-alerts','','');}
 
   var pf=$('pill-flags'),pg=$('pill-gaps');
   if(pf){pf.textContent=flags.length+' flag'+(flags.length!==1?'s':'');pf.className='pill'+(flags.length?' red':'');}
@@ -3492,7 +3413,6 @@ function buildHeidiFollowUp(rt){
         o+='  '+lbl+': '+parts+(st.note?' ['+st.note+']':'')+'\n';
       });
     });
-    if(f('rationaleNotes'))o+='Rationale: '+f('rationaleNotes')+'\n';
     var sLines=buildScriptLines();
     if(sLines.length){o+='Scripts provided today:\n'+sLines.map(function(l){return '- '+l;}).join('\n')+'\n';}
     o+='\n';
@@ -3619,7 +3539,6 @@ function buildHeidi(){
         o+='  '+lbl+': '+parts+(st.note?' ['+st.note+']':'')+'\n';
       });
     });
-    if(f('rationaleNotes'))o+='Rationale: '+f('rationaleNotes')+'\n';
     var sLines=buildScriptLines();
     if(sLines.length){o+='Scripts provided today:\n'+sLines.map(function(l){return '- '+l;}).join('\n')+'\n';}
   }
@@ -4014,9 +3933,8 @@ function buildFullReportFollowUp(rt){
   }
 
   // Management plan
-  if(titMeds.length||f('rationaleNotes')||f('rxNotes')){
+  if(titMeds.length||f('rxNotes')){
     h+=sec('Management Plan');
-    if(f('rationaleNotes')) h+=p('<strong>Rationale:</strong> '+nl(f('rationaleNotes')));
     if(titMeds.length){
       titMeds.forEach(function(m){
         var nm=m.key==='other'&&m.customName?m.customName:m.def.name;
@@ -4265,9 +4183,8 @@ function buildFullReport(){
   if(f('dxNotes')) h+=p('<strong>Formulation:</strong> '+nl(f('dxNotes')));
 
   // Management plan
-  if(titMeds.length||f('rationaleNotes')||f('rxNotes')){
+  if(titMeds.length||f('rxNotes')){
     h+=sec('Management Plan');
-    if(f('rationaleNotes')) h+=p('<strong>Rationale:</strong> '+nl(f('rationaleNotes')));
     if(titMeds.length){
       titMeds.forEach(function(m){
         var nm=m.key==='other'&&m.customName?m.customName:m.def.name;
@@ -4502,7 +4419,24 @@ function selectRat(btn){
   // Clear the touch/focus state so the button doesn't appear stuck-on
   if(btn.blur)btn.blur();
   var ta=$('rationaleNotes');
-  if(ta){ta.value=buildRationaleFromChips();save();refresh();}
+  if(ta){ta.value=buildRationaleFromChips();if(typeof save==='function')save();}
+}
+function autoFillRationale(){
+  var ta=$('rationaleNotes');
+  if(ta)ta.value=buildRationaleFromChips();
+}
+function _copyRationale(btn){
+  var ta=$('rationaleNotes');
+  var text=(ta&&ta.value.trim())||buildRationaleFromChips();
+  if(!text){
+    var orig=btn.textContent;btn.textContent='Nothing to copy';
+    setTimeout(function(){btn.textContent=orig;},1500);
+    return;
+  }
+  if(typeof _copyTextWithFeedback==='function'){_copyTextWithFeedback(btn,text);return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text);
+  else {var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(t);}
+  var orig2=btn.textContent;btn.textContent='✓ Copied';setTimeout(function(){btn.textContent=orig2;},1500);
 }
 
 function getRatAnswers(){
@@ -5544,7 +5478,7 @@ function showTab(name,btn){
   if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function initScrollSpy(){
-  var sections=['history','safety','plan','outputs'];
+  var sections=['history','safety','alerts','education','medplan','followup','outputs'];
   var els=sections.map(function(n){return document.getElementById('sec-'+n);}).filter(Boolean);
   if(!els.length)return;
   function onScroll(){
@@ -5770,6 +5704,73 @@ function renderTitReference(){
     {label:'Non-stimulants', keys:['strattera','intuniv','catnanight','catnaday']}
   ];
   var html='';
+  // Treatment Rationale builder — collapsible at the top, does not affect any reports
+  html+='<details class="pg-details"><summary>Treatment Rationale builder</summary><div class="pg-content">';
+  html+='<p style="font-size:12px;color:#64748b;margin:0 0 8px">Tap selections below to build a rationale string. Use <strong>Build from selections</strong> to populate the notes box, then <strong>Copy rationale</strong> to copy it for pasting elsewhere.</p>';
+  html+='<div id="rationale-chips" style="display:flex;flex-direction:column;gap:5px">';
+  html+='<div class="rat-row" id="rat-row-consent">'
+    +'<button class="rat-btn rat-yes" data-group="consent" data-val="yes" onclick="selectRat(this)">Consenting to medication</button>'
+    +'<button class="rat-btn rat-no"  data-group="consent" data-val="no" onclick="selectRat(this)">Not wanting medication</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-cardiac">'
+    +'<button class="rat-btn rat-yes" data-group="cardiac" data-val="neg" onclick="selectRat(this)">Cardiac screen negative</button>'
+    +'<button class="rat-btn rat-no"  data-group="cardiac" data-val="pos" onclick="selectRat(this)">Cardiac screen positive</button>'
+    +'<button class="rat-btn rat-opt" data-group="cardiac" data-val="cleared" onclick="selectRat(this)">Cleared from cardio</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-medical">'
+    +'<button class="rat-btn rat-yes" data-group="medical" data-val="ok" onclick="selectRat(this)">Medical screen sufficient</button>'
+    +'<button class="rat-btn rat-no"  data-group="medical" data-val="outstanding" onclick="selectRat(this)">Outstanding medical requirements</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-bf">'
+    +'<button class="rat-btn rat-opt" data-group="bf" data-val="na" onclick="selectRat(this)">N/A</button>'
+    +'<button class="rat-btn rat-no"  data-group="bf" data-val="pregnant" onclick="selectRat(this)">Breastfeeding</button>'
+    +'<button class="rat-btn rat-no"  data-group="bf" data-val="preg" onclick="selectRat(this)">Pregnant</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-contras">'
+    +'<button class="rat-btn rat-yes" data-group="contras" data-val="none" onclick="selectRat(this)">Can have stimulants (no contraindications)</button>'
+    +'<button class="rat-btn rat-no"  data-group="contras" data-val="shouldnt" onclick="selectRat(this)">Shouldn\'t have stimulants (possible issues identified)</button>'
+    +'<button class="rat-btn rat-no"  data-group="contras" data-val="cannot" onclick="selectRat(this)">Cannot have stimulants (second opinion required)</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-line">'
+    +'<button class="rat-btn rat-yes" data-group="line" data-val="first" onclick="selectRat(this)">First-line — stimulant</button>'
+    +'<button class="rat-btn rat-no"  data-group="line" data-val="second" onclick="selectRat(this)">Second-line — non-stimulant</button>'
+    +'<button class="rat-btn rat-opt" data-group="line" data-val="third" onclick="selectRat(this)">Third-line</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-duration">'
+    +'<button class="rat-btn rat-opt" data-group="duration" data-val="short" onclick="selectRat(this)">Short-acting preferred</button>'
+    +'<button class="rat-btn rat-opt" data-group="duration" data-val="long" onclick="selectRat(this)">Long-acting preferred</button>'
+    +'<button class="rat-btn rat-opt" data-group="duration" data-val="either" onclick="selectRat(this)">Either acceptable</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-stimclass">'
+    +'<button class="rat-btn rat-opt" data-group="stimclass" data-val="mph" onclick="selectRat(this)">Methylphenidate</button>'
+    +'<button class="rat-btn rat-opt" data-group="stimclass" data-val="amp" onclick="selectRat(this)">Amphetamine-based</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-nsclass">'
+    +'<button class="rat-btn rat-opt" data-group="nsclass" data-val="nri" onclick="selectRat(this)">Atomoxetine</button>'
+    +'<button class="rat-btn rat-opt" data-group="nsclass" data-val="guanfacine" onclick="selectRat(this)">Guanfacine</button>'
+    +'<button class="rat-btn rat-opt" data-group="nsclass" data-val="clonidine" onclick="selectRat(this)">Clonidine</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-tlclass">'
+    +'<button class="rat-btn rat-opt" data-group="tlclass" data-val="bupropion" onclick="selectRat(this)">Bupropion</button>'
+    +'<button class="rat-btn rat-opt" data-group="tlclass" data-val="modafinil" onclick="selectRat(this)">Modafinil</button>'
+    +'<button class="rat-btn rat-opt" data-group="tlclass" data-val="reboxetine" onclick="selectRat(this)">Reboxetine</button>'
+    +'<button class="rat-btn rat-opt" data-group="tlclass" data-val="venlafaxine" onclick="selectRat(this)">Venlafaxine</button>'
+    +'<button class="rat-btn rat-opt" data-group="tlclass" data-val="aripiprazole" onclick="selectRat(this)">Aripiprazole</button>'
+    +'<button class="rat-btn rat-opt" data-group="tlclass" data-val="lamotrigine" onclick="selectRat(this)">Lamotrigine</button>'
+    +'</div>';
+  html+='<div class="rat-row" id="rat-row-plan">'
+    +'<button class="rat-btn rat-yes" data-group="plan" data-val="see_plan" onclick="selectRat(this)">See treatment plan</button>'
+    +'<button class="rat-btn rat-no"  data-group="plan" data-val="deferred" onclick="selectRat(this)">Medication decision deferred</button>'
+    +'<button class="rat-btn rat-opt" data-group="plan" data-val="non_pharm" onclick="selectRat(this)">Non-pharmacotherapy only</button>'
+    +'</div>';
+  html+='</div>';
+  html+='<label class="fl" style="margin-top:10px;display:block">Rationale notes</label>';
+  html+='<textarea class="nf" id="rationaleNotes" placeholder="Additional clinical reasoning, algorithm step, considerations..." rows="3" style="width:100%;font:13px var(--sans);padding:7px 9px;border:1px solid var(--border);border-radius:6px;background:#fafbfc"></textarea>';
+  html+='<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'
+    +'<button type="button" onclick="autoFillRationale()" style="padding:6px 12px;border-radius:6px;background:#1e3a5f;color:#fff;border:none;font:600 12px var(--sans);cursor:pointer">Build from selections</button>'
+    +'<button type="button" onclick="_copyRationale(this)" style="padding:6px 12px;border-radius:6px;background:transparent;color:#1e3a5f;border:1.5px solid #1e3a5f;font:600 12px var(--sans);cursor:pointer">Copy rationale</button>'
+    +'</div>';
+  html+='</div></details>';
   groups.forEach(function(g){
     html+='<p class="tit-pg-section">'+esc(g.label)+'</p>';
     if(g.label==='Stimulants — Methylphenidate'){
