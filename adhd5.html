@@ -367,31 +367,26 @@ select.inp{appearance:none}
 .tit-ongoing-lbl{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);cursor:pointer}
 .tit-rm-step{background:none;border:none;color:#c8cdd9;font-size:11px;padding:0;cursor:pointer}
 .tit-rm-step:hover{color:var(--red)}
-.tit-dose-rows{display:flex;flex-direction:column;gap:6px}
-.tit-dose-item{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.tit-dose-time{flex:0 0 76px;width:76px;border:1px solid var(--border);border-radius:6px;color:#1e293b;padding:6px 8px;font:600 12px var(--sans);background:#fff}
-.tit-dose-ctrl{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;flex-wrap:wrap}
-.tit-stepper{flex:0 0 auto;display:grid;grid-template-columns:36px 44px 36px;background:#fff;border:1px solid #cbd5e1;border-radius:7px;overflow:hidden;align-items:stretch;height:36px}
-.tit-ds-btn{background:#eef2f7;border:none;color:#0f172a;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;padding:0;min-height:36px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tit-dose-rows{display:flex;flex-direction:column;gap:5px}
+.tit-dose-item{display:flex;align-items:center;gap:4px;flex-wrap:wrap;row-gap:5px}
+.tit-dose-time{flex:0 0 74px;width:74px;border:1px solid var(--border);border-radius:6px;color:#1e293b;padding:0 8px;font:600 12px var(--sans);background:#fff;height:32px;box-sizing:border-box}
+.tit-dose-ctrl{display:flex;align-items:center;gap:4px;flex:1 1 auto;min-width:0;flex-wrap:nowrap}
+.tit-stepper{flex:0 0 auto;display:grid;grid-template-columns:30px 36px 30px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;overflow:hidden;align-items:stretch;height:32px}
+.tit-ds-btn{background:#eef2f7;border:none;color:#0f172a;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;padding:0;min-height:32px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .tit-ds-btn:hover,.tit-ds-btn:active{background:#1e3a5f;color:#fff}
-.tit-ds-lbl{display:flex;align-items:center;justify-content:center;font:700 16px var(--sans);color:#0f172a;background:#fff;border-left:1px solid #cbd5e1;border-right:1px solid #cbd5e1;padding:0 4px}
-.tit-form-lbl{font:600 12px var(--sans);color:#475569;white-space:nowrap}
-.tit-dose-free{flex:1 1 160px;min-width:0;border:1px solid var(--border);border-radius:6px;color:#0f172a;padding:7px 9px;font:13px var(--sans);background:#fff}
-.tit-cap-sel{background:#fff;border:1px solid #cbd5e1;border-radius:6px;color:#0f172a;padding:7px 8px;font:600 13px var(--sans);height:36px}
-.tit-fixed-strength{background:#1e3a5f;border:1px solid #1e3a5f;border-radius:6px;color:#fff;padding:8px 11px;font:700 12px var(--sans);white-space:nowrap;height:36px;display:inline-flex;align-items:center}
-.tit-dose-actions{display:flex;align-items:center;gap:4px;flex:0 0 auto}
-.tit-icon-btn{padding:0;width:30px;height:30px;border-radius:6px;font-size:14px;border:1.5px solid #cbd5e1;background:#fff;color:#475569;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tit-ds-lbl{display:flex;align-items:center;justify-content:center;font:700 14px var(--sans);color:#0f172a;background:#fff;border-left:1px solid #cbd5e1;border-right:1px solid #cbd5e1;padding:0 2px}
+.tit-form-lbl{font:600 11px var(--sans);color:#475569;white-space:nowrap}
+.tit-dose-free{flex:1 1 140px;min-width:0;border:1px solid var(--border);border-radius:6px;color:#0f172a;padding:0 9px;font:12px var(--sans);background:#fff;height:32px;box-sizing:border-box}
+.tit-cap-sel{background:#fff;border:1px solid #cbd5e1;border-radius:6px;color:#0f172a;padding:0 6px;font:600 12px var(--sans);height:32px}
+.tit-fixed-strength{background:#1e3a5f;border:1px solid #1e3a5f;border-radius:6px;color:#fff;padding:0 9px;font:700 11px var(--sans);white-space:nowrap;height:32px;display:inline-flex;align-items:center}
+.tit-dose-actions{display:flex;align-items:center;gap:3px;flex:0 0 auto;margin-left:auto}
+.tit-icon-btn{padding:0;width:28px;height:28px;border-radius:6px;font-size:13px;border:1.5px solid #cbd5e1;background:#fff;color:#475569;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .tit-icon-btn:hover,.tit-icon-btn:active{border-color:#1e3a5f;color:#1e3a5f;background:#eef2f7}
-.tit-prn-btn{padding:0 9px;height:30px;border-radius:6px;font:700 11px var(--sans);border:1.5px solid #cbd5e1;background:#fff;color:#94a3b8;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tit-prn-btn{padding:0 7px;height:28px;border-radius:6px;font:700 10px var(--sans);border:1.5px solid #cbd5e1;background:#fff;color:#94a3b8;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .tit-prn-btn.on{border-color:#b45309;background:#fff7ed;color:#b45309}
-.tit-dose-rm{background:none;border:none;color:#94a3b8;font-size:18px;line-height:1;padding:0;width:28px;height:30px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.tit-dose-rm{background:none;border:none;color:#94a3b8;font-size:16px;line-height:1;padding:0;width:24px;height:28px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 .tit-dose-rm:hover,.tit-dose-rm:active{color:var(--red)}
-.tit-step-total{margin-top:6px;padding:5px 10px;background:#f0f6ff;border:1px dashed #93c5fd;border-radius:6px;font:600 11px var(--sans);color:#1e3a5f;display:inline-block}
-@media(max-width:520px){
-  .tit-dose-time{flex:1 1 100%;width:100%}
-  .tit-dose-ctrl{flex:1 1 100%}
-  .tit-dose-actions{flex:1 1 100%;justify-content:flex-end}
-}
+.tit-step-total{margin-top:6px;padding:4px 9px;background:#f0f6ff;border:1px dashed #93c5fd;border-radius:6px;font:600 11px var(--sans);color:#1e3a5f;display:inline-block}
 .tit-step-note{font-size:10px;color:var(--muted);background:transparent;border:none;outline:none;width:100%;margin-top:2px}
 .tit-step-note::placeholder{color:#c0c5d4}
 .tit-step-foot{display:flex;align-items:center;gap:4px;padding:3px 0 0;flex-wrap:wrap}
@@ -1109,10 +1104,11 @@ select.inp{appearance:none}
           </div>
           <div class="fu-q-row">
             <span class="fu-q-lbl">Length</span>
-            <button type="button" class="fu-q-btn" data-q="duration" data-v="15" onclick="fuQuickPick(this,'duration',15)">15 min</button>
-            <button type="button" class="fu-q-btn on" data-q="duration" data-v="30" onclick="fuQuickPick(this,'duration',30)">30 min</button>
-            <button type="button" class="fu-q-btn" data-q="duration" data-v="45" onclick="fuQuickPick(this,'duration',45)">45 min</button>
-            <button type="button" class="fu-q-btn" data-q="duration" data-v="60" onclick="fuQuickPick(this,'duration',60)">60 min</button>
+            <button type="button" class="fu-q-btn fu-q-num" data-q="duration" data-v="15" onclick="fuQuickPick(this,'duration',15)">15</button>
+            <button type="button" class="fu-q-btn fu-q-num on" data-q="duration" data-v="30" onclick="fuQuickPick(this,'duration',30)">30</button>
+            <button type="button" class="fu-q-btn fu-q-num" data-q="duration" data-v="45" onclick="fuQuickPick(this,'duration',45)">45</button>
+            <button type="button" class="fu-q-btn fu-q-num" data-q="duration" data-v="60" onclick="fuQuickPick(this,'duration',60)">60</button>
+            <span style="font:600 11px var(--sans);color:#64748b">min</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap">
             <span id="fuq-preview" style="flex:1 1 200px;font:500 12px var(--sans);color:#475569;line-height:1.4"></span>
