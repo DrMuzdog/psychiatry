@@ -284,12 +284,14 @@ select.inp{appearance:none}
 .fu-tmpl-btn{padding:6px 5px;border:1.5px solid var(--border);border-radius:7px;background:#fafbfc;color:var(--muted);font:600 11px var(--sans);cursor:pointer;transition:all .13s;text-align:center}
 .fu-tmpl-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-bg)}
 .fu-tmpl-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
-.fu-q-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.fu-q-lbl{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:#64748b;flex:0 0 70px}
-.fu-q-btn{padding:8px 12px;border-radius:8px;font:600 13px var(--sans);border:1.5px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer;min-height:38px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .12s}
+.fu-q-row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.fu-q-lbl{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:#64748b;flex:0 0 56px}
+.fu-q-btn{padding:0 10px;border-radius:7px;font:600 12px var(--sans);border:1.5px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer;height:32px;line-height:1;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .12s;display:inline-flex;align-items:center;justify-content:center}
 .fu-q-btn:hover{border-color:var(--primary);color:var(--primary)}
 .fu-q-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
-.fu-q-btn.fu-q-num{padding:6px 0;width:34px;text-align:center;font-size:13px}
+.fu-q-btn.fu-q-num{padding:0;width:32px}
+.fu-q-add{padding:0 14px;height:32px;border-radius:7px;background:var(--primary);color:#fff;border:none;font:700 12px var(--sans);cursor:pointer;line-height:1;display:inline-flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.fu-q-add:hover{filter:brightness(1.08)}
 .fu-chip{padding:5px 10px;border-radius:15px;font:500 11px var(--sans);border:1.5px solid var(--border);background:#fafbfc;color:var(--muted);cursor:pointer;transition:all .12s}
 .fu-chip:hover{border-color:var(--primary);color:var(--primary)}
 .fu-chip.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary);font-weight:700}
@@ -1093,7 +1095,7 @@ select.inp{appearance:none}
             <button type="button" class="fu-q-btn on" data-q="who" data-v="me" onclick="fuQuickPick(this,'who','me')">Me</button>
             <button type="button" class="fu-q-btn" data-q="who" data-v="gp" onclick="fuQuickPick(this,'who','gp')">Your GP</button>
             <button type="button" class="fu-q-btn" data-q="who" data-v="other" onclick="fuQuickPick(this,'who','other')">Other</button>
-            <input id="fuq-other" type="text" placeholder="Custom name" style="display:none;font:13px var(--sans);padding:8px 10px;border:1.5px solid #cbd5e1;border-radius:8px;background:#fff;flex:1 1 140px;min-height:38px" oninput="fuQuickDraft.whoText=this.value;fuQuickPreview()">
+            <input id="fuq-other" type="text" placeholder="Custom name" style="display:none;font:12px var(--sans);padding:0 9px;border:1.5px solid #cbd5e1;border-radius:7px;background:#fff;flex:1 1 130px;height:32px" oninput="fuQuickDraft.whoText=this.value;fuQuickPreview()">
           </div>
           <div class="fu-q-row">
             <span class="fu-q-lbl">In</span>
@@ -1114,7 +1116,7 @@ select.inp{appearance:none}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap">
             <span id="fuq-preview" style="flex:1 1 200px;font:500 12px var(--sans);color:#475569;line-height:1.4"></span>
-            <button type="button" onclick="fuQuickAdd()" style="padding:9px 16px;border-radius:8px;background:var(--primary);color:#fff;border:none;font:700 13px var(--sans);cursor:pointer;min-height:38px">+ Add appointment</button>
+            <button type="button" class="fu-q-add" onclick="fuQuickAdd()">+ Add</button>
           </div>
         </div>
       </div>
@@ -1931,7 +1933,7 @@ function fuQuickAdd(){
   fuAppts.push({with:_fuResolveWho(), num:fuQuickDraft.num, unit:fuQuickDraft.unit, duration:fuQuickDraft.duration});
   renderFuAppts(); save(); refresh();
   // Brief visual confirmation
-  var btn=document.querySelector('button[onclick="fuQuickAdd()"]');
+  var btn=document.querySelector('.fu-q-add');
   if(btn){var t=btn.textContent;btn.textContent='✓ Added';setTimeout(function(){btn.textContent=t;},900);}
 }
 function fuQuickInit(){
