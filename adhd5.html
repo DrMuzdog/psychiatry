@@ -301,6 +301,14 @@ select.inp{appearance:none}
 .fu-tile.on .fu-tile-box{border-color:var(--green);background:var(--green);color:#fff}
 .fu-tile.fu-tile-warn.on{border-color:#dc2626;background:#fee2e2;color:#991b1b}
 .fu-tile.fu-tile-warn.on .fu-tile-box{border-color:#dc2626;background:#dc2626}
+.ps-tile{background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.ps-tile-label{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#475569;margin:0}
+.ps-tile .rbtns{margin:0;gap:4px}
+.ps-tile .rbtns .rb{padding:5px 10px;font-size:11px}
+.ps-tile .inp{font-size:12px;padding:6px 9px}
+.ps-tile-mode{display:flex;flex-wrap:wrap;gap:4px}
+.ps-tile-mode .rb{font-size:10px;padding:3px 8px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b}
+.ps-tile-mode .rb.ap,.ps-tile-mode .rb.ay,.ps-tile-mode .rb.an{background:var(--primary-bg);border-color:var(--primary);color:var(--primary)}
 @media(max-width:380px){.fu-tile-grid{grid-template-columns:1fr}}
 .fu-chip{padding:5px 10px;border-radius:15px;font:500 11px var(--sans);border:1.5px solid var(--border);background:#fafbfc;color:var(--muted);cursor:pointer;transition:all .12s}
 .fu-chip:hover{border-color:var(--primary);color:var(--primary)}
@@ -709,100 +717,101 @@ select.inp{appearance:none}
 <div class="card" data-initial-only>
     <div class="ch teal">Pre-screening &amp; Collateral</div>
     <div class="cb">
-      <div class="pe-group-label" style="padding:0 0 4px;margin:0">Patient-reported</div>
+      <div class="pe-group-label" style="padding:0 0 6px;margin:0">Patient-reported</div>
       <div class="inner-2col-sm">
-        <div>
-          <div class="fl" style="margin-top:0">Patient ASRS</div>
-          <div class="rbtns" id="asrs-btns" style="margin-bottom:5px;flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">Patient ASRS</div>
+          <div class="rbtns" id="asrs-btns">
             <button class="rb" onclick="toggleScreening('asrs','Positive',this,'ay')">Positive</button>
             <button class="rb" onclick="toggleScreening('asrs','Negative',this,'an')">Negative</button>
             <button class="rb" onclick="toggleScreening('asrs','Not provided',this,'ap')">Not provided</button>
           </div>
-          <div class="rbtns" id="asrs-mode-btns" style="gap:4px;flex-wrap:wrap">
-            <button class="rb" style="font-size:10px;padding:2px 7px" onclick="toggleScreening('asrsMode','Patient completed',this,'ap')">Patient completed</button>
-            <button class="rb" style="font-size:10px;padding:2px 7px" onclick="toggleScreening('asrsMode','Clinician administered',this,'ap')">Clinician administered</button>
+          <div class="rbtns ps-tile-mode" id="asrs-mode-btns">
+            <button class="rb" onclick="toggleScreening('asrsMode','Patient completed',this,'ap')">Patient completed</button>
+            <button class="rb" onclick="toggleScreening('asrsMode','Clinician administered',this,'ap')">Clinician administered</button>
           </div>
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">DIVA-5 outcome</div>
-          <div class="rbtns" id="diva-btns" style="margin-bottom:5px;flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">DIVA-5 outcome</div>
+          <div class="rbtns" id="diva-btns">
             <button class="rb" onclick="toggleScreening('diva','Completed - positive',this,'ay')">Positive</button>
             <button class="rb" onclick="toggleScreening('diva','Completed - negative',this,'an')">Negative</button>
             <button class="rb" onclick="toggleScreening('diva','Not provided',this,'ap')">Not provided</button>
           </div>
-          <div class="rbtns" id="diva-mode-btns" style="gap:4px;flex-wrap:wrap">
-            <button class="rb" style="font-size:10px;padding:2px 7px" onclick="toggleScreening('divaMode','Patient completed',this,'ap')">Patient completed</button>
-            <button class="rb" style="font-size:10px;padding:2px 7px" onclick="toggleScreening('divaMode','Clinician administered',this,'ap')">Clinician administered</button>
+          <div class="rbtns ps-tile-mode" id="diva-mode-btns">
+            <button class="rb" onclick="toggleScreening('divaMode','Patient completed',this,'ap')">Patient completed</button>
+            <button class="rb" onclick="toggleScreening('divaMode','Clinician administered',this,'ap')">Clinician administered</button>
           </div>
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">DIVA-5 symptom count</div>
+        <div class="ps-tile">
+          <div class="ps-tile-label">DIVA-5 symptom count</div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <span style="font-size:12px;color:var(--muted)">Inattention:</span>
+            <span style="font-size:11px;color:var(--muted);font-weight:600">Inattention</span>
             <select class="inp" id="diva-inatt" style="width:60px" onchange="save();refresh()">
               <option value="">--</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
             </select>
-            <span style="font-size:12px;color:var(--muted)">/9 &nbsp; H/I:</span>
+            <span style="font-size:11px;color:var(--muted)">/9</span>
+            <span style="font-size:11px;color:var(--muted);font-weight:600;margin-left:4px">H/I</span>
             <select class="inp" id="diva-hi" style="width:60px" onchange="save();refresh()">
               <option value="">--</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
             </select>
-            <span style="font-size:12px;color:var(--muted)">/9</span>
+            <span style="font-size:11px;color:var(--muted)">/9</span>
           </div>
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">Other screening</div>
-          <input class="inp" id="otherScreening" placeholder="e.g. Conners, CAARS, other tool and outcome..." oninput="save();refresh()">
+        <div class="ps-tile">
+          <div class="ps-tile-label">Other screening</div>
+          <input class="inp" id="otherScreening" placeholder="e.g. Conners, CAARS..." oninput="save();refresh()">
         </div>
       </div>
 
-      <div class="pe-group-label" style="padding:14px 0 4px;margin:0">Collateral</div>
+      <div class="pe-group-label" style="padding:16px 0 6px;margin:0">Collateral</div>
       <div class="inner-2col-sm">
-        <div>
-          <div class="fl" style="margin-top:0">Observer ASRS</div>
-          <div class="rbtns" id="obs-btns" style="flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">Observer ASRS</div>
+          <div class="rbtns" id="obs-btns">
             <button class="rb" onclick="toggleScreening('obs','Supportive',this,'ay')">Supportive</button>
             <button class="rb" onclick="toggleScreening('obs','Not supportive',this,'an')">Not supportive</button>
             <button class="rb" onclick="toggleScreening('obs','Not provided',this,'ap')">Not provided</button>
           </div>
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">GP referral</div>
-          <div class="rbtns" id="gp-referral-btns" style="flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">GP referral</div>
+          <div class="rbtns" id="gp-referral-btns">
             <button class="rb" onclick="setScreening('gpReferral','Supportive',this,'ay')">Supportive</button>
             <button class="rb" onclick="setScreening('gpReferral','Not supportive',this,'an')">Not supportive</button>
             <button class="rb" onclick="setScreening('gpReferral','N/A',this,'ap')">N/A</button>
           </div>
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">School reports</div>
-          <div class="rbtns" id="school-btns" style="margin-bottom:5px;flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">School reports</div>
+          <div class="rbtns" id="school-btns">
             <button class="rb" onclick="setScreening('schoolReports','Supportive',this,'ay')">Supportive</button>
             <button class="rb" onclick="setScreening('schoolReports','Not supportive',this,'an')">Not supportive</button>
             <button class="rb" onclick="setScreening('schoolReports','Not provided',this,'ap')">Not provided</button>
           </div>
           <input class="inp" id="schoolNotes" placeholder="Comments..." oninput="save();refresh()">
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">Psych / neuropsych report</div>
-          <div class="rbtns" id="psych-report-btns" style="margin-bottom:5px;flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">Psych / neuropsych report</div>
+          <div class="rbtns" id="psych-report-btns">
             <button class="rb" onclick="setScreening('psychReport','Supportive',this,'ay')">Supportive</button>
             <button class="rb" onclick="setScreening('psychReport','Not supportive',this,'an')">Not supportive</button>
             <button class="rb" onclick="setScreening('psychReport','Not provided',this,'ap')">Not provided</button>
           </div>
           <input class="inp" id="psychReportNotes" placeholder="Comments..." oninput="save();refresh()">
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">Vanderbilt (parents)</div>
-          <div class="rbtns" id="vanderbilt-parent-btns" style="margin-bottom:5px;flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">Vanderbilt (parents)</div>
+          <div class="rbtns" id="vanderbilt-parent-btns">
             <button class="rb" onclick="setScreening('vanderbiltParent','Positive',this,'ay')">Positive</button>
             <button class="rb" onclick="setScreening('vanderbiltParent','Negative',this,'an')">Negative</button>
             <button class="rb" onclick="setScreening('vanderbiltParent','Not provided',this,'ap')">Not provided</button>
           </div>
           <input class="inp" id="vanderbiltParentNotes" placeholder="Comments..." oninput="save();refresh()">
         </div>
-        <div>
-          <div class="fl" style="margin-top:0">Vanderbilt (teacher)</div>
-          <div class="rbtns" id="vanderbilt-teacher-btns" style="margin-bottom:5px;flex-wrap:wrap;gap:3px">
+        <div class="ps-tile">
+          <div class="ps-tile-label">Vanderbilt (teacher)</div>
+          <div class="rbtns" id="vanderbilt-teacher-btns">
             <button class="rb" onclick="setScreening('vanderbiltTeacher','Positive',this,'ay')">Positive</button>
             <button class="rb" onclick="setScreening('vanderbiltTeacher','Negative',this,'an')">Negative</button>
             <button class="rb" onclick="setScreening('vanderbiltTeacher','Not provided',this,'ap')">Not provided</button>
@@ -811,9 +820,9 @@ select.inp{appearance:none}
         </div>
       </div>
 
-      <div style="margin-top:10px">
-        <div class="fl">Other collateral</div>
-        <textarea class="nf" id="screenNotes" placeholder="Other collateral sources, informant interviews, records..." oninput="save();refresh()" rows="2"></textarea>
+      <div class="ps-tile" style="margin-top:10px">
+        <div class="ps-tile-label">Other collateral</div>
+        <textarea class="nf" id="screenNotes" placeholder="Other collateral sources, informant interviews, records..." oninput="save();refresh()" rows="2" style="margin:0"></textarea>
       </div>
     </div>
   </div>
