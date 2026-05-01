@@ -5653,8 +5653,15 @@ function setActiveTab(name){
     else b.classList.remove('active');
   });
 }
+var _scrollSpyLock=false,_scrollSpyTimer;
 function showTab(name,btn){
   setActiveTab(name);
+  // Suppress scroll-spy until the smooth scroll has settled — without this the
+  // active tab flickers back to the previous section as the page animates past
+  // earlier headers.
+  _scrollSpyLock=true;
+  clearTimeout(_scrollSpyTimer);
+  _scrollSpyTimer=setTimeout(function(){_scrollSpyLock=false;setActiveTab(name);},700);
   if(name==='outputs')refresh();
   var target=document.getElementById('sec-'+name)||document.getElementById('panel-'+name);
   if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
@@ -5664,8 +5671,9 @@ function initScrollSpy(){
   var els=sections.map(function(n){return document.getElementById('sec-'+n);}).filter(Boolean);
   if(!els.length)return;
   function onScroll(){
-    var tabsEl=document.querySelector('.tabs');
-    var offset=(tabsEl?tabsEl.getBoundingClientRect().bottom:0)+20;
+    if(_scrollSpyLock)return;
+    var bar=document.querySelector('.sticky-headerbar');
+    var offset=(bar?bar.getBoundingClientRect().bottom:0)+8;
     var current=sections[0];
     for(var i=0;i<els.length;i++){
       var rect=els[i].getBoundingClientRect();
