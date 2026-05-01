@@ -314,6 +314,17 @@ select.inp{appearance:none}
 .fmln-btn{padding:6px 12px;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:#475569;font:600 12px var(--sans);cursor:pointer;transition:all .12s}
 .fmln-btn:hover{border-color:var(--primary);color:var(--primary)}
 .fmln-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.report-mode-tab{padding:6px 14px;border:none;background:transparent;color:#94a3b8;font:600 12px var(--sans);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.04em;text-transform:uppercase;-webkit-tap-highlight-color:transparent}
+.report-mode-tab:hover{color:#cbd5e1}
+.report-mode-tab.active{color:#f1f5f9;border-bottom-color:var(--primary)}
+#out-report.letter-mode{padding:28px 36px;font-family:Georgia,"Times New Roman",serif;font-size:10.5pt;line-height:1.6;color:#1f2937}
+#out-report.letter-mode h2{font-size:13pt;margin:0 0 10px;font-family:Arial,sans-serif;color:#0f172a;border-bottom:none}
+#out-report.letter-mode h3{font-size:10pt;font-family:Arial,sans-serif;color:#1e3a5f;text-transform:none;letter-spacing:0;margin:16px 0 6px;border-bottom:none;font-weight:700}
+#out-report.letter-mode p{margin:0 0 10px;text-align:justify}
+#out-report.letter-mode .letter-head{display:flex;justify-content:space-between;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:9.5pt;color:#475569;margin-bottom:14px;border-bottom:1px solid #e5e7eb;padding-bottom:10px}
+#out-report.letter-mode .letter-sig{margin-top:18px;font-size:10.5pt}
+#out-report.letter-mode .letter-sig .sig-name{font-weight:700;font-family:Arial,sans-serif;color:#0f172a}
+#out-report.letter-mode .letter-sig .sig-quals{color:#475569;font-size:9.5pt}
 .ps-tile{background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .ps-tile-label{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#475569;margin:0}
 .ps-tile .rbtns{margin:0;gap:4px}
@@ -1219,6 +1230,10 @@ select.inp{appearance:none}
         <button class="cbtn" onclick="dlReportDocx()">Download .docx</button>
         <button class="cbtn" onclick="copyReportPlain()">Copy plain text</button>
       </div>
+    </div>
+    <div id="report-mode-tabs" style="display:flex;gap:4px;padding:8px 14px 0;background:#0f172a;border-top:1px solid #1e293b" onclick="event.stopPropagation()">
+      <button type="button" class="report-mode-tab active" data-mode="structured" onclick="setReportMode('structured')">Structured</button>
+      <button type="button" class="report-mode-tab" data-mode="letter" onclick="setReportMode('letter')">Letter (291/92435)</button>
     </div>
     <div id="out-report" style="background:#fff;color:#000;padding:18px 22px;font-family:Arial,sans-serif;font-size:9.5pt;line-height:1.45"></div>
   </div>
@@ -4538,14 +4553,206 @@ function buildFullReport(){
   return h;
 }
 
+var currentReportMode='structured';
+function setReportMode(mode){
+  currentReportMode=mode;
+  document.querySelectorAll('.report-mode-tab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-mode')===mode);});
+  var el=$('out-report');
+  if(el)el.classList.toggle('letter-mode',mode==='letter');
+  refreshReport();
+}
 function refreshReport(){
   var el=$('out-report');
-  if(el)el.innerHTML=buildFullReport();
+  if(!el)return;
+  el.innerHTML=(currentReportMode==='letter')?buildLetterReport():buildFullReport();
 }
 
+// ─── PROSE LETTER REPORT (291 / 92435 STYLE) ────────────────────────────────
+function _letterFmt(text){
+  if(!text)return '';
+  return esc(text).replace(/\n+/g,' ');
+}
+function _letterParas(text){
+  if(!text)return '';
+  return text.split(/\n{2,}/).map(function(p){return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('');
+}
+function buildLetterReport(){
+  var name=f('ptName')||'[Patient name]';
+  var age=f('ptAge');
+  var gender=f('ptGender');
+  var dob=f('ptDob');
+  var pr=pron(gender),po=poss(gender),prCap=pronCap(gender);
+  var dv=f('ptDate');
+  var dateStr=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  var clin=f('drName')||'[Clinician]';
+  var quals=f('drQuals')||'';
+  var gp=f('gpName')||'';
+  var gpStr=gp?(/^Dr/i.test(gp)?gp:'Dr '+gp):'';
+  var dxStr=dxFull();
+  var rt=S.reviewType||'Initial';
+
+  var h='';
+
+  // Letterhead-ish line
+  h+='<div class="letter-head"><div><strong>RE:</strong> '+esc(name)+(age?', age '+esc(age):'')+(dob?', DOB '+esc(dob):'')+'</div><div>'+esc(dateStr)+'</div></div>';
+
+  // Salutation
+  h+='<p>Dear '+(gpStr?esc(gpStr):'Doctor')+',</p>';
+
+  // Opening — referral & assessment summary
+  var referral=f('referralReason');
+  var presentersBits=[];
+  if(referral)presentersBits.push('regarding '+esc(referral.toLowerCase().replace(/\.$/,'')));
+  h+='<p>Thank you for referring '+esc(name)+(age?', a '+esc(age)+'-year-old'+(gender?' '+esc(gender.toLowerCase()):''):'')+', for psychiatric assessment'+(presentersBits.length?' '+presentersBits.join(' '):'')+'. '+prCap+' was seen on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses.</p>';
+
+  // History of presentation
+  var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
+  if(diffs.length||f('presentNotes')){
+    h+='<h3>History of presentation</h3>';
+    if(diffs.length){
+      var topPhrase=diffs.slice(0,4).map(function(d){return d.toLowerCase();});
+      h+='<p>'+prCap+' described a longstanding pattern of difficulty with '+_joinList(topPhrase)+(diffs.length>4?', amongst other concerns':'')+'. These difficulties have been pervasive across multiple settings — most notably at work, in personal organisation, and within close relationships — and have caused clinically significant functional impairment.</p>';
+    }
+    if(f('presentNotes')){
+      h+=_letterParas(f('presentNotes'));
+    }
+    var curDiffs=getCurrentDifferentials().map(function(d){return d.label.toLowerCase();});
+    if(curDiffs.length){
+      h+='<p>'+prCap+' also endorsed features consistent with comorbid '+_joinList(curDiffs)+', which '+(curDiffs.length>1?'are':'is')+' considered alongside the primary diagnosis below.</p>';
+    }
+  }
+
+  // Pre-screening & collateral
+  var screenItems=[];
+  if(S.screening){
+    if(S.screening.asrs)screenItems.push('Patient ASRS — '+S.screening.asrs.toLowerCase());
+    if(S.screening.diva)screenItems.push('DIVA-5 — '+String(S.screening.diva).replace(/^Completed - /i,'').toLowerCase());
+    if(S.screening.obs)screenItems.push('observer ASRS — '+String(S.screening.obs).toLowerCase());
+    if(S.screening.gpReferral)screenItems.push('GP referral — '+String(S.screening.gpReferral).toLowerCase());
+    if(S.screening.schoolReports)screenItems.push('school reports — '+String(S.screening.schoolReports).toLowerCase());
+    if(S.screening.psychReport)screenItems.push('psychology report — '+String(S.screening.psychReport).toLowerCase());
+    if(S.screening.vanderbiltParent)screenItems.push('Vanderbilt (parents) — '+String(S.screening.vanderbiltParent).toLowerCase());
+    if(S.screening.vanderbiltTeacher)screenItems.push('Vanderbilt (teacher) — '+String(S.screening.vanderbiltTeacher).toLowerCase());
+  }
+  if(screenItems.length||f('screenNotes')){
+    h+='<h3>Pre-screening and collateral</h3>';
+    if(screenItems.length)h+='<p>The following corroborated the clinical picture: '+esc(_joinList(screenItems))+'.</p>';
+    if(f('screenNotes'))h+=_letterParas(f('screenNotes'));
+  }
+
+  // Developmental history
+  if(f('devNotes')){
+    h+='<h3>Developmental history</h3>';
+    h+=_letterParas(f('devNotes'));
+  }
+
+  // Substance use
+  var currSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';}):[];
+  var pastSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Past';}):[];
+  if(currSubs.length||pastSubs.length||f('subNotes')){
+    h+='<h3>Substance use</h3>';
+    var subBits=[];
+    if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(function(s){return s.toLowerCase();})));
+    if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(function(s){return s.toLowerCase();})));
+    if(subBits.length)h+='<p>'+prCap+' reports '+_joinList(subBits)+'.</p>';
+    if(f('subNotes'))h+=_letterParas(f('subNotes'));
+  }
+
+  // Past medical history (selected conditions + free text)
+  var medFlagged=(typeof MEDICAL!=='undefined')?MEDICAL.filter(function(m){return S.medical&&S.medical[m.id];}):[];
+  if(medFlagged.length||f('medHistory')){
+    h+='<h3>Medical history</h3>';
+    var medBits=[];
+    if(medFlagged.length)medBits.push(_joinList(medFlagged.map(function(m){return m.label.toLowerCase();})));
+    if(f('medHistory'))medBits.push(f('medHistory'));
+    h+='<p>'+esc(medBits.join('. '))+(/[.!?]$/.test(medBits.join('. '))?'':'.')+'</p>';
+  }
+
+  // Past psychiatric history
+  var pastDiffs=getPastDifferentials();
+  if(pastDiffs.length){
+    h+='<h3>Past psychiatric history</h3>';
+    h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(function(d){return d.label.toLowerCase();})))+'.</p>';
+  }
+
+  // Family history
+  if(f('famNotes')){
+    h+='<h3>Family history</h3>';
+    h+=_letterParas(f('famNotes'));
+  }
+
+  // Mental state examination
+  if(f('mseNotes')){
+    h+='<h3>Mental state examination</h3>';
+    h+=_letterParas(f('mseNotes'));
+  }
+
+  // Diagnosis with callout
+  if(dxStr){
+    h+='<h3>Diagnosis</h3>';
+    var calloutCls='dx-callout',prefix='✓ ';
+    if(S.dx==='No'){calloutCls+=' no-dx';prefix='';}
+    else if(S.dx==='Insufficient evidence'||S.dx==='Deferred'){calloutCls+=' deferred';prefix='';}
+    h+='<div class="'+calloutCls+'">'+prefix+esc(dxStr)+'</div>';
+  }
+
+  // Formulation (uses dxNotes — pre-baked by the style picker)
+  if(f('dxNotes')){
+    h+='<h3>Formulation</h3>';
+    h+=_letterParas(f('dxNotes'));
+  }
+
+  // Management plan
+  if(titMeds.length||f('rxNotes')){
+    h+='<h3>Management plan</h3>';
+    if(titMeds.length){
+      var medSummaries=titMeds.map(function(m){
+        var nm=m.key==='other'&&m.customName?m.customName:m.def.name;
+        var mainStep=m.steps.find(function(s){return s.ongoing;})||m.steps[m.steps.length-1];
+        var ongoingStr='';
+        if(mainStep&&mainStep.doses&&mainStep.doses.length){
+          try{ongoingStr=formatStepSig(m,mainStep).replace(/^take /,'');}catch(e){ongoingStr='';}
+        }
+        return '<strong>'+esc(nm)+'</strong>'+(ongoingStr?' — '+esc(ongoingStr):'');
+      });
+      h+='<p>I have commenced '+esc(name)+' on the following: '+medSummaries.join('; ')+'.</p>';
+      var hasTit=titMeds.some(function(m){return m.steps&&m.steps.length>1&&m.steps.some(function(s){return !s.ongoing;});});
+      if(hasTit)h+='<p>A titration plan has been provided to '+esc(name)+', along with written information about the medication and a list of safety scenarios that may prompt earlier review.</p>';
+    }
+    if(f('rxNotes'))h+=_letterParas(f('rxNotes'));
+  }
+
+  // Follow-up plan
+  var fuApptStr=(typeof getFuApptStr==='function')?getFuApptStr():'';
+  var fuMonStr=(typeof getFuMonStr==='function')?getFuMonStr():'';
+  var fuNotes=f('fuNotes');
+  if(fuApptStr||fuMonStr||fuNotes){
+    h+='<h3>Follow-up plan</h3>';
+    if(fuApptStr)h+='<p>I have arranged for '+esc(name)+' to be reviewed: '+esc(fuApptStr)+'.</p>';
+    if(fuMonStr)h+='<p>I would be grateful if you could monitor '+_letterFmt(fuMonStr.toLowerCase())+' at GP review.</p>';
+    if(fuNotes)h+=_letterParas(fuNotes);
+  }
+
+  // Closing
+  h+='<p>Thank you again for the opportunity to be involved in '+po+' care. Please do not hesitate to contact my rooms should you have any questions or if anything is unclear.</p>';
+
+  // Sign-off
+  h+='<div class="letter-sig"><p>Yours sincerely,</p><p style="margin-top:18px"><span class="sig-name">'+esc(clin)+'</span>'+(quals?'<br><span class="sig-quals">'+esc(quals)+'</span>':'')+'<br><span class="sig-quals">Consultant Psychiatrist</span></p></div>';
+
+  return h;
+}
+
+function _activeReportHtml(){
+  return (currentReportMode==='letter')?buildLetterReport():buildFullReport();
+}
+function _activeReportFontCss(){
+  return (currentReportMode==='letter')
+    ?'font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6;color:#1f2937'
+    :'font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#000';
+}
 function copyReportFormatted(){
-  var html=buildFullReport();
-  var fullHtml='<html><body style="font-family:Arial,sans-serif;color:#000;margin:0;padding:0;">'+html+'</body></html>';
+  var html=_activeReportHtml();
+  var fullHtml='<html><body style="'+_activeReportFontCss()+';margin:0;padding:0;">'+html+'</body></html>';
   try{
     var htmlBlob=new Blob([fullHtml],{type:'text/html'});
     navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob})]).then(function(){
@@ -4555,7 +4762,7 @@ function copyReportFormatted(){
 }
 
 function copyReportPlain(){
-  var html=buildFullReport();
+  var html=_activeReportHtml();
   var txt=htmlToPlainText(html);
   navigator.clipboard.writeText(txt).then(function(){
     flashBtn('[onclick="copyReportPlain()"]');
@@ -4563,13 +4770,13 @@ function copyReportPlain(){
 }
 
 function dlReportDocx(){
-  var body=buildFullReport();
-  var wh='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.2cm}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#000}</style></head><body>'+body+'</body></html>';
+  var body=_activeReportHtml();
+  var wh='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.2cm}body{'+_activeReportFontCss()+'}</style></head><body>'+body+'</body></html>';
   var pat=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
   var blob=new Blob(['﻿'+wh],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download='ADHD_Report_'+pat+'.docx';
+  a.href=url;a.download='ADHD_'+(currentReportMode==='letter'?'Letter_':'Report_')+pat+'.docx';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
 }
