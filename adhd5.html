@@ -172,8 +172,8 @@ select.inp{appearance:none}
 .sub-item{background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:6px 9px;display:flex;flex-direction:column;gap:4px}
 .sub-name{font-size:12px;font-weight:600}
 .sub-btns{display:flex;gap:3px}
-.sub-detail,.fam-detail{font:12px var(--sans);padding:5px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box}
-.sub-detail:focus,.fam-detail:focus{outline:none;border-color:var(--primary)}
+.sub-detail,.fam-detail,.diff-detail{font:12px var(--sans);padding:5px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;margin-top:3px}
+.sub-detail:focus,.fam-detail:focus,.diff-detail:focus{outline:none;border-color:var(--primary)}
 .sb{flex:1;padding:3px 0;border-radius:5px;border:1px solid var(--border);background:#fff;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;text-align:center;font-family:var(--sans)}
 .sb.nil{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .sb.past{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
@@ -998,7 +998,13 @@ select.inp{appearance:none}
         </div>
         <div>
           <label class="fl" style="margin-top:0">BP (sitting)</label>
-          <input class="inp" id="bpReading" placeholder="e.g. 128/82 mmHg" oninput="save();refresh()">
+          <div style="display:flex;gap:6px;align-items:center">
+            <input class="inp" id="bpSystolic" type="number" min="50" max="260" placeholder="systolic" style="flex:1;min-width:70px" oninput="save();refresh()">
+            <span style="color:var(--muted);font-weight:600">/</span>
+            <input class="inp" id="bpDiastolic" type="number" min="30" max="160" placeholder="diastolic" style="flex:1;min-width:70px" oninput="save();refresh()">
+            <span style="font-size:11px;color:var(--muted)">mmHg</span>
+          </div>
+          <input type="hidden" id="bpReading">
         </div>
         <div>
           <label class="fl" style="margin-top:0">Resting HR</label>
@@ -1306,7 +1312,7 @@ select.inp{appearance:none}
 <script>
 'use strict';
 
-const DIFFICULTIES=['Difficulty focusing / concentrating','Poor organisation / time management','Procrastination / task initiation','Forgetfulness / memory problems','Restlessness / internal hyperactivity','Emotional dysregulation / mood swings','Impulsive behaviour or decisions','Time blindness','Sleep difficulties','Underperformance at work or study despite effort','Relationship difficulties','Hyperfocus on preferred tasks, not others'];
+const DIFFICULTIES=['Difficulty focusing','Difficulty concentrating','Poor organisation','Poor time management','Procrastination','Difficulty initiating tasks','Forgetfulness','Memory difficulties','Restlessness','Internal hyperactivity','Emotional dysregulation','Mood swings','Impulsive behaviour or decisions','Time blindness','Sleep difficulties','Underperformance at work or study despite effort','Relationship difficulties','Hyperfocus on preferred tasks'];
 const SCREENING=[{id:'asrs',label:'Patient ASRS',opts:['Positive','Negative','Not provided']},{id:'diva',label:'DIVA-5',opts:['Completed - positive','Completed - negative','Not provided']},{id:'obs',label:'Observer ASRS',opts:['Supportive','Not supportive','Not provided']},{id:'gpReferral',label:'GP referral',opts:['Supportive','Not supportive','N/A']},{id:'schoolReports',label:'School reports',opts:['Supportive','Not supportive','Not provided']},{id:'psychReport',label:'Psychologist / neuropsychological report',opts:['Supportive','Not supportive','Not provided']},{id:'vanderbiltParent',label:'Vanderbilt (parents)',opts:['Positive','Negative','Not provided']},{id:'vanderbiltTeacher',label:'Vanderbilt (teacher)',opts:['Positive','Negative','Not provided']}];
 const DEV=[
   {id:'childhood',label:'Clear childhood ADHD pattern (pre-age 12)',qs:['When you picture yourself in primary school, what sort of child were you at school and at home?','What did adults keep correcting you for, over and over?','Were you often described as bright but not applying yourself, careless, messy, chatty, daydreamy, or always on the go?','Did things seem inconsistent rather than impossible - you could do it sometimes but not reliably?','What themes would I expect to see repeatedly in your primary school reports?','Were there clear examples of inattention, hyperactivity, or impulsivity before age 12?']},
@@ -1340,22 +1346,22 @@ const DIFFS=[
   {id:'depression',label:'Depression',qs:['When your mood is normal, do attention and organisation problems still remain?','Did concentration problems begin only during depressive episodes?','Has low mood been present more days than not for two or more years, or does it come in discrete episodes?','Does the picture feel more like low mood and drive than lifelong distractibility?']},
   {id:'bipolar',label:'Bipolar-spectrum disorder',qs:['Have there been clear episodes of elevated or irritable mood with reduced need for sleep?','Do periods of high energy and risk-taking alternate with more normal or low periods?','Are there recurrent shorter swings between low-grade depression and elevated energy?','Is distractibility tied mainly to mood episodes rather than being lifelong?']},
   {id:'anxiety',label:'Anxiety disorder',qs:['Does your mind wander due to general distractibility, or because it gets stuck on worry?','When anxiety settles, do focus and organisation improve substantially?','Are attention and performance difficulties mainly in social or evaluative situations?','Does avoidance feel more about fear or perfectionism than about boredom or difficulty starting?','Do symptoms largely resolve in familiar or low-stakes settings?']},
-  {id:'ptsd',label:'PTSD / trauma-related disorder',qs:['Did concentration problems begin after trauma exposures?','Is attention hijacked by hypervigilance, intrusive memories, or dissociation?','Do symptoms spike around triggers rather than being constant?','Is there a history of prolonged or repeated interpersonal trauma?','Are there difficulties with affect regulation, identity, and relationships alongside hypervigilance?']},
-  {id:'autism',label:'Autism spectrum disorder (ASD)',qs:['Have there been longstanding differences in social communication and flexibility?','Are task problems driven more by rigidity or sensory overload than distractibility?','Were autistic traits present before academic attention issues were noticed?']},
-  {id:'neurodevel_other',label:'Other neurodevelopmental disorder (dyslexia, dyscalculia, intellectual disability)',qs:['Are difficulties domain-specific (reading, maths, writing) rather than broad executive dysfunction?','Does performance improve markedly with appropriate accommodations?','Are difficulties consistent across most domains rather than attention-specific?','Was developmental progress slower across language, cognition, and adaptive behaviour?']},
-  {id:'tic_tourette',label:'Tic disorder / Tourette syndrome',qs:['Are there repetitive, involuntary motor or vocal tics?','Do tics cause distress or impairment beyond the attention difficulties?','Is the attention picture complicated by tic-related disruption?']},
+  {id:'ptsd',label:'PTSD',qs:['Did concentration problems begin after trauma exposures?','Is attention hijacked by hypervigilance, intrusive memories, or dissociation?','Do symptoms spike around triggers rather than being constant?','Is there a history of prolonged or repeated interpersonal trauma?','Are there difficulties with affect regulation, identity, and relationships alongside hypervigilance?']},
+  {id:'autism',label:'Autism spectrum disorder',qs:['Have there been longstanding differences in social communication and flexibility?','Are task problems driven more by rigidity or sensory overload than distractibility?','Were autistic traits present before academic attention issues were noticed?']},
+  {id:'neurodevel_other',label:'Neurodevelopmental disorder',qs:['Are difficulties domain-specific (reading, maths, writing) rather than broad executive dysfunction?','Does performance improve markedly with appropriate accommodations?','Are difficulties consistent across most domains rather than attention-specific?','Was developmental progress slower across language, cognition, and adaptive behaviour?']},
+  {id:'tic_tourette',label:'Tic disorder',qs:['Are there repetitive, involuntary motor or vocal tics?','Do tics cause distress or impairment beyond the attention difficulties?','Is the attention picture complicated by tic-related disruption?']},
   {id:'schizophrenia',label:'Schizophrenia-spectrum disorder',qs:['Are there positive symptoms such as hallucinations, delusions, or disorganised thinking?','Did the concentration picture change markedly around the time of psychotic symptoms?','Is there negative symptom burden such as flat affect or avolition explaining the presentation?','Has there been a discrete period of psychotic symptoms?']},
   {id:'ocd',label:'OCD-spectrum disorder',qs:['Is time lost to rituals, checking, or intrusive thoughts rather than distractibility?','Are you late because of compulsions rather than losing track of time?','Is a significant amount of time consumed by preoccupation with appearance, symmetry, or other themes?','When compulsions are managed, do executive problems substantially resolve?']},
   {id:'personality',label:'Personality disorder',qs:['Is the main difficulty unstable relationships, identity, and affect rather than inattention per se?','Are impulsive acts mostly linked to relational crises or intense emotional states rather than general impulsivity?','When affect is regulated, do executive symptoms largely resolve?','Is there a pervasive and inflexible pattern across many contexts rather than situational difficulty?','Does the functional impairment come mainly from relational, self-image, or emotional regulation difficulties rather than executive dysfunction?','Is there chronic feelings of emptiness, or identity disturbance that goes beyond time-blindness and disorganisation?']},
   {id:'anorexia',label:'Anorexia nervosa',qs:['Are there significant dietary restriction and fears about weight gain?','Could cognitive symptoms be partly explained by malnutrition or low weight?','Is preoccupation with food, weight, and shape consuming significant cognitive bandwidth?']},
   {id:'bulimia',label:'Bulimia nervosa',qs:['Are there recurrent binge-purge cycles causing distress and impairment?','Is impulsivity mainly expressed through eating behaviour?','Could mood instability be driven by the eating disorder cycle?']},
   {id:'bed',label:'Binge eating disorder',qs:['Are there recurrent episodes of eating large amounts with loss of control and marked distress?','Is impulsivity mainly expressed through eating rather than across domains?','Does the attention picture improve independently of eating behaviour?']},
-  {id:'sleep',label:'Sleep disorder (OSA, DSPD, insomnia)',qs:['Are you consistently short on sleep or unrefreshed on waking?','Do you snore loudly, stop breathing, or have restless legs at night?','Do cognitive problems track sleep quality more than anything else?']},
+  {id:'sleep',label:'Sleep disorder',qs:['Are you consistently short on sleep or unrefreshed on waking?','Do you snore loudly, stop breathing, or have restless legs at night?','Do cognitive problems track sleep quality more than anything else?']},
   {id:'neurodegen',label:'Neurodegenerative disorder',qs:['Is there a noticeable decline from a previously higher level of functioning?','Are memory, language, or processing speed declining over months to years?','Is this a change from baseline rather than a lifelong pattern?','Are activities of daily living now compromised due to cognitive decline?']},
-  {id:'tbi',label:'Acquired brain injury / post-TBI',qs:['Did cognitive difficulties begin or worsen significantly after a head injury?','Are there domain-specific deficits consistent with the injury pattern?','Has there been formal neuropsychological assessment post-injury?']},
-  {id:'suicidality',label:'Suicidal ideation / self-harm',qs:['Are there current thoughts of suicide or self-harm?','Has there been any recent planning, intent, or preparatory behaviour?','What protective factors are in place and how robust are they?']},
-  {id:'substance_induced',label:'Substance / medication-induced disorder',qs:['Could stimulant, cannabis, alcohol, or other substance or medication use explain or worsen the picture?','Do cognitive symptoms resolve or substantially improve during sustained abstinence or medication change?','Is there an active substance use disorder that needs prioritising?']},
-  {id:'medical',label:'Medical / neurological cause',qs:['Did symptoms start after a medical illness, injury, or medication change?','Could thyroid, anaemia, seizures, autoimmune, or other medical issues be contributing?','Has relevant medical investigation been completed?']},
+  {id:'tbi',label:'Acquired brain injury',qs:['Did cognitive difficulties begin or worsen significantly after a head injury?','Are there domain-specific deficits consistent with the injury pattern?','Has there been formal neuropsychological assessment post-injury?']},
+  {id:'suicidality',label:'Suicidal ideation',qs:['Are there current thoughts of suicide or self-harm?','Has there been any recent planning, intent, or preparatory behaviour?','What protective factors are in place and how robust are they?']},
+  {id:'substance_induced',label:'Substance-induced disorder',qs:['Could stimulant, cannabis, alcohol, or other substance or medication use explain or worsen the picture?','Do cognitive symptoms resolve or substantially improve during sustained abstinence or medication change?','Is there an active substance use disorder that needs prioritising?']},
+  {id:'medical',label:'Medical or neurological cause',qs:['Did symptoms start after a medical illness, injury, or medication change?','Could thyroid, anaemia, seizures, autoimmune, or other medical issues be contributing?','Has relevant medical investigation been completed?']},
 ];
 const CARDIAC=[
   {id:'c_exertional',label:'Exertional chest pain / unexplained shortness of breath / exercise intolerance',flag:true,
@@ -1380,50 +1386,50 @@ const CARDIAC=[
     note:'Do not prescribe stimulants or atomoxetine until an appropriate washout period is completed. This is an absolute contraindication.'},
 ];
 const FAM_PSYCH=[
-  {id:'fam_neurodevel',label:'Neurodevelopmental (ADHD, ASD, intellectual disability, learning disorders)'},
-  {id:'fam_schiz',label:'Schizophrenia / psychotic disorder'},
+  {id:'fam_neurodevel',label:'Neurodevelopmental disorders'},
+  {id:'fam_schiz',label:'Psychotic disorder'},
   {id:'fam_bipolar',label:'Bipolar disorder'},
-  {id:'fam_depression',label:'Depression / major depressive disorder'},
-  {id:'fam_anxiety',label:'Anxiety disorders (generalised anxiety, panic, phobia, social anxiety)'},
-  {id:'fam_ocd',label:'OCD / OC-spectrum disorder'},
-  {id:'fam_ptsd',label:'PTSD / trauma-related disorder'},
+  {id:'fam_depression',label:'Depression'},
+  {id:'fam_anxiety',label:'Anxiety disorders'},
+  {id:'fam_ocd',label:'OCD-spectrum disorder'},
+  {id:'fam_ptsd',label:'PTSD'},
   {id:'fam_eating',label:'Eating disorder'},
   {id:'fam_personality',label:'Personality disorder'},
-  {id:'fam_sud',label:'Substance use disorder / addiction'},
-  {id:'fam_suicide',label:'Suicide / self-harm'},
-  {id:'fam_dementia',label:'Dementia / neurocognitive disorder'},
+  {id:'fam_sud',label:'Substance use disorder'},
+  {id:'fam_suicide',label:'Suicide or self-harm'},
+  {id:'fam_dementia',label:'Dementia'},
   {id:'fam_other',label:'Other psychiatric diagnosis'},
 ];
 const MEDICAL=[
-  {id:'epilepsy',flag:true,label:'Epilepsy / seizure disorder',
+  {id:'epilepsy',flag:true,label:'Epilepsy or seizure disorder',
     note:'Stimulants may lower seizure threshold. Check recent control and neurology input, start low and monitor.'},
-  {id:'glaucoma',flag:true,label:'Glaucoma (especially narrow-angle)',
+  {id:'glaucoma',flag:true,label:'Glaucoma',
     note:'Avoid stimulants and atomoxetine in narrow-angle glaucoma. Consider non-stimulant alternatives.'},
-  {id:'thyroid',flag:false,label:'Thyroid disorder (especially hyperthyroidism)',
+  {id:'thyroid',flag:false,label:'Thyroid disorder',
     note:'Treat or stabilise hyperthyroidism before starting stimulants due to additive sympathomimetic effects.'},
-  {id:'raynauds',flag:false,label:"Raynaud's phenomenon / peripheral vasculopathy",
+  {id:'raynauds',flag:false,label:"Raynaud's phenomenon",
     note:'Stimulants can worsen vasospasm. Monitor digits and consider dose reduction or switch if symptomatic.'},
-  {id:'tic',flag:false,label:'Tic disorder / Tourette syndrome',
+  {id:'tic',flag:false,label:'Tic disorder',
     note:'Stimulants can exacerbate tics in some patients. Consider atomoxetine or alpha-2 agonists, or cautious stimulant trial with close monitoring.'},
   {id:'liver',flag:false,label:'Hepatic impairment',
     note:'Atomoxetine exposure increases significantly in moderate-severe hepatic impairment. Use lower doses and monitor LFTs.'},
   {id:'renal',flag:false,label:'Renal impairment',
     note:'Clonidine and guanfacine may accumulate in renal impairment. Titrate slowly and monitor for hypotension and sedation.'},
-  {id:'pregnancy',flag:true,label:'Pregnancy / breastfeeding',
+  {id:'pregnancy',flag:true,label:'Pregnancy or breastfeeding',
     note:'Use non-pharmacological strategies where possible. If prescribing, use the lowest effective dose and agents with better safety data, with obstetric input.'},
-  {id:'cvd',flag:true,label:'Coronary artery disease / cerebrovascular disease',
+  {id:'cvd',flag:true,label:'Coronary artery disease',
     note:'Stimulants increase HR and BP. Optimise vascular risk factors, consider cardiology input, start low and monitor closely.'},
   {id:'obesity',flag:false,label:'Obesity with metabolic syndrome',
     note:'Stimulants may reduce appetite and weight. Monitor weight, blood pressure and metabolic parameters during treatment.'},
-  {id:'low_bmi',flag:false,label:'Low BMI / underweight',
+  {id:'low_bmi',flag:false,label:'Low BMI',
     note:'Appetite suppression can be problematic. Prefer non-stimulants or very cautious stimulant use with close weight monitoring.'},
   {id:'eating_disorder',flag:true,label:'Current or recent eating disorder',
     note:'Stimulants may worsen dietary restriction. Avoid or minimise stimulants and prioritise nutritional rehabilitation.'},
-  {id:'osa',flag:false,label:'Obstructive sleep apnoea / significant sleep disorder',
+  {id:'osa',flag:false,label:'Obstructive sleep apnoea',
     note:'Optimise sleep and OSA treatment first. Time doses to minimise insomnia. Consider alpha-2 agonists for nocturnal hyperarousal.'},
-  {id:'bph',flag:false,label:'Benign prostatic hyperplasia / urinary outflow obstruction',
+  {id:'bph',flag:false,label:'Benign prostatic hyperplasia',
     note:'Atomoxetine can worsen urinary retention. Monitor lower urinary tract symptoms or avoid in severe cases.'},
-  {id:'end_stage_renal',flag:true,label:'End-stage renal disease / dialysis',
+  {id:'end_stage_renal',flag:true,label:'End-stage renal disease',
     note:'Use clonidine and guanfacine very cautiously. Coordinate with nephrology and monitor haemodynamics carefully.'},
   {id:'falls_risk',flag:false,label:'Chronic dizziness or high falls risk',
     note:'Alpha-2 agonists can increase orthostatic symptoms and falls risk. Minimise dose and monitor standing blood pressure.'},
@@ -2039,17 +2045,8 @@ function formulationClinical(c){
   var demo=_demoPhrase(c);
   bits.push(c.name+' is '+(demo?demo+' ':'')+'presenting with a longstanding pattern of '+(c.subPhrase?c.subPhrase+' symptoms ':'attentional and self-regulatory symptoms ')+'consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+'.');
   bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant impairment'+(c.top.length?' — particularly in the areas of '+_joinList(c.top):'')+'.');
-  var ss=_screeningSupportiveness(c.asrs,c.diva);
-  if(ss==='supports'){
-    var sl=[];
-    if(c.asrs)sl.push('Patient ASRS '+c.asrs.toLowerCase());
-    if(c.diva)sl.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
-    bits.push('Pre-screening ('+_joinList(sl)+') supports the diagnosis.');
-  } else if(ss==='unsupportive'){
-    bits.push('Pre-screening was not supportive of the diagnosis; however, the clinical history was felt to be sufficient to confirm the diagnosis.');
-  }
-  if(c.past.length)bits.push('Other potential differentials, including '+_joinList(c.past)+', were considered and felt unlikely to better account for the current presentation.');
-  if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' '+(c.current.length>1?'are':'is')+' present and will be addressed alongside ADHD treatment.');
+  bits.push('These symptoms are not better explained by another disorder.');
+  if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' will be addressed alongside their primary concerns.');
   return bits.join(' ');
 }
 function formulationNarrative(c){
@@ -3363,6 +3360,7 @@ function renderDev(){
 function renderDSM(){$('dsm-checks').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllDSM()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllDSM()">Deselect all</button></div>'+DSM.map(function(d){var on=!!S.dsm[d.id];return '<div class="crow" onclick="toggleCheck(\'dsm\',\''+d.id+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d.label+'</div></div>';}).join('');}
 function renderDiffRows(){
   var DIFF_FLAGS={bipolar:1,schizophrenia:1,suicidality:1,anorexia:1,bulimia:1,tbi:1,substance_induced:1,neurodegen:1,medical:1};
+  if(!S.diffDetail)S.diffDetail={};
   var header='<div style="display:flex;gap:6px;margin-bottom:8px;grid-column:1/-1"><button class="sel-all-btn" onclick="selectAllDiffsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllDiffs()">Deselect all</button></div>';
   $('diff-rows').innerHTML=header+DIFFS.map(function(d){
     var cur=S.differentials[d.id]||'';
@@ -3371,6 +3369,9 @@ function renderDiffRows(){
     var nilCls=cur==='Nil'?' ay':'';
     var pastCls=cur==='Past'?' ap':'';
     var currCls=cur==='Current'?(isFlag?' af':' aq'):'';
+    var showDetail=(cur==='Current'||cur==='Past');
+    var detail=(S.diffDetail&&S.diffDetail[d.id])||'';
+    var detailInp=showDetail?'<input class="diff-detail" type="text" placeholder="brief detail (e.g. mild, treated, last episode 2yrs ago)" value="'+esc(detail)+'" oninput="setDiffDetail(\''+d.id+'\',this.value)">':'';
     return '<div class="'+cardCls+'">'
       +'<div class="diff-card-label">'+d.label
       +'<button class="qbtn" onclick="openDrawer(event,\''+d.id+'\',\'diff\')" style="margin-left:4px">?</button></div>'
@@ -3378,8 +3379,15 @@ function renderDiffRows(){
       +'<button class="rb'+nilCls+'" onclick="setDiffVal(\''+d.id+'\',\'Nil\',this)">Nil</button>'
       +'<button class="rb'+pastCls+'" onclick="setDiffVal(\''+d.id+'\',\'Past\',this)">Past</button>'
       +'<button class="rb'+currCls+'" onclick="setDiffVal(\''+d.id+'\',\'Current\',this)">Current</button>'
-      +'</div></div>';
+      +'</div>'
+      +detailInp
+      +'</div>';
   }).join('');
+}
+function setDiffDetail(id,val){
+  if(!S.diffDetail)S.diffDetail={};
+  S.diffDetail[id]=val;
+  save();refresh();
 }
 
 function mseVals(id){var v=S.mse[id];if(!v)return[];if(Array.isArray(v))return v;return [v];}
@@ -3621,7 +3629,7 @@ function setDiffVal(id,val,btn){
       delete S.dsmManual['critE'];
     }
   }
-  save();refresh();
+  save();refresh();renderDiffRows();
 }
 function setDiff(id,val,btn){setDiffVal(id,val,btn);}
 
@@ -4912,39 +4920,52 @@ function buildLetterReport(){
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
-  // Past psychiatric history — its own section, before Family Hx
+  // Past psychiatric history — past differentials + relevant negatives.
   var pastDiffs=getPastDifferentials();
+  var notPresDiffs=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
+  function _diffEntry(d){
+    var det=(S.diffDetail&&S.diffDetail[d.id]||'').trim();
+    var lbl=_letterCleanLabel(d.label);
+    return det?lbl+' ('+det+')':lbl;
+  }
   h+='<h3>Past psychiatric history</h3>';
   if(pastDiffs.length){
-    h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+'.</p>';
+    h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(_diffEntry)))+'.</p>';
   } else {
     h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any past psychiatric history.</p>';
   }
+  if(notPresDiffs.length){
+    h+='<p>Other potential differentials, including '+esc(_joinList(notPresDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+', were considered and assessed as being unlikely to better account for the current presentation.</p>';
+  } else {
+    h+='<p>There were no other reported psychiatric symptoms or past diagnoses.</p>';
+  }
 
-  // Family psychiatric history
+  // Family psychiatric history — prose form.
   if(typeof FAM_PSYCH!=='undefined'&&S.fam){
     var famPresent=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Present';});
     var famNil=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Nil';});
     if(famPresent.length||famNil.length||f('famNotes')){
       h+='<h3>Family psychiatric history</h3>';
       if(famPresent.length){
-        h+='<p>A family history of the following was reported:</p>'+L(famPresent.map(function(i){
+        var famLines=famPresent.map(function(i){
           var d=(S.famDetail&&S.famDetail[i.id]||'').trim();
           var lbl=_letterCleanLabel(i.label);
-          return esc(lbl)+(d?' ('+esc(d)+')':'');
-        }));
+          return _smartLower(lbl)+(d?' ('+d+')':'');
+        });
+        h+='<p>'+prCap+' reported a family history of '+esc(_joinList(famLines))+'.</p>';
       }
       if(famNil.length){
         h+='<p>'+prCap+' denied any family history of '+esc(_joinList(famNil.map(function(i){return _smartLower(_letterCleanLabel(i.label));})))+'.</p>';
       }
-      if(f('famNotes'))h+='<p><strong>Additional family history details:</strong> '+esc(f('famNotes'))+'</p>';
+      if(f('famNotes'))h+=_letterParas(f('famNotes'));
     }
   } else if(f('famNotes')){
     h+='<h3>Family psychiatric history</h3>';
     h+=_letterParas(f('famNotes'));
   }
 
-  // Substance use — show per-substance detail in parens when provided
+  // Substance use — show per-substance detail in parens when provided.
+  // Composite SUD/dependency sentence draws on S.sudDiff + S.drugDep.
   function _subEntry(s){
     var key='sub_'+s.replace(/\W/g,'_');
     var d=(S.subDetail&&S.subDetail[key]||'').trim();
@@ -4953,26 +4974,48 @@ function buildLetterReport(){
   }
   var currSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';}):[];
   var pastSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Past';}):[];
-  if(currSubs.length||pastSubs.length||f('subNotes')){
+  function _sudSentence(){
+    var sud=S.sudDiff||'',dep=S.drugDep||'';
+    if(!sud&&!dep)return '';
+    var sudPart=sud==='Current'?prCap+' has a current substance use disorder'
+      :sud==='Past'?prCap+' has a past history of substance use disorder'
+      :sud==='Nil'?prCap+' has no history of substance use disorder'
+      :'';
+    var depPart='';
+    if(dep==='Yes')depPart='was assessed today as a drug-dependent person';
+    else if(dep==='No')depPart='was assessed today as not being a drug-dependent person';
+    if(!sudPart&&!depPart)return '';
+    if(!sudPart)return prCap+' '+depPart+'.';
+    if(!depPart)return sudPart+'.';
+    // Combine with appropriate connector
+    var sudConsistent=(sud==='Current'&&dep==='Yes')||(sud==='Nil'&&dep==='No');
+    var connector=sudConsistent?' and ':', however ';
+    return sudPart+connector+depPart+'.';
+  }
+  var sudSent=_sudSentence();
+  if(currSubs.length||pastSubs.length||f('subNotes')||sudSent){
     h+='<h3>Substance use</h3>';
     var subBits=[];
     if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(_subEntry)));
     if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(_subEntry)));
     if(subBits.length)h+='<p>'+prCap+' '+reports+' '+_joinList(subBits)+'.</p>';
+    if(sudSent)h+='<p>'+esc(sudSent)+'</p>';
     if(f('subNotes'))h+=_letterParas(f('subNotes'));
   }
 
-  // Medical history (no past psych here — it's its own section above)
+  // Medical history — prose form.
   var medFlagged=(typeof MEDICAL!=='undefined')?MEDICAL.filter(function(m){return S.medical&&S.medical[m.id];}):[];
-  var medItems=[];
-  var medHxParts=[];
-  if(medFlagged.length)medHxParts.push(medFlagged.map(function(m){return _letterCleanLabel(m.label);}).join(', '));
-  if(f('medHistory'))medHxParts.push(f('medHistory'));
-  medItems.push('<strong>Medical history:</strong> '+(medHxParts.length?esc(medHxParts.join('; ')):'Nil'));
-  if(f('currentMeds'))medItems.push('<strong>Current medications:</strong> '+esc(f('currentMeds')));
-  if(f('allergies'))medItems.push('<strong>Allergies:</strong> '+esc(f('allergies')));
+  var medListProse=medFlagged.map(function(m){return _smartLower(_letterCleanLabel(m.label));});
   h+='<h3>Medical history</h3>';
-  h+=L(medItems);
+  if(medListProse.length||f('medHistory')){
+    var medSentence=prCap+' has a medical history of '+_joinList(medListProse);
+    if(f('medHistory'))medSentence+=(medListProse.length?'. Additionally, ':'')+f('medHistory');
+    h+='<p>'+esc(medSentence.replace(/\.$/,''))+'.</p>';
+  } else {
+    h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any significant medical history.</p>';
+  }
+  if(f('currentMeds'))h+='<p>Current medications include '+esc(f('currentMeds').replace(/\.$/,''))+'.</p>';
+  if(f('allergies'))h+='<p>Allergies: '+esc(f('allergies').replace(/\.$/,''))+'.</p>';
   if(f('medNotes'))h+=_letterParas(f('medNotes'));
 
   // Investigations & safety screen
@@ -4992,13 +5035,8 @@ function buildLetterReport(){
   if(invItems.length||cardFlagged.length||f('cardiacNotes')){
     h+='<h3>Cardiac and prescribing screen</h3>';
     if(invItems.length)h+=L(invItems.map(esc));
-    if(cardFlagged.length)h+='<p><strong>Cardiac risk factors identified:</strong></p>'+L(cardFlagged.map(function(c){return esc(c.label);}));
+    if(cardFlagged.length)h+='<p><strong>Cardiac risk factors identified:</strong></p>'+L(cardFlagged.map(function(c){return esc(_letterCleanLabel(c.label));}));
     if(f('cardiacNotes'))h+=_letterParas(f('cardiacNotes'));
-    var sscript=[];
-    if(S.safeScript)sscript.push('SafeScript / RTPM: '+S.safeScript.replace(/\s*-{1,2}\s*/g,' — ')+(f('ssDetail')?' — '+f('ssDetail'):''));
-    if(S.drugDep)sscript.push('Drug-dependent status: '+S.drugDep);
-    if(S.sudDiff)sscript.push('SUD differential: '+S.sudDiff);
-    if(sscript.length)h+=L(sscript.map(esc));
   }
 
   // Mental state examination — flowing prose per section. Yes/no question
@@ -5051,28 +5089,12 @@ function buildLetterReport(){
     h+='<p>'+validityLead+'</p>'+L(malFlagged.map(function(m){return esc(m.label);}));
   }
 
-  // Differential diagnoses considered. Past differentials are already covered
-  // under "Past psychiatric history" above so the comorbid line shows Current
-  // only to avoid duplication. Lists ALL Current items the user marked
-  // (including bipolar / schizophrenia / suicidality / EDs) — those are valid
-  // comorbidities here even if the formulation prose treats some as
-  // alternative explanations.
-  h+='<h3>Differential diagnoses considered</h3>';
-  var betterEx=DIFFS.filter(function(d){return S.differentials[d.id]==='Better explanation';});
-  var currentAll=getCurrentDifferentials();
-  var notPres=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
-  var diffLines=[];
-  if(currentAll.length)diffLines.push('<strong>Comorbid:</strong> '+esc(currentAll.map(function(d){return _letterCleanLabel(d.label);}).join(', ')));
-  if(betterEx.length)diffLines.push('<strong>Considered as a better explanation:</strong> '+esc(betterEx.map(function(d){return _letterCleanLabel(d.label);}).join(', ')));
-  if(diffLines.length)h+=L(diffLines);
-  // Negatives after the positives — prose form per user request.
-  if(notPres.length){
-    h+='<p>There was no evidence to support '+esc(_joinList(notPres.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+'.</p>';
-  }
-  if(!diffLines.length&&!notPres.length){
-    h+='<p>Other psychiatric diagnoses were considered and felt unlikely to better account for the presentation.</p>';
-  }
-  if(f('diffNotes'))h+=_letterParas(f('diffNotes'));
+  // (Differential diagnoses considered section removed — Past psychiatric
+  // history above now carries both the past differentials and the relevant
+  // negatives. Comorbid Current differentials are already mentioned in the
+  // History of presentation block, and the Diagnosis & Formulation below
+  // handles the rest.)
+  if(f('diffNotes'))h+='<h3>Differential diagnoses — additional notes</h3>'+_letterParas(f('diffNotes'));
 
   // DSM criteria met
   var dsmMet=(typeof DSM!=='undefined')?DSM.filter(function(d){return S.dsm&&S.dsm[d.id];}):[];
@@ -5098,10 +5120,36 @@ function buildLetterReport(){
     h+=_letterParas(f('dxNotes'));
   }
 
-  // Management plan
-  if(titMeds.length||f('rxNotes')){
+  // ─── Management plan with subheadings ───────────────────────────────────
+  var hasMgmt=titMeds.length||f('rxNotes');
+  // Pre-compute split for Psychoeducation vs Non-pharm
+  var PE_NONPHARM={'Non-pharmacological Strategies':1,'Products and Resources':1};
+  var psychoedItems=[],nonpharmItems=[];
+  if(typeof PE_GROUPS!=='undefined'&&S.peChips){
+    PE_GROUPS.forEach(function(g){
+      g.items.forEach(function(it){
+        if(!S.peChips[it.id])return;
+        if(g.label&&PE_NONPHARM[g.label])nonpharmItems.push(it.title);
+        else psychoedItems.push(it.title);
+      });
+    });
+  }
+  var fuApptStr=(typeof getFuApptStr==='function')?getFuApptStr():'';
+  var fuMonStr=(typeof getFuMonStr==='function')?getFuMonStr():'';
+  var fuNPList=(typeof getFuNPList==='function')?getFuNPList():[];
+  var fuProvideList=(typeof getFuProvideList==='function')?getFuProvideList():[];
+  var fuConKeys=(typeof fuCon!=='undefined')?Array.from(fuCon):[];
+  var fuNotes=f('fuNotes');
+  var hasNonPharm=nonpharmItems.length||fuNPList.length;
+  var hasPatientTasks=fuProvideList.length>0;
+  var hasMonitoring=!!fuMonStr;
+  var hasFollowUp=!!fuApptStr;
+  if(hasMgmt||psychoedItems.length||hasNonPharm||hasPatientTasks||hasMonitoring||hasFollowUp||fuNotes){
     h+='<h3>Management plan</h3>';
-    if(titMeds.length){
+
+    // Pharmacological
+    if(titMeds.length||f('rxNotes')){
+      h+='<p><strong>Pharmacological</strong></p>';
       titMeds.forEach(function(m){
         var nm=m.key==='other'&&m.customName?m.customName:m.def.name;
         var mainStep=m.steps.find(function(s){return s.ongoing;})||m.steps[m.steps.length-1];
@@ -5109,10 +5157,6 @@ function buildLetterReport(){
         if(mainStep&&mainStep.doses&&mainStep.doses.length){
           try{ongoingStr=formatStepSig(m,mainStep).replace(/^take /,'');}catch(e){ongoingStr='';}
         }
-        // Branch: real titration (multiple distinct doses across steps) →
-        // open with "I have commenced [name] on [Med], with the following
-        // titration plan:" then the bullet steps. Single ongoing dose →
-        // simple "[Med] — ongoing dose X" line.
         var schedule=(typeof buildMedSchedule==='function')?buildMedSchedule(m):[];
         var hasTit=false;
         if(schedule.length>1){
@@ -5126,55 +5170,31 @@ function buildLetterReport(){
           h+='<p><strong>'+esc(nm)+'</strong>'+(ongoingStr?' — ongoing dose '+esc(ongoingStr):'')+'.</p>';
         }
       });
-      // Scripts provided today
       var scriptLines=(typeof buildScriptLines==='function')?buildScriptLines():[];
-      if(scriptLines.length){
-        h+='<p><strong>Scripts provided today:</strong></p>'+L(scriptLines.map(esc));
+      if(scriptLines.length)h+='<p><strong>Scripts provided today:</strong></p>'+L(scriptLines.map(esc));
+      if(f('rxNotes'))h+='<p><strong>Prescription notes:</strong> '+esc(f('rxNotes'))+'</p>';
+    }
+
+    // Non-pharmacological (psychoed + non-pharm strategies)
+    if(psychoedItems.length||hasNonPharm){
+      h+='<p><strong>Non-pharmacological</strong></p>';
+      if(psychoedItems.length)h+='<p>Psychoeducation provided: '+esc(psychoedItems.join(', '))+'.</p>';
+      if(nonpharmItems.length||fuNPList.length){
+        var allNonPharm=nonpharmItems.concat(fuNPList);
+        h+='<p>Non-pharmacological recommendations: '+esc(allNonPharm.join(', '))+'.</p>';
       }
     }
-    if(f('rxNotes'))h+='<p><strong>Prescription notes:</strong> '+esc(f('rxNotes'))+'</p>';
-  }
 
-  // Education / non-pharmacological recommendations — split PE selections
-  // into "psychoeducation" (general education + medication info) and
-  // "non-pharmacological recommendations" (strategies + resources).
-  if(typeof PE_GROUPS!=='undefined'&&S.peChips){
-    var PE_NONPHARM={'Non-pharmacological Strategies':1,'Products and Resources':1};
-    var psychoedItems=[],nonpharmItems=[];
-    PE_GROUPS.forEach(function(g){
-      g.items.forEach(function(it){
-        if(!S.peChips[it.id])return;
-        if(g.label&&PE_NONPHARM[g.label])nonpharmItems.push(it.title);
-        else psychoedItems.push(it.title);
-      });
-    });
-    if(psychoedItems.length)h+='<p><strong>Psychoeducation provided:</strong> '+esc(psychoedItems.join(', '))+'.</p>';
-    if(nonpharmItems.length)h+='<p><strong>Non-pharmacological recommendations:</strong> '+esc(nonpharmItems.join(', '))+'.</p>';
-  }
-
-  // Follow-up plan
-  var fuApptStr=(typeof getFuApptStr==='function')?getFuApptStr():'';
-  var fuMonStr=(typeof getFuMonStr==='function')?getFuMonStr():'';
-  var fuNPList=(typeof getFuNPList==='function')?getFuNPList():[];
-  var fuProvideList=(typeof getFuProvideList==='function')?getFuProvideList():[];
-  var fuConKeys=(typeof fuCon!=='undefined')?Array.from(fuCon):[];
-  var fuNotes=f('fuNotes');
-  if(fuApptStr||fuMonStr||fuNPList.length||fuProvideList.length||fuConKeys.length||fuNotes){
-    h+='<h3>Follow-up plan</h3>';
-    if(fuApptStr){
-      // The appointment templates use "your GP" because they're written for
-      // the patient's copy. In a GP letter we want third-person ("their GP").
-      var apptForGP=String(fuApptStr).replace(/\byour\b/gi,po);
-      h+='<p>I have arranged for '+esc(name)+' to be reviewed: '+esc(apptForGP)+'.</p>';
-    }
-    if(fuProvideList.length){
+    // Patient tasks
+    if(hasPatientTasks){
+      h+='<p><strong>Patient tasks</strong></p>';
       var pTime=f('fu-provide-timeframe')||'prior to next review';
       h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(_lowerPreserveAcronyms(fuProvideList.join(', ')))+'.</p>';
     }
-    if(fuMonStr){
-      // Split into things you actively monitor (vitals, bloods, ECG, UDS,
-      // weight, BMI) versus things you review (mood, sleep) so the prose
-      // reads naturally. Lowercase mid-sentence while preserving acronyms.
+
+    // Monitoring
+    if(hasMonitoring){
+      h+='<p><strong>Monitoring</strong></p>';
       var rawMon=fuMonStr.split(/\s*[,;]\s*/).filter(Boolean);
       var monitor=[],review=[];
       rawMon.forEach(function(item){
@@ -5186,12 +5206,77 @@ function buildLetterReport(){
       if(review.length)bits.push('review '+_joinList(review));
       if(bits.length)h+='<p>I would be grateful if you could '+_joinList(bits)+' at GP review.</p>';
     }
-    if(fuNPList.length)h+='<p><strong>Non-pharmacological recommendations:</strong> '+esc(fuNPList.join(', '))+'.</p>';
-    if(fuConKeys.length){
-      var conLabels=fuConKeys.map(function(k){return TIT_SCEN_GP[k]||((typeof TIT_SCEN!=='undefined'&&TIT_SCEN[k])?TIT_SCEN[k].t:k);});
-      h+='<p>Safety scenarios discussed with '+esc(name)+' (and included in '+po+' patient document): '+esc(conLabels.join(', '))+'.</p>';
+
+    // Follow-up
+    if(hasFollowUp||fuNotes){
+      h+='<p><strong>Follow-up</strong></p>';
+      if(hasFollowUp){
+        // Reword "Review with X in N weeks (T min); Review with Y in N weeks
+        // (T min)" → "Patient to please arrange follow-up appointments with
+        // X in N weeks for T mins, and with Y in N weeks for T mins."
+        var apptForGP=String(fuApptStr).replace(/\byour\b/gi,po);
+        var appts=apptForGP.split(/\s*;\s*/).filter(Boolean).map(function(a){
+          // "Review with X in N weeks (T min)" → "X in N weeks for T mins"
+          return a.replace(/^Review\s+with\s+/i,'').replace(/\((\d+)\s*min\)/,'for $1 mins');
+        });
+        if(appts.length){
+          var verb=appts.length===1?'a follow-up appointment':'follow-up appointments';
+          h+='<p>'+esc(name)+' is to please arrange '+verb+' with '+esc(_joinList(appts))+'.</p>';
+        }
+      }
+      if(fuNotes)h+=_letterParas(fuNotes);
     }
-    if(fuNotes)h+=_letterParas(fuNotes);
+  }
+
+  // ─── Safety alerts (concern + recommended action) ───────────────────────
+  // Pulls from cardiac flags, BMI, BP, HR, UDS, MSE risk, SafeScript,
+  // discussed safety scenarios.
+  var safetyAlerts=[];
+  // Vitals
+  var sysBP=parseInt(f('bpSystolic')||'',10);
+  var diaBP=parseInt(f('bpDiastolic')||'',10);
+  if((sysBP&&sysBP>=140)||(diaBP&&diaBP>=90)){
+    safetyAlerts.push({c:'Elevated blood pressure ('+(sysBP||'?')+'/'+(diaBP||'?')+' mmHg)',a:'Optimise BP before / during stimulant treatment; recheck and consider antihypertensive review if persistent.'});
+  }
+  var hrVal=parseInt(f('hrReading')||'',10);
+  if(hrVal&&hrVal>=100){
+    safetyAlerts.push({c:'Resting tachycardia ('+hrVal+' bpm)',a:'Recheck on a separate occasion; investigate underlying causes (anxiety, thyroid, anaemia, substance use) before / during stimulant titration.'});
+  }
+  // BMI low
+  var weightN=parseFloat(f('ptWeight')||''),heightN=parseFloat(f('ptHeight')||'');
+  if(weightN&&heightN&&heightN>0){
+    var bmi=weightN/((heightN/100)*(heightN/100));
+    if(bmi<18.5){
+      safetyAlerts.push({c:'Underweight (BMI '+bmi.toFixed(1)+')',a:'Stimulant-related appetite suppression may worsen this; monitor weight closely or consider a non-stimulant agent.'});
+    }
+  }
+  // SafeScript / RTPM concern
+  if(S.safeScript&&/concern/i.test(S.safeScript)){
+    safetyAlerts.push({c:'SafeScript / RTPM concern flagged'+(f('ssDetail')?' — '+f('ssDetail'):''),a:'Document rationale for prescribing; coordinate with prior prescribers; consider non-stimulant or supervised dispensing.'});
+  }
+  // UDS positive
+  if(S.uds==='Positive'){
+    safetyAlerts.push({c:'Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),a:'Address ongoing substance use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing.'});
+  }
+  // MSE: active suicidality
+  if(typeof mseVals==='function'){
+    var siVals=mseVals('suicide');
+    if(siVals.some(function(v){return /active/i.test(v);})){
+      safetyAlerts.push({c:'Active suicidal ideation reported on MSE',a:'A safety plan was developed in session; means restriction discussed; '+(po||'their')+' GP and emergency contacts identified. To re-review at next appointment.'});
+    }
+  }
+  // Cardiac flags
+  cardFlagged.forEach(function(c){
+    safetyAlerts.push({c:_letterCleanLabel(c.label),a:c.note||'Consider further work-up before initiating stimulant therapy.'});
+  });
+  // Selected safety scenarios (TIT_SCEN) — concern + action pairs
+  fuConKeys.forEach(function(k){
+    var sc=(typeof TIT_SCEN!=='undefined')?TIT_SCEN[k]:null;
+    if(sc)safetyAlerts.push({c:sc.t,a:sc.a});
+  });
+  if(safetyAlerts.length){
+    h+='<h3>Safety</h3>';
+    h+='<ul>'+safetyAlerts.map(function(s){return '<li><strong>'+esc(s.c)+':</strong> '+esc(s.a)+'</li>';}).join('')+'</ul>';
   }
 
   // Closing
@@ -6409,6 +6494,14 @@ function autoDSM(){
 
 // ─── MAIN REFRESH ─────────────────────────────────────────────────────────────
 function refresh(){
+  // Keep the legacy bpReading hidden field in sync with the new
+  // bpSystolic / bpDiastolic inputs so existing builders that read
+  // f('bpReading') keep working.
+  var sys=f('bpSystolic'),dia=f('bpDiastolic');
+  var bpEl=$('bpReading');
+  if(bpEl){
+    bpEl.value=(sys&&dia)?(sys+'/'+dia):(sys||dia||'');
+  }
   // Auto-toggle concerns: on if titrating OR user added concern items; off otherwise. Manual toggles always win.
   var titrating=hasRealTitration();
   if(!docSections._concernsManual) docSections.concerns = titrating || fuCon.size > 0;
