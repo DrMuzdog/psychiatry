@@ -1878,9 +1878,47 @@ function dxFull(){
 function getCurrentDifferentials(){
   return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Current';});
 }
+function getCurrentComorbidities(){
+  // Comorbidities for the letter / formulation prose: exclude flagged
+  // differentials (medical / neurodegen / substance-induced etc.) — they're
+  // ruled-out considerations, not actual comorbid diagnoses.
+  var FLAGS={bipolar:1,schizophrenia:1,suicidality:1,anorexia:1,bulimia:1,tbi:1,substance_induced:1,neurodegen:1,medical:1};
+  return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Current'&&!FLAGS[d.id];});
+}
 function getPastDifferentials(){
   return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Past';});
 }
+
+// Verb conjugation helpers (handle they/them as plural verb form)
+function _vAgree(g,sing,plural){return (g==='Male'||g==='Female')?sing:plural;}
+function _smartLower(s){
+  // Lowercase the first character only, preserving acronyms like ASD or FBC
+  // that may appear later in the label.
+  return s?s.charAt(0).toLowerCase()+s.slice(1):s;
+}
+function _stripDifficultyPrefix(s){return s.replace(/^difficulty\s+/i,'');}
+function _capitaliseDr(s){
+  return (s||'').replace(/^(Dr\s+)([a-z])/,function(_,p1,p2){return p1+p2.toUpperCase();});
+}
+function _personNoun(g){
+  return (g==='Male'||g==='Female')?'':' individual';
+}
+function _appendUnit(val,unit){
+  if(!val)return '';
+  return new RegExp(unit.replace(/[/]/g,'\\/'),'i').test(val)?val:val+' '+unit;
+}
+var TIT_SCEN_GP={
+  sideEffects:'side effects',
+  noEffect:'lack of medication effect',
+  tooStrong:'medication feeling too strong',
+  sleep:'sleep disturbance',
+  appetite:'appetite changes',
+  mood:'mood changes',
+  chest:'chest pain or palpitations',
+  crisis:'mental health crisis',
+  runOut:'running out of medication',
+  script:'prescription rules / 20-day rule'
+};
 
 // ─── FORMULATION STYLES ─────────────────────────────────────────────────────
 function getFormulationContext(){
@@ -1891,9 +1929,11 @@ function getFormulationContext(){
   var sub=S.subtype||'';
   var subPhrase=sub==='Combined'?'combined inattentive and hyperactive-impulsive':sub==='Inattentive'?'predominantly inattentive':sub==='Hyperactive-Impulsive'?'predominantly hyperactive-impulsive':'';
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
-  var top=diffs.slice(0,3).map(function(d){return d.toLowerCase();});
-  var current=getCurrentDifferentials().map(function(d){return d.label.toLowerCase();});
-  var past=getPastDifferentials().map(function(d){return d.label.toLowerCase();});
+  var top=diffs.slice(0,3).map(function(d){return _smartLower(_stripDifficultyPrefix(d));});
+  // Comorbidities: only Current and excluding flagged differentials so the
+  // formulation doesn't claim a "comorbid medical / neurological cause".
+  var current=getCurrentComorbidities().map(function(d){return _smartLower(d.label);});
+  var past=getPastDifferentials().map(function(d){return _smartLower(d.label);});
   var asrs=(S.screening&&S.screening.asrs)||'';
   var diva=(S.screening&&S.screening.diva)||'';
   var dx=dxFull();
@@ -1907,9 +1947,10 @@ function _joinList(arr){
 }
 function formulationClinical(c){
   var bits=[];
-  var who=(c.age?c.age+'-year-old ':'')+(c.gender?c.gender.toLowerCase()+' ':'')+'patient';
+  var personNoun=_personNoun(c.gender)||' patient';
+  var who=(c.age?c.age+'-year-old ':'')+(c.gender?c.gender.toLowerCase()+(personNoun?'':' patient'):'patient')+(personNoun?personNoun:'');
   bits.push(c.name+' is a '+who+' presenting with a longstanding pattern of '+(c.subPhrase?c.subPhrase+' symptoms ':'attentional and self-regulatory symptoms ')+'consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+'.');
-  bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant impairment'+(c.top.length?' — particularly in the areas of '+_joinList(c.top)+'':'')+'.');
+  bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant impairment'+(c.top.length?' — particularly in the areas of '+_joinList(c.top):'')+'.');
   var screen=[];
   if(c.asrs)screen.push('Patient ASRS '+c.asrs.toLowerCase());
   if(c.diva)screen.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
@@ -1921,12 +1962,13 @@ function formulationClinical(c){
 function formulationNarrative(c){
   var pron=c.pron||'they',poss=c.poss||'their';
   var bits=[];
-  var who=c.name+(c.age?', a '+c.age+'-year-old'+(c.gender?' '+c.gender.toLowerCase():''):'');
+  var personNoun=_personNoun(c.gender);
+  var who=c.name+(c.age?', a '+c.age+'-year-old'+(c.gender?' '+c.gender.toLowerCase()+(personNoun?personNoun:''):''):'');
   var topPhrase=c.top.length?_joinList(c.top):'difficulty regulating attention, organisation, and internal restlessness';
   bits.push(who+', describes a lifelong difficulty with '+topPhrase+'.');
   bits.push('These patterns were present from childhood and have persisted into '+poss+' adult life, where they continue to interfere with work, relationships, and day-to-day self-management.');
   bits.push('The clinical picture is consistent with adult ADHD'+(c.sub?', '+c.sub+' presentation':'')+'.');
-  if(c.current.length)bits.push('Alongside the core ADHD picture, '+pron+' '+(pron==='they'?'are':'is')+' also experiencing '+_joinList(c.current)+', which will be considered as part of the broader treatment plan.');
+  if(c.current.length)bits.push('Alongside the core ADHD picture, '+pron+' '+_vAgree(c.gender,'is','are')+' also experiencing '+_joinList(c.current)+', which will be considered as part of the broader treatment plan.');
   bits.push('Treatment will target the core attentional and regulatory difficulties while supporting '+poss+' broader functional picture.');
   return bits.join(' ');
 }
@@ -1943,12 +1985,12 @@ function formulationFunctional(c){
   return bits.join(' ');
 }
 var FORMULATION_BUILDERS={clinical:formulationClinical,narrative:formulationNarrative,functional:formulationFunctional};
-var _fmlnEdited=false,_fmlnActiveStyle=null;
+var _fmlnEdited=false,_fmlnActiveStyle=null,_fmlnDxAtGen='';
 function pickFormulation(style){
   var fn=FORMULATION_BUILDERS[style];if(!fn)return;
   var ta=$('dxNotes');if(!ta)return;
   ta.value=fn(getFormulationContext());
-  _fmlnEdited=false;_fmlnActiveStyle=style;
+  _fmlnEdited=false;_fmlnActiveStyle=style;_fmlnDxAtGen=dxFull();
   document.querySelectorAll('.fmln-btn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-style')===style);});
   var tag=$('fmln-edited-tag');if(tag)tag.style.display='none';
   if(typeof save==='function')save();
@@ -1958,6 +2000,17 @@ function onDxNotesEdit(){
   if(_fmlnActiveStyle){_fmlnEdited=true;var tag=$('fmln-edited-tag');if(tag)tag.style.display='inline';}
   if(typeof save==='function')save();
   if(typeof refresh==='function')refresh();
+}
+function maybeRefreshFormulation(){
+  // Called from refresh(): if a style is active and the user hasn't manually
+  // edited the textarea, regenerate it whenever the diagnosis changes so the
+  // formulation paragraph always matches the current dx state.
+  if(!_fmlnActiveStyle||_fmlnEdited)return;
+  var cur=dxFull();
+  if(cur===_fmlnDxAtGen)return;
+  var fn=FORMULATION_BUILDERS[_fmlnActiveStyle];
+  var ta=$('dxNotes');
+  if(fn&&ta){ta.value=fn(getFormulationContext());_fmlnDxAtGen=cur;}
 }
 
 
@@ -4588,8 +4641,13 @@ function buildLetterReport(){
   var quals=f('drQuals')||'';
   var gp=f('gpName')||'';
   var gpStr=gp?(/^Dr/i.test(gp)?gp:'Dr '+gp):'';
+  gpStr=_capitaliseDr(gpStr);
   var dxStr=dxFull();
   var rt=S.reviewType||'Initial';
+  var personNoun=_personNoun(gender);
+  var was=_vAgree(gender,'was','were');
+  var reports=_vAgree(gender,'reports','report');
+  var has=_vAgree(gender,'has','have');
   function L(arr){return '<ul>'+arr.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
 
   var h='';
@@ -4602,18 +4660,18 @@ function buildLetterReport(){
 
   // Opening
   var referral=f('referralReason');
-  h+='<p>Thank you for referring '+esc(name)+(age?', a '+esc(age)+'-year-old'+(gender?' '+esc(gender.toLowerCase()):''):'')+', for psychiatric assessment'+(referral?' regarding '+esc(referral.toLowerCase().replace(/\.$/,''))+'':'')+'. '+prCap+' was reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
+  h+='<p>Thank you for referring '+esc(name)+(age?', a '+esc(age)+'-year-old'+(gender?' '+esc(gender.toLowerCase())+esc(personNoun):''):'')+', for psychiatric assessment'+(referral?' regarding '+esc(referral.toLowerCase().replace(/\.$/,'')):'')+'. '+prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
 
   // History of presentation
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length||f('presentNotes')){
     h+='<h3>History of presentation</h3>';
     if(diffs.length){
-      var topPhrase=diffs.slice(0,5).map(function(d){return d.toLowerCase();});
+      var topPhrase=diffs.slice(0,5).map(function(d){return _smartLower(_stripDifficultyPrefix(d));});
       h+='<p>'+prCap+' described a longstanding pattern of difficulty with '+_joinList(topPhrase)+(diffs.length>5?', amongst other concerns':'')+'. These difficulties have been pervasive across multiple settings and have caused clinically significant functional impairment.</p>';
     }
     if(f('presentNotes'))h+=_letterParas(f('presentNotes'));
-    var curDiffs=getCurrentDifferentials().map(function(d){return d.label.toLowerCase();});
+    var curDiffs=getCurrentComorbidities().map(function(d){return _smartLower(d.label);});
     if(curDiffs.length)h+='<p>'+prCap+' also endorsed features consistent with comorbid '+_joinList(curDiffs)+', which '+(curDiffs.length>1?'are':'is')+' considered alongside the primary diagnosis below.</p>';
   }
 
@@ -4624,11 +4682,11 @@ function buildLetterReport(){
     if(S.screening.diva)screenItems.push('DIVA-5 — '+String(S.screening.diva).replace(/^Completed - /i,'').toLowerCase()+(S.screening.divaMode?' ('+S.screening.divaMode.toLowerCase()+')':''));
     var di=f('diva-inatt'),dh=f('diva-hi');
     if(di||dh)screenItems.push('DIVA-5 symptom counts — inattention '+(di||'?')+'/9, hyperactivity/impulsivity '+(dh||'?')+'/9');
-    if(f('otherScreening'))screenItems.push('other screening — '+f('otherScreening'));
-    if(S.screening.obs)screenItems.push('observer ASRS — '+String(S.screening.obs).toLowerCase());
+    if(f('otherScreening'))screenItems.push('Other screening — '+f('otherScreening'));
+    if(S.screening.obs)screenItems.push('Observer ASRS — '+String(S.screening.obs).toLowerCase());
     if(S.screening.gpReferral)screenItems.push('GP referral — '+String(S.screening.gpReferral).toLowerCase());
-    if(S.screening.schoolReports)screenItems.push('school reports — '+String(S.screening.schoolReports).toLowerCase()+(f('schoolNotes')?' ('+f('schoolNotes')+')':''));
-    if(S.screening.psychReport)screenItems.push('psychology report — '+String(S.screening.psychReport).toLowerCase()+(f('psychReportNotes')?' ('+f('psychReportNotes')+')':''));
+    if(S.screening.schoolReports)screenItems.push('School reports — '+String(S.screening.schoolReports).toLowerCase()+(f('schoolNotes')?' ('+f('schoolNotes')+')':''));
+    if(S.screening.psychReport)screenItems.push('Psychology report — '+String(S.screening.psychReport).toLowerCase()+(f('psychReportNotes')?' ('+f('psychReportNotes')+')':''));
     if(S.screening.vanderbiltParent)screenItems.push('Vanderbilt (parents) — '+String(S.screening.vanderbiltParent).toLowerCase()+(f('vanderbiltParentNotes')?' ('+f('vanderbiltParentNotes')+')':''));
     if(S.screening.vanderbiltTeacher)screenItems.push('Vanderbilt (teacher) — '+String(S.screening.vanderbiltTeacher).toLowerCase()+(f('vanderbiltTeacherNotes')?' ('+f('vanderbiltTeacherNotes')+')':''));
   }
@@ -4680,7 +4738,7 @@ function buildLetterReport(){
     var subBits=[];
     if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(function(s){return s.toLowerCase();})));
     if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(function(s){return s.toLowerCase();})));
-    if(subBits.length)h+='<p>'+prCap+' reports '+_joinList(subBits)+'.</p>';
+    if(subBits.length)h+='<p>'+prCap+' '+reports+' '+_joinList(subBits)+'.</p>';
     if(f('subNotes'))h+=_letterParas(f('subNotes'));
   }
 
@@ -4703,8 +4761,12 @@ function buildLetterReport(){
   var invItems=[];
   if(f('ptHeight'))invItems.push('Height: '+f('ptHeight')+' cm');
   if(f('ptWeight'))invItems.push('Weight: '+f('ptWeight')+' kg');
-  if(f('bpReading'))invItems.push('BP: '+f('bpReading'));
-  if(f('hrReading'))invItems.push('HR: '+f('hrReading'));
+  // BMI: pull from #bmi-display if it has been calculated
+  var bmiEl=document.getElementById('bmi-display');
+  var bmiTxt=bmiEl?(bmiEl.textContent||'').trim():'';
+  if(bmiTxt&&bmiTxt!=='—'&&bmiTxt!=='-')invItems.push('BMI: '+bmiTxt);
+  if(f('bpReading'))invItems.push('BP: '+_appendUnit(f('bpReading'),'mmHg'));
+  if(f('hrReading'))invItems.push('HR: '+_appendUnit(f('hrReading'),'bpm'));
   if(S.ecg)invItems.push('ECG: '+S.ecg);
   if(S.uds)invItems.push('UDS: '+S.uds+(f('udsDetail')?' ('+f('udsDetail')+')':''));
   if(f('otherInvest'))invItems.push('Other: '+f('otherInvest'));
@@ -4721,10 +4783,16 @@ function buildLetterReport(){
     if(sscript.length)h+=L(sscript.map(esc));
   }
 
-  // Mental state examination
+  // Mental state examination — filter out yes/no question rows (e.g.
+  // "Is the MSE consistent with an ADHD diagnosis?") which don't belong in
+  // a prose MSE.
   var mseItems=[];
   if(typeof MSE!=='undefined'){
-    MSE.forEach(function(sectn){var v=mseVals(sectn.id);if(v.length)mseItems.push('<strong>'+esc(sectn.label)+':</strong> '+v.map(esc).join(', '));});
+    MSE.forEach(function(sectn){
+      if(/\?\s*$/.test(sectn.label||''))return;
+      var v=mseVals(sectn.id);
+      if(v.length)mseItems.push('<strong>'+esc(sectn.label)+':</strong> '+v.map(esc).join(', '));
+    });
   }
   if(mseItems.length||f('mseNotes')){
     h+='<h3>Mental state examination</h3>';
@@ -4732,20 +4800,23 @@ function buildLetterReport(){
     if(f('mseNotes'))h+=_letterParas(f('mseNotes'));
   }
 
-  // Validity considerations (only if any flagged)
+  // Validity considerations — soften wording to make clear these were weighed
+  // and judged against the supportive information.
   var malFlagged=(typeof MAL!=='undefined')?MAL.filter(function(m){return S.malingering&&S.malingering[m.id];}):[];
   if(malFlagged.length){
     h+='<h3>Validity considerations</h3>';
-    h+='<p>The following were considered during the assessment:</p>'+L(malFlagged.map(function(m){return esc(m.label);}));
+    h+='<p>The following were considered during the assessment, weighed against the supportive collateral and standardised screening, and judged not to undermine the diagnosis:</p>'+L(malFlagged.map(function(m){return esc(m.label);}));
   }
 
-  // Differential diagnoses + DSM criteria + Diagnosis + Formulation
+  // Differential diagnoses considered. Past differentials are already covered
+  // under "Past psychiatric history" above so the comorbid line shows Current
+  // only to avoid duplication.
   h+='<h3>Differential diagnoses considered</h3>';
   var betterEx=DIFFS.filter(function(d){return S.differentials[d.id]==='Better explanation';});
-  var comorbidAll=DIFFS.filter(function(d){return S.differentials[d.id]==='Current'||S.differentials[d.id]==='Past';});
+  var currentCom=getCurrentComorbidities();
   var notPres=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
   var diffLines=[];
-  if(comorbidAll.length)diffLines.push('<strong>Comorbid (current or past):</strong> '+esc(comorbidAll.map(function(d){return d.label;}).join(', ')));
+  if(currentCom.length)diffLines.push('<strong>Comorbid:</strong> '+esc(currentCom.map(function(d){return d.label;}).join(', ')));
   if(betterEx.length)diffLines.push('<strong>Considered as a better explanation:</strong> '+esc(betterEx.map(function(d){return d.label;}).join(', ')));
   if(notPres.length)diffLines.push('<strong>Excluded:</strong> '+esc(notPres.map(function(d){return d.label;}).join(', ')));
   if(diffLines.length)h+=L(diffLines);
@@ -4759,13 +4830,15 @@ function buildLetterReport(){
     h+=L(dsmMet.map(function(d){return esc(d.label);}));
   }
 
-  // Diagnosis (callout)
+  // Diagnosis (callout). For Deferred / Insufficient, render a full sentence
+  // so the plain-text export doesn't read as the orphan word "Deferred".
   if(dxStr){
     h+='<h3>Diagnosis</h3>';
-    var calloutCls='dx-callout',prefix='✓ ';
+    var calloutCls='dx-callout',prefix='✓ ',calloutText=dxStr;
     if(S.dx==='No'){calloutCls+=' no-dx';prefix='';}
-    else if(S.dx==='Insufficient evidence'||S.dx==='Deferred'){calloutCls+=' deferred';prefix='';}
-    h+='<div class="'+calloutCls+'">'+prefix+esc(dxStr)+'</div>';
+    else if(S.dx==='Insufficient evidence'){calloutCls+=' deferred';prefix='';calloutText='Diagnosis deferred — insufficient evidence at this time';}
+    else if(S.dx==='Deferred'){calloutCls+=' deferred';prefix='';calloutText='Diagnostic conclusion deferred pending further review';}
+    h+='<div class="'+calloutCls+'">'+prefix+esc(calloutText)+'</div>';
   }
 
   // Formulation
@@ -4787,8 +4860,12 @@ function buildLetterReport(){
         }
         h+='<p><strong>'+esc(nm)+'</strong>'+(ongoingStr?' — ongoing dose '+esc(ongoingStr):'')+'.</p>';
         var schedule=(typeof buildMedSchedule==='function')?buildMedSchedule(m):[];
+        // Skip the day-by-day list when every step shares the same dose string
+        // (i.e. nothing actually titrates).
         if(schedule.length>1){
-          h+='<p>Titration plan:</p>'+L(schedule);
+          var unique={};
+          schedule.forEach(function(line){var dose=line.replace(/<strong>[^<]+<\/strong>:\s*/,'').trim();unique[dose]=true;});
+          if(Object.keys(unique).length>1)h+='<p>Titration plan:</p>'+L(schedule);
         }
       });
       // Scripts provided today
@@ -4815,15 +4892,34 @@ function buildLetterReport(){
   var fuNotes=f('fuNotes');
   if(fuApptStr||fuMonStr||fuNPList.length||fuProvideList.length||fuConKeys.length||fuNotes){
     h+='<h3>Follow-up plan</h3>';
-    if(fuApptStr)h+='<p>I have arranged for '+esc(name)+' to be reviewed: '+esc(fuApptStr)+'.</p>';
+    if(fuApptStr){
+      // The appointment templates use "your GP" because they're written for
+      // the patient's copy. In a GP letter we want third-person ("their GP").
+      var apptForGP=String(fuApptStr).replace(/\byour\b/gi,po);
+      h+='<p>I have arranged for '+esc(name)+' to be reviewed: '+esc(apptForGP)+'.</p>';
+    }
     if(fuProvideList.length){
       var pTime=f('fu-provide-timeframe')||'prior to next review';
-      h+='<p>'+prCap+' has been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(fuProvideList.join(', '))+'.</p>';
+      h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(fuProvideList.join(', '))+'.</p>';
     }
-    if(fuMonStr)h+='<p>I would be grateful if you could monitor '+esc(fuMonStr.toLowerCase())+' at GP review.</p>';
+    if(fuMonStr){
+      // Split into things you actively monitor (vitals, bloods, ECG, UDS,
+      // weight, BMI) versus things you review (mood, sleep) so the prose
+      // reads naturally.
+      var rawMon=fuMonStr.split(/\s*[,;]\s*/).filter(Boolean);
+      var monitor=[],review=[];
+      rawMon.forEach(function(item){
+        if(/\breview$/i.test(item))review.push(item.replace(/\s*review$/i,'').toLowerCase());
+        else monitor.push(item);
+      });
+      var bits=[];
+      if(monitor.length)bits.push('monitor '+_joinList(monitor));
+      if(review.length)bits.push('review '+_joinList(review));
+      if(bits.length)h+='<p>I would be grateful if you could '+_joinList(bits)+' at GP review.</p>';
+    }
     if(fuNPList.length)h+='<p><strong>Non-pharmacological recommendations:</strong> '+esc(fuNPList.join(', '))+'.</p>';
     if(fuConKeys.length){
-      var conLabels=fuConKeys.map(function(k){return (typeof TIT_SCEN!=='undefined'&&TIT_SCEN[k])?TIT_SCEN[k].t:k;});
+      var conLabels=fuConKeys.map(function(k){return TIT_SCEN_GP[k]||((typeof TIT_SCEN!=='undefined'&&TIT_SCEN[k])?TIT_SCEN[k].t:k);});
       h+='<p>Safety scenarios discussed with '+esc(name)+' (and included in '+po+' patient document): '+esc(conLabels.join(', '))+'.</p>';
     }
     if(fuNotes)h+=_letterParas(fuNotes);
@@ -6057,6 +6153,7 @@ function refresh(){
   });
   autoDSM();
   fuAutoFromSafety();
+  if(typeof maybeRefreshFormulation==='function')maybeRefreshFormulation();
   renderFlags();updateBadges();
   refreshTitOutputs();
 }
