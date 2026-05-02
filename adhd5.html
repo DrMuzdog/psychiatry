@@ -172,6 +172,8 @@ select.inp{appearance:none}
 .sub-item{background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:6px 9px;display:flex;flex-direction:column;gap:4px}
 .sub-name{font-size:12px;font-weight:600}
 .sub-btns{display:flex;gap:3px}
+.sub-detail,.fam-detail{font:12px var(--sans);padding:5px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box}
+.sub-detail:focus,.fam-detail:focus{outline:none;border-color:var(--primary)}
 .sb{flex:1;padding:3px 0;border-radius:5px;border:1px solid var(--border);background:#fff;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;text-align:center;font-family:var(--sans)}
 .sb.nil{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .sb.past{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
@@ -1937,6 +1939,12 @@ function _lowerPreserveAcronyms(s){
     return /^[A-Z]{2,}$/.test(w)?w:w.toLowerCase();
   });
 }
+function _letterCleanLabel(s){
+  // Strip "(...)" parenthetical hints from form labels and flatten "X / Y"
+  // into "X or Y" so they read naturally in prose.
+  if(!s)return '';
+  return String(s).replace(/\s*\([^)]*\)\s*/g,'').replace(/\s*\/\s*/g,' or ').trim();
+}
 function _screeningSupportiveness(asrs,diva){
   // Returns 'supports' / 'unsupportive' / '' (mixed or unknown)
   var sup=0,unsup=0;
@@ -3426,23 +3434,34 @@ function renderMSE(){
 function renderCardiac(){$('cardiac-checks').innerHTML=CARDIAC.map(function(c){var on=!!S.cardiac[c.id];var isMaoi=c.id==='c_maoi';return '<div class="crow" onclick="toggleCardiac(\''+c.id+'\','+c.flag+',this)"><div class="cbox'+(on?(c.flag?' flag':' yes'):'')+'"></div><div class="clabel">'+(isMaoi?'<strong style="color:var(--red)">'+c.label+'</strong>':c.label)+(c.flag&&!isMaoi?'<span style="font-size:10px;color:var(--red);margin-left:5px">\u26a0</span>':'')+'</div><button class="qbtn" onclick="openDrawer(event,\''+c.id+'\',\'cardiac\')">?</button></div>';}).join('');}
 function renderFam(){
   var el=$('fam-checks');if(!el)return;
+  if(!S.famDetail)S.famDetail={};
   el.innerHTML=FAM_PSYCH.map(function(item){
     var cur=S.fam&&S.fam[item.id]||'';
     var isPresent=cur==='Present';
     var isNil=cur==='Nil';
-    return '<div class="rrow"><div class="rlabel" style="flex:1;font-size:12px">'+item.label+'</div>'
+    var detail=(S.famDetail&&S.famDetail[item.id])||'';
+    var detailInp=isPresent?'<input class="fam-detail" type="text" placeholder="brief detail (relation, severity)" value="'+esc(detail)+'" oninput="setFamDetail(\''+item.id+'\',this.value)">':'';
+    return '<div class="rrow" style="flex-direction:column;align-items:stretch;gap:4px">'
+      +'<div style="display:flex;align-items:center;gap:8px"><div class="rlabel" style="flex:1;font-size:12px">'+item.label+'</div>'
       +'<div class="rbtns">'
       +'<button class="rb'+(isNil?' ay':'')+'" onclick="setFam(\''+item.id+'\',\'Nil\',this)">Nil</button>'
       +'<button class="rb'+(isPresent?' af':'')+'" onclick="setFam(\''+item.id+'\',\'Present\',this)">Present</button>'
-      +'</div></div>';
+      +'</div></div>'
+      +detailInp
+      +'</div>';
   }).join('');
+}
+function setFamDetail(id,val){
+  if(!S.famDetail)S.famDetail={};
+  S.famDetail[id]=val;
+  save();refresh();
 }
 function setFam(id,val,btn){
   if(!S.fam)S.fam={};
   var cur=S.fam[id]||'';
   if(cur===val){S.fam[id]='';btn.className='rb';}
   else{S.fam[id]=val;btn.closest('.rbtns').querySelectorAll('.rb').forEach(function(b){b.className='rb';});btn.classList.add(val==='Present'?'af':'ay');}
-  save();refresh();
+  save();refresh();renderFam();
 }
 function famSetAll(val){
   if(!S.fam)S.fam={};
@@ -3450,7 +3469,16 @@ function famSetAll(val){
   renderFam();save();refresh();
 }
 function renderMedical(){$('med-checks').innerHTML=MEDICAL.map(function(m){var on=!!S.medical[m.id];return '<div class="crow" onclick="toggleMedical(\''+m.id+'\','+m.flag+',this)"><div class="cbox'+(on?(m.flag?' flag':' yes'):'')+'"></div><div class="clabel">'+m.label+(m.flag?'<span style="font-size:10px;color:var(--red);margin-left:5px">\u26a0</span>':'')+'</div><button class="qbtn" onclick="openDrawer(event,\''+m.id+'\',\'medical\')">?</button></div>';}).join('');}
-function renderSubs(){$('sub-grid').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllSubsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllSubs()">Deselect all</button></div>'+SUBS.map(function(s){var key='sub_'+s.replace(/\W/g,'_');var cur=S.substances[key]||'';return '<div class="sub-item"><div class="sub-name">'+s+'</div><div class="sub-btns"><button class="sb'+(cur==='Nil'?' nil':'')+'" onclick="setSub(\''+key+'\',\'Nil\',this)">Nil</button><button class="sb'+(cur==='Past'?' past':'')+'" onclick="setSub(\''+key+'\',\'Past\',this)">Past</button><button class="sb'+(cur==='Current'?' curr':'')+'" onclick="setSub(\''+key+'\',\'Current\',this)">Curr</button></div></div>';}).join('');
+function renderSubs(){
+  if(!S.subDetail)S.subDetail={};
+  $('sub-grid').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllSubsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllSubs()">Deselect all</button></div>'+SUBS.map(function(s){
+    var key='sub_'+s.replace(/\W/g,'_');
+    var cur=S.substances[key]||'';
+    var showDetail=(cur==='Current'||cur==='Past');
+    var detail=(S.subDetail&&S.subDetail[key])||'';
+    var detailInp=showDetail?'<input class="sub-detail" type="text" placeholder="frequency / amount" value="'+esc(detail)+'" oninput="setSubDetail(\''+key+'\',this.value)">':'';
+    return '<div class="sub-item"><div class="sub-name">'+s+'</div><div class="sub-btns"><button class="sb'+(cur==='Nil'?' nil':'')+'" onclick="setSub(\''+key+'\',\'Nil\',this)">Nil</button><button class="sb'+(cur==='Past'?' past':'')+'" onclick="setSub(\''+key+'\',\'Past\',this)">Past</button><button class="sb'+(cur==='Current'?' curr':'')+'" onclick="setSub(\''+key+'\',\'Current\',this)">Curr</button></div>'+detailInp+'</div>';
+  }).join('');
   var sd=$('suddiff-btns');
   if(sd){var cur=S.sudDiff||'';sd.querySelectorAll('.rb').forEach(function(b){b.className='rb';var l=b.textContent.trim();if(l===cur)b.classList.add(cur==='Nil'?'ay':cur==='Past'?'ap':'af');});}
 }
@@ -3642,7 +3670,12 @@ function setV(key,val,btn,cls){
   if(cls)btn.classList.add(cls);
   save();refresh();
 }
-function setSub(key,val,btn){S.substances[key]=val;btn.closest('.sub-btns').querySelectorAll('.sb').forEach(function(b){b.className='sb';});btn.classList.add(val==='Nil'?'nil':val==='Past'?'past':'curr');save();refresh();}
+function setSub(key,val,btn){S.substances[key]=val;btn.closest('.sub-btns').querySelectorAll('.sb').forEach(function(b){b.className='sb';});btn.classList.add(val==='Nil'?'nil':val==='Past'?'past':'curr');save();refresh();renderSubs();}
+function setSubDetail(key,val){
+  if(!S.subDetail)S.subDetail={};
+  S.subDetail[key]=val;
+  save();refresh();
+}
 // togglePE replaced by peToggle
 
 function deselectAllDifficulties(){DIFFICULTIES.forEach(function(d){S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')]=false;});renderDiffChecks();save();refresh();}
@@ -4805,11 +4838,11 @@ function buildLetterReport(){
   if(diffs.length||f('presentNotes')){
     h+='<h3>History of presentation</h3>';
     if(diffs.length){
-      var topPhrase=diffs.slice(0,5).map(function(d){return _smartLower(_stripDifficultyPrefix(d));});
+      var topPhrase=diffs.slice(0,5).map(function(d){return _smartLower(_letterCleanLabel(_stripDifficultyPrefix(d)));});
       h+='<p>'+prCap+' described a longstanding pattern of difficulty with '+_joinList(topPhrase)+(diffs.length>5?', amongst other concerns':'')+'. These difficulties have been pervasive across multiple settings and have caused clinically significant functional impairment.</p>';
     }
     if(f('presentNotes'))h+=_letterParas(f('presentNotes'));
-    var curDiffs=getCurrentComorbidities().map(function(d){return _smartLower(d.label);});
+    var curDiffs=getCurrentComorbidities().map(function(d){return _smartLower(_letterCleanLabel(d.label));});
     if(curDiffs.length){
       // The trailing clause depends on dx state — when there's no primary
       // diagnosis (No / Deferred / Insufficient) we can't say "alongside the
@@ -4869,61 +4902,76 @@ function buildLetterReport(){
       h+='<p>'+prCap+' endorsed <strong>'+inattSx.length+'/9</strong> core inattention symptoms and <strong>'+hiSx.length+'/9</strong> core hyperactivity / impulsivity symptoms in adulthood.</p>';
     }
     if(devNorm.length){
-      var devLabels=devNorm.map(function(d){return _smartLower(d.label);});
+      var devLabels=devNorm.map(function(d){return _smartLower(_letterCleanLabel(d.label));});
       h+='<p>Supporting developmental features included '+esc(_joinList(devLabels))+'.</p>';
     }
     if(devAll.length&&devMissing.length){
-      var missLabels=devMissing.map(function(d){return _smartLower(d.label);});
+      var missLabels=devMissing.map(function(d){return _smartLower(_letterCleanLabel(d.label));});
       h+='<p>However, there was insufficient evidence for '+esc(_joinList(missLabels))+'.</p>';
     }
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
+  // Past psychiatric history — its own section, before Family Hx
+  var pastDiffs=getPastDifferentials();
+  h+='<h3>Past psychiatric history</h3>';
+  if(pastDiffs.length){
+    h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+'.</p>';
+  } else {
+    h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any past psychiatric history.</p>';
+  }
+
   // Family psychiatric history
   if(typeof FAM_PSYCH!=='undefined'&&S.fam){
     var famPresent=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Present';});
-    var famAllNil=FAM_PSYCH.every(function(item){return S.fam[item.id]==='Nil';});
-    if(famPresent.length){
+    var famNil=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Nil';});
+    if(famPresent.length||famNil.length||f('famNotes')){
       h+='<h3>Family psychiatric history</h3>';
-      h+='<p>A family history of the following was reported:</p>'+L(famPresent.map(function(i){return esc(i.label);}));
-      if(f('famNotes'))h+='<p><strong>Details:</strong> '+esc(f('famNotes'))+'</p>';
-    } else if(famAllNil){
-      h+='<h3>Family psychiatric history</h3>';
-      h+='<p>Nil significant family psychiatric history reported.</p>';
-      if(f('famNotes'))h+=_letterParas(f('famNotes'));
-    } else if(f('famNotes')){
-      h+='<h3>Family psychiatric history</h3>';
-      h+=_letterParas(f('famNotes'));
+      if(famPresent.length){
+        h+='<p>A family history of the following was reported:</p>'+L(famPresent.map(function(i){
+          var d=(S.famDetail&&S.famDetail[i.id]||'').trim();
+          var lbl=_letterCleanLabel(i.label);
+          return esc(lbl)+(d?' ('+esc(d)+')':'');
+        }));
+      }
+      if(famNil.length){
+        h+='<p>'+prCap+' denied any family history of '+esc(_joinList(famNil.map(function(i){return _smartLower(_letterCleanLabel(i.label));})))+'.</p>';
+      }
+      if(f('famNotes'))h+='<p><strong>Additional family history details:</strong> '+esc(f('famNotes'))+'</p>';
     }
   } else if(f('famNotes')){
     h+='<h3>Family psychiatric history</h3>';
     h+=_letterParas(f('famNotes'));
   }
 
-  // Substance use
+  // Substance use — show per-substance detail in parens when provided
+  function _subEntry(s){
+    var key='sub_'+s.replace(/\W/g,'_');
+    var d=(S.subDetail&&S.subDetail[key]||'').trim();
+    var name=_lowerPreserveAcronyms(s);
+    return d?name+' ('+d+')':name;
+  }
   var currSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';}):[];
   var pastSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Past';}):[];
   if(currSubs.length||pastSubs.length||f('subNotes')){
     h+='<h3>Substance use</h3>';
     var subBits=[];
-    if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(_lowerPreserveAcronyms)));
-    if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(_lowerPreserveAcronyms)));
+    if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(_subEntry)));
+    if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(_subEntry)));
     if(subBits.length)h+='<p>'+prCap+' '+reports+' '+_joinList(subBits)+'.</p>';
     if(f('subNotes'))h+=_letterParas(f('subNotes'));
   }
 
-  // Medical history
+  // Medical history (no past psych here — it's its own section above)
   var medFlagged=(typeof MEDICAL!=='undefined')?MEDICAL.filter(function(m){return S.medical&&S.medical[m.id];}):[];
   var medItems=[];
   var medHxParts=[];
-  if(medFlagged.length)medHxParts.push(medFlagged.map(function(m){return m.label;}).join(', '));
+  if(medFlagged.length)medHxParts.push(medFlagged.map(function(m){return _letterCleanLabel(m.label);}).join(', '));
   if(f('medHistory'))medHxParts.push(f('medHistory'));
   medItems.push('<strong>Medical history:</strong> '+(medHxParts.length?esc(medHxParts.join('; ')):'Nil'));
-  var pastDiffs=getPastDifferentials();
-  medItems.push('<strong>Past psychiatric history:</strong> '+(pastDiffs.length?esc(pastDiffs.map(function(d){return d.label;}).join(', ')):'Nil'));
   if(f('currentMeds'))medItems.push('<strong>Current medications:</strong> '+esc(f('currentMeds')));
   if(f('allergies'))medItems.push('<strong>Allergies:</strong> '+esc(f('allergies')));
-  h+='<h3>Medical and psychiatric history</h3>';
+  h+='<h3>Medical history</h3>';
   h+=L(medItems);
   if(f('medNotes'))h+=_letterParas(f('medNotes'));
 
@@ -4953,21 +5001,40 @@ function buildLetterReport(){
     if(sscript.length)h+=L(sscript.map(esc));
   }
 
-  // Mental state examination — filter out yes/no question rows (e.g.
-  // "Is the MSE consistent with an ADHD diagnosis?") which don't belong in
-  // a prose MSE.
-  var mseItems=[];
+  // Mental state examination — flowing prose per section. Yes/no question
+  // rows (e.g. "Is the MSE consistent with an ADHD diagnosis?") are filtered.
   if(typeof MSE!=='undefined'){
+    var mseProseTpls={
+      appearance:function(v){return name+' presented '+_joinList(v)+'.';},
+      inattention:function(v){return prCap+' '+was+' '+_joinList(v)+' during the interview.';},
+      hyperactivity:function(v){return 'Psychomotor activity was '+_joinList(v)+'.';},
+      impulsivity:function(v){return 'In terms of impulsivity, '+pr+' '+_vAgree(gender,'showed','showed')+' '+_joinList(v)+'.';},
+      speech:function(v){return 'Speech was '+_joinList(v)+'.';},
+      mood:function(v){return 'Mood was reported as '+_joinList(v)+'.';},
+      affect:function(v){return 'Affect was '+_joinList(v)+'.';},
+      thought_form:function(v){return 'Thought form was '+_joinList(v)+'.';},
+      thought_cont:function(v){return 'Thought content showed '+_joinList(v)+'.';},
+      perception:function(v){return 'There '+_vAgree(gender,'was','was')+' '+_joinList(v)+'.';},
+      cognition:function(v){return 'Cognition was '+_joinList(v)+'.';},
+      insight:function(v){return 'Insight was '+_joinList(v)+'.';},
+      judgment:function(v){return 'Judgment was '+_joinList(v)+'.';},
+      suicide:function(v){return 'Regarding suicidality, '+_joinList(v.map(function(x){return _smartLower(x);}))+'.';},
+      harm_others:function(v){return 'Regarding risk to others, '+_joinList(v.map(function(x){return _smartLower(x);}))+'.';}
+    };
+    var mseSentences=[];
     MSE.forEach(function(sectn){
       if(/\?\s*$/.test(sectn.label||''))return;
       var v=mseVals(sectn.id);
-      if(v.length)mseItems.push('<strong>'+esc(sectn.label)+':</strong> '+v.map(esc).join(', '));
+      if(!v.length)return;
+      var clean=v.map(function(x){return _smartLower(_letterCleanLabel(x));});
+      var tpl=mseProseTpls[sectn.id];
+      mseSentences.push(esc(tpl?tpl(clean):sectn.label+' was '+_joinList(clean)+'.'));
     });
-  }
-  if(mseItems.length||f('mseNotes')){
-    h+='<h3>Mental state examination</h3>';
-    if(mseItems.length)h+=L(mseItems);
-    if(f('mseNotes'))h+=_letterParas(f('mseNotes'));
+    if(mseSentences.length||f('mseNotes')){
+      h+='<h3>Mental state examination</h3>';
+      if(mseSentences.length)h+='<p>'+mseSentences.join(' ')+'</p>';
+      if(f('mseNotes'))h+=_letterParas(f('mseNotes'));
+    }
   }
 
   // Validity considerations — wording adapts to the diagnosis state so we
@@ -4995,11 +5062,16 @@ function buildLetterReport(){
   var currentAll=getCurrentDifferentials();
   var notPres=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
   var diffLines=[];
-  if(currentAll.length)diffLines.push('<strong>Comorbid:</strong> '+esc(currentAll.map(function(d){return d.label;}).join(', ')));
-  if(betterEx.length)diffLines.push('<strong>Considered as a better explanation:</strong> '+esc(betterEx.map(function(d){return d.label;}).join(', ')));
-  if(notPres.length)diffLines.push('<strong>Excluded:</strong> '+esc(notPres.map(function(d){return d.label;}).join(', ')));
+  if(currentAll.length)diffLines.push('<strong>Comorbid:</strong> '+esc(currentAll.map(function(d){return _letterCleanLabel(d.label);}).join(', ')));
+  if(betterEx.length)diffLines.push('<strong>Considered as a better explanation:</strong> '+esc(betterEx.map(function(d){return _letterCleanLabel(d.label);}).join(', ')));
   if(diffLines.length)h+=L(diffLines);
-  else h+='<p>Other psychiatric diagnoses were considered and felt unlikely to better account for the presentation.</p>';
+  // Negatives after the positives — prose form per user request.
+  if(notPres.length){
+    h+='<p>There was no evidence to support '+esc(_joinList(notPres.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+'.</p>';
+  }
+  if(!diffLines.length&&!notPres.length){
+    h+='<p>Other psychiatric diagnoses were considered and felt unlikely to better account for the presentation.</p>';
+  }
   if(f('diffNotes'))h+=_letterParas(f('diffNotes'));
 
   // DSM criteria met
@@ -5037,14 +5109,21 @@ function buildLetterReport(){
         if(mainStep&&mainStep.doses&&mainStep.doses.length){
           try{ongoingStr=formatStepSig(m,mainStep).replace(/^take /,'');}catch(e){ongoingStr='';}
         }
-        h+='<p><strong>'+esc(nm)+'</strong>'+(ongoingStr?' — ongoing dose '+esc(ongoingStr):'')+'.</p>';
+        // Branch: real titration (multiple distinct doses across steps) →
+        // open with "I have commenced [name] on [Med], with the following
+        // titration plan:" then the bullet steps. Single ongoing dose →
+        // simple "[Med] — ongoing dose X" line.
         var schedule=(typeof buildMedSchedule==='function')?buildMedSchedule(m):[];
-        // Skip the day-by-day list when every step shares the same dose string
-        // (i.e. nothing actually titrates).
+        var hasTit=false;
         if(schedule.length>1){
           var unique={};
           schedule.forEach(function(line){var dose=line.replace(/<strong>[^<]+<\/strong>:\s*/,'').trim();unique[dose]=true;});
-          if(Object.keys(unique).length>1)h+='<p>Titration plan:</p>'+L(schedule);
+          hasTit=Object.keys(unique).length>1;
+        }
+        if(hasTit){
+          h+='<p>I have commenced '+esc(name)+' on <strong>'+esc(nm)+'</strong>, with the following titration plan:</p>'+L(schedule);
+        } else {
+          h+='<p><strong>'+esc(nm)+'</strong>'+(ongoingStr?' — ongoing dose '+esc(ongoingStr):'')+'.</p>';
         }
       });
       // Scripts provided today
@@ -5053,13 +5132,24 @@ function buildLetterReport(){
         h+='<p><strong>Scripts provided today:</strong></p>'+L(scriptLines.map(esc));
       }
     }
-    // Patient education
-    if(typeof PE_GROUPS!=='undefined'&&S.peChips){
-      var peDone=[];
-      PE_GROUPS.forEach(function(g){g.items.forEach(function(it){if(S.peChips[it.id])peDone.push(it.title);});});
-      if(peDone.length)h+='<p><strong>Education provided:</strong> '+esc(peDone.join(', '))+'.</p>';
-    }
     if(f('rxNotes'))h+='<p><strong>Prescription notes:</strong> '+esc(f('rxNotes'))+'</p>';
+  }
+
+  // Education / non-pharmacological recommendations — split PE selections
+  // into "psychoeducation" (general education + medication info) and
+  // "non-pharmacological recommendations" (strategies + resources).
+  if(typeof PE_GROUPS!=='undefined'&&S.peChips){
+    var PE_NONPHARM={'Non-pharmacological Strategies':1,'Products and Resources':1};
+    var psychoedItems=[],nonpharmItems=[];
+    PE_GROUPS.forEach(function(g){
+      g.items.forEach(function(it){
+        if(!S.peChips[it.id])return;
+        if(g.label&&PE_NONPHARM[g.label])nonpharmItems.push(it.title);
+        else psychoedItems.push(it.title);
+      });
+    });
+    if(psychoedItems.length)h+='<p><strong>Psychoeducation provided:</strong> '+esc(psychoedItems.join(', '))+'.</p>';
+    if(nonpharmItems.length)h+='<p><strong>Non-pharmacological recommendations:</strong> '+esc(nonpharmItems.join(', '))+'.</p>';
   }
 
   // Follow-up plan
