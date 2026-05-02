@@ -2096,15 +2096,16 @@ function onDxNotesEdit(){
   if(typeof refresh==='function')refresh();
 }
 function maybeRefreshFormulation(){
-  // Called from refresh(): if a style is active and the user hasn't manually
-  // edited the textarea, regenerate it whenever the diagnosis changes so the
-  // formulation paragraph always matches the current dx state.
+  // Whenever there's an active style and the user hasn't manually edited the
+  // textarea, regenerate the formulation on every refresh so it always
+  // reflects current state — not just when dx changes. (E.g. marking UDS as
+  // Positive should remove "a urine drug screen" from the Deferred prose.)
   if(!_fmlnActiveStyle||_fmlnEdited)return;
-  var cur=dxFull();
-  if(cur===_fmlnDxAtGen)return;
   var fn=FORMULATION_BUILDERS[_fmlnActiveStyle];
   var ta=$('dxNotes');
-  if(fn&&ta){ta.value=fn(getFormulationContext());_fmlnDxAtGen=cur;}
+  if(!fn||!ta)return;
+  var fresh=fn(getFormulationContext());
+  if(ta.value!==fresh){ta.value=fresh;_fmlnDxAtGen=dxFull();}
 }
 
 
@@ -4792,7 +4793,12 @@ function buildLetterReport(){
     if(gender)demoClause+=' '+esc(_personWord(gender));
     demoClause+=',';
   }
-  h+='<p>Thank you for referring '+esc(name)+demoClause+' for psychiatric assessment'+(referral?' regarding '+esc(referral.toLowerCase().replace(/\.$/,'')):'')+'. '+prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
+  h+='<p>Thank you for referring '+esc(name)+demoClause+' for psychiatric assessment. ';
+  // Referral reason is rendered as its own sentence so it works whether the
+  // user types a noun phrase ("attentional difficulties") or a sentence
+  // fragment ("Psychologist recommended assessment").
+  if(referral)h+='Reason for referral: '+esc(referral.replace(/\.$/,''))+'. ';
+  h+=prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
 
   // History of presentation
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
@@ -4804,7 +4810,15 @@ function buildLetterReport(){
     }
     if(f('presentNotes'))h+=_letterParas(f('presentNotes'));
     var curDiffs=getCurrentComorbidities().map(function(d){return _smartLower(d.label);});
-    if(curDiffs.length)h+='<p>'+prCap+' also endorsed features consistent with comorbid '+_joinList(curDiffs)+', which '+(curDiffs.length>1?'are':'is')+' considered alongside the primary diagnosis below.</p>';
+    if(curDiffs.length){
+      // The trailing clause depends on dx state — when there's no primary
+      // diagnosis (No / Deferred / Insufficient) we can't say "alongside the
+      // primary diagnosis below".
+      var trailing=(S.dx==='Yes')
+        ? 'which '+(curDiffs.length>1?'are':'is')+' considered alongside the primary diagnosis below'
+        : 'which '+(curDiffs.length>1?'were':'was')+' noted as part of the broader clinical picture';
+      h+='<p>'+prCap+' also endorsed features consistent with comorbid '+_joinList(curDiffs)+', '+trailing+'.</p>';
+    }
   }
 
   // Pre-screening & collateral — three buckets: supportive, unsupportive, not provided
@@ -4892,8 +4906,8 @@ function buildLetterReport(){
   if(currSubs.length||pastSubs.length||f('subNotes')){
     h+='<h3>Substance use</h3>';
     var subBits=[];
-    if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(function(s){return s.toLowerCase();})));
-    if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(function(s){return s.toLowerCase();})));
+    if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(_lowerPreserveAcronyms)));
+    if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(_lowerPreserveAcronyms)));
     if(subBits.length)h+='<p>'+prCap+' '+reports+' '+_joinList(subBits)+'.</p>';
     if(f('subNotes'))h+=_letterParas(f('subNotes'));
   }
@@ -4956,12 +4970,18 @@ function buildLetterReport(){
     if(f('mseNotes'))h+=_letterParas(f('mseNotes'));
   }
 
-  // Validity considerations — soften wording to make clear these were weighed
-  // and judged against the supportive information.
+  // Validity considerations — wording adapts to the diagnosis state so we
+  // don't claim the items were "judged not to undermine the diagnosis" when
+  // there is no diagnosis.
   var malFlagged=(typeof MAL!=='undefined')?MAL.filter(function(m){return S.malingering&&S.malingering[m.id];}):[];
   if(malFlagged.length){
     h+='<h3>Validity considerations</h3>';
-    h+='<p>The following were considered during the assessment, weighed against the supportive collateral and standardised screening, and judged not to undermine the diagnosis:</p>'+L(malFlagged.map(function(m){return esc(m.label);}));
+    var validityLead=(S.dx==='Yes')
+      ? 'The following were considered during the assessment, weighed against the supportive collateral and standardised screening, and judged not to undermine the diagnosis:'
+      : (S.dx==='No')
+        ? 'The following were noted during the assessment and contributed to the conclusion that diagnostic criteria were not met:'
+        : 'The following were noted during the assessment and will be re-weighed at reassessment:';
+    h+='<p>'+validityLead+'</p>'+L(malFlagged.map(function(m){return esc(m.label);}));
   }
 
   // Differential diagnoses considered. Past differentials are already covered
