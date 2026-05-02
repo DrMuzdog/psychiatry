@@ -327,6 +327,17 @@ select.inp{appearance:none}
 #out-report.letter-mode .letter-sig{margin-top:18px;font-size:10.5pt}
 #out-report.letter-mode .letter-sig .sig-name{font-weight:700;font-family:Arial,sans-serif;color:#0f172a}
 #out-report.letter-mode .letter-sig .sig-quals{color:#475569;font-size:9.5pt}
+#out-report .mgmt-sub{font:700 10pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#1e3a5f;margin:14px 0 4px;border-bottom:1px solid #cbd5e1;padding-bottom:2px}
+#out-report.letter-mode .mgmt-sub{font-family:Arial,sans-serif;font-size:9.5pt;color:#1e3a5f;border-bottom-color:#cbd5e1;font-weight:700}
+.ms-card{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;margin-top:6px;display:flex;flex-direction:column;gap:6px}
+.ms-card.off{background:#f1f5f9;border-color:#cbd5e1;opacity:.6}
+.ms-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ms-include{padding:4px 10px;border-radius:6px;border:1.5px solid var(--green);background:var(--green-bg);color:#166534;font:700 11px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ms-include:not(.on){border-color:#cbd5e1;background:#fff;color:#94a3b8}
+.ms-concern{font:600 12px var(--sans);color:#9a3412;flex:1}
+.ms-card.off .ms-concern{color:#475569;text-decoration:line-through}
+.ms-plan{font:12px var(--sans);padding:6px 9px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;resize:vertical}
+.ms-card.off .ms-plan{display:none}
 .ps-tile{background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .ps-tile-label{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#475569;margin:0}
 .ps-tile .rbtns{margin:0;gap:4px}
@@ -1221,6 +1232,7 @@ select.inp{appearance:none}
       <input type="hidden" id="fu-gp-name">
       <input type="hidden" id="fu-gp-practice">
       <textarea style="display:none" id="fu-ho-notes"></textarea>
+      <div id="fu-safety-concerns" style="padding:0 13px 0;border-top:1px solid var(--border)"></div>
       <div style="padding:0 13px 10px;border-top:1px solid var(--border)">
         <div class="fl" style="margin-top:8px">Notes / referrals / safety netting</div>
         <textarea class="nf" id="fuNotes" placeholder="Referrals, outstanding tasks, other instructions..." oninput="save();refresh()" rows="2"></textarea>
@@ -1869,7 +1881,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:''};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -1912,6 +1924,42 @@ function getCurrentComorbidities(){
 }
 function getPastDifferentials(){
   return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Past';});
+}
+// ─── Medical safety concerns (for letter + FU panel UI) ───────────────────
+function getMedSafetyConcerns(){
+  var out=[];
+  function add(key,concern,plan){
+    var ov=(S.safetyOverrides&&S.safetyOverrides[key])||{};
+    out.push({key:key,concern:concern,defaultPlan:plan,plan:ov.plan!=null?ov.plan:plan,include:ov.include!==false});
+  }
+  var sysBP=parseInt(f('bpSystolic')||'',10),diaBP=parseInt(f('bpDiastolic')||'',10);
+  if((sysBP&&sysBP>=140)||(diaBP&&diaBP>=90))
+    add('bp_high','Elevated blood pressure ('+(sysBP||'?')+'/'+(diaBP||'?')+' mmHg)','Optimise BP before / during stimulant treatment; recheck and consider antihypertensive review if persistent.');
+  var hrV=parseInt(f('hrReading')||'',10);
+  if(hrV&&hrV>=100)
+    add('hr_high','Resting tachycardia ('+hrV+' bpm)','Recheck on a separate occasion; investigate underlying causes (anxiety, thyroid, anaemia, substance use) before / during stimulant titration.');
+  var w=parseFloat(f('ptWeight')||''),hh=parseFloat(f('ptHeight')||'');
+  if(w&&hh&&hh>0){var bmi=w/((hh/100)*(hh/100));
+    if(bmi<18.5)add('bmi_low','Underweight (BMI '+bmi.toFixed(1)+')','Stimulant-related appetite suppression may worsen this; monitor weight closely or consider a non-stimulant agent.');
+  }
+  if(/concern/i.test(S.safeScript||'')&&!/no concerns?/i.test(S.safeScript||''))
+    add('safescript_concern','SafeScript / RTPM concern flagged'+(f('ssDetail')?' — '+f('ssDetail'):''),'Document rationale for prescribing; coordinate with prior prescribers; consider non-stimulant or supervised dispensing.');
+  if(S.uds==='Positive')
+    add('uds_positive','Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),'Address ongoing substance use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing.');
+  if(S.sudDiff==='Current')
+    add('sud_current','Current substance use disorder','Active treatment / referral for SUD; integrate prescribing with addiction-aware approach; consider non-stimulant or supervised dispensing.');
+  if(typeof mseVals==='function'){
+    var siVals=mseVals('suicide');
+    if(siVals.some(function(v){return /active/i.test(v);}))
+      add('si_active','Active suicidal ideation reported on MSE','Safety plan developed in session; means restriction discussed; emergency contacts identified. To re-review at next appointment.');
+  }
+  return out;
+}
+function setSafetyOverride(key,field,val){
+  if(!S.safetyOverrides)S.safetyOverrides={};
+  if(!S.safetyOverrides[key])S.safetyOverrides[key]={};
+  S.safetyOverrides[key][field]=val;
+  save();refresh();renderSafetyConcerns();
 }
 
 // Verb conjugation helpers (handle they/them as plural verb form)
@@ -2243,6 +2291,22 @@ function fuQuickAdd(){
 function fuQuickInit(){
   fuQuickRenderNumRow();
   fuQuickPreview();
+}
+function renderSafetyConcerns(){
+  var el=$('fu-safety-concerns');if(!el)return;
+  var concerns=getMedSafetyConcerns();
+  if(!concerns.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="fl" style="margin-top:12px">Medical safety concerns from this review</div>'+
+    concerns.map(function(c){
+      var off=!c.include;
+      return '<div class="ms-card'+(off?' off':'')+'">'
+        +'<div class="ms-head">'
+          +'<button class="ms-include'+(off?'':' on')+'" onclick="setSafetyOverride(\''+c.key+'\',\'include\','+off+')">'+(off?'Excluded':'Included')+'</button>'
+          +'<span class="ms-concern">'+esc(c.concern)+'</span>'
+        +'</div>'
+        +'<textarea class="ms-plan" rows="2" placeholder="Plan for this concern…" oninput="setSafetyOverride(\''+c.key+'\',\'plan\',this.value)">'+esc(c.plan)+'</textarea>'
+      +'</div>';
+    }).join('');
 }
 
 function fuRemoveAppt(i) {
@@ -5088,6 +5152,11 @@ function buildLetterReport(){
   if(S.ecg)invItems.push('ECG: '+S.ecg);
   if(S.uds)invItems.push('UDS: '+S.uds+(f('udsDetail')?' ('+f('udsDetail')+')':''));
   if(f('otherInvest'))invItems.push('Other: '+f('otherInvest'));
+  // Positive SafeScript reporting (concern handling lives in Medical safety
+  // under Management plan)
+  var ssVal=S.safeScript||'';
+  if(/no concerns?/i.test(ssVal))invItems.push('SafeScript / RTPM: checked, no concerns');
+  else if(ssVal==='Not checked')invItems.push('SafeScript / RTPM: not checked at this visit');
   var cardFlagged=(typeof CARDIAC!=='undefined')?CARDIAC.filter(function(c){return c.flag&&S.cardiac&&S.cardiac[c.id];}):[];
   if(invItems.length||cardFlagged.length||f('cardiacNotes')){
     h+='<h3>Cardiac and prescribing screen</h3>';
@@ -5178,8 +5247,6 @@ function buildLetterReport(){
   }
 
   // ─── Management plan with subheadings ───────────────────────────────────
-  var hasMgmt=titMeds.length||f('rxNotes');
-  // Pre-compute split for Psychoeducation vs Non-pharm
   var PE_NONPHARM={'Non-pharmacological Strategies':1,'Products and Resources':1};
   var psychoedItems=[],nonpharmItems=[];
   if(typeof PE_GROUPS!=='undefined'&&S.peChips){
@@ -5197,16 +5264,31 @@ function buildLetterReport(){
   var fuProvideList=(typeof getFuProvideList==='function')?getFuProvideList():[];
   var fuConKeys=(typeof fuCon!=='undefined')?Array.from(fuCon):[];
   var fuNotes=f('fuNotes');
-  var hasNonPharm=nonpharmItems.length||fuNPList.length;
+  var includedMedSafety=getMedSafetyConcerns().filter(function(c){return c.include;});
+  var hasMgmt=titMeds.length||f('rxNotes');
+  var hasNonPharm=psychoedItems.length||nonpharmItems.length||fuNPList.length;
   var hasPatientTasks=fuProvideList.length>0;
   var hasMonitoring=!!fuMonStr;
   var hasFollowUp=!!fuApptStr;
-  if(hasMgmt||psychoedItems.length||hasNonPharm||hasPatientTasks||hasMonitoring||hasFollowUp||fuNotes){
+  if(hasMgmt||hasNonPharm||hasPatientTasks||hasMonitoring||hasFollowUp||fuNotes||includedMedSafety.length){
     h+='<h3>Management plan</h3>';
 
-    // Pharmacological
+    // 1. Patient tasks (top)
+    if(hasPatientTasks){
+      h+='<div class="mgmt-sub">Patient tasks</div>';
+      var pTime=f('fu-provide-timeframe')||'prior to next review';
+      h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(_lowerPreserveAcronyms(fuProvideList.join(', ')))+'.</p>';
+    }
+
+    // 2. Medical safety (only if any concerns are flagged AND user hasn't excluded them)
+    if(includedMedSafety.length){
+      h+='<div class="mgmt-sub">Medical safety</div>';
+      h+='<ul>'+includedMedSafety.map(function(c){return '<li><strong>'+esc(c.concern)+':</strong> '+esc(c.plan||c.defaultPlan)+'</li>';}).join('')+'</ul>';
+    }
+
+    // 3. Pharmacological
     if(titMeds.length||f('rxNotes')){
-      h+='<p><strong>Pharmacological</strong></p>';
+      h+='<div class="mgmt-sub">Pharmacological</div>';
       titMeds.forEach(function(m){
         var nm=m.key==='other'&&m.customName?m.customName:m.def.name;
         var mainStep=m.steps.find(function(s){return s.ongoing;})||m.steps[m.steps.length-1];
@@ -5232,9 +5314,9 @@ function buildLetterReport(){
       if(f('rxNotes'))h+='<p><strong>Prescription notes:</strong> '+esc(f('rxNotes'))+'</p>';
     }
 
-    // Non-pharmacological (psychoed + non-pharm strategies)
-    if(psychoedItems.length||hasNonPharm){
-      h+='<p><strong>Non-pharmacological</strong></p>';
+    // 4. Non-pharmacological
+    if(hasNonPharm){
+      h+='<div class="mgmt-sub">Non-pharmacological</div>';
       if(psychoedItems.length)h+='<p>Psychoeducation provided: '+esc(psychoedItems.join(', '))+'.</p>';
       if(nonpharmItems.length||fuNPList.length){
         var allNonPharm=nonpharmItems.concat(fuNPList);
@@ -5242,16 +5324,9 @@ function buildLetterReport(){
       }
     }
 
-    // Patient tasks
-    if(hasPatientTasks){
-      h+='<p><strong>Patient tasks</strong></p>';
-      var pTime=f('fu-provide-timeframe')||'prior to next review';
-      h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(_lowerPreserveAcronyms(fuProvideList.join(', ')))+'.</p>';
-    }
-
-    // Monitoring
+    // 5. Monitoring
     if(hasMonitoring){
-      h+='<p><strong>Monitoring</strong></p>';
+      h+='<div class="mgmt-sub">Monitoring</div>';
       var rawMon=fuMonStr.split(/\s*[,;]\s*/).filter(Boolean);
       var monitor=[],review=[];
       rawMon.forEach(function(item){
@@ -5264,16 +5339,12 @@ function buildLetterReport(){
       if(bits.length)h+='<p>I would be grateful if you could '+_joinList(bits)+' at GP review.</p>';
     }
 
-    // Follow-up
-    if(hasFollowUp||fuNotes){
-      h+='<p><strong>Follow-up</strong></p>';
+    // 6. Follow-up (appointments + safety scenarios discussed + notes)
+    if(hasFollowUp||fuNotes||fuConKeys.length){
+      h+='<div class="mgmt-sub">Follow-up</div>';
       if(hasFollowUp){
-        // Reword "Review with X in N weeks (T min); Review with Y in N weeks
-        // (T min)" → "Patient to please arrange follow-up appointments with
-        // X in N weeks for T mins, and with Y in N weeks for T mins."
         var apptForGP=String(fuApptStr).replace(/\byour\b/gi,po);
         var appts=apptForGP.split(/\s*;\s*/).filter(Boolean).map(function(a){
-          // "Review with X in N weeks (T min)" → "X in N weeks for T mins"
           return a.replace(/^Review\s+with\s+/i,'').replace(/\((\d+)\s*min\)/,'for $1 mins');
         });
         if(appts.length){
@@ -5281,59 +5352,12 @@ function buildLetterReport(){
           h+='<p>'+esc(name)+' is to please arrange '+verb+' with '+esc(_joinList(appts))+'.</p>';
         }
       }
+      if(fuConKeys.length){
+        var conLabels=fuConKeys.map(function(k){return TIT_SCEN_GP[k]||((typeof TIT_SCEN!=='undefined'&&TIT_SCEN[k])?TIT_SCEN[k].t:k);});
+        h+='<p>Safety scenarios discussed with '+esc(name)+' (and included in '+po+' patient document): '+esc(conLabels.join(', '))+'.</p>';
+      }
       if(fuNotes)h+=_letterParas(fuNotes);
     }
-  }
-
-  // ─── Safety alerts (concern + recommended action) ───────────────────────
-  // Pulls from cardiac flags, BMI, BP, HR, UDS, MSE risk, SafeScript,
-  // discussed safety scenarios.
-  var safetyAlerts=[];
-  // Vitals
-  var sysBP=parseInt(f('bpSystolic')||'',10);
-  var diaBP=parseInt(f('bpDiastolic')||'',10);
-  if((sysBP&&sysBP>=140)||(diaBP&&diaBP>=90)){
-    safetyAlerts.push({c:'Elevated blood pressure ('+(sysBP||'?')+'/'+(diaBP||'?')+' mmHg)',a:'Optimise BP before / during stimulant treatment; recheck and consider antihypertensive review if persistent.'});
-  }
-  var hrVal=parseInt(f('hrReading')||'',10);
-  if(hrVal&&hrVal>=100){
-    safetyAlerts.push({c:'Resting tachycardia ('+hrVal+' bpm)',a:'Recheck on a separate occasion; investigate underlying causes (anxiety, thyroid, anaemia, substance use) before / during stimulant titration.'});
-  }
-  // BMI low
-  var weightN=parseFloat(f('ptWeight')||''),heightN=parseFloat(f('ptHeight')||'');
-  if(weightN&&heightN&&heightN>0){
-    var bmi=weightN/((heightN/100)*(heightN/100));
-    if(bmi<18.5){
-      safetyAlerts.push({c:'Underweight (BMI '+bmi.toFixed(1)+')',a:'Stimulant-related appetite suppression may worsen this; monitor weight closely or consider a non-stimulant agent.'});
-    }
-  }
-  // SafeScript / RTPM concern
-  if(S.safeScript&&/concern/i.test(S.safeScript)){
-    safetyAlerts.push({c:'SafeScript / RTPM concern flagged'+(f('ssDetail')?' — '+f('ssDetail'):''),a:'Document rationale for prescribing; coordinate with prior prescribers; consider non-stimulant or supervised dispensing.'});
-  }
-  // UDS positive
-  if(S.uds==='Positive'){
-    safetyAlerts.push({c:'Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),a:'Address ongoing substance use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing.'});
-  }
-  // MSE: active suicidality
-  if(typeof mseVals==='function'){
-    var siVals=mseVals('suicide');
-    if(siVals.some(function(v){return /active/i.test(v);})){
-      safetyAlerts.push({c:'Active suicidal ideation reported on MSE',a:'A safety plan was developed in session; means restriction discussed; '+(po||'their')+' GP and emergency contacts identified. To re-review at next appointment.'});
-    }
-  }
-  // Cardiac flags
-  cardFlagged.forEach(function(c){
-    safetyAlerts.push({c:_letterCleanLabel(c.label),a:c.note||'Consider further work-up before initiating stimulant therapy.'});
-  });
-  // Selected safety scenarios (TIT_SCEN) — concern + action pairs
-  fuConKeys.forEach(function(k){
-    var sc=(typeof TIT_SCEN!=='undefined')?TIT_SCEN[k]:null;
-    if(sc)safetyAlerts.push({c:sc.t,a:sc.a});
-  });
-  if(safetyAlerts.length){
-    h+='<h3>Safety</h3>';
-    h+='<ul>'+safetyAlerts.map(function(s){return '<li><strong>'+esc(s.c)+':</strong> '+esc(s.a)+'</li>';}).join('')+'</ul>';
   }
 
   // Closing
@@ -6573,6 +6597,7 @@ function refresh(){
   autoDSM();
   fuAutoFromSafety();
   if(typeof maybeRefreshFormulation==='function')maybeRefreshFormulation();
+  if(typeof renderSafetyConcerns==='function')renderSafetyConcerns();
   renderFlags();updateBadges();
   refreshTitOutputs();
 }
