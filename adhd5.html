@@ -1919,6 +1919,54 @@ var TIT_SCEN_GP={
   runOut:'running out of medication',
   script:'prescription rules / 20-day rule'
 };
+function _personWord(g){
+  if(g==='Male')return 'man';
+  if(g==='Female')return 'woman';
+  if(g)return g.toLowerCase()+' individual';
+  return '';
+}
+function _lowerPreserveAcronyms(s){
+  // Lowercase letters in s but leave all-caps tokens of 2+ chars (ECG, BMI,
+  // FBC, TSH, UDS, etc.) untouched.
+  return String(s||'').replace(/[A-Za-z]+/g,function(w){
+    return /^[A-Z]{2,}$/.test(w)?w:w.toLowerCase();
+  });
+}
+function _screeningSupportiveness(asrs,diva){
+  // Returns 'supports' / 'unsupportive' / '' (mixed or unknown)
+  var sup=0,unsup=0;
+  if(asrs){if(/positive/i.test(asrs))sup++;else if(/negative/i.test(asrs))unsup++;}
+  if(diva){if(/positive/i.test(diva))sup++;else if(/negative/i.test(diva))unsup++;}
+  if(sup&&!unsup)return 'supports';
+  if(unsup&&!sup)return 'unsupportive';
+  return '';
+}
+// Mapping from a missing-info source key to the patient-to-provide chip key
+// (used both in the Deferred formulation prose and in fuAutoFromMissing).
+var MISSING_TO_PROVIDE={
+  ecg:{label:'ECG',chip:'ecg'},
+  uds:{label:'a urine drug screen',chip:'uds'},
+  obs:{label:'observer ASRS',chip:'obs_asrs'},
+  schoolReports:{label:'school reports',chip:'school_rep'},
+  psychReport:{label:'a psychology / neuropsych report',chip:'psych_rep'},
+  vanderbiltParent:{label:'parent Vanderbilt scales',chip:'vanderbilt'},
+  vanderbiltTeacher:{label:'teacher Vanderbilt scales',chip:'vanderbilt'}
+};
+function getMissingInfoLabels(){
+  // Returns a list of human-readable labels for items the patient hasn't
+  // provided / done yet — used in the Deferred formulation prose.
+  var out=[];
+  if(S.ecg==='Not done')out.push(MISSING_TO_PROVIDE.ecg.label);
+  if(S.uds==='Not done')out.push(MISSING_TO_PROVIDE.uds.label);
+  if(S.screening){
+    if(S.screening.obs==='Not provided')out.push(MISSING_TO_PROVIDE.obs.label);
+    if(S.screening.schoolReports==='Not provided')out.push(MISSING_TO_PROVIDE.schoolReports.label);
+    if(S.screening.psychReport==='Not provided')out.push(MISSING_TO_PROVIDE.psychReport.label);
+    if(S.screening.vanderbiltParent==='Not provided')out.push(MISSING_TO_PROVIDE.vanderbiltParent.label);
+    if(S.screening.vanderbiltTeacher==='Not provided')out.push(MISSING_TO_PROVIDE.vanderbiltTeacher.label);
+  }
+  return out;
+}
 
 // ─── FORMULATION STYLES ─────────────────────────────────────────────────────
 function getFormulationContext(){
@@ -1945,25 +1993,61 @@ function _joinList(arr){
   if(arr.length===2)return arr[0]+' and '+arr[1];
   return arr.slice(0,-1).join(', ')+', and '+arr[arr.length-1];
 }
-function formulationClinical(c){
+function _demoPhrase(c){
+  // "a 35-year-old man" / "a 77-year-old non-binary individual" / "a man" / ""
   var bits=[];
-  var personNoun=_personNoun(c.gender)||' patient';
-  var who=(c.age?c.age+'-year-old ':'')+(c.gender?c.gender.toLowerCase()+(personNoun?'':' patient'):'patient')+(personNoun?personNoun:'');
-  bits.push(c.name+' is a '+who+' presenting with a longstanding pattern of '+(c.subPhrase?c.subPhrase+' symptoms ':'attentional and self-regulatory symptoms ')+'consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+'.');
+  if(c.age)bits.push(c.age+'-year-old');
+  if(c.gender)bits.push(_personWord(c.gender));
+  return bits.length?'a '+bits.join(' '):'';
+}
+function _formulationNoDx(c){
+  // S.dx === 'No' — history did not support ADHD; better explained by a
+  // current comorbidity from the differential list.
+  var bits=[];
+  bits.push('Following a comprehensive assessment, the developmental and symptom history did not support a diagnosis of Attention Deficit Hyperactivity Disorder.');
+  if(c.current.length){
+    bits.push('The current presentation is felt to be better accounted for by '+_joinList(c.current)+'.');
+  } else {
+    bits.push('The current presentation does not meet diagnostic threshold for ADHD on the basis of the assessment to date.');
+  }
+  bits.push('No specific ADHD-targeted treatment is indicated at this stage; ongoing follow-up will focus on the conditions identified above and any emerging symptoms over time.');
+  return bits.join(' ');
+}
+function _formulationDeferred(c){
+  // S.dx === 'Deferred' or 'Insufficient evidence' — more information needed.
+  var bits=[];
+  var missing=getMissingInfoLabels();
+  bits.push('A definitive conclusion regarding ADHD is not yet possible — further information is required'+(missing.length?', including '+_joinList(missing):'')+'.');
+  bits.push('Reassessment is recommended once this information is available.');
+  return bits.join(' ');
+}
+function formulationClinical(c){
+  if(S.dx==='No')return _formulationNoDx(c);
+  if(S.dx==='Deferred'||S.dx==='Insufficient evidence')return _formulationDeferred(c);
+  var bits=[];
+  var demo=_demoPhrase(c);
+  bits.push(c.name+' is '+(demo?demo+' ':'')+'presenting with a longstanding pattern of '+(c.subPhrase?c.subPhrase+' symptoms ':'attentional and self-regulatory symptoms ')+'consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+'.');
   bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant impairment'+(c.top.length?' — particularly in the areas of '+_joinList(c.top):'')+'.');
-  var screen=[];
-  if(c.asrs)screen.push('Patient ASRS '+c.asrs.toLowerCase());
-  if(c.diva)screen.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
-  if(screen.length)bits.push('Pre-screening ('+_joinList(screen)+') supports the diagnosis.');
-  if(c.past.length)bits.push('Past psychiatric considerations including '+_joinList(c.past)+' have been considered and are not better accounted for by another disorder.');
+  var ss=_screeningSupportiveness(c.asrs,c.diva);
+  if(ss==='supports'){
+    var sl=[];
+    if(c.asrs)sl.push('Patient ASRS '+c.asrs.toLowerCase());
+    if(c.diva)sl.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
+    bits.push('Pre-screening ('+_joinList(sl)+') supports the diagnosis.');
+  } else if(ss==='unsupportive'){
+    bits.push('Pre-screening was not supportive of the diagnosis; however, the clinical history was felt to be sufficient to confirm the diagnosis.');
+  }
+  if(c.past.length)bits.push('Other potential differentials, including '+_joinList(c.past)+', were considered and felt unlikely to better account for the current presentation.');
   if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' '+(c.current.length>1?'are':'is')+' present and will be addressed alongside ADHD treatment.');
   return bits.join(' ');
 }
 function formulationNarrative(c){
+  if(S.dx==='No')return _formulationNoDx(c);
+  if(S.dx==='Deferred'||S.dx==='Insufficient evidence')return _formulationDeferred(c);
   var pron=c.pron||'they',poss=c.poss||'their';
   var bits=[];
-  var personNoun=_personNoun(c.gender);
-  var who=c.name+(c.age?', a '+c.age+'-year-old'+(c.gender?' '+c.gender.toLowerCase()+(personNoun?personNoun:''):''):'');
+  var demo=_demoPhrase(c);
+  var who=c.name+(demo?', '+demo:'');
   var topPhrase=c.top.length?_joinList(c.top):'difficulty regulating attention, organisation, and internal restlessness';
   bits.push(who+', describes a lifelong difficulty with '+topPhrase+'.');
   bits.push('These patterns were present from childhood and have persisted into '+poss+' adult life, where they continue to interfere with work, relationships, and day-to-day self-management.');
@@ -1973,13 +2057,20 @@ function formulationNarrative(c){
   return bits.join(' ');
 }
 function formulationFunctional(c){
+  if(S.dx==='No')return _formulationNoDx(c);
+  if(S.dx==='Deferred'||S.dx==='Insufficient evidence')return _formulationDeferred(c);
   var bits=[];
   bits.push(c.name+' meets DSM-5-TR criteria for ADHD'+(c.sub?' ('+c.sub+' presentation)':'')+'.');
   if(c.top.length)bits.push('The most disabling features at present are '+_joinList(c.top)+', with substantial functional impact across work, study, and daily routines.');
-  var screen=[];
-  if(c.asrs)screen.push('ASRS '+c.asrs.toLowerCase());
-  if(c.diva)screen.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
-  if(screen.length)bits.push('Pre-screening ('+_joinList(screen)+') and collateral information support the diagnosis.');
+  var ss=_screeningSupportiveness(c.asrs,c.diva);
+  if(ss==='supports'){
+    var sl=[];
+    if(c.asrs)sl.push('ASRS '+c.asrs.toLowerCase());
+    if(c.diva)sl.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
+    bits.push('Pre-screening ('+_joinList(sl)+') and collateral information support the diagnosis.');
+  } else if(ss==='unsupportive'){
+    bits.push('Although pre-screening was not strongly supportive, the broader clinical picture was felt sufficient to confirm the diagnosis.');
+  }
   if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' '+(c.current.length>1?'are':'is')+' also present and will be managed in parallel.');
   bits.push('Treatment is indicated to reduce these functional impacts; the proposed plan is detailed in the management section.');
   return bits.join(' ');
@@ -2052,19 +2143,32 @@ function fuAddAppt(obj) {
   fuAppts.push(obj || {with:'',num:4,unit:'weeks',duration:30}); renderFuAppts();
 }
 
-// ─── AUTO-TICK PROVIDE FROM SAFETY ──────────────────────────────────────────
-// Track previous safety state so we only auto-add on the transition into "Not
-// done" — a user who manually unticks the provide chip won't get it added back.
-var fuAutoState={ecg:'',uds:''};
+// ─── AUTO-TICK PROVIDE FROM MISSING INFO ─────────────────────────────────────
+// Track previous values so we only auto-add on the transition into a "missing"
+// state ("Not done" / "Not provided"). A user who manually unticks the provide
+// chip later won't get it re-added on subsequent refreshes.
+var fuAutoState={};
+function _autoAddProvide(k,chipKey){
+  if(!fuProvide.has(chipKey)){
+    fuProvide.add(chipKey);
+    var t=document.querySelector('#fu-provide-chips [data-k="'+chipKey+'"]');
+    if(t)t.classList.add('on');
+  }
+}
 function fuAutoFromSafety(){
+  // ECG + UDS: source = S.ecg / S.uds; trigger value = "Not done"
   ['ecg','uds'].forEach(function(k){
-    var cur = (S && S[k]) || '';
-    if(cur==='Not done' && fuAutoState[k]!=='Not done'){
-      fuProvide.add(k);
-      var t=document.querySelector('#fu-provide-chips [data-k="'+k+'"]');
-      if(t)t.classList.add('on');
-    }
+    var cur=(S&&S[k])||'';
+    if(cur==='Not done'&&fuAutoState[k]!=='Not done')_autoAddProvide(k,k);
     fuAutoState[k]=cur;
+  });
+  // Screening collateral: source = S.screening.*; trigger value = "Not provided"
+  var screenMap={obs:'obs_asrs',schoolReports:'school_rep',psychReport:'psych_rep',vanderbiltParent:'vanderbilt',vanderbiltTeacher:'vanderbilt'};
+  Object.keys(screenMap).forEach(function(k){
+    var cur=(S&&S.screening&&S.screening[k])||'';
+    var stateKey='screen_'+k;
+    if(cur==='Not provided'&&fuAutoState[stateKey]!=='Not provided')_autoAddProvide(stateKey,screenMap[k]);
+    fuAutoState[stateKey]=cur;
   });
 }
 
@@ -3510,8 +3614,25 @@ function toggleV(key,val,btn,cls){
   save();refresh();
 }
 function setV(key,val,btn,cls){
+  // Subtype toggles off when re-clicked so the user can clear a stale subtype
+  // (otherwise dxFull renders as "ADHD deferred Combined" if subtype was set
+  // before they switched dx away from Yes).
+  var already=S[key]===val;
+  if(key==='subtype'&&already){
+    S.subtype='';
+    S.subtypeManual=true;
+    btn.parentElement.querySelectorAll('.rb').forEach(function(b){b.className='rb';});
+    save();refresh();
+    return;
+  }
   S[key]=val;
-  if(key==='dx')S.dxManual=true;
+  if(key==='dx'){
+    S.dxManual=true;
+    // When the user moves dx away from a confirmed ADHD, blank the subtype
+    // so the diagnosis line doesn't carry stale "Combined / Inattentive /
+    // H-I" text into the No / Deferred / Insufficient cases.
+    if(val!=='Yes')S.subtype='';
+  }
   if(key==='subtype')S.subtypeManual=true;
   btn.parentElement.querySelectorAll('.rb').forEach(function(b){b.className='rb';});
   if(cls)btn.classList.add(cls);
@@ -4630,7 +4751,9 @@ function _letterParas(text){
   return text.split(/\n{2,}/).map(function(p){return '<p>'+esc(p).replace(/\n/g,'<br>')+'</p>';}).join('');
 }
 function buildLetterReport(){
-  var name=f('ptName')||'[Patient name]';
+  var ptName=f('ptName');
+  var name=ptName||'the patient';
+  var nameHeader=ptName||'[Patient name]';
   var age=f('ptAge');
   var gender=f('ptGender');
   var dob=f('ptDob');
@@ -4644,7 +4767,6 @@ function buildLetterReport(){
   gpStr=_capitaliseDr(gpStr);
   var dxStr=dxFull();
   var rt=S.reviewType||'Initial';
-  var personNoun=_personNoun(gender);
   var was=_vAgree(gender,'was','were');
   var reports=_vAgree(gender,'reports','report');
   var has=_vAgree(gender,'has','have');
@@ -4653,14 +4775,21 @@ function buildLetterReport(){
   var h='';
 
   // Letterhead
-  h+='<div class="letter-head"><div><strong>RE:</strong> '+esc(name)+(age?', age '+esc(age):'')+(dob?', DOB '+esc(dob):'')+'</div><div>'+esc(dateStr)+'</div></div>';
+  h+='<div class="letter-head"><div><strong>RE:</strong> '+esc(nameHeader)+(age?', age '+esc(age):'')+(dob?', DOB '+esc(dob):'')+'</div><div>'+esc(dateStr)+'</div></div>';
 
   // Salutation
   h+='<p>Dear '+(gpStr?esc(gpStr):'Doctor')+',</p>';
 
-  // Opening
+  // Opening — demographic clause is a single optional ", …," insert so the
+  // sentence reads cleanly when age / gender are missing.
   var referral=f('referralReason');
-  h+='<p>Thank you for referring '+esc(name)+(age?', a '+esc(age)+'-year-old'+(gender?' '+esc(gender.toLowerCase())+esc(personNoun):''):'')+', for psychiatric assessment'+(referral?' regarding '+esc(referral.toLowerCase().replace(/\.$/,'')):'')+'. '+prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
+  var demoClause='';
+  if(age){
+    demoClause=', a '+esc(age)+'-year-old';
+    if(gender)demoClause+=' '+esc(_personWord(gender));
+    demoClause+=',';
+  }
+  h+='<p>Thank you for referring '+esc(name)+demoClause+' for psychiatric assessment'+(referral?' regarding '+esc(referral.toLowerCase().replace(/\.$/,'')):'')+'. '+prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
 
   // History of presentation
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
@@ -4675,37 +4804,61 @@ function buildLetterReport(){
     if(curDiffs.length)h+='<p>'+prCap+' also endorsed features consistent with comorbid '+_joinList(curDiffs)+', which '+(curDiffs.length>1?'are':'is')+' considered alongside the primary diagnosis below.</p>';
   }
 
-  // Pre-screening & collateral
-  var screenItems=[];
-  if(S.screening){
-    if(S.screening.asrs)screenItems.push('Patient ASRS — '+S.screening.asrs.toLowerCase()+(S.screening.asrsMode?' ('+S.screening.asrsMode.toLowerCase()+')':''));
-    if(S.screening.diva)screenItems.push('DIVA-5 — '+String(S.screening.diva).replace(/^Completed - /i,'').toLowerCase()+(S.screening.divaMode?' ('+S.screening.divaMode.toLowerCase()+')':''));
-    var di=f('diva-inatt'),dh=f('diva-hi');
-    if(di||dh)screenItems.push('DIVA-5 symptom counts — inattention '+(di||'?')+'/9, hyperactivity/impulsivity '+(dh||'?')+'/9');
-    if(f('otherScreening'))screenItems.push('Other screening — '+f('otherScreening'));
-    if(S.screening.obs)screenItems.push('Observer ASRS — '+String(S.screening.obs).toLowerCase());
-    if(S.screening.gpReferral)screenItems.push('GP referral — '+String(S.screening.gpReferral).toLowerCase());
-    if(S.screening.schoolReports)screenItems.push('School reports — '+String(S.screening.schoolReports).toLowerCase()+(f('schoolNotes')?' ('+f('schoolNotes')+')':''));
-    if(S.screening.psychReport)screenItems.push('Psychology report — '+String(S.screening.psychReport).toLowerCase()+(f('psychReportNotes')?' ('+f('psychReportNotes')+')':''));
-    if(S.screening.vanderbiltParent)screenItems.push('Vanderbilt (parents) — '+String(S.screening.vanderbiltParent).toLowerCase()+(f('vanderbiltParentNotes')?' ('+f('vanderbiltParentNotes')+')':''));
-    if(S.screening.vanderbiltTeacher)screenItems.push('Vanderbilt (teacher) — '+String(S.screening.vanderbiltTeacher).toLowerCase()+(f('vanderbiltTeacherNotes')?' ('+f('vanderbiltTeacherNotes')+')':''));
+  // Pre-screening & collateral — three buckets: supportive, unsupportive, not provided
+  var supBucket=[],unsupBucket=[],missingBucket=[];
+  function _classifyScreen(label,val,extra){
+    if(!val)return;
+    var lo=String(val).toLowerCase();
+    var detail=label+' — '+lo+(extra?' '+extra:'');
+    if(/not provided|not done|^n\/a$/.test(lo))missingBucket.push(label);
+    else if(/positive(?!.*not)|^supportive$|completed - positive/.test(lo)&&!/not /.test(lo))supBucket.push(detail);
+    else if(/^not supportive|^negative$|completed - negative/.test(lo))unsupBucket.push(detail);
+    else supBucket.push(detail);
   }
-  if(screenItems.length||f('screenNotes')){
+  if(S.screening){
+    _classifyScreen('Patient ASRS',S.screening.asrs,S.screening.asrsMode?'('+S.screening.asrsMode.toLowerCase()+')':'');
+    var divaVal=String(S.screening.diva||'').replace(/^Completed - /i,'');
+    _classifyScreen('DIVA-5',divaVal,S.screening.divaMode?'('+S.screening.divaMode.toLowerCase()+')':'');
+    var di=f('diva-inatt'),dh=f('diva-hi');
+    if(di||dh)supBucket.push('DIVA-5 symptom counts — inattention '+(di||'?')+'/9, hyperactivity/impulsivity '+(dh||'?')+'/9');
+    if(f('otherScreening'))supBucket.push('Other screening — '+f('otherScreening'));
+    _classifyScreen('Observer ASRS',S.screening.obs);
+    _classifyScreen('GP referral',S.screening.gpReferral);
+    _classifyScreen('School reports',S.screening.schoolReports,f('schoolNotes')?'('+f('schoolNotes')+')':'');
+    _classifyScreen('Psychology / neuropsych report',S.screening.psychReport,f('psychReportNotes')?'('+f('psychReportNotes')+')':'');
+    _classifyScreen('Vanderbilt (parents)',S.screening.vanderbiltParent,f('vanderbiltParentNotes')?'('+f('vanderbiltParentNotes')+')':'');
+    _classifyScreen('Vanderbilt (teacher)',S.screening.vanderbiltTeacher,f('vanderbiltTeacherNotes')?'('+f('vanderbiltTeacherNotes')+')':'');
+  }
+  if(supBucket.length||unsupBucket.length||missingBucket.length||f('screenNotes')){
     h+='<h3>Pre-screening and collateral</h3>';
-    if(screenItems.length)h+='<p>The following supported the clinical picture:</p>'+L(screenItems.map(esc));
+    if(supBucket.length)h+='<p>The following <strong>supported</strong> the clinical picture:</p>'+L(supBucket.map(esc));
+    if(unsupBucket.length)h+='<p>However, there was <strong>insufficient evidence</strong> from:</p>'+L(unsupBucket.map(esc));
+    if(missingBucket.length)h+='<p><strong>Not yet provided / completed:</strong></p>'+L(missingBucket.map(esc));
     if(f('screenNotes'))h+=_letterParas(f('screenNotes'));
   }
 
-  // Developmental history + DSM symptom counts
+  // Developmental and symptom history — prose form. Reports the symptom
+  // counts and any developmental milestones endorsed; if any developmental
+  // checkpoints aren't endorsed, append an "However…" sentence.
   var devYes=(typeof DEV!=='undefined')?DEV.filter(function(d){return S.dev&&S.dev[d.id]&&d.type!=='label';}):[];
+  var devAll=(typeof DEV!=='undefined')?DEV.filter(function(d){return d.type==='dev';}):[];
+  var devMissing=devAll.filter(function(d){return !S.dev||!S.dev[d.id];});
   var devNorm=devYes.filter(function(d){return d.type!=='sym';});
   var inattSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0;});
   var hiSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0;});
   if(devYes.length||f('devNotes')){
     h+='<h3>Developmental and symptom history</h3>';
-    if(devNorm.length)h+=L(devNorm.map(function(d){return esc(d.label);}));
-    if(inattSx.length)h+='<p><strong>Core inattention symptoms ('+inattSx.length+'/9):</strong></p>'+L(inattSx.map(function(d){return esc(d.label);}));
-    if(hiSx.length)h+='<p><strong>Core hyperactivity / impulsivity symptoms ('+hiSx.length+'/9):</strong></p>'+L(hiSx.map(function(d){return esc(d.label);}));
+    if(inattSx.length||hiSx.length){
+      h+='<p>'+prCap+' endorsed <strong>'+inattSx.length+'/9</strong> core inattention symptoms and <strong>'+hiSx.length+'/9</strong> core hyperactivity / impulsivity symptoms in adulthood.</p>';
+    }
+    if(devNorm.length){
+      var devLabels=devNorm.map(function(d){return _smartLower(d.label);});
+      h+='<p>Supporting developmental features included '+esc(_joinList(devLabels))+'.</p>';
+    }
+    if(devAll.length&&devMissing.length){
+      var missLabels=devMissing.map(function(d){return _smartLower(d.label);});
+      h+='<p>However, there was insufficient evidence for '+esc(_joinList(missLabels))+'.</p>';
+    }
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
@@ -4777,7 +4930,7 @@ function buildLetterReport(){
     if(cardFlagged.length)h+='<p><strong>Cardiac risk factors identified:</strong></p>'+L(cardFlagged.map(function(c){return esc(c.label);}));
     if(f('cardiacNotes'))h+=_letterParas(f('cardiacNotes'));
     var sscript=[];
-    if(S.safeScript)sscript.push('SafeScript / RTPM: '+S.safeScript+(f('ssDetail')?' — '+f('ssDetail'):''));
+    if(S.safeScript)sscript.push('SafeScript / RTPM: '+S.safeScript.replace(/\s*-{1,2}\s*/g,' — ')+(f('ssDetail')?' — '+f('ssDetail'):''));
     if(S.drugDep)sscript.push('Drug-dependent status: '+S.drugDep);
     if(S.sudDiff)sscript.push('SUD differential: '+S.sudDiff);
     if(sscript.length)h+=L(sscript.map(esc));
@@ -4900,17 +5053,17 @@ function buildLetterReport(){
     }
     if(fuProvideList.length){
       var pTime=f('fu-provide-timeframe')||'prior to next review';
-      h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(fuProvideList.join(', '))+'.</p>';
+      h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(_lowerPreserveAcronyms(fuProvideList.join(', ')))+'.</p>';
     }
     if(fuMonStr){
       // Split into things you actively monitor (vitals, bloods, ECG, UDS,
       // weight, BMI) versus things you review (mood, sleep) so the prose
-      // reads naturally.
+      // reads naturally. Lowercase mid-sentence while preserving acronyms.
       var rawMon=fuMonStr.split(/\s*[,;]\s*/).filter(Boolean);
       var monitor=[],review=[];
       rawMon.forEach(function(item){
-        if(/\breview$/i.test(item))review.push(item.replace(/\s*review$/i,'').toLowerCase());
-        else monitor.push(item);
+        if(/\breview$/i.test(item))review.push(_lowerPreserveAcronyms(item.replace(/\s*review$/i,'')));
+        else monitor.push(_lowerPreserveAcronyms(item));
       });
       var bits=[];
       if(monitor.length)bits.push('monitor '+_joinList(monitor));
