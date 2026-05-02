@@ -1879,11 +1879,16 @@ function getCurrentDifferentials(){
   return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Current';});
 }
 function getCurrentComorbidities(){
-  // Comorbidities for the letter / formulation prose: exclude flagged
-  // differentials (medical / neurodegen / substance-induced etc.) — they're
-  // ruled-out considerations, not actual comorbid diagnoses.
-  var FLAGS={bipolar:1,schizophrenia:1,suicidality:1,anorexia:1,bulimia:1,tbi:1,substance_induced:1,neurodegen:1,medical:1};
-  return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Current'&&!FLAGS[d.id];});
+  // Comorbidities for formulation prose: include almost everything the user
+  // marked as Current. Only exclude differentials that are purely framed as
+  // *alternative explanations* for the symptom picture (a medical /
+  // neurological cause, a substance-induced presentation, a neurodegenerative
+  // process, or past head injury) — those don't read as comorbidities and
+  // belong in the Better-explanation bucket if relevant. Bipolar,
+  // schizophrenia-spectrum, suicidality, eating disorders etc. are kept
+  // because they are genuine comorbidities when marked Current.
+  var EXPLANATION_DIFFS={medical:1,substance_induced:1,neurodegen:1,tbi:1};
+  return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Current'&&!EXPLANATION_DIFFS[d.id];});
 }
 function getPastDifferentials(){
   return DIFFS.filter(function(d){return S.differentials&&S.differentials[d.id]==='Past';});
@@ -2001,16 +2006,14 @@ function _demoPhrase(c){
   return bits.length?'a '+bits.join(' '):'';
 }
 function _formulationNoDx(c){
-  // S.dx === 'No' — history did not support ADHD; better explained by a
-  // current comorbidity from the differential list.
+  // S.dx === 'No' — history did not support ADHD. Per user request, do NOT
+  // list the specific differentials chosen; just state that the picture is
+  // better accounted for by an alternative diagnosis. The Differential
+  // diagnoses considered section in the report still shows the specifics.
   var bits=[];
   bits.push('Following a comprehensive assessment, the developmental and symptom history did not support a diagnosis of Attention Deficit Hyperactivity Disorder.');
-  if(c.current.length){
-    bits.push('The current presentation is felt to be better accounted for by '+_joinList(c.current)+'.');
-  } else {
-    bits.push('The current presentation does not meet diagnostic threshold for ADHD on the basis of the assessment to date.');
-  }
-  bits.push('No specific ADHD-targeted treatment is indicated at this stage; ongoing follow-up will focus on the conditions identified above and any emerging symptoms over time.');
+  bits.push('The current presentation is felt to be better accounted for by an alternative diagnosis, as detailed in the differential diagnoses section above.');
+  bits.push('No specific ADHD-targeted treatment is indicated at this stage; ongoing follow-up will focus on the alternative diagnosis and any emerging symptoms over time.');
   return bits.join(' ');
 }
 function _formulationDeferred(c){
@@ -4963,13 +4966,16 @@ function buildLetterReport(){
 
   // Differential diagnoses considered. Past differentials are already covered
   // under "Past psychiatric history" above so the comorbid line shows Current
-  // only to avoid duplication.
+  // only to avoid duplication. Lists ALL Current items the user marked
+  // (including bipolar / schizophrenia / suicidality / EDs) — those are valid
+  // comorbidities here even if the formulation prose treats some as
+  // alternative explanations.
   h+='<h3>Differential diagnoses considered</h3>';
   var betterEx=DIFFS.filter(function(d){return S.differentials[d.id]==='Better explanation';});
-  var currentCom=getCurrentComorbidities();
+  var currentAll=getCurrentDifferentials();
   var notPres=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
   var diffLines=[];
-  if(currentCom.length)diffLines.push('<strong>Comorbid:</strong> '+esc(currentCom.map(function(d){return d.label;}).join(', ')));
+  if(currentAll.length)diffLines.push('<strong>Comorbid:</strong> '+esc(currentAll.map(function(d){return d.label;}).join(', ')));
   if(betterEx.length)diffLines.push('<strong>Considered as a better explanation:</strong> '+esc(betterEx.map(function(d){return d.label;}).join(', ')));
   if(notPres.length)diffLines.push('<strong>Excluded:</strong> '+esc(notPres.map(function(d){return d.label;}).join(', ')));
   if(diffLines.length)h+=L(diffLines);
