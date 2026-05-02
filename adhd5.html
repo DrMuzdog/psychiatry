@@ -980,7 +980,7 @@ select.inp{appearance:none}
     <div class="ch plum">Validity / Malingering Concerns</div>
     <div class="cb"><div id="mal-checks" class="inner-2col-sm"></div></div>
   </div>
-<div class="card">
+<div class="card" id="card-investigations">
     <div class="ch sky">Investigations</div>
     <div class="cb">
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;align-items:start">
@@ -1034,7 +1034,7 @@ select.inp{appearance:none}
       <input class="inp" id="otherInvest" placeholder="e.g. Bloods, neuropsychological testing, neuroimaging..." oninput="save();refresh()">
     </div>
   </div>
-<div class="card">
+<div class="card" id="card-safescript">
     <div class="ch warning">SafeScript / RTPM (NSW)</div>
     <div class="cb">
       <div class="rrow" style="padding-top:0">
@@ -1102,7 +1102,7 @@ select.inp{appearance:none}
 <!-- FOLLOW-UP -->
 <div class="section-header" id="sec-followup"><span class="sh-num">6</span>Follow-up</div>
 <div class="panel active" id="panel-followup">
-  <div class="card">
+  <div class="card" id="card-fu-plan">
     <div class="ch teal">Follow-Up Plan</div>
     <div class="cb" style="padding:0">
       <div style="padding:10px 13px 8px">
@@ -4292,8 +4292,48 @@ function setReviewType(val,btn){
 function applyReviewType(){
   var rt=S.reviewType||'Initial';
   var isFu=rt!=='Initial';
-  document.querySelectorAll('[data-initial-only]').forEach(function(el){el.style.display=isFu?'none':'';});
-  document.querySelectorAll('[data-followup-only]').forEach(function(el){el.style.display=isFu?'':'none';});
+  // On follow-up / titration / script reviews we now keep all the cards in
+  // the form but pre-collapse the assessment ones (the user can expand them
+  // if they need to update something). Investigations is collapsed too.
+  // SafeScript stays expanded so it's checked at every visit.
+  document.querySelectorAll('[data-initial-only]').forEach(function(el){
+    el.style.display='';
+    if(isFu)el.classList.add('collapsed');
+    else el.classList.remove('collapsed');
+  });
+  document.querySelectorAll('[data-followup-only]').forEach(function(el){
+    el.style.display=isFu?'':'none';
+    el.classList.remove('collapsed');
+  });
+  // Investigations: collapsed on follow-ups
+  var inv=document.getElementById('card-investigations');
+  if(inv){
+    inv.style.display='';
+    if(isFu)inv.classList.add('collapsed');
+    else inv.classList.remove('collapsed');
+  }
+  // SafeScript: always expanded (must be checked every visit)
+  var ss=document.getElementById('card-safescript');
+  if(ss){ss.style.display='';ss.classList.remove('collapsed');}
+  // Move the Follow-Up Plan card to the very top of the document on FU /
+  // Titration / Script reviews so it's the first thing the user sees after
+  // the Session info card. Restore to its native panel-followup container
+  // when back on Initial.
+  var fuCard=document.getElementById('card-fu-plan');
+  var fuHomePanel=document.getElementById('panel-followup');
+  var historyPanel=document.getElementById('panel-history');
+  if(fuCard&&fuHomePanel&&historyPanel){
+    if(isFu){
+      // Insert as the second card in panel-history (right after the Session info card)
+      var firstCard=historyPanel.querySelector('.card');
+      if(firstCard&&firstCard.parentNode){
+        firstCard.parentNode.insertBefore(fuCard,firstCard.nextSibling);
+      }
+    } else {
+      // Restore to original location
+      if(fuCard.parentNode!==fuHomePanel)fuHomePanel.insertBefore(fuCard,fuHomePanel.firstChild);
+    }
+  }
   document.querySelectorAll('#review-type-btns .rb').forEach(function(b){
     b.className='rb'+(b.textContent.trim()===rt?' aq':'');
   });
@@ -4834,12 +4874,20 @@ function buildLetterReport(){
     if(gender)demoClause+=' '+esc(_personWord(gender));
     demoClause+=',';
   }
-  h+='<p>Thank you for referring '+esc(name)+demoClause+' for psychiatric assessment. ';
-  // Referral reason is rendered as its own sentence so it works whether the
-  // user types a noun phrase ("attentional difficulties") or a sentence
-  // fragment ("Psychologist recommended assessment").
-  if(referral)h+='Reason for referral: '+esc(referral.replace(/\.$/,''))+'. ';
-  h+=prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
+  // Opening paragraph adapts to review type — "psychiatric assessment" for
+  // an Initial visit, "follow-up review" / "titration review" / "script
+  // review" otherwise.
+  var visitLabel=(rt==='Initial'||!rt)?'psychiatric assessment'
+    :(rt==='Follow-up'?'follow-up review'
+    :(rt==='Titration'?'titration review'
+    :(rt==='Script'?'medication review':'review')));
+  if(rt==='Initial'||!rt){
+    h+='<p>Thank you for referring '+esc(name)+demoClause+' for psychiatric assessment. ';
+    if(referral)h+='Reason for referral: '+esc(referral.replace(/\.$/,''))+'. ';
+    h+=prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
+  } else {
+    h+='<p>I saw '+esc(name)+demoClause+' on '+esc(dateStr)+' for a '+esc(visitLabel)+'. The outcome and updated management plan are summarised below.</p>';
+  }
 
   // History of presentation
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
