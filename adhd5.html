@@ -6978,275 +6978,367 @@ function renderHandoverReference(){
     <div class="pg-scroll">
 <h1>How to Use This Tool</h1>
 
-<p style="background:#eff6ff;border-left:3px solid #3b82f6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:13px;color:#1e3a5f"><strong>Purpose:</strong> A structured clinical companion for ADHD assessments — not a replacement for clinical judgment, but a way to stay organised, capture everything, and leave with a complete document set ready to send.</p>
+<p style="background:#eff6ff;border-left:3px solid #3b82f6;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-size:13px;color:#1e3a5f"><strong>Purpose:</strong> A structured clinical companion for ADHD assessments and follow-up reviews — not a replacement for clinical judgment. Capture the consult as you go, and leave with the report, GP letter, patient document, eScript text, and titration plan ready to send.</p>
 
-<details class="pg-details">
-<summary>Overview &amp; Philosophy</summary>
+<details class="pg-details" open>
+<summary>Quick orientation — the layout</summary>
 <div class="pg-content">
 <div class="pg-section">
-<h4>What this does</h4>
+<h4>The two strips at the top of every page</h4>
 <ul>
-<li>Guides you through a full ADHD assessment in a logical order</li>
-<li>Captures clinical data as you go and auto-generates outputs at the end</li>
-<li>Produces a patient letter, titration plan, GP handover, educational handout, and specialist letters — all from the same session</li>
-<li>Outputs a plain-text context block for Heidi, MedicalDirector, Best Practice or any AI scribe</li>
+<li><strong>Reference ribbon</strong> (icons): 🦮 Guide · ✍️ Prescribing · 💊 Titration · 💵 Billing · 📅 Follow-up · 🤝 Handover. These open standalone reference overlays on top of whatever you're working on — nothing in your form is lost.</li>
+<li><strong>Section nav</strong> (two rows of tabs): the slate row is your assessment workflow (Psych Hx · Medical Hx · Alerts), the dark green row is your planning workflow (EDU · Med Plan · Follow-up · Reports). Both rows stay pinned as you scroll. Click any tab to jump straight to that section.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>How to use it</h4>
+<h4>Tab badges</h4>
 <ul>
-<li><strong>Follow along during the consult</strong> — tap items as the patient describes them. The form follows the natural arc of a psychiatric assessment</li>
-<li><strong>Use after the consult</strong> — fill in from memory or notes, then generate all outputs at once</li>
-<li><strong>Hybrid</strong> — pre-fill demographic info before the patient joins, fill clinical sections during, finish outputs after</li>
-<li>Nothing is compulsory. Fill what's relevant and leave the rest</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Data &amp; privacy</h4>
-<ul>
-<li>Everything stays in your browser — no data is sent anywhere</li>
-<li>The form auto-saves to local storage as you type</li>
-<li>Use Reset (top right) to clear between patients</li>
+<li>A red number on Psych Hx, Medical Hx or Alerts shows the current safety/gap count for that section. You can see at a glance whether anything needs your attention.</li>
 </ul>
 </div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Timing Guide — Staying Within 50–60 Minutes</summary>
+<summary>How to use it</summary>
 <div class="pg-content">
 <div class="pg-section">
-<h4>Suggested time allocation</h4>
+<h4>During the consult</h4>
 <ul>
-<li><strong>0–5 min</strong> — Presenting concerns, reason for referral, demographics</li>
-<li><strong>5–10 min</strong> — Pre-screening review (ASRS, DIVA, collateral). Check what the GP has already done</li>
-<li><strong>10–20 min</strong> — Developmental history. Childhood pattern, adolescence, adult presentation. Tick core symptoms as patient describes them</li>
-<li><strong>20–30 min</strong> — Differential diagnoses, substance use, family history. These can move quickly with targeted questions</li>
-<li><strong>30–35 min</strong> — Mental state examination, DSM criteria review (mostly auto-filled by this point)</li>
-<li><strong>35–40 min</strong> — Medical history, cardiac screening, investigations, SafeScript</li>
-<li><strong>40–50 min</strong> — Treatment rationale, medication selection, titration plan, follow-up</li>
-<li><strong>50–60 min</strong> — Psychoeducation discussion, handout selection, patient letter review, wrap-up</li>
+<li>Tap items as the patient describes them. The form follows the natural arc of an assessment, so you can fill from the top down.</li>
+<li>Nothing is compulsory — fill what's relevant and skip the rest.</li>
+<li>The form auto-saves to your browser as you type. Reload-safe.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>Tips to stay on time</h4>
+<h4>After the consult</h4>
 <ul>
-<li>The <strong>? buttons</strong> next to each item give suggested interview questions — use these to prompt without losing structure</li>
-<li>Differentials default to Nil — only change ones that are relevant</li>
-<li>DSM criteria and diagnosis auto-complete as you fill in the developmental section</li>
-<li>Skip the titration builder if continuing an existing plan — just note it in the authority/Rx box</li>
+<li>Fill in from memory or scribe notes, then jump to <strong>Reports</strong> to generate everything at once.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Hybrid</h4>
+<ul>
+<li>Pre-fill demographics before the patient arrives, fill clinical sections during, finish documents after.</li>
 </ul>
 </div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Psych Hx Tab</summary>
+<summary>Top of page — Session info</summary>
 <div class="pg-content">
 <div class="pg-section">
-<h4>Presenting Concerns</h4>
+<h4>What lives here</h4>
 <ul>
-<li>Fill patient name, age, gender and referring GP at the top — these flow into all generated letters</li>
-<li>Tap difficulties as the patient describes them — no need to type</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Pre-screening &amp; Collateral</h4>
-<ul>
-<li>Record ASRS and DIVA outcomes with one tap — include whether patient or clinician administered</li>
-<li>Collateral section covers observer ASRS, GP referral, school reports, psych reports, Vanderbilt scales</li>
-<li>Items are deselectable — tap again to clear</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Developmental History — Core Symptoms</h4>
-<ul>
-<li>The <strong>? button</strong> on each item reveals interview prompts tailored to that criterion</li>
-<li>Tick the 18 DSM-5-TR core symptoms as the patient describes them — inattention and H/I tracked separately</li>
-<li>Once 5+ symptoms are ticked in either domain, Criterion A auto-checks</li>
-<li>Childhood, cross-situational and impairment items auto-fill Criteria B, C and D</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Differential Diagnoses</h4>
-<ul>
-<li>All default to Nil — only change what's relevant</li>
-<li>Nil / Past / Current for each condition</li>
-<li>Flagged conditions (bipolar, schizophrenia, suicidality, eating disorders, ABI, substance-induced) turn red and trigger a flag when marked Current</li>
-<li>? button shows key differential questions for each condition</li>
-<li>Criterion E (not better explained) auto-unchecks if any Current differential is set — you can manually re-check it if you disagree</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Auto-DSM &amp; Diagnosis</h4>
-<ul>
-<li>DSM criteria auto-check as you fill the developmental section</li>
-<li>Diagnosis and subtype auto-set when all 5 criteria are met</li>
-<li>You can override any auto-selection manually — it sticks</li>
-<li>Deselect All resets manual overrides so auto-logic can take over again</li>
+<li>Psychiatrist name and qualifications (saved between sessions — only enter once).</li>
+<li>Visit date (auto-fills to today).</li>
+<li>Patient name, age, gender, GP.</li>
+<li>MBS item picker, with 291/92435 eligibility check (auto-flags if you've billed one in the last 12 months).</li>
+<li><strong>Review type</strong>: Initial · Follow-up · Titration · Script — drives the rest of the form (see "Follow-up reviews" below).</li>
 </ul>
 </div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Medical Hx Tab</summary>
+<summary>Psych Hx tab</summary>
 <div class="pg-content">
 <div class="pg-section">
-<h4>Cardiac Screening</h4>
+<h4>Presenting concerns</h4>
 <ul>
-<li>Each item has a ? button with a clinical note explaining prescribing implications</li>
-<li>Flagged items (MAOI, hypertension, structural heart disease etc.) trigger red flags in the Plan tab</li>
+<li>Tap the difficulties the patient describes — single-concept tiles (no slashes), so you only tick what's actually endorsed.</li>
+<li>Free-text "presenting notes" box for anything else.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Pre-screening &amp; collateral</h4>
+<ul>
+<li>Each item is a self-contained tile: Patient ASRS, DIVA-5 (with separate symptom counts), other screening; then collateral — Observer ASRS, GP referral, school reports, psych report, Vanderbilt parents/teacher, plus an Other collateral textarea.</li>
+<li>Items marked <strong>Not provided</strong> automatically tick the matching chip in "Patient to provide" under Follow-up — you can untick manually if you don't want it actioned.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Developmental history</h4>
+<ul>
+<li>Each ? button reveals interview prompts. Tap items the patient endorses — inattention and H/I symptoms are tracked separately and counted (N/9).</li>
+<li>Once 5+ symptoms in either domain, Criterion A auto-checks. Childhood / cross-situational / impairment items auto-fill Criteria B, C and D.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Differential diagnoses</h4>
+<ul>
+<li>All default to blank. Tap Nil / Past / Current for each.</li>
+<li>When Past or Current is selected, an inline detail box appears so you can record specifics (e.g. "mild, last episode 2yrs ago"). The detail flows into the letter as the parenthetical.</li>
+<li>Flagged differentials (bipolar, schizophrenia, suicidality, EDs, ABI, substance-induced, neurodegen, medical) turn red when Current and trigger an Alerts entry.</li>
+<li>Criterion E auto-unchecks if any Current differential is set; you can manually re-check.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Substance use</h4>
+<ul>
+<li>Nil / Past / Curr per substance. When Current or Past is selected an inline detail box appears (e.g. "daily ~1g", "weekly ~point") — the detail appears in the letter parenthetical.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Family psychiatric history</h4>
+<ul>
+<li>Nil / Present per category. When Present is selected an inline detail box appears for relation/severity (e.g. "Mother, hospitalised x2") — appears in the letter parenthetical.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Mental state examination</h4>
+<ul>
+<li>Tap the descriptors that apply per MSE section. The letter renders these as flowing prose.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>DSM-5-TR criteria + Diagnosis</h4>
+<ul>
+<li>DSM criteria auto-tick as you fill the developmental section.</li>
+<li>Diagnosis (Yes / No / Insufficient / Deferred) and subtype auto-set when criteria are met.</li>
+<li>Subtype is now <strong>clearable</strong> — re-click the active subtype to deselect it. Setting dx to anything other than Yes also auto-clears the subtype.</li>
+<li>Manual overrides stick. "Deselect all" resets so auto-logic can take over again.</li>
+</ul>
+</div>
+</div>
+</details>
+
+<details class="pg-details">
+<summary>Medical Hx tab</summary>
+<div class="pg-content">
+<div class="pg-section">
+<h4>Current medications, allergies, medical conditions</h4>
+<ul>
+<li>Free-text current meds + allergies; medical-conditions checklist with ? buttons explaining prescribing implications.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Cardiac screening</h4>
+<ul>
+<li>Each item flagged "?" has a clinical note. Flagged items (MAOI, hypertension, structural heart disease, etc.) bubble up to the Alerts tab.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Investigations</h4>
+<ul>
+<li>Height + weight auto-calculate BMI (red-highlighted if &lt;18.5).</li>
+<li>BP entered as separate systolic + diastolic fields; HR as bpm.</li>
+<li>BP ≥140/90, HR ≥100, or BMI &lt;18.5 raise a Safety alert in the letter.</li>
+<li>ECG and UDS as Normal/Abnormal/Not done buttons. "Not done" auto-ticks the matching chip in Follow-up "Patient to provide".</li>
 </ul>
 </div>
 <div class="pg-section">
 <h4>SafeScript / RTPM</h4>
 <ul>
-<li>Record SafeScript status — "Not checked" triggers a gap in the Plan tab as a reminder</li>
-<li>NSW RTPM required before prescribing stimulants</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Tab badge</h4>
-<ul>
-<li>A red number appears on the Medical Hx tab when there are active flags — tells you at a glance if anything needs attention without switching tabs</li>
+<li>Record Checked (no concerns) / Concern / Not checked. "Not checked" raises a gap. "Concern" raises a Safety alert in the letter.</li>
 </ul>
 </div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Plan Tab — Flags, Gaps &amp; Treatment Rationale</summary>
+<summary>Alerts tab</summary>
+<div class="pg-content">
+<ul>
+<li><strong>Flags</strong> — live-updated safety/clinical alerts (cardiac, suicidality, SafeScript, current substances, low BMI, billing conflicts, …).</li>
+<li><strong>Gaps</strong> — outstanding items before the assessment is complete (MSE not done, no follow-up set, DSM criteria incomplete, …).</li>
+</ul>
+</div>
+</details>
+
+<details class="pg-details">
+<summary>EDU tab — patient education</summary>
+<div class="pg-content">
+<ul>
+<li>Tick the topics you discussed. Items in the "Non-pharmacological Strategies" and "Products and Resources" groups render as <em>Non-pharmacological recommendations</em> in the letter; everything else renders as <em>Psychoeducation provided</em>.</li>
+<li>The full content of each topic also appears in the patient handout.</li>
+</ul>
+</div>
+</details>
+
+<details class="pg-details">
+<summary>Med Plan tab — titration + scripts</summary>
 <div class="pg-content">
 <div class="pg-section">
-<h4>Flags &amp; Gaps panels</h4>
+<h4>Picking a med</h4>
 <ul>
-<li><strong>Flags</strong> — safety and clinical alerts (suicidality, cardiac concerns, SafeScript not checked, current substances, billing conflicts)</li>
-<li><strong>Gaps</strong> — outstanding items before the assessment is complete (MSE not done, no follow-up set, DSM criteria incomplete)</li>
-<li>Both update live as you fill in the form</li>
+<li>Tap a medication tile to choose between Titration (multi-step) or Regular (single ongoing dose).</li>
+<li>Pre-built protocols for each med (e.g. dex BD normal/fast/slow/TDS, Vyvanse 30+20, Vyvanse water method, Concerta etc.) load with one tap.</li>
+<li>Or "+ Add medication manually" — picks a med, seeds it with a default morning dose, and lets you build the plan from scratch.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>Treatment Rationale grid</h4>
+<h4>Editing a step</h4>
 <ul>
-<li>Tap through: pregnancy/breastfeeding status → contraindications → first/second/third line → duration → medication class</li>
-<li>Selecting a line automatically dims irrelevant options (e.g. First-line dims the non-stimulant and third-line rows)</li>
-<li>Auto-generates a rationale sentence in the notes box below</li>
+<li>Each step row: duration · time · stepper for tabs/caps · strength · ✎ free-text override · PRN · ×.</li>
+<li>"+ Add step below" inserts a new step right after the one you clicked (not at the end).</li>
+<li>Default duration is "1 week" (you can change to days).</li>
+<li>The ✎ pencil flips a dose to free-text mode so you can type ranges like "0.5–1 tab (2.5–5mg)". ↺ flips back.</li>
+<li>If a step has more than one timing, a "Total/day" chip appears.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>Psychoeducation &amp; Handout generator</h4>
+<h4>Scripts provided today</h4>
 <ul>
-<li>Tick the topics discussed during the consult — they appear in the patient handout</li>
-<li>Topics include: what ADHD is, how medications work, side effects, stimulant comparisons, sleep, emotional regulation, study tips, driving, phone use, products and resources</li>
-<li>The handout is generated as a formatted section within the patient document — ready to print or send</li>
-<li>Tick count shown in the card header so you can see at a glance how much has been covered</li>
+<li>One script per distinct strength used in titration (so Vyvanse 20mg + 30mg makes two scripts automatically).</li>
+<li>Repeats default to blank with a yellow "needs filling" border the first time you use a med — your choice is then remembered for that med across sessions.</li>
+<li>The × is replaced by an <strong>Included / Excluded</strong> toggle. Excluded scripts are dimmed and skipped from outputs.</li>
+<li>The dose textarea auto-derives from the titration plan and updates live; type to override (a 🔒 marker appears so picking a different formulation style won't overwrite your edit).</li>
+<li><strong>Copy instructions</strong> / <strong>Copy full script</strong> on each row, plus copy buttons in the Titration overlay.</li>
 </ul>
 </div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Titration Plan Builder</summary>
+<summary>Follow-up tab</summary>
 <div class="pg-content">
 <div class="pg-section">
-<h4>Using presets</h4>
+<h4>Quick templates</h4>
 <ul>
-<li>Tap any protocol button to load it — Dexamphetamine, Ritalin IR/LA, Concerta, Vyvanse, Atomoxetine, Guanfacine, Clonidine</li>
-<li>Multiple medications can be loaded and displayed together</li>
-<li>Each step shows duration, timing and dose — all editable inline</li>
+<li>One-tap templates: 4-wk titration, 6-wk titration, 3-mo stable, 6-mo stable, GP handover, Shared care.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>Building manually</h4>
+<h4>Quick add appointment</h4>
 <ul>
-<li>Click "+ Add medication manually" — select the medication from a dropdown (no typing required)</li>
-<li>Add, remove or reorder steps and doses within each medication block</li>
-<li>Mark a step as "Ongoing" for the maintenance phase</li>
-<li>Switch medication mid-plan using the dropdown in the block header</li>
+<li>Four taps: With (Me / Your GP / Other) · In (1–12) · Unit (Days / Weeks / Months) · Length (15 / 30 / 45 / 60 min). A live preview shows the line that will be added.</li>
+<li>"Me" resolves to your psychiatrist name. "Your GP" resolves to the GP name from Session info.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Patient to provide / Monitoring / Safety scenarios</h4>
+<ul>
+<li>2-column tile checkboxes — selected tiles turn green (red for the warn items: chest pain, crisis).</li>
+<li>"Patient to provide" auto-ticks when the matching screening or investigation item was marked Not provided / Not done — manual unticks are preserved.</li>
+<li>Safety scenarios drive both the patient document content and the Safety section of the letter.</li>
+</ul>
+</div>
+</div>
+</details>
+
+<details class="pg-details">
+<summary>Reports tab — what gets generated</summary>
+<div class="pg-content">
+<div class="pg-section">
+<h4>Two views</h4>
+<ul>
+<li><strong>Structured</strong> — sectioned report with headings, lists and tables.</li>
+<li><strong>Letter (291/92435)</strong> — flowing prose letter to the GP in serif typography, with a formal RE: / date letterhead, the diagnosis callout, the formulation paragraph, management plan with sub-headings, and a sign-off.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Formulation styles</h4>
+<ul>
+<li>Three pill buttons above the Formulation textarea: <strong>Clinical</strong> · <strong>Narrative</strong> · <strong>Functional</strong>. Each generator pulls live state and writes a paragraph for you.</li>
+<li>The text is editable — once you type, an "✎ edited" warning appears so picking another style doesn't silently overwrite your edit.</li>
+<li>The formulation auto-regenerates if you change the diagnosis or other dependent fields (unless you've manually edited it).</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Diagnosis callout</h4>
+<ul>
+<li>Green ✓ box for confirmed ADHD; amber for "criteria not met"; indigo for insufficient/deferred.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Safety section</h4>
+<ul>
+<li>Each safety concern (cardiac flag, low BMI, BP ≥140/90, HR ≥100, SafeScript concern, positive UDS, active SI, plus the user's selected safety scenarios) appears as a <em>concern → recommended action</em> bullet.</li>
 </ul>
 </div>
 <div class="pg-section">
 <h4>Outputs</h4>
 <ul>
-<li><strong>eScript text</strong> — formatted day-by-day dosing ready to copy into an eScript or pharmacy label</li>
-<li><strong>Rich plan</strong> — formatted table with authority text, step labels, dosing, medication info, safety scenarios and sign-off</li>
-<li><strong>Day-by-day calendar</strong> — checkboxes for each day with the 20-day rule highlighted</li>
+<li><strong>Copy</strong> (rich) · <strong>Copy plain text</strong> · <strong>Download .docx</strong>. The .docx filename is <code>ADHD_Letter_&lt;Patient&gt;.docx</code> or <code>ADHD_Report_&lt;Patient&gt;.docx</code> depending on which view is active.</li>
+<li>Below the report there's a separate <strong>Patient document</strong> builder (cover letter + plan + monitoring + safety + handout + optional medical certificate / travel / workplace / study / driving letters).</li>
+<li>And a Heidi / AI scribe context block — plain text dump of everything entered, ready to paste into Heidi, MedicalDirector, Best Practice, Dragon, etc.</li>
 </ul>
 </div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Outputs Tab — Documents &amp; Letters</summary>
+<summary>Reference overlays (icons in the top ribbon)</summary>
 <div class="pg-content">
-<div class="pg-section">
-<h4>Heidi / AI context output</h4>
 <ul>
-<li>Plain text summary of everything entered — structured by section</li>
-<li>Paste directly into Heidi's context field, Dragon notes, or any AI scribe</li>
-<li>Reminds you to include detail you might forget or prefer not to say aloud in front of the patient — medication authority numbers, screening results, collateral findings, safety flags</li>
-<li>Useful for dictating letters after the consult using a scribe that has full context</li>
+<li><strong>🦮 Guide</strong> — this page.</li>
+<li><strong>✍️ Prescribing</strong> — state-by-state stimulant authority requirements, dose limits, RTPM and UDS rules. Always available, even mid-form.</li>
+<li><strong>💊 Titration</strong> — every titration protocol as a copyable card, plus a Treatment Rationale builder (consent / cardiac / contras / line / class / duration / plan) with a "Copy rationale" button. The rationale is reference-only — it doesn't leak into your reports.</li>
+<li><strong>💵 Billing</strong> — MBS item dropdown grouped by modality with current rebate values.</li>
+<li><strong>📅 Follow-up</strong> — follow-up styles guide.</li>
+<li><strong>🤝 Handover</strong> — GP handover letter template + the full state-by-state continuation prescriber guide. Copy buttons under the letter, the guide, and a combined "Copy letter + guide".</li>
 </ul>
-</div>
-<div class="pg-section">
-<h4>Patient document builder</h4>
-<ul>
-<li>Toggle sections on/off — cover letter, medication plan, medication info, monitoring, non-pharmacological recommendations, if-concerns table, educational handout</li>
-<li>Add optional extras: medical certificate (with dates), travel letter, medication possession letter, workplace adjustments, study adjustments, driving/machinery letter</li>
-<li>Preview updates live. Download as .docx or .rtf, print to PDF, or copy for Best Practice</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Cover letter</h4>
-<ul>
-<li>Written in second person to the patient — summarises diagnosis, what follows in the document, medication, next steps and safety netting</li>
-<li>Automatically populates from the clinical data you entered — diagnosis, subtype, medications, follow-up appointments, monitoring requirements</li>
-</ul>
-</div>
-<div class="pg-section">
-<h4>Specialist letters</h4>
-<ul>
-<li><strong>Travel</strong> — confirms diagnosis and prescription, explains false positives on drug screening, requests uninterrupted medication access</li>
-<li><strong>Medication possession</strong> — detailed drug screening explanation including GC-MS/LC-MS confirmatory testing</li>
-<li><strong>Workplace adjustments</strong> — confirms diagnosis, explains occupational impact, provides example adjustments</li>
-<li><strong>Study adjustments</strong> — academic context, extended time, separate venue, recorded lectures, assistive technology</li>
-<li><strong>Driving / machinery</strong> — explicitly confirms fitness to drive and operate machinery on current medication, cites evidence base</li>
-<li><strong>Medical certificate</strong> — confirms attendance and unfitness period, preserves confidentiality</li>
-</ul>
-</div>
 </div>
 </details>
 
 <details class="pg-details">
-<summary>Shortcuts &amp; Tips</summary>
+<summary>Follow-up / Titration / Script reviews</summary>
+<div class="pg-content">
+<ul>
+<li>Set the review type at the top of the page (Initial / Follow-up / Titration / Script).</li>
+<li>On non-Initial reviews, all the assessment cards stay in the form but pre-collapsed — expand any to update something. Investigations is collapsed by default; SafeScript stays expanded (must be checked every visit).</li>
+<li>The <strong>Follow-Up Plan</strong> card jumps to the top of the page right after Session info, so it's the first thing you see.</li>
+<li>The Reports letter opening adapts: "I saw [name] on [date] for a follow-up review. The outcome and updated management plan are summarised below." (or titration / script review).</li>
+</ul>
+</div>
+</details>
+
+<details class="pg-details">
+<summary>Tips &amp; shortcuts</summary>
 <div class="pg-content">
 <div class="pg-section">
 <h4>General</h4>
 <ul>
-<li><strong>? buttons</strong> — clinical prompts and interview questions for any item, without cluttering the main view</li>
-<li><strong>Select all / Deselect all</strong> — on any checklist section for quick bulk actions</li>
-<li><strong>All nil</strong> — sets every differential or substance to Nil in one tap</li>
-<li><strong>Tab badges</strong> — red numbers on Psych Hx and Medical Hx tabs show flag count without switching tabs</li>
-<li><strong>Prescriber Guide button</strong> — state-by-state stimulant authority requirements, dose limits, RTPM and UDS rules, available anywhere in the form</li>
+<li><strong>?</strong> buttons — interview prompts and clinical notes for any item.</li>
+<li><strong>Select all / Deselect all</strong> — bulk actions on every checklist.</li>
+<li><strong>All nil</strong> — sets every differential or substance to Nil in one tap.</li>
+<li><strong>Tab badges</strong> — red counts on Psych Hx, Medical Hx, Alerts.</li>
+<li><strong>Cards collapse</strong> by tapping their header (the chevron). Useful when a section is irrelevant.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>Filling efficiently</h4>
+<h4>Mobile</h4>
 <ul>
-<li>Psychiatrist name is saved between sessions — you only need to enter it once</li>
-<li>Date auto-fills to today</li>
-<li>MBS item and 291/92435 eligibility check sit together — flag triggers automatically if you bill 291/92435 and mark Yes</li>
-<li>Differential buttons are deselectable — tap again to undo</li>
-<li>DSM criteria and diagnosis update automatically as you fill in the developmental section — you usually don't need to touch them</li>
+<li>The form is touch-friendly: 32–38px buttons, the dose stepper has clear tap targets, and the chip groups collapse to single column under 380px.</li>
+<li>Reference overlays scroll independently so the reading position is preserved.</li>
+<li>If the page looks stale after an update, append <code>?v=&lt;n&gt;</code> to the URL (any number) to bypass Safari's cache.</li>
 </ul>
 </div>
 <div class="pg-section">
-<h4>Document generation</h4>
+<h4>Privacy</h4>
 <ul>
-<li>Refresh the document preview at any point during the consult to see how it's taking shape</li>
-<li>GP handover letter generates from the Follow-Up section — tick the checkbox, enter the GP name, and it appears in the document automatically</li>
-<li>All letters use the patient's name, diagnosis, medication and date from the form — no manual editing needed for most cases</li>
+<li>Everything stays in your browser — no data is sent anywhere.</li>
+<li>The form auto-saves to local storage as you type.</li>
+<li>Use Reset (top right) to clear between patients.</li>
+</ul>
+</div>
+</div>
+</details>
+
+<details class="pg-details">
+<summary>Suggested timing — staying within 50–60 minutes</summary>
+<div class="pg-content">
+<div class="pg-section">
+<h4>Sample allocation</h4>
+<ul>
+<li><strong>0–5 min</strong> — Session info, presenting concerns, reason for referral.</li>
+<li><strong>5–10 min</strong> — Pre-screening &amp; collateral (what the GP / patient has already done).</li>
+<li><strong>10–20 min</strong> — Developmental history. Tick core symptoms as the patient describes them.</li>
+<li><strong>20–30 min</strong> — Differentials, substance use, family history.</li>
+<li><strong>30–35 min</strong> — Mental state examination, DSM criteria review (mostly auto-filled by now).</li>
+<li><strong>35–40 min</strong> — Medical history, cardiac, investigations, SafeScript.</li>
+<li><strong>40–50 min</strong> — Medication selection, titration plan, follow-up, scripts.</li>
+<li><strong>50–60 min</strong> — Education, formulation style, generate the letter and patient document.</li>
+</ul>
+</div>
+<div class="pg-section">
+<h4>Tips to stay on time</h4>
+<ul>
+<li>Use the ? prompts when you're unsure how to phrase an interview question — they're fast.</li>
+<li>Differentials default to blank; only flip what's relevant.</li>
+<li>For continuation patients, switch review type to <strong>Follow-up</strong> — the assessment cards collapse and Follow-Up Plan jumps to the top.</li>
 </ul>
 </div>
 </div>
