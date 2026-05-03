@@ -327,8 +327,8 @@ select.inp{appearance:none}
 #out-report.letter-mode .letter-sig{margin-top:18px;font-size:10.5pt}
 #out-report.letter-mode .letter-sig .sig-name{font-weight:700;font-family:Arial,sans-serif;color:#0f172a}
 #out-report.letter-mode .letter-sig .sig-quals{color:#475569;font-size:9.5pt}
-#out-report .mgmt-sub{font:700 10pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#1e3a5f;margin:14px 0 4px;border-bottom:1px solid #cbd5e1;padding-bottom:2px}
-#out-report.letter-mode .mgmt-sub{font-family:Arial,sans-serif;font-size:9.5pt;color:#1e3a5f;border-bottom-color:#cbd5e1;font-weight:700}
+#out-report .mgmt-sub{font:700 11pt Arial,sans-serif;color:#1e40af;margin:12px 0 4px;letter-spacing:0;text-transform:none;border:none}
+#out-report.letter-mode .mgmt-sub{font-family:Arial,sans-serif;font-size:10.5pt;color:#1e40af;font-weight:700;margin:12px 0 4px}
 .ms-card{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;margin-top:6px;display:flex;flex-direction:column;gap:6px}
 .ms-card.off{background:#f1f5f9;border-color:#cbd5e1;opacity:.6}
 .ms-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -743,6 +743,7 @@ select.inp{appearance:none}
 
     <label class="fl">Treatment decision today</label>
     <div class="rbtns" id="fu-decision-btns" style="flex-wrap:wrap">
+      <button class="rb" onclick="setFuRating('fuDecision','Start medication',this,'ay')">Start medication</button>
       <button class="rb" onclick="setFuRating('fuDecision','Up-titrate',this,'ay')">Up-titrate</button>
       <button class="rb" onclick="setFuRating('fuDecision','Down-titrate',this,'ap')">Down-titrate</button>
       <button class="rb" onclick="setFuRating('fuDecision','Keep same',this,'ay')">Keep same</button>
@@ -1439,8 +1440,10 @@ const MEDICAL=[
     note:'Atomoxetine exposure increases significantly in moderate-severe hepatic impairment. Use lower doses and monitor LFTs.'},
   {id:'renal',flag:false,label:'Renal impairment',
     note:'Clonidine and guanfacine may accumulate in renal impairment. Titrate slowly and monitor for hypotension and sedation.'},
-  {id:'pregnancy',flag:true,label:'Pregnancy or breastfeeding',
-    note:'Use non-pharmacological strategies where possible. If prescribing, use the lowest effective dose and agents with better safety data, with obstetric input.'},
+  {id:'pregnancy',flag:true,label:'Pregnancy',
+    note:'Use non-pharmacological strategies where possible. If prescribing in pregnancy, use the lowest effective dose and agents with the best safety data, with obstetric input.'},
+  {id:'breastfeeding',flag:true,label:'Breastfeeding',
+    note:'Stimulants pass into breast milk in small amounts. Methylphenidate has the lowest excretion. Discuss risks/benefits with the patient and monitor the infant for irritability or feeding changes.'},
   {id:'cvd',flag:true,label:'Coronary artery disease',
     note:'Stimulants increase HR and BP. Optimise vascular risk factors, consider cardiology input, start low and monitor closely.'},
   {id:'obesity',flag:false,label:'Obesity with metabolic syndrome',
@@ -1881,7 +1884,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{}};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,diffDetail:{},subDetail:{},famDetail:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -1952,6 +1955,26 @@ function getMedSafetyConcerns(){
     var siVals=mseVals('suicide');
     if(siVals.some(function(v){return /active/i.test(v);}))
       add('si_active','Active suicidal ideation reported on MSE','Safety plan developed in session; means restriction discussed; emergency contacts identified. To re-review at next appointment.');
+  }
+  // Age 65+
+  var age=parseInt(f('ptAge')||'',10);
+  if(age&&age>=65)
+    add('age_65','Age 65 or over','Increased sensitivity to sympathomimetic side effects; start at the lowest effective dose, monitor BP / HR / cognition closely, and review medication interactions and renal/hepatic function.');
+  // Cardiac flagged risk factors (each as its own concern, carrying the
+  // CARDIAC[].note as the default plan)
+  if(typeof CARDIAC!=='undefined'&&S.cardiac){
+    CARDIAC.forEach(function(c){
+      if(!c.flag||!S.cardiac[c.id])return;
+      add('cardiac_'+c.id,_letterCleanLabel(c.label),c.note||'Consider further work-up before initiating stimulant therapy.');
+    });
+  }
+  // Medical-flagged conditions (pregnancy, breastfeeding, glaucoma, eating
+  // disorder, etc.) — each carried through as its own safety concern
+  if(typeof MEDICAL!=='undefined'&&S.medical){
+    MEDICAL.forEach(function(m){
+      if(!m.flag||!S.medical[m.id])return;
+      add('medical_'+m.id,_letterCleanLabel(m.label),m.note||'Consider implications for prescribing and adjust the plan accordingly.');
+    });
   }
   return out;
 }
@@ -3437,7 +3460,8 @@ function renderDSM(){$('dsm-checks').innerHTML='<div style="display:flex;gap:6px
 function renderDiffRows(){
   var DIFF_FLAGS={bipolar:1,schizophrenia:1,suicidality:1,anorexia:1,bulimia:1,tbi:1,substance_induced:1,neurodegen:1,medical:1};
   if(!S.diffDetail)S.diffDetail={};
-  var header='<div style="display:flex;gap:6px;margin-bottom:8px;grid-column:1/-1"><button class="sel-all-btn" onclick="selectAllDiffsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllDiffs()">Deselect all</button></div>';
+  var noPastBtn='<button class="sel-all-btn'+(S.noPastPsych?' on':'')+'" style="'+(S.noPastPsych?'background:var(--green-bg);border-color:var(--green);color:#166534;':'')+'" onclick="toggleNoSection(\'noPastPsych\')">'+(S.noPastPsych?'✓ ':'')+'No past psychiatric history</button>';
+  var header='<div style="display:flex;gap:6px;margin-bottom:8px;grid-column:1/-1;flex-wrap:wrap">'+noPastBtn+'<button class="sel-all-btn" onclick="selectAllDiffsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllDiffs()">Deselect all</button></div>';
   $('diff-rows').innerHTML=header+DIFFS.map(function(d){
     var cur=S.differentials[d.id]||'';
     var isFlag=!!DIFF_FLAGS[d.id];
@@ -3464,6 +3488,13 @@ function setDiffDetail(id,val){
   if(!S.diffDetail)S.diffDetail={};
   S.diffDetail[id]=val;
   save();refresh();
+}
+function toggleNoSection(key){
+  S[key]=!S[key];
+  save();refresh();
+  if(key==='noPastPsych')renderDiffRows();
+  if(key==='noMedHistory')renderMedical();
+  if(key==='noCardiacRisk')renderCardiac();
 }
 
 function mseVals(id){var v=S.mse[id];if(!v)return[];if(Array.isArray(v))return v;return [v];}
@@ -3515,7 +3546,10 @@ function renderMSE(){
     return '<div class="'+rowCls+'"><div class="mse-label">'+esc(sec.label)+'</div><div class="mse-checks">'+checks+'</div>'+noteBox+'</div>';
   }).join('');
 }
-function renderCardiac(){$('cardiac-checks').innerHTML=CARDIAC.map(function(c){var on=!!S.cardiac[c.id];var isMaoi=c.id==='c_maoi';return '<div class="crow" onclick="toggleCardiac(\''+c.id+'\','+c.flag+',this)"><div class="cbox'+(on?(c.flag?' flag':' yes'):'')+'"></div><div class="clabel">'+(isMaoi?'<strong style="color:var(--red)">'+c.label+'</strong>':c.label)+(c.flag&&!isMaoi?'<span style="font-size:10px;color:var(--red);margin-left:5px">\u26a0</span>':'')+'</div><button class="qbtn" onclick="openDrawer(event,\''+c.id+'\',\'cardiac\')">?</button></div>';}).join('');}
+function renderCardiac(){
+  var noBtn='<div style="margin-bottom:8px"><button class="sel-all-btn'+(S.noCardiacRisk?' on':'')+'" style="'+(S.noCardiacRisk?'background:var(--green-bg);border-color:var(--green);color:#166534;':'')+'" onclick="toggleNoSection(\'noCardiacRisk\')">'+(S.noCardiacRisk?'\u2713 ':'')+'No known cardiac risk factors</button></div>';
+  $('cardiac-checks').innerHTML=noBtn+CARDIAC.map(function(c){var on=!!S.cardiac[c.id];var isMaoi=c.id==='c_maoi';return '<div class="crow" onclick="toggleCardiac(\''+c.id+'\','+c.flag+',this)"><div class="cbox'+(on?(c.flag?' flag':' yes'):'')+'"></div><div class="clabel">'+(isMaoi?'<strong style="color:var(--red)">'+c.label+'</strong>':c.label)+(c.flag&&!isMaoi?'<span style="font-size:10px;color:var(--red);margin-left:5px">\u26a0</span>':'')+'</div><button class="qbtn" onclick="openDrawer(event,\''+c.id+'\',\'cardiac\')">?</button></div>';}).join('');
+}
 function renderFam(){
   var el=$('fam-checks');if(!el)return;
   if(!S.famDetail)S.famDetail={};
@@ -3552,7 +3586,10 @@ function famSetAll(val){
   FAM_PSYCH.forEach(function(item){S.fam[item.id]=val;});
   renderFam();save();refresh();
 }
-function renderMedical(){$('med-checks').innerHTML=MEDICAL.map(function(m){var on=!!S.medical[m.id];return '<div class="crow" onclick="toggleMedical(\''+m.id+'\','+m.flag+',this)"><div class="cbox'+(on?(m.flag?' flag':' yes'):'')+'"></div><div class="clabel">'+m.label+(m.flag?'<span style="font-size:10px;color:var(--red);margin-left:5px">\u26a0</span>':'')+'</div><button class="qbtn" onclick="openDrawer(event,\''+m.id+'\',\'medical\')">?</button></div>';}).join('');}
+function renderMedical(){
+  var noBtn='<div style="margin-bottom:8px"><button class="sel-all-btn'+(S.noMedHistory?' on':'')+'" style="'+(S.noMedHistory?'background:var(--green-bg);border-color:var(--green);color:#166534;':'')+'" onclick="toggleNoSection(\'noMedHistory\')">'+(S.noMedHistory?'\u2713 ':'')+'No known medical history</button></div>';
+  $('med-checks').innerHTML=noBtn+MEDICAL.map(function(m){var on=!!S.medical[m.id];return '<div class="crow" onclick="toggleMedical(\''+m.id+'\','+m.flag+',this)"><div class="cbox'+(on?(m.flag?' flag':' yes'):'')+'"></div><div class="clabel">'+m.label+(m.flag?'<span style="font-size:10px;color:var(--red);margin-left:5px">\u26a0</span>':'')+'</div><button class="qbtn" onclick="openDrawer(event,\''+m.id+'\',\'medical\')">?</button></div>';}).join('');
+}
 function renderSubs(){
   if(!S.subDetail)S.subDetail={};
   $('sub-grid').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllSubsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllSubs()">Deselect all</button></div>'+SUBS.map(function(s){
@@ -4433,10 +4470,31 @@ function toggleSideFx(k,r){
   save();refresh();
 }
 function setFuRating(key,val,btn,cls){
-  S[key]=val;
-  var parent=btn.parentElement;
-  if(parent)parent.querySelectorAll('.rb').forEach(function(b){b.className='rb';});
-  btn.classList.add(cls||'ay');
+  // Toggle off when re-clicking the active option so the user can clear
+  // a stale selection (especially medResponse / fuDecision).
+  var already=S[key]===val;
+  if(already){
+    S[key]='';
+    var parent2=btn.parentElement;
+    if(parent2)parent2.querySelectorAll('.rb').forEach(function(b){b.className='rb';});
+  } else {
+    S[key]=val;
+    var parent=btn.parentElement;
+    if(parent)parent.querySelectorAll('.rb').forEach(function(b){b.className='rb';});
+    btn.classList.add(cls||'ay');
+  }
+  // When medResponse is "Not started", grey out the other efficacy ratings
+  // (coverage, adherence, side effects) since they don't apply yet.
+  if(key==='medResponse'){
+    var notStarted=S.medResponse==='Not started';
+    ['coverage-btns','adherence-btns','sidefx-rating-btns'].forEach(function(grpId){
+      var g=document.getElementById(grpId);
+      if(!g)return;
+      g.style.opacity=notStarted?'.4':'';
+      g.style.pointerEvents=notStarted?'none':'';
+    });
+    if(notStarted){S.coverage='';S.adherence='';S.sideFxRating='';}
+  }
   save();refresh();
 }
 function setSideFxRating(val,btn,cls){
@@ -5041,7 +5099,10 @@ function buildLetterReport(){
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
-  // Past psychiatric history — past differentials + relevant negatives.
+  // Past psychiatric history — only emit if there's something to say.
+  // Past differentials, "Not present" negatives, or the explicit
+  // "No past psychiatric history" toggle are the triggers. Default empty
+  // state no longer emits a "denies any past psychiatric history" line.
   var pastDiffs=getPastDifferentials();
   var notPresDiffs=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
   function _diffEntry(d){
@@ -5049,16 +5110,16 @@ function buildLetterReport(){
     var lbl=_letterCleanLabel(d.label);
     return det?lbl+' ('+det+')':lbl;
   }
-  h+='<h3>Past psychiatric history</h3>';
-  if(pastDiffs.length){
-    h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(_diffEntry)))+'.</p>';
-  } else {
-    h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any past psychiatric history.</p>';
-  }
-  if(notPresDiffs.length){
-    h+='<p>Other potential differentials, including '+esc(_joinList(notPresDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+', were considered and assessed as being unlikely to better account for the current presentation.</p>';
-  } else {
-    h+='<p>There were no other reported psychiatric symptoms or past diagnoses.</p>';
+  if(pastDiffs.length||notPresDiffs.length||S.noPastPsych){
+    h+='<h3>Past psychiatric history</h3>';
+    if(pastDiffs.length){
+      h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(_diffEntry)))+'.</p>';
+    } else if(S.noPastPsych){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any past psychiatric history.</p>';
+    }
+    if(notPresDiffs.length){
+      h+='<p>Other potential differentials, including '+esc(_joinList(notPresDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+', were considered and assessed as being unlikely to better account for the current presentation.</p>';
+    }
   }
 
   // Family psychiatric history — prose form.
@@ -5124,26 +5185,29 @@ function buildLetterReport(){
     if(f('subNotes'))h+=_letterParas(f('subNotes'));
   }
 
-  // Medical history — prose form.
+  // Medical history — only emit if there's something to say.
   var medFlagged=(typeof MEDICAL!=='undefined')?MEDICAL.filter(function(m){return S.medical&&S.medical[m.id];}):[];
   var medListProse=medFlagged.map(function(m){return _smartLower(_letterCleanLabel(m.label));});
-  h+='<h3>Medical history</h3>';
-  if(medListProse.length||f('medHistory')){
-    var medSentence=prCap+' has a medical history of '+_joinList(medListProse);
-    if(f('medHistory'))medSentence+=(medListProse.length?'. Additionally, ':'')+f('medHistory');
-    h+='<p>'+esc(medSentence.replace(/\.$/,''))+'.</p>';
-  } else {
-    h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any significant medical history.</p>';
+  var hasMedSection=medListProse.length||f('medHistory')||S.noMedHistory||f('currentMeds')||f('allergies')||f('medNotes');
+  if(hasMedSection){
+    h+='<h3>Medical history</h3>';
+    if(medListProse.length||f('medHistory')){
+      var medSentence=prCap+' has a medical history of '+_joinList(medListProse);
+      if(f('medHistory'))medSentence+=(medListProse.length?'. Additionally, ':'')+f('medHistory');
+      h+='<p>'+esc(medSentence.replace(/\.$/,''))+'.</p>';
+    } else if(S.noMedHistory){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any significant medical history.</p>';
+    }
+    if(f('currentMeds'))h+='<p>Current medications include '+esc(f('currentMeds').replace(/\.$/,''))+'.</p>';
+    if(f('allergies'))h+='<p>Allergies: '+esc(f('allergies').replace(/\.$/,''))+'.</p>';
+    if(f('medNotes'))h+=_letterParas(f('medNotes'));
   }
-  if(f('currentMeds'))h+='<p>Current medications include '+esc(f('currentMeds').replace(/\.$/,''))+'.</p>';
-  if(f('allergies'))h+='<p>Allergies: '+esc(f('allergies').replace(/\.$/,''))+'.</p>';
-  if(f('medNotes'))h+=_letterParas(f('medNotes'));
 
-  // Investigations & safety screen
+  // Prescribing safety (renamed from "Cardiac and prescribing screen")
+  // Investigations
   var invItems=[];
   if(f('ptHeight'))invItems.push('Height: '+f('ptHeight')+' cm');
   if(f('ptWeight'))invItems.push('Weight: '+f('ptWeight')+' kg');
-  // BMI: pull from #bmi-display if it has been calculated
   var bmiEl=document.getElementById('bmi-display');
   var bmiTxt=bmiEl?(bmiEl.textContent||'').trim():'';
   if(bmiTxt&&bmiTxt!=='—'&&bmiTxt!=='-')invItems.push('BMI: '+bmiTxt);
@@ -5152,18 +5216,31 @@ function buildLetterReport(){
   if(S.ecg)invItems.push('ECG: '+S.ecg);
   if(S.uds)invItems.push('UDS: '+S.uds+(f('udsDetail')?' ('+f('udsDetail')+')':''));
   if(f('otherInvest'))invItems.push('Other: '+f('otherInvest'));
-  // Positive SafeScript reporting (concern handling lives in Medical safety
-  // under Management plan)
-  var ssVal=S.safeScript||'';
-  if(/no concerns?/i.test(ssVal))invItems.push('SafeScript / RTPM: checked, no concerns');
-  else if(ssVal==='Not checked')invItems.push('SafeScript / RTPM: not checked at this visit');
-  var cardFlagged=(typeof CARDIAC!=='undefined')?CARDIAC.filter(function(c){return c.flag&&S.cardiac&&S.cardiac[c.id];}):[];
-  if(invItems.length||cardFlagged.length||f('cardiacNotes')){
-    h+='<h3>Cardiac and prescribing screen</h3>';
-    if(invItems.length)h+=L(invItems.map(esc));
-    if(cardFlagged.length)h+='<p><strong>Cardiac risk factors identified:</strong></p>'+L(cardFlagged.map(function(c){return esc(_letterCleanLabel(c.label));}));
-    if(f('cardiacNotes'))h+=_letterParas(f('cardiacNotes'));
+  if(invItems.length){
+    h+='<h3>Investigations</h3>';
+    h+=L(invItems.map(esc));
   }
+
+  // Prescribing safety (renamed from "Cardiac and prescribing screen").
+  // SafeScript is mandatory and always appears in the letter, regardless of
+  // status. Cardiac risk factors only emit if there are flagged items, the
+  // user has explicitly selected "No known cardiac risk factors", or there
+  // are cardiac notes.
+  var cardFlagged=(typeof CARDIAC!=='undefined')?CARDIAC.filter(function(c){return c.flag&&S.cardiac&&S.cardiac[c.id];}):[];
+  var ssVal=S.safeScript||'';
+  var ssLine=/no concerns?/i.test(ssVal)
+    ? 'SafeScript / RTPM was checked at this visit with no concerns identified.'
+    : (ssVal==='Not checked'||!ssVal)
+      ? 'SafeScript / RTPM was not checked at this visit.'
+      : 'SafeScript / RTPM concern flagged at this visit'+(f('ssDetail')?' — '+f('ssDetail'):'')+'.';
+  h+='<h3>Prescribing safety</h3>';
+  h+='<p>'+esc(ssLine)+'</p>';
+  if(cardFlagged.length){
+    h+='<p>Cardiac risk factors identified:</p>'+L(cardFlagged.map(function(c){return esc(_letterCleanLabel(c.label));}));
+  } else if(S.noCardiacRisk){
+    h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any cardiac risk factors.</p>';
+  }
+  if(f('cardiacNotes'))h+=_letterParas(f('cardiacNotes'));
 
   // Mental state examination — flowing prose per section. Yes/no question
   // rows (e.g. "Is the MSE consistent with an ADHD diagnosis?") are filtered.
@@ -5222,28 +5299,29 @@ function buildLetterReport(){
   // handles the rest.)
   if(f('diffNotes'))h+='<h3>Differential diagnoses — additional notes</h3>'+_letterParas(f('diffNotes'));
 
-  // DSM criteria met
+  // DSM criteria met — only emit if the user has answered the dx question.
+  // Skipping the section avoids "Criterion E - Not better explained" appearing
+  // in isolation on follow-up reviews where dx hasn't been re-stated.
   var dsmMet=(typeof DSM!=='undefined')?DSM.filter(function(d){return S.dsm&&S.dsm[d.id];}):[];
-  if(dsmMet.length){
+  if(S.dx&&dsmMet.length){
     h+='<h3>DSM-5-TR criteria met</h3>';
     h+=L(dsmMet.map(function(d){return esc(d.label);}));
   }
 
-  // Diagnosis (callout). For Deferred / Insufficient, render a full sentence
-  // so the plain-text export doesn't read as the orphan word "Deferred".
-  if(dxStr){
+  // Diagnosis + Formulation — only emit when the user has explicitly set
+  // S.dx for this review. Many follow-ups don't need to re-confirm the
+  // diagnosis, so a blank dx skips the section entirely.
+  if(S.dx){
     h+='<h3>Diagnosis</h3>';
     var calloutCls='dx-callout',prefix='✓ ',calloutText=dxStr;
     if(S.dx==='No'){calloutCls+=' no-dx';prefix='';}
     else if(S.dx==='Insufficient evidence'){calloutCls+=' deferred';prefix='';calloutText='Diagnosis deferred — insufficient evidence at this time';}
     else if(S.dx==='Deferred'){calloutCls+=' deferred';prefix='';calloutText='Diagnostic conclusion deferred pending further review';}
     h+='<div class="'+calloutCls+'">'+prefix+esc(calloutText)+'</div>';
-  }
-
-  // Formulation
-  if(f('dxNotes')){
-    h+='<h3>Formulation</h3>';
-    h+=_letterParas(f('dxNotes'));
+    if(f('dxNotes')){
+      h+='<h3>Formulation</h3>';
+      h+=_letterParas(f('dxNotes'));
+    }
   }
 
   // ─── Management plan with subheadings ───────────────────────────────────
@@ -6538,13 +6616,18 @@ function autoDSM(){
   var currentSubs=SUBS.some(function(s){return S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';});
   var sudCurrent=S.sudDiff==='Current'||S.drugDep==='Yes';
   var anyCurrent=currentDiff||currentSubs||sudCurrent;
+  // Criterion E: only auto-tick when the user has affirmatively excluded
+  // alternatives — i.e. ticked "No past psychiatric history" OR explicitly
+  // marked at least one differential as Nil. An empty differential panel no
+  // longer flips Criterion E on by default.
+  var anyDiffNil=DIFFS.some(function(d){return S.differentials[d.id]==='Nil';});
+  var critEAuto=!anyCurrent && (S.noPastPsych||anyDiffNil);
   function autoSetDsm(id,val){if(S.dsmManual[id])return;S.dsm[id]=val;}
   autoSetDsm('critA',critAMet);
   autoSetDsm('critB',critBMet);
   autoSetDsm('critC',critCMet);
   autoSetDsm('critD',critDMet);
-  if(!anyCurrent){autoSetDsm('critE',true);}
-  else{if(!S.dsmManual['critE'])S.dsm['critE']=false;}
+  autoSetDsm('critE',critEAuto);
   var allMet=S.dsm.critA&&S.dsm.critB&&S.dsm.critC&&S.dsm.critD&&S.dsm.critE;
   if(!S.dxManual){
     if(allMet)S.dx='Yes';
