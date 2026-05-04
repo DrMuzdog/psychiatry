@@ -920,6 +920,7 @@ select.inp{appearance:none}
     <div class="cb" style="padding:0">
       <div style="padding:6px 13px 8px">
         <div style="display:flex;gap:6px;margin-bottom:8px">
+          <button class="sel-all-btn" onclick="toggleNoSection('noFamPsych')" id="no-fam-btn">No family psychiatric history</button>
           <button class="sel-all-btn" onclick="famSetAll('Nil')">All nil</button>
           <button class="sel-all-btn desel" onclick="famSetAll('')">Deselect all</button>
         </div>
@@ -1265,10 +1266,10 @@ select.inp{appearance:none}
       </div>
     </div>
     <div id="report-mode-tabs" style="display:flex;gap:4px;padding:8px 14px 0;background:#0f172a;border-top:1px solid #1e293b" onclick="event.stopPropagation()">
-      <button type="button" class="report-mode-tab active" data-mode="structured" onclick="setReportMode('structured')">Structured</button>
-      <button type="button" class="report-mode-tab" data-mode="letter" onclick="setReportMode('letter')">Letter (291/92435)</button>
+      <button type="button" class="report-mode-tab active" data-mode="letter" onclick="setReportMode('letter')">GP Letter</button>
+      <button type="button" class="report-mode-tab" data-mode="structured" onclick="setReportMode('structured')">Structured</button>
     </div>
-    <div id="out-report" style="background:#fff;color:#000;padding:18px 22px;font-family:Arial,sans-serif;font-size:9.5pt;line-height:1.45"></div>
+    <div id="out-report" class="letter-mode" style="background:#fff;color:#000;padding:18px 22px;font-family:Arial,sans-serif;font-size:9.5pt;line-height:1.45"></div>
   </div>
 
   <!-- PATIENT DOCUMENT BUILDER -->
@@ -1884,7 +1885,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,diffDetail:{},subDetail:{},famDetail:{}};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -2262,6 +2263,17 @@ function fuAutoFromSafety(){
     if(cur==='Not provided'&&fuAutoState[stateKey]!=='Not provided')_autoAddProvide(stateKey,screenMap[k]);
     fuAutoState[stateKey]=cur;
   });
+  // On Follow-up / Titration / Script reviews, if vital signs were never
+  // recorded at the initial visit (BP / HR), auto-tick the matching
+  // Patient-to-provide chips so they're prompted at next GP visit. Triggers
+  // once on the transition into a non-Initial review type.
+  var rt=S.reviewType||'Initial';
+  var isFu=rt!=='Initial';
+  if(isFu&&fuAutoState._reviewType!==rt){
+    if(!f('bpSystolic')&&!f('bpDiastolic')&&!f('bpReading'))_autoAddProvide('vitals_bp_missing','bp');
+    if(!f('hrReading'))_autoAddProvide('vitals_hr_missing','hr');
+  }
+  fuAutoState._reviewType=rt;
 }
 
 // ─── QUICK-ADD APPOINTMENT ──────────────────────────────────────────────────
@@ -3495,6 +3507,13 @@ function toggleNoSection(key){
   if(key==='noPastPsych')renderDiffRows();
   if(key==='noMedHistory')renderMedical();
   if(key==='noCardiacRisk')renderCardiac();
+  if(key==='noFamPsych'){renderFam();_syncNoBtnStyle('no-fam-btn',S.noFamPsych);}
+  if(key==='noSubHistory'){renderSubs();_syncNoBtnStyle('no-sub-btn',S.noSubHistory);}
+}
+function _syncNoBtnStyle(id,on){
+  var b=document.getElementById(id);if(!b)return;
+  if(on){b.classList.add('on');b.style.cssText='background:var(--green-bg);border-color:var(--green);color:#166534;';b.textContent=b.textContent.replace(/^✓\s*/,'');b.textContent='✓ '+b.textContent;}
+  else{b.classList.remove('on');b.style.cssText='';b.textContent=b.textContent.replace(/^✓\s*/,'');}
 }
 
 function mseVals(id){var v=S.mse[id];if(!v)return[];if(Array.isArray(v))return v;return [v];}
@@ -3553,6 +3572,12 @@ function renderCardiac(){
 function renderFam(){
   var el=$('fam-checks');if(!el)return;
   if(!S.famDetail)S.famDetail={};
+  // Sync the "No family psychiatric history" master button styling
+  var btn=document.getElementById('no-fam-btn');
+  if(btn){
+    if(S.noFamPsych){btn.style.cssText='background:var(--green-bg);border-color:var(--green);color:#166534;';btn.textContent='✓ No family psychiatric history';}
+    else{btn.style.cssText='';btn.textContent='No family psychiatric history';}
+  }
   el.innerHTML=FAM_PSYCH.map(function(item){
     var cur=S.fam&&S.fam[item.id]||'';
     var isPresent=cur==='Present';
@@ -3579,6 +3604,8 @@ function setFam(id,val,btn){
   var cur=S.fam[id]||'';
   if(cur===val){S.fam[id]='';btn.className='rb';}
   else{S.fam[id]=val;btn.closest('.rbtns').querySelectorAll('.rb').forEach(function(b){b.className='rb';});btn.classList.add(val==='Present'?'af':'ay');}
+  // Selecting Present implicitly contradicts "No family psychiatric history".
+  if(val==='Present'&&S.noFamPsych)S.noFamPsych=false;
   save();refresh();renderFam();
 }
 function famSetAll(val){
@@ -3592,7 +3619,9 @@ function renderMedical(){
 }
 function renderSubs(){
   if(!S.subDetail)S.subDetail={};
-  $('sub-grid').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllSubsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllSubs()">Deselect all</button></div>'+SUBS.map(function(s){
+  var noSubStyle=S.noSubHistory?'background:var(--green-bg);border-color:var(--green);color:#166534;':'';
+  var noSubLabel=(S.noSubHistory?'✓ ':'')+'No substance use history';
+  $('sub-grid').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap"><button id="no-sub-btn" class="sel-all-btn" style="'+noSubStyle+'" onclick="toggleNoSection(\'noSubHistory\')">'+noSubLabel+'</button><button class="sel-all-btn" onclick="selectAllSubsNil()">All nil</button><button class="sel-all-btn desel" onclick="deselectAllSubs()">Deselect all</button></div>'+SUBS.map(function(s){
     var key='sub_'+s.replace(/\W/g,'_');
     var cur=S.substances[key]||'';
     var showDetail=(cur==='Current'||cur==='Past');
@@ -3741,6 +3770,9 @@ function setDiffVal(id,val,btn){
       // Clear manual override on E so auto-uncheck can fire
       delete S.dsmManual['critE'];
     }
+    // Selecting Past or Current implicitly contradicts "No past psychiatric
+    // history" — auto-clear the master toggle so the user doesn't have to.
+    if((val==='Past'||val==='Current')&&S.noPastPsych)S.noPastPsych=false;
   }
   save();refresh();renderDiffRows();
 }
@@ -3791,7 +3823,14 @@ function setV(key,val,btn,cls){
   if(cls)btn.classList.add(cls);
   save();refresh();
 }
-function setSub(key,val,btn){S.substances[key]=val;btn.closest('.sub-btns').querySelectorAll('.sb').forEach(function(b){b.className='sb';});btn.classList.add(val==='Nil'?'nil':val==='Past'?'past':'curr');save();refresh();renderSubs();}
+function setSub(key,val,btn){
+  S.substances[key]=val;
+  btn.closest('.sub-btns').querySelectorAll('.sb').forEach(function(b){b.className='sb';});
+  btn.classList.add(val==='Nil'?'nil':val==='Past'?'past':'curr');
+  // Selecting Past or Current contradicts "No substance use history".
+  if((val==='Past'||val==='Current')&&S.noSubHistory)S.noSubHistory=false;
+  save();refresh();renderSubs();
+}
 function setSubDetail(key,val){
   if(!S.subDetail)S.subDetail={};
   S.subDetail[key]=val;
@@ -4943,7 +4982,7 @@ function buildFullReport(){
   return h;
 }
 
-var currentReportMode='structured';
+var currentReportMode='letter';
 function setReportMode(mode){
   currentReportMode=mode;
   document.querySelectorAll('.report-mode-tab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-mode')===mode);});
@@ -5099,23 +5138,33 @@ function buildLetterReport(){
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
-  // Past psychiatric history — only emit if there's something to say.
-  // Past differentials, "Not present" negatives, or the explicit
-  // "No past psychiatric history" toggle are the triggers. Default empty
-  // state no longer emits a "denies any past psychiatric history" line.
+  // Past psychiatric history — emit when there's something to say. Three
+  // overlapping triggers, combined into a single prose paragraph:
+  //   • past differentials (Past)            → "has previously experienced X"
+  //   • Nil-marked differentials             → "denies a history of Y"
+  //   • S.noPastPsych master toggle          → "denies any past psychiatric history"
+  //   • Both master + nils                   → "denies any past psychiatric history, including Y"
+  //   • "Not present" / "Better explanation" carry on as before.
   var pastDiffs=getPastDifferentials();
+  var nilDiffs=DIFFS.filter(function(d){return S.differentials[d.id]==='Nil';});
   var notPresDiffs=DIFFS.filter(function(d){return S.differentials[d.id]==='Not present';});
   function _diffEntry(d){
     var det=(S.diffDetail&&S.diffDetail[d.id]||'').trim();
     var lbl=_letterCleanLabel(d.label);
     return det?lbl+' ('+det+')':lbl;
   }
-  if(pastDiffs.length||notPresDiffs.length||S.noPastPsych){
+  if(pastDiffs.length||nilDiffs.length||notPresDiffs.length||S.noPastPsych){
     h+='<h3>Past psychiatric history</h3>';
     if(pastDiffs.length){
       h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(_diffEntry)))+'.</p>';
+    }
+    var nilLabels=nilDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));});
+    if(S.noPastPsych && nilLabels.length){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any past psychiatric history, including '+esc(_joinList(nilLabels))+'.</p>';
     } else if(S.noPastPsych){
       h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any past psychiatric history.</p>';
+    } else if(nilLabels.length){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' a history of '+esc(_joinList(nilLabels))+'.</p>';
     }
     if(notPresDiffs.length){
       h+='<p>Other potential differentials, including '+esc(_joinList(notPresDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));})))+', were considered and assessed as being unlikely to better account for the current presentation.</p>';
@@ -5126,7 +5175,7 @@ function buildLetterReport(){
   if(typeof FAM_PSYCH!=='undefined'&&S.fam){
     var famPresent=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Present';});
     var famNil=FAM_PSYCH.filter(function(item){return S.fam[item.id]==='Nil';});
-    if(famPresent.length||famNil.length||f('famNotes')){
+    if(famPresent.length||famNil.length||S.noFamPsych||f('famNotes')){
       h+='<h3>Family psychiatric history</h3>';
       if(famPresent.length){
         var famLines=famPresent.map(function(i){
@@ -5136,8 +5185,13 @@ function buildLetterReport(){
         });
         h+='<p>'+prCap+' reported a family history of '+esc(_joinList(famLines))+'.</p>';
       }
-      if(famNil.length){
-        h+='<p>'+prCap+' denied any family history of '+esc(_joinList(famNil.map(function(i){return _smartLower(_letterCleanLabel(i.label));})))+'.</p>';
+      var famNilLabels=famNil.map(function(i){return _smartLower(_letterCleanLabel(i.label));});
+      if(S.noFamPsych && famNilLabels.length){
+        h+='<p>'+prCap+' denied any family psychiatric history, including '+esc(_joinList(famNilLabels))+'.</p>';
+      } else if(S.noFamPsych){
+        h+='<p>'+prCap+' denied any family psychiatric history.</p>';
+      } else if(famNilLabels.length){
+        h+='<p>'+prCap+' denied a family history of '+esc(_joinList(famNilLabels))+'.</p>';
       }
       if(f('famNotes'))h+=_letterParas(f('famNotes'));
     }
@@ -5156,6 +5210,7 @@ function buildLetterReport(){
   }
   var currSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';}):[];
   var pastSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Past';}):[];
+  var nilSubs=(typeof SUBS!=='undefined')?SUBS.filter(function(s){return S.substances&&S.substances['sub_'+s.replace(/\W/g,'_')]==='Nil';}):[];
   function _sudSentence(){
     var sud=S.sudDiff||'',dep=S.drugDep||'';
     if(!sud&&!dep)return '';
@@ -5175,12 +5230,20 @@ function buildLetterReport(){
     return sudPart+connector+depPart+'.';
   }
   var sudSent=_sudSentence();
-  if(currSubs.length||pastSubs.length||f('subNotes')||sudSent){
+  if(currSubs.length||pastSubs.length||nilSubs.length||S.noSubHistory||f('subNotes')||sudSent){
     h+='<h3>Substance use</h3>';
     var subBits=[];
     if(currSubs.length)subBits.push('current use of '+_joinList(currSubs.map(_subEntry)));
     if(pastSubs.length)subBits.push('a past history of '+_joinList(pastSubs.map(_subEntry)));
     if(subBits.length)h+='<p>'+prCap+' '+reports+' '+_joinList(subBits)+'.</p>';
+    var nilSubLabels=nilSubs.map(_lowerPreserveAcronyms);
+    if(S.noSubHistory && nilSubLabels.length){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any current or past substance use, including '+esc(_joinList(nilSubLabels))+'.</p>';
+    } else if(S.noSubHistory){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' any current or past substance use.</p>';
+    } else if(nilSubLabels.length){
+      h+='<p>'+prCap+' '+_vAgree(gender,'denies','deny')+' use of '+esc(_joinList(nilSubLabels))+'.</p>';
+    }
     if(sudSent)h+='<p>'+esc(sudSent)+'</p>';
     if(f('subNotes'))h+=_letterParas(f('subNotes'));
   }
