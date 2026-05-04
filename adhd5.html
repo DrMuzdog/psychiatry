@@ -2042,6 +2042,21 @@ var TIT_SCEN_GP={
   runOut:'running out of medication',
   script:'prescription rules / 20-day rule'
 };
+// One concrete GP-facing instruction per scenario, used in the letter so
+// the GP knows what to actually do rather than being told a topic was
+// "discussed with the patient."
+var TIT_SCEN_GP_ACTION={
+  sideEffects:'Significant side effects (e.g. persistent headache, severe anxiety) — pause the medication and contact the psychiatry rooms the same day for advice on whether to resume or change.',
+  noEffect:'No effect after starting — this is expected at low starting doses; continue as planned and contact the psychiatry rooms before any dose change if still no effect after the planned titration phase.',
+  tooStrong:'Medication feels too strong (heart racing, very anxious, wired) — drop back to the previous dose and contact the psychiatry rooms; do not titrate up again until reviewed.',
+  sleep:'Sleep disturbance — shift the last dose earlier in the day; if persistent after a week, contact the psychiatry rooms to consider a dose adjustment.',
+  appetite:'Reduced appetite or weight loss — encourage breakfast before the morning dose, monitor weight at each visit, and contact the psychiatry rooms if weight loss is significant.',
+  mood:'Mood changes (low, irritable, lability) — hold the current dose and contact the psychiatry rooms; do not titrate up until reviewed.',
+  chest:'Chest pain, palpitations, or shortness of breath — stop the medication immediately, arrange an ECG, and refer to ED if acute.',
+  crisis:'Mental health crisis or thoughts of self-harm — arrange same-day mental health review; if acute risk, ED or call 000. Patient has also been given Lifeline 13 11 14.',
+  runOut:'Running out of medication before next appointment — contact the psychiatry rooms early; ADHD prescriptions can only be re-dispensed a minimum of 20 days after the previous one.',
+  script:'Prescription queries — ADHD medications are controlled substances; the next prescription can only be collected a minimum of 20 days after the previous dispense.'
+};
 function _personWord(g){
   if(g==='Male')return 'man';
   if(g==='Female')return 'woman';
@@ -2288,11 +2303,7 @@ function fuAddAppt(obj) {
   fuAppts.push(obj || {with:'',num:4,unit:'weeks',duration:30}); renderFuAppts();
 }
 
-// ─── AUTO-TICK PROVIDE FROM MISSING INFO ─────────────────────────────────────
-// fuAutoState is used for non-Initial reviews where the auto-tick should fire
-// once on the transition into a Follow-up / Titration / Script review type
-// (so the clinician isn't surprised by chips re-ticking after they uncheck them).
-var fuAutoState={};
+// ─── AUTO-TICK PROVIDE FROM EXPLICIT "Not provided" STATE ────────────────────
 function _autoAddProvide(k,chipKey){
   if(!fuProvide.has(chipKey)){
     fuProvide.add(chipKey);
@@ -2308,59 +2319,32 @@ function _autoRemoveProvide(chipKey){
   }
 }
 function fuAutoFromSafety(){
-  var rt=S.reviewType||'Initial';
-  var isInitial=(rt==='Initial'||!rt);
+  // Reactive on every review type: chips mirror the explicit "Not provided"
+  // state on each investigation. Typing into the input clears the NP flag,
+  // which removes the chip; clicking NP off removes it directly. Manual chip
+  // toggles in the Follow-up plan are honoured via S.userTouchedProvide.
   var touched=S.userTouchedProvide||{};
-
-  if(isInitial){
-    // Reactive: chips mirror the explicit "Not provided" state on each
-    // investigation. Typing into the input clears the NP flag, which removes
-    // the chip; clicking NP off removes it directly. Manual chip toggles in
-    // the Follow-up plan are honoured via S.userTouchedProvide.
-    var inp=S.invNotProvided||{};
-    var bpMissing=!!inp.bp;
-    var hrMissing=!!inp.hr;
-    var weightMissing=!!inp.weight;
-    var heightMissing=!!inp.height;
-    var ecgMissing=S.ecg==='Not done';
-    var udsMissing=S.uds==='Not done';
-    var bloodsMissing=!!inp.otherInv;
-    var sc=S.screening||{};
-    var obsMissing=sc.obs==='Not provided';
-    var schoolMissing=sc.schoolReports==='Not provided';
-    var psychMissing=sc.psychReport==='Not provided';
-    var vandMissing=(sc.vanderbiltParent==='Not provided')||(sc.vanderbiltTeacher==='Not provided');
-
-    var pairs=[
-      ['bp',bpMissing],
-      ['hr',hrMissing],
-      ['weight',weightMissing],
-      ['height',heightMissing],
-      ['ecg',ecgMissing],
-      ['uds',udsMissing],
-      ['bloods',bloodsMissing],
-      ['obs_asrs',obsMissing],
-      ['school_rep',schoolMissing],
-      ['psych_rep',psychMissing],
-      ['vanderbilt',vandMissing]
-    ];
-    pairs.forEach(function(p){
-      var chipKey=p[0],missing=p[1];
-      if(touched[chipKey])return;
-      if(missing)_autoAddProvide(chipKey,chipKey);
-      else _autoRemoveProvide(chipKey);
-    });
-  }else{
-    // On Follow-up / Titration / Script reviews, if vital signs were never
-    // recorded at the initial visit (BP / HR), auto-tick the matching
-    // Patient-to-provide chips so they're prompted at next GP visit. Triggers
-    // once on the transition into a non-Initial review type.
-    if(fuAutoState._reviewType!==rt){
-      if(!touched.bp&&!f('bpSystolic')&&!f('bpDiastolic')&&!f('bpReading'))_autoAddProvide('vitals_bp_missing','bp');
-      if(!touched.hr&&!f('hrReading'))_autoAddProvide('vitals_hr_missing','hr');
-    }
-  }
-  fuAutoState._reviewType=rt;
+  var inp=S.invNotProvided||{};
+  var sc=S.screening||{};
+  var pairs=[
+    ['bp',!!inp.bp],
+    ['hr',!!inp.hr],
+    ['weight',!!inp.weight],
+    ['height',!!inp.height],
+    ['ecg',S.ecg==='Not done'],
+    ['uds',S.uds==='Not done'],
+    ['bloods',!!inp.otherInv],
+    ['obs_asrs',sc.obs==='Not provided'],
+    ['school_rep',sc.schoolReports==='Not provided'],
+    ['psych_rep',sc.psychReport==='Not provided'],
+    ['vanderbilt',(sc.vanderbiltParent==='Not provided')||(sc.vanderbiltTeacher==='Not provided')]
+  ];
+  pairs.forEach(function(p){
+    var chipKey=p[0],missing=p[1];
+    if(touched[chipKey])return;
+    if(missing)_autoAddProvide(chipKey,chipKey);
+    else _autoRemoveProvide(chipKey);
+  });
 }
 
 // ─── QUICK-ADD APPOINTMENT ──────────────────────────────────────────────────
@@ -5587,8 +5571,11 @@ function buildLetterReport(){
         }
       }
       if(fuConKeys.length){
-        var conLabels=fuConKeys.map(function(k){return TIT_SCEN_GP[k]||((typeof TIT_SCEN!=='undefined'&&TIT_SCEN[k])?TIT_SCEN[k].t:k);});
-        h+='<p>Safety scenarios discussed with '+esc(name)+' (and included in '+po+' patient document): '+esc(conLabels.join(', '))+'.</p>';
+        var conActions=fuConKeys.map(function(k){return TIT_SCEN_GP_ACTION[k]||'';}).filter(Boolean);
+        if(conActions.length){
+          h+='<p>If '+esc(name)+' presents with any of the following, please:</p>';
+          h+='<ul>'+conActions.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>';
+        }
       }
       if(fuNotes)h+=_letterParas(fuNotes);
     }
