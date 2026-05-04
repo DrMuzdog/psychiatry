@@ -1885,7 +1885,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{}};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'Not checked',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -2237,9 +2237,9 @@ function fuAddAppt(obj) {
 }
 
 // ─── AUTO-TICK PROVIDE FROM MISSING INFO ─────────────────────────────────────
-// Track previous values so we only auto-add on the transition into a "missing"
-// state ("Not done" / "Not provided"). A user who manually unticks the provide
-// chip later won't get it re-added on subsequent refreshes.
+// fuAutoState is used for non-Initial reviews where the auto-tick should fire
+// once on the transition into a Follow-up / Titration / Script review type
+// (so the clinician isn't surprised by chips re-ticking after they uncheck them).
 var fuAutoState={};
 function _autoAddProvide(k,chipKey){
   if(!fuProvide.has(chipKey)){
@@ -2248,30 +2248,56 @@ function _autoAddProvide(k,chipKey){
     if(t)t.classList.add('on');
   }
 }
+function _autoRemoveProvide(chipKey){
+  if(fuProvide.has(chipKey)){
+    fuProvide.delete(chipKey);
+    var t=document.querySelector('#fu-provide-chips [data-k="'+chipKey+'"]');
+    if(t)t.classList.remove('on');
+  }
+}
 function fuAutoFromSafety(){
-  // ECG + UDS: source = S.ecg / S.uds; trigger value = "Not done"
-  ['ecg','uds'].forEach(function(k){
-    var cur=(S&&S[k])||'';
-    if(cur==='Not done'&&fuAutoState[k]!=='Not done')_autoAddProvide(k,k);
-    fuAutoState[k]=cur;
-  });
-  // Screening collateral: source = S.screening.*; trigger value = "Not provided"
-  var screenMap={obs:'obs_asrs',schoolReports:'school_rep',psychReport:'psych_rep',vanderbiltParent:'vanderbilt',vanderbiltTeacher:'vanderbilt'};
-  Object.keys(screenMap).forEach(function(k){
-    var cur=(S&&S.screening&&S.screening[k])||'';
-    var stateKey='screen_'+k;
-    if(cur==='Not provided'&&fuAutoState[stateKey]!=='Not provided')_autoAddProvide(stateKey,screenMap[k]);
-    fuAutoState[stateKey]=cur;
-  });
-  // On Follow-up / Titration / Script reviews, if vital signs were never
-  // recorded at the initial visit (BP / HR), auto-tick the matching
-  // Patient-to-provide chips so they're prompted at next GP visit. Triggers
-  // once on the transition into a non-Initial review type.
   var rt=S.reviewType||'Initial';
-  var isFu=rt!=='Initial';
-  if(isFu&&fuAutoState._reviewType!==rt){
-    if(!f('bpSystolic')&&!f('bpDiastolic')&&!f('bpReading'))_autoAddProvide('vitals_bp_missing','bp');
-    if(!f('hrReading'))_autoAddProvide('vitals_hr_missing','hr');
+  var isInitial=(rt==='Initial'||!rt);
+  var touched=S.userTouchedProvide||{};
+
+  if(isInitial){
+    // Reactive: keep provide chips in sync with what hasn't been done in
+    // Investigations. Skip any chip the user has manually toggled.
+    var bpMissing=!f('bpSystolic')&&!f('bpDiastolic')&&!f('bpReading');
+    var hrMissing=!f('hrReading');
+    var ecgMissing=!S.ecg||S.ecg==='Not done';
+    var udsMissing=!S.uds||S.uds==='Not done';
+    var sc=S.screening||{};
+    var obsMissing=sc.obs==='Not provided';
+    var schoolMissing=sc.schoolReports==='Not provided';
+    var psychMissing=sc.psychReport==='Not provided';
+    var vandMissing=(sc.vanderbiltParent==='Not provided')||(sc.vanderbiltTeacher==='Not provided');
+
+    var pairs=[
+      ['bp',bpMissing],
+      ['hr',hrMissing],
+      ['ecg',ecgMissing],
+      ['uds',udsMissing],
+      ['obs_asrs',obsMissing],
+      ['school_rep',schoolMissing],
+      ['psych_rep',psychMissing],
+      ['vanderbilt',vandMissing]
+    ];
+    pairs.forEach(function(p){
+      var chipKey=p[0],missing=p[1];
+      if(touched[chipKey])return;
+      if(missing)_autoAddProvide(chipKey,chipKey);
+      else _autoRemoveProvide(chipKey);
+    });
+  }else{
+    // On Follow-up / Titration / Script reviews, if vital signs were never
+    // recorded at the initial visit (BP / HR), auto-tick the matching
+    // Patient-to-provide chips so they're prompted at next GP visit. Triggers
+    // once on the transition into a non-Initial review type.
+    if(fuAutoState._reviewType!==rt){
+      if(!touched.bp&&!f('bpSystolic')&&!f('bpDiastolic')&&!f('bpReading'))_autoAddProvide('vitals_bp_missing','bp');
+      if(!touched.hr&&!f('hrReading'))_autoAddProvide('vitals_hr_missing','hr');
+    }
   }
   fuAutoState._reviewType=rt;
 }
@@ -2385,7 +2411,13 @@ function toggleFuChip(btn, type) {
   btn.classList.toggle('on');
   if(type === 'mon') { fuMon.has(k) ? fuMon.delete(k) : fuMon.add(k); }
   else if(type === 'np') { fuNP.has(k) ? fuNP.delete(k) : fuNP.add(k); }
-  else if(type === 'provide') { fuProvide.has(k) ? fuProvide.delete(k) : fuProvide.add(k); }
+  else if(type === 'provide') {
+    fuProvide.has(k) ? fuProvide.delete(k) : fuProvide.add(k);
+    // Mark this chip as manually managed so the auto-fill loop stops
+    // overriding the user's choice.
+    if(!S.userTouchedProvide)S.userTouchedProvide={};
+    S.userTouchedProvide[k]=true;
+  }
   else if(type === 'con') { fuCon.has(k) ? fuCon.delete(k) : fuCon.add(k); }
   save(); refresh();
 }
