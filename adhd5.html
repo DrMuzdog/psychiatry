@@ -921,9 +921,10 @@ select.inp{appearance:none}
 <div class="card" data-initial-only>
     <div class="ch indigo">Developmental History &nbsp;<span style="font-size:10px;font-weight:400;opacity:.75">-- tap ? for example questions</span></div>
     <div class="cb">
-      <div id="dev-checks"></div>
-      <label class="fl" style="margin-top:14px">Predisposing / risk factors</label>
+      <label class="fl" style="margin-top:0">Predisposing / risk factors</label>
       <div id="predispose-checks"></div>
+      <label class="fl" style="margin-top:14px">Developmental pattern</label>
+      <div id="dev-checks"></div>
       <textarea class="nf" id="devNotes" placeholder="Developmental notes..." oninput="save();refresh()" rows="2" style="margin-top:10px"></textarea>
     </div>
   </div>
@@ -1412,6 +1413,15 @@ const RISK_FACTORS=['Family history of ADHD (first-degree relative)','Family his
 const PERPETUATING_FACTORS=['Untreated or under-treated ADHD symptoms','Poor sleep / disrupted circadian rhythm','Iron deficiency, low vitamin D, or other nutritional issue','Untreated comorbid mental illness (anxiety, depression, SUD)','Stimulant or other substance misuse','Insufficient workplace or educational supports','Maladaptive coping (procrastination, avoidance, all-or-nothing effort)','Learned helplessness / negative self-concept','Lack of structure (no routines, planning systems, or external scaffolding)','Chronic stress or relational conflict','Financial or housing instability','Low physical activity'];
 const PROTECTIVE_FACTORS=['Established treatment / engaged with care','Strong family or social supports','Stable housing and finances','Effective routines and structure','Regular exercise','Good sleep hygiene','Workplace or educational accommodations in place','Insight and motivation for change','Positive therapeutic alliance'];
 const ASSESS_REASONS=['Self-recognised symptoms','GP recommended','Psychologist recommended','Partner / spouse recommended','Child(ren) recently diagnosed','Family member recently diagnosed','Workplace or academic difficulties'];
+const ASSESS_REASON_NARR={
+  'Self-recognised symptoms':'recognising symptoms in {refl}',
+  'GP recommended':'a recommendation from {poss} GP',
+  'Psychologist recommended':'a recommendation from {poss} psychologist',
+  'Partner / spouse recommended':'encouragement from {poss} partner',
+  'Child(ren) recently diagnosed':'one of {poss} children being recently diagnosed with ADHD',
+  'Family member recently diagnosed':'a family member being recently diagnosed with ADHD',
+  'Workplace or academic difficulties':'mounting difficulties at work or in study'
+};
 const SCREENING=[{id:'asrs',label:'Patient ASRS',opts:['Positive','Negative','Not provided']},{id:'diva',label:'DIVA-5',opts:['Completed - positive','Completed - negative','Not provided']},{id:'obs',label:'Observer ASRS',opts:['Supportive','Not supportive','Not provided']},{id:'gpReferral',label:'GP referral',opts:['Supportive','Not supportive','N/A']},{id:'schoolReports',label:'School reports',opts:['Supportive','Not supportive','Not provided']},{id:'psychReport',label:'Psychologist / neuropsychological report',opts:['Supportive','Not supportive','Not provided']},{id:'vanderbiltParent',label:'Vanderbilt (parents)',opts:['Positive','Negative','Not provided']},{id:'vanderbiltTeacher',label:'Vanderbilt (teacher)',opts:['Positive','Negative','Not provided']}];
 const DEV=[
   {id:'childhood',label:'Clear childhood ADHD pattern (pre-age 12)',qs:['When you picture yourself in primary school, what sort of child were you at school and at home?','What did adults keep correcting you for, over and over?','Were you often described as bright but not applying yourself, careless, messy, chatty, daydreamy, or always on the go?','Did things seem inconsistent rather than impossible - you could do it sometimes but not reliably?','What themes would I expect to see repeatedly in your primary school reports?','Were there clear examples of inattention, hyperactivity, or impulsivity before age 12?']},
@@ -2181,10 +2191,14 @@ function getFormulationContext(){
   var predispose=RISK_FACTORS.filter(function(d){return S.predispose[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
   var perpetuate=PERPETUATING_FACTORS.filter(function(d){return S.perpetuate[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
   var protective=PROTECTIVE_FACTORS.filter(function(d){return S.protective[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
-  var arOn=ASSESS_REASONS.filter(function(r){return S.assessReason[r.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var arSelected=ASSESS_REASONS.filter(function(r){return S.assessReason[r.replace(/[^a-zA-Z0-9]/g,'_')];});
+  var arOn=arSelected.map(_smartLower);
   var arFree=f('referralReason');
   var assessReason=arOn.length?_joinList(arOn)+(arFree?' ('+arFree+')':''):arFree;
-  return {name:name,age:age,gender:gender,pron:pr,poss:po,sub:sub,subPhrase:subPhrase,diffs:diffs,top:top,current:current,past:past,asrs:asrs,diva:diva,dx:dx,predispose:predispose,perpetuate:perpetuate,protective:protective,assessReason:assessReason,assessReasonHasChips:arOn.length>0};
+  var refl=pr==='he'?'himself':pr==='she'?'herself':'themselves';
+  var arNarrPhrases=arSelected.map(function(r){return (ASSESS_REASON_NARR[r]||r.toLowerCase()).replace(/\{poss\}/g,po).replace(/\{pron\}/g,pr).replace(/\{refl\}/g,refl);});
+  var assessReasonNarr=arNarrPhrases.length?_joinList(arNarrPhrases)+(arFree?', and '+arFree:''):arFree;
+  return {name:name,age:age,gender:gender,pron:pr,poss:po,sub:sub,subPhrase:subPhrase,diffs:diffs,top:top,current:current,past:past,asrs:asrs,diva:diva,dx:dx,predispose:predispose,perpetuate:perpetuate,protective:protective,assessReason:assessReason,assessReasonNarr:assessReasonNarr,assessReasonHasChips:arOn.length>0};
 }
 function _joinList(arr){
   if(!arr.length)return '';
@@ -2246,7 +2260,7 @@ function formulationNarrative(c){
   bits.push(who+', describes a lifelong difficulty with '+topPhrase+'.');
   bits.push('These patterns were present from childhood and have persisted into '+poss+' adult life, where they continue to interfere with work, relationships, and day-to-day self-management.');
   if(c.predispose.length)bits.push('Predisposing factors include '+_joinList(c.predispose)+'.');
-  if(c.assessReason)bits.push(firstName+' presents now '+(c.assessReasonHasChips?'having been prompted by ':'because of ')+c.assessReason+'.');
+  if(c.assessReasonNarr)bits.push(firstName+' presented for assessment after '+c.assessReasonNarr+'.');
   bits.push('The clinical picture is consistent with adult ADHD'+(c.sub?', '+c.sub+' presentation':'')+'.');
   if(c.current.length)bits.push('Alongside the core ADHD picture, '+pron+' '+_vAgree(c.gender,'is','are')+' also experiencing '+_joinList(c.current)+', which will be considered as part of the broader treatment plan.');
   if(c.perpetuate.length)bits.push('Functioning is currently perpetuated by '+_joinList(c.perpetuate)+', which the management plan will target alongside the core symptoms.');
