@@ -238,6 +238,10 @@ select.inp{appearance:none}
 .sel-all-btn:hover{background:var(--primary);color:#fff;}
 .sel-all-btn.desel{border-color:var(--border);background:#f1f5f9;color:var(--muted);}
 .sel-all-btn.desel:hover{background:#e2e6ed;color:var(--text);}
+.ar-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ar-chips .ar-chip{padding:5px 11px;border:1.5px solid #cbd5e1;border-radius:7px;background:#fff;color:#475569;font:600 12px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .12s}
+.ar-chips .ar-chip:hover{border-color:var(--primary);color:var(--primary)}
+.ar-chips .ar-chip.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary)}
 /* ── Psychoeducation expandable topics ── */
 .pe-section{border:1px solid var(--border);border-radius:10px;background:#fff;overflow:hidden;margin-bottom:5px}
 .pe-section.pe-optional{border-style:dashed;opacity:0.85}
@@ -784,8 +788,9 @@ select.inp{appearance:none}
 <div class="card" data-initial-only>
     <div class="ch rose">Presenting Concerns</div>
     <div class="cb">
-      <label class="fl" style="margin-top:0">Reason for referral</label>
-      <input class="inp" id="referralReason" placeholder="e.g. Self-identified, GP referral, partner suggested..." oninput="save();refresh()">
+      <label class="fl" style="margin-top:0">Reason for seeking assessment</label>
+      <div id="assess-reason-chips" class="ar-chips"></div>
+      <input class="inp" id="referralReason" placeholder="Additional context (optional)…" oninput="save();refresh()" style="margin-top:8px">
       <label class="fl">Main difficulties (tap to tick)</label>
       <div id="diff-checks" class="inner-2col-sm"></div>
       <textarea class="nf" id="presentNotes" placeholder="Additional notes..." oninput="save();refresh()" rows="2"></textarea>
@@ -907,7 +912,9 @@ select.inp{appearance:none}
     <div class="ch indigo">Developmental History &nbsp;<span style="font-size:10px;font-weight:400;opacity:.75">-- tap ? for example questions</span></div>
     <div class="cb">
       <div id="dev-checks"></div>
-      <textarea class="nf" id="devNotes" placeholder="Developmental notes..." oninput="save();refresh()" rows="2"></textarea>
+      <label class="fl" style="margin-top:14px">Predisposing / risk factors</label>
+      <div id="predispose-checks"></div>
+      <textarea class="nf" id="devNotes" placeholder="Developmental notes..." oninput="save();refresh()" rows="2" style="margin-top:10px"></textarea>
     </div>
   </div>
 <div class="card" data-initial-only>
@@ -957,6 +964,15 @@ select.inp{appearance:none}
         <label class="fl" style="margin-top:8px">Details — who and further information</label>
         <textarea class="nf" id="famNotes" placeholder="e.g. Father — bipolar disorder, hospitalised twice. Sister — ADHD diagnosed age 30..." oninput="save();refresh()" rows="3"></textarea>
       </div>
+    </div>
+  </div>
+<div class="card" data-initial-only>
+    <div class="ch slate">Perpetuating &amp; protective factors</div>
+    <div class="cb">
+      <label class="fl" style="margin-top:0">Perpetuating factors</label>
+      <div id="perpetuate-checks"></div>
+      <label class="fl" style="margin-top:14px">Protective factors</label>
+      <div id="protective-checks"></div>
     </div>
   </div>
 <div class="card" data-initial-only>
@@ -1382,6 +1398,10 @@ select.inp{appearance:none}
 'use strict';
 
 const DIFFICULTIES=['Anger or irritability','Anxiety or worry','Avoidance of difficult tasks','Binge eating or disordered eating','Burnout or chronic exhaustion','Conflict at work or in study settings','Difficulty concentrating','Difficulty finishing tasks','Difficulty focusing','Difficulty initiating tasks','Difficulty managing finances','Difficulty managing household tasks','Difficulty parenting / caregiving','Difficulty regulating substance use','Driving difficulties (inattention, speeding)','Emotional dysregulation','Family or partner conflict','Forgetfulness','Hyperfocus on preferred tasks','Impulsive behaviour or decisions','Internal hyperactivity','Job loss or job instability','Low mood','Low self-esteem','Memory difficulties','Mood swings','Overcommitting or saying yes too easily','Overspending or impulsive purchases','Poor organisation','Poor sleep routine','Poor time management','Procrastination','Rejection sensitivity','Relationship difficulties','Restlessness','Risk-taking behaviour','Sensory sensitivities','Sleep difficulties','Social difficulties or withdrawal','Time blindness','Underperformance at work or study despite effort'];
+const RISK_FACTORS=['Family history of ADHD (first-degree relative)','Family history of other neurodevelopmental disorder','Prematurity or low birth weight','Prenatal exposure (alcohol, tobacco, illicit drugs)','Perinatal complications (hypoxia, neonatal jaundice)','Early childhood adversity / trauma','Lead or other neurotoxin exposure','Childhood traumatic brain injury','Maternal stress, depression, or illness in pregnancy','Chronic medical illness in childhood (epilepsy, severe iron deficiency)'];
+const PERPETUATING_FACTORS=['Untreated or under-treated ADHD symptoms','Poor sleep / disrupted circadian rhythm','Iron deficiency, low vitamin D, or other nutritional issue','Untreated comorbid mental illness (anxiety, depression, SUD)','Stimulant or other substance misuse','Insufficient workplace or educational supports','Maladaptive coping (procrastination, avoidance, all-or-nothing effort)','Learned helplessness / negative self-concept','Lack of structure (no routines, planning systems, or external scaffolding)','Chronic stress or relational conflict','Financial or housing instability','Low physical activity'];
+const PROTECTIVE_FACTORS=['Established treatment / engaged with care','Strong family or social supports','Stable housing and finances','Effective routines and structure','Regular exercise','Good sleep hygiene','Workplace or educational accommodations in place','Insight and motivation for change','Positive therapeutic alliance'];
+const ASSESS_REASONS=['Self-recognised symptoms','GP recommended','Psychologist recommended','Partner / spouse recommended','Child(ren) recently diagnosed','Family member recently diagnosed','Workplace or academic difficulties'];
 const SCREENING=[{id:'asrs',label:'Patient ASRS',opts:['Positive','Negative','Not provided']},{id:'diva',label:'DIVA-5',opts:['Completed - positive','Completed - negative','Not provided']},{id:'obs',label:'Observer ASRS',opts:['Supportive','Not supportive','Not provided']},{id:'gpReferral',label:'GP referral',opts:['Supportive','Not supportive','N/A']},{id:'schoolReports',label:'School reports',opts:['Supportive','Not supportive','Not provided']},{id:'psychReport',label:'Psychologist / neuropsychological report',opts:['Supportive','Not supportive','Not provided']},{id:'vanderbiltParent',label:'Vanderbilt (parents)',opts:['Positive','Negative','Not provided']},{id:'vanderbiltTeacher',label:'Vanderbilt (teacher)',opts:['Positive','Negative','Not provided']}];
 const DEV=[
   {id:'childhood',label:'Clear childhood ADHD pattern (pre-age 12)',qs:['When you picture yourself in primary school, what sort of child were you at school and at home?','What did adults keep correcting you for, over and over?','Were you often described as bright but not applying yourself, careless, messy, chatty, daydreamy, or always on the go?','Did things seem inconsistent rather than impossible - you could do it sometimes but not reliably?','What themes would I expect to see repeatedly in your primary school reports?','Were there clear examples of inattention, hyperactivity, or impulsivity before age 12?']},
@@ -1930,7 +1950,7 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{}};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -2148,7 +2168,13 @@ function getFormulationContext(){
   var asrs=(S.screening&&S.screening.asrs)||'';
   var diva=(S.screening&&S.screening.diva)||'';
   var dx=dxFull();
-  return {name:name,age:age,gender:gender,pron:pr,poss:po,sub:sub,subPhrase:subPhrase,diffs:diffs,top:top,current:current,past:past,asrs:asrs,diva:diva,dx:dx};
+  var predispose=RISK_FACTORS.filter(function(d){return S.predispose[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var perpetuate=PERPETUATING_FACTORS.filter(function(d){return S.perpetuate[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var protective=PROTECTIVE_FACTORS.filter(function(d){return S.protective[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var arOn=ASSESS_REASONS.filter(function(r){return S.assessReason[r.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var arFree=f('referralReason');
+  var assessReason=arOn.length?_joinList(arOn)+(arFree?' ('+arFree+')':''):arFree;
+  return {name:name,age:age,gender:gender,pron:pr,poss:po,sub:sub,subPhrase:subPhrase,diffs:diffs,top:top,current:current,past:past,asrs:asrs,diva:diva,dx:dx,predispose:predispose,perpetuate:perpetuate,protective:protective,assessReason:assessReason,assessReasonHasChips:arOn.length>0};
 }
 function _joinList(arr){
   if(!arr.length)return '';
@@ -2191,6 +2217,11 @@ function formulationClinical(c){
   bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant impairment'+(c.top.length?' — particularly in the areas of '+_joinList(c.top):'')+'.');
   bits.push('These symptoms are not better explained by another disorder.');
   if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' will be addressed alongside their primary concerns.');
+  var fourPbits=[];
+  if(c.predispose.length)fourPbits.push('predisposing factors '+_joinList(c.predispose));
+  if(c.perpetuate.length)fourPbits.push('perpetuating factors '+_joinList(c.perpetuate));
+  if(c.protective.length)fourPbits.push('protective factors '+_joinList(c.protective));
+  if(fourPbits.length)bits.push('Formulation factors: '+_joinList(fourPbits)+'.');
   return bits.join(' ');
 }
 function formulationNarrative(c){
@@ -2201,10 +2232,15 @@ function formulationNarrative(c){
   var demo=_demoPhrase(c);
   var who=c.name+(demo?', '+demo:'');
   var topPhrase=c.top.length?_joinList(c.top):'difficulty regulating attention, organisation, and internal restlessness';
+  var firstName=(c.name||'').split(' ')[0]||c.name;
   bits.push(who+', describes a lifelong difficulty with '+topPhrase+'.');
   bits.push('These patterns were present from childhood and have persisted into '+poss+' adult life, where they continue to interfere with work, relationships, and day-to-day self-management.');
+  if(c.predispose.length)bits.push('Predisposing factors include '+_joinList(c.predispose)+'.');
+  if(c.assessReason)bits.push(firstName+' presents now '+(c.assessReasonHasChips?'having been prompted by ':'because of ')+c.assessReason+'.');
   bits.push('The clinical picture is consistent with adult ADHD'+(c.sub?', '+c.sub+' presentation':'')+'.');
   if(c.current.length)bits.push('Alongside the core ADHD picture, '+pron+' '+_vAgree(c.gender,'is','are')+' also experiencing '+_joinList(c.current)+', which will be considered as part of the broader treatment plan.');
+  if(c.perpetuate.length)bits.push('Functioning is currently perpetuated by '+_joinList(c.perpetuate)+', which the management plan will target alongside the core symptoms.');
+  if(c.protective.length)bits.push('Protective factors include '+_joinList(c.protective)+', which support the prognosis.');
   bits.push('Treatment will target the core attentional and regulatory difficulties while supporting '+poss+' broader functional picture.');
   return bits.join(' ');
 }
@@ -2224,6 +2260,10 @@ function formulationFunctional(c){
     bits.push('Although pre-screening was not strongly supportive, the broader clinical picture was felt sufficient to confirm the diagnosis.');
   }
   if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' '+(c.current.length>1?'are':'is')+' also present and will be managed in parallel.');
+  if(c.predispose.length)bits.push('Predisposing risk factors: '+_joinList(c.predispose)+'.');
+  if(c.assessReason)bits.push('Reason for seeking assessment: '+c.assessReason+'.');
+  if(c.perpetuate.length)bits.push('Perpetuating factors maintaining current impairment: '+_joinList(c.perpetuate)+'.');
+  if(c.protective.length)bits.push('Protective factors: '+_joinList(c.protective)+'.');
   bits.push('Treatment is indicated to reduce these functional impacts; the proposed plan is detailed in the management section.');
   return bits.join(' ');
 }
@@ -3532,6 +3572,35 @@ function printTitDoc(){var pane=$('tit-pane-rich');if(!pane)return;openPrintWin(
 
 // ─── ASSESSMENT RENDERS ───────────────────────────────────────────────────────
 function renderDiffChecks(){$('diff-checks').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllDifficulties()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllDifficulties()">Deselect all</button></div>'+DIFFICULTIES.map(function(d){var key=d.replace(/[^a-zA-Z0-9]/g,'_');var on=!!S.difficulties[key];return '<div class="crow" onclick="toggleDiff(\''+key+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d+'</div></div>';}).join('');}
+function _factorListFor(stateKey){return stateKey==='predispose'?RISK_FACTORS:stateKey==='perpetuate'?PERPETUATING_FACTORS:PROTECTIVE_FACTORS;}
+function renderFactorChecks(elId,list,stateKey){
+  var el=$(elId);if(!el)return;
+  el.innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn desel" onclick="deselectAllFactors(\''+stateKey+'\',\''+elId+'\')">Deselect all</button></div>'+
+    list.map(function(d){
+      var key=d.replace(/[^a-zA-Z0-9]/g,'_');
+      var on=!!S[stateKey][key];
+      return '<div class="crow" onclick="toggleFactor(\''+stateKey+'\',\''+key+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d+'</div></div>';
+    }).join('');
+}
+function toggleFactor(stateKey,k,r){S[stateKey][k]=!S[stateKey][k];var b=r.querySelector('.cbox');if(b)b.className='cbox'+(S[stateKey][k]?' yes':'');save();refresh();}
+function deselectAllFactors(stateKey,elId){
+  var list=_factorListFor(stateKey);
+  list.forEach(function(d){S[stateKey][d.replace(/[^a-zA-Z0-9]/g,'_')]=false;});
+  renderFactorChecks(elId,list,stateKey);save();refresh();
+}
+function renderAssessReasonChips(){
+  var el=$('assess-reason-chips');if(!el)return;
+  el.innerHTML=ASSESS_REASONS.map(function(r){
+    var key=r.replace(/[^a-zA-Z0-9]/g,'_');
+    var on=!!S.assessReason[key];
+    return '<button type="button" class="ar-chip'+(on?' on':'')+'" onclick="toggleAssessReason(\''+key+'\',this)">'+r+'</button>';
+  }).join('');
+}
+function toggleAssessReason(key,btn){
+  S.assessReason[key]=!S.assessReason[key];
+  if(btn)btn.classList.toggle('on',!!S.assessReason[key]);
+  save();refresh();
+}
 function renderScreening(){
   // Main result buttons
   var btnGroups={
@@ -4269,7 +4338,7 @@ function buildHeidi(){
   if(dr)o+='Psychiatrist: '+dr+(f('drQuals')?' ('+f('drQuals')+')':'')+'\n';if(gp)o+='Referring GP: '+gp+'\n';
   if(f('ptOtherPresent'))o+='Others present: '+f('ptOtherPresent')+'\n';
   if(mbs)o+='MBS item: '+mbs+'\n';if(S.prevPsych)o+='291/92435 in past 12 months: '+S.prevPsych+'\n';
-  if(f('referralReason'))o+='Referral reason: '+f('referralReason')+'\n';o+='\n';
+  if(f('referralReason'))o+='Reason for seeking assessment: '+f('referralReason')+'\n';o+='\n';
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length){o+='PRESENTING DIFFICULTIES:\n';diffs.forEach(function(d){o+='- '+d+'\n';});}
   if(f('presentNotes'))o+=f('presentNotes')+'\n';
@@ -4944,7 +5013,7 @@ function buildFullReport(){
   // 1. Referral & Presenting Concerns
   h+=sec('Referral and Presenting Concerns');
   var refBits=[];
-  if(f('referralReason')) refBits.push('<strong>Referral reason:</strong> '+esc(f('referralReason')));
+  if(f('referralReason')) refBits.push('<strong>Reason for seeking assessment:</strong> '+esc(f('referralReason')));
   if(refBits.length) h+=p(refBits.join(' &nbsp;·&nbsp; '));
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length){ h+=p('<strong>Difficulties endorsed:</strong>'); h+=list(diffs.map(esc)); }
@@ -5215,7 +5284,7 @@ function buildLetterReport(){
     :(rt==='Script'?'medication review':'review')));
   if(rt==='Initial'||!rt){
     h+='<p>Thank you for referring '+esc(name)+demoClause+' for psychiatric assessment. ';
-    if(referral)h+='Reason for referral: '+esc(referral.replace(/\.$/,''))+'. ';
+    if(referral)h+='Reason for seeking assessment: '+esc(referral.replace(/\.$/,''))+'. ';
     h+=prCap+' '+was+' reviewed on '+esc(dateStr)+' for a comprehensive assessment, including detailed clinical history, review of standardised rating scales, examination of collateral information where available, and consideration of differential diagnoses. The assessment and management plan are summarised below.</p>';
   } else {
     h+='<p>I saw '+esc(name)+demoClause+' on '+esc(dateStr)+' for a '+esc(visitLabel)+'. The outcome and updated management plan are summarised below.</p>';
@@ -6960,6 +7029,10 @@ function init(){
   loadSaved();
 
   renderDiffChecks();renderScreening();renderDev();renderDSM();renderDiffRows();
+  renderFactorChecks('predispose-checks',RISK_FACTORS,'predispose');
+  renderFactorChecks('perpetuate-checks',PERPETUATING_FACTORS,'perpetuate');
+  renderFactorChecks('protective-checks',PROTECTIVE_FACTORS,'protective');
+  renderAssessReasonChips();
   autoDSM();renderMSE();renderCardiac();renderMedical();renderSubs();renderMal();renderPE();renderFam();renderPrevPsych();
   renderTitMeds();
   calcBMI();
