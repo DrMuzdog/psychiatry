@@ -559,8 +559,8 @@ select.inp{appearance:none}
 <div class="topbar">
   <div class="tb-row">
     <span class="topbar-title">ADHD <span style="font-size:9px;font-weight:600;color:#64748b;letter-spacing:normal;text-transform:none;margin-left:2px">v6.5</span></span>
-    <input class="ti" id="drName" placeholder="Psychiatrist name" oninput="save();refresh()" style="flex:1 1 130px;min-width:100px">
-    <input class="ti" id="drQuals" placeholder="FRANZCP / RANZCP" oninput="save();refresh()" style="flex:0 1 130px;min-width:80px">
+    <input class="ti" id="drName" placeholder="Psychiatrist name" oninput="save();refresh()" style="flex:1 1 130px;min-width:100px" autocomplete="off">
+    <input class="ti" id="drQuals" placeholder="FRANZCP / RANZCP" oninput="save();refresh()" style="flex:0 1 130px;min-width:80px" autocomplete="off">
     <input class="ti" id="ptDate" type="date" style="flex:0 0 120px" oninput="save();refresh()">
     <div style="display:flex;gap:4px;align-items:center;margin-left:auto;flex-shrink:0">
       <button onclick="window.location.reload()" style="padding:3px 9px;border-radius:999px;border:1.5px solid #dc2626;background:#450a0a;color:#fca5a5;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--sans);white-space:nowrap">Reset</button>
@@ -628,11 +628,11 @@ select.inp{appearance:none}
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:8px">
         <div>
           <label class="fl" style="margin-top:0">Patient name</label>
-          <input class="inp" id="ptName" placeholder="Full name" oninput="save();refresh()">
+          <input class="inp" id="ptName" placeholder="Full name" oninput="save();refresh()" autocomplete="off">
         </div>
         <div>
           <label class="fl" style="margin-top:0">Age</label>
-          <input class="inp" id="ptAge" placeholder="e.g. 34" oninput="save();refresh()">
+          <input class="inp" id="ptAge" placeholder="e.g. 34" oninput="save();refresh()" autocomplete="off">
         </div>
         <div>
           <label class="fl" style="margin-top:0">Gender</label>
@@ -727,7 +727,7 @@ select.inp{appearance:none}
       </div>
       <div style="margin-top:8px">
         <label class="fl" style="margin-top:0">Referring GP</label>
-        <input class="inp" id="gpName" placeholder="GP name" oninput="save();refresh()">
+        <input class="inp" id="gpName" placeholder="GP name" oninput="save();refresh()" autocomplete="off">
       </div>
       <div style="margin-top:8px">
         <label class="fl" style="margin-top:0">Other demographic details</label>
@@ -6823,7 +6823,7 @@ function dlRtf(){
         return el.textContent
           .replace(/\\/g,'\\\\')
           .replace(/[{}]/g,function(c){return '\\'+c;})
-          .replace(/[-￿]/g,function(c){return '\\u'+c.charCodeAt(0)+'?';});
+          .replace(/[^ -~]/g,function(c){var n=c.charCodeAt(0);return '\\u'+(n>32767?n-65536:n)+'?';});
       }
       var tag=el.tagName?el.tagName.toLowerCase():'';
       var inner=Array.from(el.childNodes).map(node).join('');
