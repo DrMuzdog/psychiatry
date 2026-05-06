@@ -1153,6 +1153,7 @@ select.inp{appearance:none}
 <div class="panel active" id="panel-alerts">
   <div id="flags-panel"></div>
   <div id="gaps-panel"></div>
+  <div id="medsafety-panel"></div>
 </div>
 
 <!-- EDUCATION -->
@@ -2495,11 +2496,11 @@ function fuQuickInit(){
   fuQuickPreview();
 }
 function renderSafetyConcerns(){
-  var el=$('fu-safety-concerns');if(!el)return;
+  var fuEl=$('fu-safety-concerns');
+  var alertEl=$('medsafety-panel');
   var concerns=getMedSafetyConcerns();
-  if(!concerns.length){el.innerHTML='';return;}
-  el.innerHTML='<div class="fl" style="margin-top:12px">Medical safety concerns from this review</div>'+
-    concerns.map(function(c){
+  function cards(idSuffix){
+    return concerns.map(function(c){
       var off=!c.include;
       return '<div class="ms-card'+(off?' off':'')+'">'
         +'<div class="ms-head">'
@@ -2509,6 +2510,17 @@ function renderSafetyConcerns(){
         +'<textarea class="ms-plan" rows="2" placeholder="Plan for this concern…" oninput="setSafetyOverride(\''+c.key+'\',\'plan\',this.value)">'+esc(c.plan)+'</textarea>'
       +'</div>';
     }).join('');
+  }
+  if(fuEl){
+    fuEl.innerHTML=concerns.length
+      ?'<div class="fl" style="margin-top:12px">Medical safety concerns from this review</div>'+cards('fu')
+      :'';
+  }
+  if(alertEl){
+    alertEl.innerHTML=concerns.length
+      ?'<div class="fl" style="margin-top:12px;padding:0 4px">Medical safety concerns</div>'+cards('al')
+      :'';
+  }
 }
 
 function fuRemoveAppt(i) {
