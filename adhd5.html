@@ -4881,6 +4881,7 @@ function buildFullReportFollowUp(rt){
   if(f('ptDemo')) idItems.push(['Demographics', esc(f('ptDemo')).replace(/\n/g,'<br>')]);
   if(dr) idItems.push(['Psychiatrist', esc(dr)+(drQuals?' '+esc(drQuals):'')]);
   if(gp) idItems.push(['Referring GP', esc(gp)]);
+  if(f('mbsItem')) idItems.push(['MBS item', esc(f('mbsItem'))]);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
     +buildIdRowsFu(idItems)+'</table>';
 
@@ -5037,6 +5038,7 @@ function buildFullReport(){
   if(dr) idItems.push(['Psychiatrist', esc(dr)+(drQuals?' '+esc(drQuals):'')]);
   if(gp) idItems.push(['Referring GP', esc(gp)]);
   if(f('ptOtherPresent')) idItems.push(['Others present', esc(f('ptOtherPresent'))]);
+  if(f('mbsItem')) idItems.push(['MBS item', esc(f('mbsItem'))]);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
     +buildIdRows(idItems)+'</table>';
 
@@ -5798,6 +5800,7 @@ function buildLetterReport(){
 
   // Sign-off
   h+='<div class="letter-sig"><p>Yours sincerely,</p><p style="margin-top:18px"><span class="sig-name">'+esc(clin)+'</span>'+(quals?'<br><span class="sig-quals">'+esc(quals)+'</span>':'')+'<br><span class="sig-quals">Consultant Psychiatrist</span></p></div>';
+  if(f('mbsItem'))h+='<p style="margin-top:14px;font-size:9.5pt;color:#6b7280">MBS item: '+esc(f('mbsItem'))+'</p>';
 
   return h;
 }
