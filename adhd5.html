@@ -1018,6 +1018,7 @@ select.inp{appearance:none}
           <button type="button" class="fmln-btn" data-style="clinical" onclick="pickFormulation('clinical')">Clinical</button>
           <button type="button" class="fmln-btn" data-style="narrative" onclick="pickFormulation('narrative')">Narrative</button>
           <button type="button" class="fmln-btn" data-style="functional" onclick="pickFormulation('functional')">Functional</button>
+          <button type="button" class="fmln-btn" data-style="dotpoints" onclick="pickFormulation('dotpoints')">4P dot points</button>
           <span id="fmln-edited-tag" style="display:none;font-size:10px;color:#b45309;font-weight:600">✎ edited — picking a style overwrites</span>
         </div>
         <textarea class="nf" id="dxNotes" placeholder="Pick a style above, or write your own…" oninput="onDxNotesEdit()" rows="6"></textarea>
@@ -2181,6 +2182,7 @@ function getFormulationContext(){
   var subPhrase=sub==='Combined'?'combined inattentive and hyperactive-impulsive':sub==='Inattentive'?'predominantly inattentive':sub==='Hyperactive-Impulsive'?'predominantly hyperactive-impulsive':'';
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   var top=diffs.slice(0,3).map(function(d){return _smartLower(_stripDifficultyPrefix(d));});
+  var allDiffs=diffs.map(function(d){return _smartLower(_stripDifficultyPrefix(d));});
   // Comorbidities: only Current and excluding flagged differentials so the
   // formulation doesn't claim a "comorbid medical / neurological cause".
   var current=getCurrentComorbidities().map(function(d){return _smartLower(d.label);});
@@ -2198,7 +2200,7 @@ function getFormulationContext(){
   var refl=pr==='he'?'himself':pr==='she'?'herself':'themselves';
   var arNarrPhrases=arSelected.map(function(r){return (ASSESS_REASON_NARR[r]||r.toLowerCase()).replace(/\{poss\}/g,po).replace(/\{pron\}/g,pr).replace(/\{refl\}/g,refl);});
   var assessReasonNarr=arNarrPhrases.length?_joinList(arNarrPhrases)+(arFree?', and '+arFree:''):arFree;
-  return {name:name,age:age,gender:gender,pron:pr,poss:po,sub:sub,subPhrase:subPhrase,diffs:diffs,top:top,current:current,past:past,asrs:asrs,diva:diva,dx:dx,predispose:predispose,perpetuate:perpetuate,protective:protective,assessReason:assessReason,assessReasonNarr:assessReasonNarr,assessReasonHasChips:arOn.length>0};
+  return {name:name,age:age,gender:gender,pron:pr,poss:po,sub:sub,subPhrase:subPhrase,diffs:diffs,allDiffs:allDiffs,top:top,current:current,past:past,asrs:asrs,diva:diva,dx:dx,predispose:predispose,perpetuate:perpetuate,protective:protective,assessReason:assessReason,assessReasonNarr:assessReasonNarr,assessReasonHasChips:arOn.length>0};
 }
 function _joinList(arr){
   if(!arr.length)return '';
@@ -2238,14 +2240,13 @@ function formulationClinical(c){
   var bits=[];
   var demo=_demoPhrase(c);
   bits.push(c.name+' is '+(demo?demo+' ':'')+'presenting with a longstanding pattern of '+(c.subPhrase?c.subPhrase+' symptoms ':'attentional and self-regulatory symptoms ')+'consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+'.');
-  bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant impairment'+(c.top.length?' — particularly in the areas of '+_joinList(c.top):'')+'.');
+  bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant functional impairment'+(c.allDiffs.length?' — particularly in the areas of '+_joinList(c.allDiffs):'')+'.');
   bits.push('These symptoms are not better explained by another disorder.');
-  if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' will be addressed alongside their primary concerns.');
-  var fourPbits=[];
-  if(c.predispose.length)fourPbits.push('predisposing factors '+_joinList(c.predispose));
-  if(c.perpetuate.length)fourPbits.push('perpetuating factors '+_joinList(c.perpetuate));
-  if(c.protective.length)fourPbits.push('protective factors '+_joinList(c.protective));
-  if(fourPbits.length)bits.push('Formulation factors: '+_joinList(fourPbits)+'.');
+  if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' will be addressed alongside '+(c.pron==='they'?'their':'his/her')+' primary concerns.');
+  if(c.assessReasonNarr)bits.push(c.name.split(' ')[0]+' presented for assessment after '+c.assessReasonNarr+'.');
+  if(c.predispose.length)bits.push('Predisposing factors include '+_joinList(c.predispose)+'.');
+  if(c.perpetuate.length)bits.push('Perpetuating factors include '+_joinList(c.perpetuate)+'.');
+  if(c.protective.length)bits.push('Protective factors include '+_joinList(c.protective)+'.');
   return bits.join(' ');
 }
 function formulationNarrative(c){
@@ -2255,43 +2256,55 @@ function formulationNarrative(c){
   var bits=[];
   var demo=_demoPhrase(c);
   var who=c.name+(demo?', '+demo:'');
-  var topPhrase=c.top.length?_joinList(c.top):'difficulty regulating attention, organisation, and internal restlessness';
+  var diffPhrase=c.allDiffs.length?_joinList(c.allDiffs):'difficulty regulating attention, organisation, and internal restlessness';
   var firstName=(c.name||'').split(' ')[0]||c.name;
-  bits.push(who+', describes a lifelong difficulty with '+topPhrase+'.');
-  bits.push('These patterns were present from childhood and have persisted into '+poss+' adult life, where they continue to interfere with work, relationships, and day-to-day self-management.');
+  bits.push(who+' presents with a longstanding pattern of '+diffPhrase+'.');
+  if(c.assessReasonNarr)bits.push(firstName+' sought assessment after '+c.assessReasonNarr+'.');
   if(c.predispose.length)bits.push('Predisposing factors include '+_joinList(c.predispose)+'.');
-  if(c.assessReasonNarr)bits.push(firstName+' presented for assessment after '+c.assessReasonNarr+'.');
-  bits.push('The clinical picture is consistent with adult ADHD'+(c.sub?', '+c.sub+' presentation':'')+'.');
-  if(c.current.length)bits.push('Alongside the core ADHD picture, '+pron+' '+_vAgree(c.gender,'is','are')+' also experiencing '+_joinList(c.current)+', which will be considered as part of the broader treatment plan.');
-  if(c.perpetuate.length)bits.push('Functioning is currently perpetuated by '+_joinList(c.perpetuate)+', which the management plan will target alongside the core symptoms.');
-  if(c.protective.length)bits.push('Protective factors include '+_joinList(c.protective)+', which support the prognosis.');
-  bits.push('Treatment will target the core attentional and regulatory difficulties while supporting '+poss+' broader functional picture.');
+  bits.push('The clinical picture is consistent with adult ADHD'+(c.sub?', '+c.sub+' presentation':'')+', with symptoms traceable to childhood and evident across multiple settings.');
+  if(c.current.length)bits.push('Alongside the core ADHD presentation, '+pron+' '+_vAgree(c.gender,'is','are')+' also experiencing '+_joinList(c.current)+', which will form part of the broader management plan.');
+  if(c.perpetuate.length)bits.push('Current perpetuating factors include '+_joinList(c.perpetuate)+', and will be directly addressed in the management plan.');
+  if(c.protective.length)bits.push('Protective factors — including '+_joinList(c.protective)+' — support a positive treatment trajectory.');
+  bits.push('Treatment will address the core attentional and regulatory difficulties alongside '+poss+' broader functional goals.');
   return bits.join(' ');
 }
 function formulationFunctional(c){
   if(S.dx==='No')return _formulationNoDx(c);
   if(S.dx==='Deferred'||S.dx==='Insufficient evidence')return _formulationDeferred(c);
   var bits=[];
+  var firstName=(c.name||'').split(' ')[0]||c.name;
   bits.push(c.name+' meets DSM-5-TR criteria for ADHD'+(c.sub?' ('+c.sub+' presentation)':'')+'.');
-  if(c.top.length)bits.push('The most disabling features at present are '+_joinList(c.top)+', with substantial functional impact across work, study, and daily routines.');
+  if(c.assessReasonNarr)bits.push(firstName+' sought assessment after '+c.assessReasonNarr+'.');
+  if(c.allDiffs.length)bits.push('Key areas of functional difficulty include '+_joinList(c.allDiffs)+'.');
   var ss=_screeningSupportiveness(c.asrs,c.diva);
   if(ss==='supports'){
     var sl=[];
     if(c.asrs)sl.push('ASRS '+c.asrs.toLowerCase());
     if(c.diva)sl.push('DIVA-5 '+c.diva.replace(/^Completed - /i,'').toLowerCase());
-    bits.push('Pre-screening ('+_joinList(sl)+') and collateral information support the diagnosis.');
+    bits.push('Pre-screening ('+_joinList(sl)+') supports the diagnosis.');
   } else if(ss==='unsupportive'){
-    bits.push('Although pre-screening was not strongly supportive, the broader clinical picture was felt sufficient to confirm the diagnosis.');
+    bits.push('Pre-screening was not strongly supportive; however, the broader clinical picture was felt sufficient to confirm the diagnosis.');
   }
   if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' '+(c.current.length>1?'are':'is')+' also present and will be managed in parallel.');
-  if(c.predispose.length)bits.push('Predisposing risk factors: '+_joinList(c.predispose)+'.');
-  if(c.assessReason)bits.push('Reason for seeking assessment: '+c.assessReason+'.');
-  if(c.perpetuate.length)bits.push('Perpetuating factors maintaining current impairment: '+_joinList(c.perpetuate)+'.');
-  if(c.protective.length)bits.push('Protective factors: '+_joinList(c.protective)+'.');
-  bits.push('Treatment is indicated to reduce these functional impacts; the proposed plan is detailed in the management section.');
+  if(c.predispose.length)bits.push('Predisposing factors include '+_joinList(c.predispose)+'.');
+  if(c.perpetuate.length)bits.push('Perpetuating factors include '+_joinList(c.perpetuate)+'.');
+  if(c.protective.length)bits.push('Protective factors include '+_joinList(c.protective)+'.');
+  bits.push('Treatment is indicated; the management plan is outlined below.');
   return bits.join(' ');
 }
-var FORMULATION_BUILDERS={clinical:formulationClinical,narrative:formulationNarrative,functional:formulationFunctional};
+function formulationDotPoints(c){
+  if(S.dx==='No')return _formulationNoDx(c);
+  if(S.dx==='Deferred'||S.dx==='Insufficient evidence')return _formulationDeferred(c);
+  var lines=[];
+  var diffLine=c.allDiffs.length?_joinList(c.allDiffs):'not documented';
+  lines.push('Presenting: '+diffLine+(c.sub?' (ADHD, '+c.sub+' presentation)':'')+'.');
+  lines.push('Predisposing: '+(c.predispose.length?_joinList(c.predispose):'none identified')+'.');
+  lines.push('Precipitating: '+(c.assessReasonNarr||c.assessReason||'not documented')+'.');
+  lines.push('Perpetuating: '+(c.perpetuate.length?_joinList(c.perpetuate):'none identified')+'.');
+  lines.push('Protective: '+(c.protective.length?_joinList(c.protective):'none identified')+'.');
+  return lines.map(function(l){return '• '+l;}).join('\n');
+}
+var FORMULATION_BUILDERS={clinical:formulationClinical,narrative:formulationNarrative,functional:formulationFunctional,dotpoints:formulationDotPoints};
 var _fmlnEdited=false,_fmlnActiveStyle=null,_fmlnDxAtGen='';
 function pickFormulation(style){
   var fn=FORMULATION_BUILDERS[style];if(!fn)return;
