@@ -1153,6 +1153,7 @@ select.inp{appearance:none}
 <div class="panel active" id="panel-alerts">
   <div id="flags-panel"></div>
   <div id="gaps-panel"></div>
+  <div id="medsafety-panel"></div>
 </div>
 
 <!-- EDUCATION -->
@@ -4240,8 +4241,12 @@ function getGapsPatient(){
 }
 function renderFlags(){
   var flags=getFlags(),gaps=getGaps();
-  var fp=$('flags-panel'),gp=$('gaps-panel');
+  var fp=$('flags-panel'),gp=$('gaps-panel'),mp=$('medsafety-panel');
   if(fp)fp.innerHTML=flags.length?'<div class="flags-box"><h3>Safety Flags</h3>'+flags.map(function(fl){return '<div class="fitem'+(fl.level==='red'?' red':'')+'">'+fl.text+'</div>';}).join('')+'</div>':'';
+  if(mp){
+    var concerns=(typeof getMedSafetyConcerns==='function'?getMedSafetyConcerns():[]).filter(function(c){return c.include;});
+    mp.innerHTML=concerns.length?'<div class="flags-box" style="background:#fef2f2;border-color:#dc2626"><h3 style="color:#991b1b">Medical Safety Concerns</h3>'+concerns.map(function(c){return '<div class="fitem red"><strong>'+esc(c.concern)+'</strong>'+(c.plan?'<div style="margin-top:3px;font-weight:400;color:#374151">Plan: '+esc(c.plan)+'</div>':'')+'</div>';}).join('')+'</div>':'';
+  }
   var clinGaps=getGapsClinician(), patGaps=getGapsPatient();
   var allGaps=clinGaps.concat(patGaps);
   if(gp){
@@ -5813,15 +5818,23 @@ function _activeReportFontCss(){
     ?'font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6;color:#1f2937'
     :'font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#000';
 }
+function _writeClipboardRichAndPlain(html,plain,btnSel){
+  var done=function(){if(btnSel)flashBtn(btnSel);};
+  var fail=function(){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(plain).then(done,function(){});};
+  try{
+    if(window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){
+      var hb=new Blob([html],{type:'text/html'});
+      var pb=new Blob([plain],{type:'text/plain'});
+      navigator.clipboard.write([new ClipboardItem({'text/html':hb,'text/plain':pb})]).then(done).catch(fail);
+      return;
+    }
+  }catch(e){}
+  fail();
+}
 function copyReportFormatted(){
   var html=_activeReportHtml();
   var fullHtml='<html><body style="'+_activeReportFontCss()+';margin:0;padding:0;">'+html+'</body></html>';
-  try{
-    var htmlBlob=new Blob([fullHtml],{type:'text/html'});
-    navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob})]).then(function(){
-      flashBtn('[onclick="copyReportFormatted()"]');
-    }).catch(function(){navigator.clipboard.writeText(fullHtml);});
-  }catch(e){navigator.clipboard.writeText(fullHtml);}
+  _writeClipboardRichAndPlain(fullHtml,htmlToPlainText(html),'[onclick="copyReportFormatted()"]');
 }
 
 function copyReportPlain(){
@@ -6661,13 +6674,13 @@ function buildGPGuide(){
     ['Tasmania','TasScript — health.tas.gov.au/health-topics/drugs-and-poisons/information-for-medical-practitioners','1. Check TasScript before prescribing.<br>2. Apply for a Section 59E authority through the Pharmaceutical Services Branch, with this letter attached.<br>3. Guidance: health.tas.gov.au/publications/seeking-authorisation-prescribe-s8-psychostimulants-tasmania<br><em>Contact: TAS Pharmaceutical Services Branch — 03 6166 0400 | pharmserv@health.tas.gov.au</em>'],
   ];
 
-  h += '<table style="border-collapse:collapse;width:100%;font-size:10pt;margin-bottom:18px">';
+  h += '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:18px"><table style="border-collapse:collapse;width:100%;table-layout:fixed;font-size:10pt;word-break:break-word;overflow-wrap:anywhere">';
   h += '<tr><th '+TH+' style="width:17%">State/Territory</th><th '+TH+' style="width:22%">RTPM System</th><th '+TH+'>Steps</th></tr>';
   states.forEach(function(s,i){
     var bg = i%2===0?'#fff':'#f9fafb';
-    h += '<tr style="background:'+bg+'"><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top;font-size:10pt">'+s[0]+'</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;font-size:9.5pt;color:#1e3a5f">'+s[1]+'</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;font-size:9.5pt;line-height:1.6">'+s[2]+'</td></tr>';
+    h += '<tr style="background:'+bg+'"><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top;font-size:10pt;word-break:break-word;overflow-wrap:anywhere">'+s[0]+'</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;font-size:9.5pt;color:#1e3a5f;word-break:break-word;overflow-wrap:anywhere">'+s[1]+'</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;font-size:9.5pt;line-height:1.6;word-break:break-word;overflow-wrap:anywhere">'+s[2]+'</td></tr>';
   });
-  h += '</table>';
+  h += '</table></div>';
 
   h += '<h3 style="color:#1e3a5f;margin-bottom:8px">Cardiovascular Monitoring</h3>';
   h += '<p style="font-size:10pt;margin-bottom:8px">Stimulants cause sympathomimetic effects — small average increases in heart rate (~5–7 bpm) and systolic BP (~1–5 mmHg), clinically significant in vulnerable patients.</p>';
@@ -6697,11 +6710,36 @@ function buildGPGuide(){
 
   h += '<h3 style="color:#1e3a5f;margin-bottom:8px">Managing Insomnia</h3>';
   h += '<p style="font-size:10pt;margin-bottom:8px">Insomnia is common in ADHD. Stimulants may or may not worsen it — many patients actually sleep better on treatment due to reduced stress from improved task management. ADHD is strongly associated with Delayed Sleep Phase Syndrome.</p>';
+  var SLEEP_UL='margin:0;padding-left:18px;font-size:10pt;line-height:1.55';
+  var SLEEP_LI='margin-bottom:3px';
   h += '<table style="border-collapse:collapse;width:100%;font-size:10pt;margin-bottom:8px">';
   h += '<tr><th '+TH+' style="width:22%">Intervention</th><th '+TH+'>Details</th></tr>';
-  h += '<tr><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top">Initial actions</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;line-height:1.6">If short-acting stimulant, move last dose to at least 6–8 hours before bedtime. If long-acting, take earlier. Reduce caffeine — cut off at least 10 hours before bed. Optimise sleep hygiene. CBT-I (with psychologist or via This Way Up) for willing patients.</td></tr>';
-  h += '<tr style="background:#f9fafb"><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top">Sleep hygiene</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;line-height:1.6">Fixed wake time 7 days/week. Morning bright light therapy (Re-Timer 3 for 30–60 min within 1 hr of waking). Melatonin 2–4 mg taken 3–4 hours before desired bedtime (not at bedtime) as a chronobiotic. 10-3-2-1-0 wind-down: last caffeine 10 hrs before bed; no heavy meals or alcohol 3 hrs before; stop work 2 hrs before; screens off 1 hr before (or blue light glasses); sleep mask and earplugs at bedtime.</td></tr>';
-  h += '<tr><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top">Medication options</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top;line-height:1.6">Melatonin 1–5 mg (highly effective, especially in ADHD/ASD, taken 3–4 hrs before bed) · Clonidine 50–200 mcg (effective where nocturnal agitation or hyperarousal is an issue) · Lemborexant 5–10 mg · Suvorexant 15–30 mg · Doxylamine 12.5–50 mg (effective short-term; next-day sedation) · Mirtazapine 15–30 mg (also addresses mood and anxiety; monitor weight) · Quetiapine 12.5–50 mg IR · Benzodiazepines: reserve for severe insomnia crisis only, <4 weeks.</td></tr>';
+  h += '<tr><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top">Initial actions</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top">'
+    +'<ul style="'+SLEEP_UL+'">'
+    +'<li style="'+SLEEP_LI+'">If short-acting stimulant: move last dose to at least 6–8 hours before bedtime.</li>'
+    +'<li style="'+SLEEP_LI+'">If long-acting: take earlier in the day.</li>'
+    +'<li style="'+SLEEP_LI+'">Reduce caffeine — cut off at least 10 hours before bed.</li>'
+    +'<li style="'+SLEEP_LI+'">Optimise sleep hygiene (see below).</li>'
+    +'<li style="'+SLEEP_LI+'">CBT-I (with a psychologist or via This Way Up) for willing patients.</li>'
+    +'</ul></td></tr>';
+  h += '<tr style="background:#f9fafb"><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top">Sleep hygiene</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top">'
+    +'<ul style="'+SLEEP_UL+'">'
+    +'<li style="'+SLEEP_LI+'">Fixed wake time 7 days/week.</li>'
+    +'<li style="'+SLEEP_LI+'">Morning bright light therapy (Re-Timer 3 for 30–60 min within 1 hr of waking).</li>'
+    +'<li style="'+SLEEP_LI+'">Melatonin 2–4 mg as a chronobiotic — taken 3–4 hours before desired bedtime (not at bedtime).</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>10-3-2-1-0 wind-down:</strong> last caffeine 10 hrs before bed; no heavy meals or alcohol 3 hrs before; stop work 2 hrs before; screens off 1 hr before (or blue-light glasses); sleep mask and earplugs at bedtime.</li>'
+    +'</ul></td></tr>';
+  h += '<tr><td style="padding:6px 9px;border:1px solid #e5e7eb;font-weight:600;vertical-align:top">Medication options</td><td style="padding:6px 9px;border:1px solid #e5e7eb;vertical-align:top">'
+    +'<ul style="'+SLEEP_UL+'">'
+    +'<li style="'+SLEEP_LI+'"><strong>Melatonin 1–5 mg</strong> — highly effective, especially in ADHD/ASD; take 3–4 hrs before bed.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Clonidine 50–200 mcg</strong> — useful where nocturnal agitation or hyperarousal is an issue.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Lemborexant 5–10 mg</strong>.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Suvorexant 15–30 mg</strong>.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Doxylamine 12.5–50 mg</strong> — effective short-term; next-day sedation common.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Mirtazapine 15–30 mg</strong> — also addresses mood and anxiety; monitor weight.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Quetiapine 12.5–50 mg IR</strong>.</li>'
+    +'<li style="'+SLEEP_LI+'"><strong>Benzodiazepines</strong> — reserve for severe insomnia crisis only, &lt;4 weeks.</li>'
+    +'</ul></td></tr>';
   h += '</table>';
   h += '<p style="font-size:9.5pt;color:#6b7280;font-style:italic;margin-bottom:16px">Recommended products: Re-Timer 3 light therapy glasses (retimer.com.au) · Manta Sleep SOUND mask (mantasleep.com.au) · Loop Dream / Quiet 2 earplugs.</p>';
 
@@ -6923,13 +6961,13 @@ function copyDocFormatted(){
     var tmp = document.createElement('div');
     tmp.innerHTML = sec.html;
     tmp.querySelectorAll('h1,h2').forEach(function(el){
-      el.style.cssText='font-family:Arial,sans-serif;font-size:13pt;font-weight:bold;color:#000000;margin:18pt 0 6pt 0;';
+      el.style.cssText='font-family:Arial,sans-serif;font-size:16pt;font-weight:bold;color:#000000;margin:24pt 0 10pt 0;border-bottom:1pt solid #000;padding-bottom:4pt;';
     });
     tmp.querySelectorAll('h3').forEach(function(el){
-      el.style.cssText='font-family:Arial,sans-serif;font-size:11pt;font-weight:bold;color:#000000;margin:12pt 0 4pt 0;';
+      el.style.cssText='font-family:Arial,sans-serif;font-size:13pt;font-weight:bold;color:#000000;margin:18pt 0 6pt 0;';
     });
     tmp.querySelectorAll('h4').forEach(function(el){
-      el.style.cssText='font-family:Arial,sans-serif;font-size:11pt;font-weight:bold;color:#000000;margin:10pt 0 3pt 0;';
+      el.style.cssText='font-family:Arial,sans-serif;font-size:12pt;font-weight:bold;color:#000000;margin:14pt 0 5pt 0;';
     });
     tmp.querySelectorAll('p').forEach(function(el){
       el.style.cssText='font-family:Arial,sans-serif;font-size:11pt;color:#000000;margin:0 0 8pt 0;line-height:1.5;';
@@ -6956,16 +6994,11 @@ function copyDocFormatted(){
       }
     });
     return '<div style="'+baseStyle+'">'+tmp.innerHTML+'</div>';
-  }).join('<div style="margin:14pt 0"></div>');
+  }).join('<hr style="border:none;border-top:1pt solid #999;margin:28pt 0 24pt 0">');
 
   var fullHtml = '<html><body style="'+baseStyle+'margin:0;padding:0;">'+htmlParts+'</body></html>';
-
-  try {
-    var htmlBlob = new Blob([fullHtml], {type:'text/html'});
-    navigator.clipboard.write([new ClipboardItem({'text/html':htmlBlob})]).then(function(){
-      flashBtn('[onclick="copyDocFormatted()"]');
-    }).catch(function(){navigator.clipboard.writeText(fullHtml);});
-  } catch(e){navigator.clipboard.writeText(fullHtml);}
+  var plain = htmlToPlainText(htmlParts);
+  _writeClipboardRichAndPlain(fullHtml, plain, '[onclick="copyDocFormatted()"]');
 }
 
 // ─── AUTO-DSM LOGIC ──────────────────────────────────────────────────────────
@@ -7444,7 +7477,7 @@ function renderHandoverReference(){
   html+='<div style="margin-top:8px;display:flex;justify-content:flex-end"><button type="button" onclick="_copyHOSection(this,\'ho-letter-content\')" style="font-size:.75rem;background:#1e3a5f;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;font-weight:600">Copy letter</button></div>';
   html+='</div></details>';
   // GP prescribing guide content from buildGPGuide()
-  html+='<details class="pg-details"><summary>State-by-state prescribing guide + side-effect & insomnia management</summary><div class="pg-content"><div id="ho-guide-content">'+buildGPGuide()+'</div>';
+  html+='<details class="pg-details" open><summary>State-by-state prescribing guide + side-effect & insomnia management</summary><div class="pg-content"><div id="ho-guide-content">'+buildGPGuide()+'</div>';
   html+='<div style="margin-top:8px;display:flex;justify-content:flex-end"><button type="button" onclick="_copyHOSection(this,\'ho-guide-content\')" style="font-size:.75rem;background:#1e3a5f;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;font-weight:600">Copy guide</button></div>';
   html+='</div></details>';
   html+='<div style="margin-top:14px;padding:10px 12px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:#475569">Copy the letter and prescribing guide together</span><button type="button" onclick="_copyHOFull(this)" style="font-size:.8rem;background:#1e3a5f;color:#fff;border:none;border-radius:4px;padding:6px 14px;cursor:pointer;font-weight:600">Copy letter + guide</button></div>';
