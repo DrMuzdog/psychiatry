@@ -1153,7 +1153,6 @@ select.inp{appearance:none}
 <div class="panel active" id="panel-alerts">
   <div id="flags-panel"></div>
   <div id="gaps-panel"></div>
-  <div id="medsafety-panel"></div>
 </div>
 
 <!-- EDUCATION -->
@@ -4241,12 +4240,8 @@ function getGapsPatient(){
 }
 function renderFlags(){
   var flags=getFlags(),gaps=getGaps();
-  var fp=$('flags-panel'),gp=$('gaps-panel'),mp=$('medsafety-panel');
+  var fp=$('flags-panel'),gp=$('gaps-panel');
   if(fp)fp.innerHTML=flags.length?'<div class="flags-box"><h3>Safety Flags</h3>'+flags.map(function(fl){return '<div class="fitem'+(fl.level==='red'?' red':'')+'">'+fl.text+'</div>';}).join('')+'</div>':'';
-  if(mp){
-    var concerns=(typeof getMedSafetyConcerns==='function'?getMedSafetyConcerns():[]).filter(function(c){return c.include;});
-    mp.innerHTML=concerns.length?'<div class="flags-box" style="background:#fef2f2;border-color:#dc2626"><h3 style="color:#991b1b">Medical Safety Concerns</h3>'+concerns.map(function(c){return '<div class="fitem red"><strong>'+esc(c.concern)+'</strong>'+(c.plan?'<div style="margin-top:3px;font-weight:400;color:#374151">Plan: '+esc(c.plan)+'</div>':'')+'</div>';}).join('')+'</div>':'';
-  }
   var clinGaps=getGapsClinician(), patGaps=getGapsPatient();
   var allGaps=clinGaps.concat(patGaps);
   if(gp){
