@@ -3858,7 +3858,7 @@ function renderQoL(){
   };
   el.addEventListener('click',el._h);
 }
-function setQoL(n){S.qol=n||0;save();refresh();}
+function setQoL(n){S.qol=n||0;renderQoL();save();refresh();}
 function renderCoreSx(){
   var el=$('core-sx-checks');if(!el)return;
   var inattItems=DEV.filter(function(d){return d.type==='sym'&&/^sym_inatt/.test(d.id);});
