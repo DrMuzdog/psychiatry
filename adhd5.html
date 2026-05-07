@@ -156,6 +156,25 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .rb.ap{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
 .rb.aq{background:var(--purple-bg);border-color:var(--purple);color:var(--purple)}
 .rb.af{background:var(--red-bg);border-color:var(--red);color:var(--red);font-weight:800}
+/* Review-type buttons (Initial / Follow-up / Titration / Script) — larger
+   and more distinct so the user knows which review they're on. */
+#review-type-btns{gap:6px;flex-wrap:wrap}
+#review-type-btns .rb{padding:7px 14px;font-size:12.5px;font-weight:700;letter-spacing:.02em;background:#fff;border:1.5px solid #cbd5e1;color:#475569;box-shadow:0 1px 0 rgba(15,23,42,.04)}
+#review-type-btns .rb:hover{border-color:#1e3a5f;color:#1e3a5f;background:#f8fafc}
+#review-type-btns .rb.aq{background:#1e3a5f;border-color:#1e3a5f;color:#fff;box-shadow:0 2px 6px rgba(30,58,95,.25)}
+/* Tier buttons */
+.tier-row{display:inline-flex;align-items:center;gap:5px;padding:2px 6px;background:#0f172a;border:1px solid #1e293b;border-radius:8px}
+.tier-row .tier-lbl{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;padding:0 4px}
+.tier-btn{padding:3px 9px;border:1px solid #334155;background:#1e293b;color:#cbd5e1;font:700 12px var(--sans);border-radius:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:1.1}
+.tier-btn:hover{border-color:#64748b;color:#f1f5f9}
+.tier-btn.on{background:#f59e0b;border-color:#f59e0b;color:#0f172a;box-shadow:0 0 0 1px #f59e0b}
+.tier-info{width:18px;height:18px;border:1px solid #334155;background:#1e293b;color:#94a3b8;font:700 11px var(--sans);border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;margin-left:2px}
+.tier-info:hover{border-color:#94a3b8;color:#f1f5f9}
+.tier-popover{position:fixed;top:60px;right:12px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:14px 16px;max-width:340px;font:13px/1.5 var(--sans);color:#0f172a;box-shadow:0 8px 24px rgba(15,23,42,.18);z-index:9999}
+.tier-popover h4{margin:0 0 8px 0;font-size:13px;font-weight:800;color:#1e3a5f}
+.tier-popover p{margin:6px 0;font-size:12.5px;line-height:1.45}
+.tier-popover p strong{color:#1e3a5f}
+.tier-popover .tier-close{position:absolute;top:6px;right:8px;background:none;border:none;color:#94a3b8;font-size:16px;cursor:pointer;padding:2px 6px}
 .nf{width:100%;border:1px solid #e1e5ee;border-radius:8px;padding:8px 11px;font:inherit;font-size:13px;resize:vertical;min-height:52px;color:var(--text);background:#fafbfd;margin-top:7px}
 .nf:focus{outline:1px solid var(--primary);background:#fff}
 .fl{font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:#334155;margin-bottom:5px;display:block;margin-top:12px}
@@ -575,6 +594,13 @@ select.inp{appearance:none}
     <input class="ti" id="drName" placeholder="Psychiatrist name" oninput="save();refresh()" style="flex:1 1 130px;min-width:100px" autocomplete="off">
     <input class="ti" id="drQuals" placeholder="FRANZCP / RANZCP" oninput="save();refresh()" style="flex:0 1 130px;min-width:80px" autocomplete="off">
     <input class="ti" id="ptDate" type="date" style="flex:0 0 120px" oninput="save();refresh()">
+    <div class="tier-row" id="tier-row">
+      <span class="tier-lbl">Tier</span>
+      <button type="button" class="tier-btn" data-tier="1" onclick="setTier(1)">1</button>
+      <button type="button" class="tier-btn" data-tier="2" onclick="setTier(2)">2</button>
+      <button type="button" class="tier-btn" data-tier="3" onclick="setTier(3)">3</button>
+      <button type="button" class="tier-info" onclick="toggleTierInfo(event)" title="What do the Tiers mean?">?</button>
+    </div>
     <div style="display:flex;gap:4px;align-items:center;margin-left:auto;flex-shrink:0">
       <button onclick="window.location.reload()" style="padding:3px 9px;border-radius:999px;border:1.5px solid #dc2626;background:#450a0a;color:#fca5a5;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--sans);white-space:nowrap">Reset</button>
     </div>
@@ -2047,7 +2073,7 @@ const TIT_SCEN={
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 const SETTINGS_LIST=['Home','Work','School','TAFE','University','Romantic / partner relationships','Family relationships','Friendships / social','Driving','Recreational / hobbies','Sport / physical activity','Spiritual / religious','Self-care / health management','Online / digital'];
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0,tier:0};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -3859,6 +3885,36 @@ function renderQoL(){
   el.addEventListener('click',el._h);
 }
 function setQoL(n){S.qol=n||0;renderQoL();save();refresh();}
+function setTier(n){
+  n=parseInt(n,10)||0;
+  S.tier=(S.tier===n)?0:n;
+  renderTier();save();refresh();
+}
+function renderTier(){
+  document.querySelectorAll('#tier-row .tier-btn').forEach(function(b){
+    b.classList.toggle('on',parseInt(b.getAttribute('data-tier'),10)===S.tier);
+  });
+}
+function toggleTierInfo(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var existing=document.getElementById('tier-popover');
+  if(existing){existing.remove();return;}
+  var pop=document.createElement('div');
+  pop.id='tier-popover';
+  pop.className='tier-popover';
+  pop.innerHTML='<button type="button" class="tier-close" onclick="document.getElementById(\'tier-popover\').remove()">×</button>'+
+    '<h4>Patient complexity tier</h4>'+
+    '<p><strong>Tier 1</strong> — Straightforward presentation; minimal ongoing psychiatrist follow-up after stabilisation.</p>'+
+    '<p><strong>Tier 2</strong> — One additional complexity (e.g. comorbidity, medication intolerance, partial response). Brief ongoing psychiatrist follow-up to support the GP may be warranted.</p>'+
+    '<p><strong>Tier 3</strong> — Multiple complexities and challenges (significant comorbidity, substance use, treatment resistance, safety concerns). Ongoing psychiatrist follow-up and a clearly documented formulation revisited each session.</p>';
+  document.body.appendChild(pop);
+  // Close on outside click
+  setTimeout(function(){
+    document.addEventListener('click',function h(ev){
+      if(!pop.contains(ev.target)){pop.remove();document.removeEventListener('click',h);}
+    });
+  },50);
+}
 function renderCoreSx(){
   var el=$('core-sx-checks');if(!el)return;
   var inattItems=DEV.filter(function(d){return d.type==='sym'&&/^sym_inatt/.test(d.id);});
@@ -5113,6 +5169,7 @@ function buildFullReportFollowUp(rt){
   if(dr) idItems.push(['Psychiatrist', esc(dr)+(drQuals?' '+esc(drQuals):'')]);
   if(gp) idItems.push(['Referring GP', esc(gp)]);
   if(f('mbsItem')) idItems.push(['MBS item', esc(f('mbsItem'))]);
+  if(S.tier) idItems.push(['Complexity tier', 'Tier '+S.tier]);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
     +buildIdRowsFu(idItems)+'</table>';
 
@@ -5270,6 +5327,7 @@ function buildFullReport(){
   if(gp) idItems.push(['Referring GP', esc(gp)]);
   if(f('ptOtherPresent')) idItems.push(['Others present', esc(f('ptOtherPresent'))]);
   if(f('mbsItem')) idItems.push(['MBS item', esc(f('mbsItem'))]);
+  if(S.tier) idItems.push(['Complexity tier', 'Tier '+S.tier]);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
     +buildIdRows(idItems)+'</table>';
 
@@ -6031,7 +6089,12 @@ function buildLetterReport(){
 
   // Sign-off
   h+='<div class="letter-sig"><p>Yours sincerely,</p><p style="margin-top:18px"><span class="sig-name">'+esc(clin)+'</span>'+(quals?'<br><span class="sig-quals">'+esc(quals)+'</span>':'')+'<br><span class="sig-quals">Consultant Psychiatrist</span></p></div>';
-  if(f('mbsItem'))h+='<p style="margin-top:14px;font-size:9.5pt;color:#6b7280">MBS item: '+esc(f('mbsItem'))+'</p>';
+  if(f('mbsItem')||S.tier){
+    var footBits=[];
+    if(f('mbsItem'))footBits.push('MBS item: '+esc(f('mbsItem')));
+    if(S.tier)footBits.push('Complexity tier: '+S.tier);
+    h+='<p style="margin-top:14px;font-size:9.5pt;color:#6b7280">'+footBits.join(' &nbsp;·&nbsp; ')+'</p>';
+  }
 
   return h;
 }
@@ -7380,7 +7443,7 @@ function initScrollSpy(){
 function init(){
   loadSaved();
 
-  renderDiffChecks();renderScreening();renderDev();renderCoreSx();renderSettings();renderQoL();renderDSM();renderDiffRows();
+  renderDiffChecks();renderScreening();renderDev();renderCoreSx();renderSettings();renderQoL();renderTier();renderDSM();renderDiffRows();
   renderFactorChecks('predispose-checks',RISK_FACTORS,'predispose',{tile:true});
   renderFactorChecks('perpetuate-checks',PERPETUATING_FACTORS,'perpetuate');
   renderFactorChecks('protective-checks',PROTECTIVE_FACTORS,'protective');
