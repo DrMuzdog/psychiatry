@@ -825,6 +825,7 @@ select.inp{appearance:none}
             <button class="rb" onclick="toggleScreening('asrsMode','Patient completed',this,'ap')">Patient completed</button>
             <button class="rb" onclick="toggleScreening('asrsMode','Clinician administered',this,'ap')">Clinician administered</button>
           </div>
+          <input class="inp" id="asrsScore" placeholder="Score (optional)" oninput="setScreening('asrsScore',this.value)">
         </div>
         <div class="ps-tile">
           <div class="ps-tile-label">DIVA-5 outcome</div>
@@ -837,6 +838,33 @@ select.inp{appearance:none}
             <button class="rb" onclick="toggleScreening('divaMode','Patient completed',this,'ap')">Patient completed</button>
             <button class="rb" onclick="toggleScreening('divaMode','Clinician administered',this,'ap')">Clinician administered</button>
           </div>
+          <input class="inp" id="divaScore" placeholder="Score (optional)" oninput="setScreening('divaScore',this.value)">
+        </div>
+        <div class="ps-tile">
+          <div class="ps-tile-label">WURS</div>
+          <div class="rbtns" id="wurs-btns">
+            <button class="rb" onclick="toggleScreening('wurs','Positive',this,'ay')">Positive</button>
+            <button class="rb" onclick="toggleScreening('wurs','Negative',this,'an')">Negative</button>
+            <button class="rb" onclick="toggleScreening('wurs','Not provided',this,'ap')">Not provided</button>
+          </div>
+          <div class="rbtns ps-tile-mode" id="wurs-mode-btns">
+            <button class="rb" onclick="toggleScreening('wursMode','Patient completed',this,'ap')">Patient completed</button>
+            <button class="rb" onclick="toggleScreening('wursMode','Clinician administered',this,'ap')">Clinician administered</button>
+          </div>
+          <input class="inp" id="wursScore" placeholder="Score (optional)" oninput="setScreening('wursScore',this.value)">
+        </div>
+        <div class="ps-tile">
+          <div class="ps-tile-label">BAARS-IV</div>
+          <div class="rbtns" id="baars-btns">
+            <button class="rb" onclick="toggleScreening('baars','Positive',this,'ay')">Positive</button>
+            <button class="rb" onclick="toggleScreening('baars','Negative',this,'an')">Negative</button>
+            <button class="rb" onclick="toggleScreening('baars','Not provided',this,'ap')">Not provided</button>
+          </div>
+          <div class="rbtns ps-tile-mode" id="baars-mode-btns">
+            <button class="rb" onclick="toggleScreening('baarsMode','Patient completed',this,'ap')">Patient completed</button>
+            <button class="rb" onclick="toggleScreening('baarsMode','Clinician administered',this,'ap')">Clinician administered</button>
+          </div>
+          <input class="inp" id="baarsScore" placeholder="Score (optional)" oninput="setScreening('baarsScore',this.value)">
         </div>
         <div class="ps-tile">
           <div class="ps-tile-label">DIVA-5 symptom count</div>
@@ -867,6 +895,22 @@ select.inp{appearance:none}
             <button class="rb" onclick="toggleScreening('obs','Supportive',this,'ay')">Supportive</button>
             <button class="rb" onclick="toggleScreening('obs','Not supportive',this,'an')">Not supportive</button>
             <button class="rb" onclick="toggleScreening('obs','Not provided',this,'ap')">Not provided</button>
+          </div>
+        </div>
+        <div class="ps-tile">
+          <div class="ps-tile-label">Observer WURS</div>
+          <div class="rbtns" id="obs-wurs-btns">
+            <button class="rb" onclick="toggleScreening('obsWurs','Supportive',this,'ay')">Supportive</button>
+            <button class="rb" onclick="toggleScreening('obsWurs','Not supportive',this,'an')">Not supportive</button>
+            <button class="rb" onclick="toggleScreening('obsWurs','Not provided',this,'ap')">Not provided</button>
+          </div>
+        </div>
+        <div class="ps-tile">
+          <div class="ps-tile-label">Observer DIVA</div>
+          <div class="rbtns" id="obs-diva-btns">
+            <button class="rb" onclick="toggleScreening('obsDiva','Supportive',this,'ay')">Supportive</button>
+            <button class="rb" onclick="toggleScreening('obsDiva','Not supportive',this,'an')">Not supportive</button>
+            <button class="rb" onclick="toggleScreening('obsDiva','Not provided',this,'ap')">Not provided</button>
           </div>
         </div>
         <div class="ps-tile">
@@ -972,7 +1016,7 @@ select.inp{appearance:none}
           <button class="sel-all-btn" onclick="famSetAll('Nil')">All nil</button>
           <button class="sel-all-btn desel" onclick="famSetAll('')">Deselect all</button>
         </div>
-        <div id="fam-checks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px"></div>
+        <div id="fam-checks" class="sub-grid"></div>
       </div>
       <div style="padding:0 13px 10px;border-top:1px solid var(--border)">
         <label class="fl" style="margin-top:8px">Details — who and further information</label>
@@ -3693,7 +3737,8 @@ function toggleAssessReason(key,btn){
 function renderScreening(){
   // Main result buttons
   var btnGroups={
-    asrs:'asrs-btns', diva:'diva-btns', obs:'obs-btns',
+    asrs:'asrs-btns', diva:'diva-btns', wurs:'wurs-btns', baars:'baars-btns',
+    obs:'obs-btns', obsWurs:'obs-wurs-btns', obsDiva:'obs-diva-btns',
     gpReferral:'gp-referral-btns', schoolReports:'school-btns', psychReport:'psych-report-btns',
     vanderbiltParent:'vanderbilt-parent-btns', vanderbiltTeacher:'vanderbilt-teacher-btns'
   };
@@ -3713,7 +3758,7 @@ function renderScreening(){
     });
   });
   // Mode buttons (Patient completed / Clinician administered)
-  var modeGroups={asrsMode:'asrs-mode-btns', divaMode:'diva-mode-btns'};
+  var modeGroups={asrsMode:'asrs-mode-btns', divaMode:'diva-mode-btns', wursMode:'wurs-mode-btns', baarsMode:'baars-mode-btns'};
   Object.keys(modeGroups).forEach(function(id){
     var cur=S.screening[id]||'';
     var container=$(modeGroups[id]);
@@ -3722,6 +3767,14 @@ function renderScreening(){
       b.className='rb';
       if(b.textContent.trim()===cur)b.classList.add('ap');
     });
+  });
+  // Score inputs — load from state (no redraw needed for the inputs themselves;
+  // they save via oninput, but on page reload we need to populate them from
+  // S.screening so values aren't lost.)
+  ['asrsScore','divaScore','wursScore','baarsScore'].forEach(function(id){
+    var el=$(id);if(!el)return;
+    var v=S.screening[id]||'';
+    if(el.value!==v)el.value=v;
   });
 }
 function renderDev(){
@@ -3901,15 +3954,15 @@ function renderFam(){
     var isPresent=cur==='Present';
     var isNil=cur==='Nil';
     var detail=(S.famDetail&&S.famDetail[item.id])||'';
-    var detailInp=isPresent?'<input class="fam-detail" type="text" placeholder="brief detail (relation, severity)" value="'+esc(detail)+'" oninput="setFamDetail(\''+item.id+'\',this.value)">':'';
-    return '<div class="rrow" style="flex-direction:column;align-items:stretch;gap:4px">'
-      +'<div style="display:flex;align-items:center;gap:8px"><div class="rlabel" style="flex:1;font-size:12px">'+item.label+'</div>'
-      +'<div class="rbtns">'
-      +'<button class="rb'+(isNil?' ay':'')+'" onclick="setFam(\''+item.id+'\',\'Nil\',this)">Nil</button>'
-      +'<button class="rb'+(isPresent?' af':'')+'" onclick="setFam(\''+item.id+'\',\'Present\',this)">Present</button>'
-      +'</div></div>'
+    var detailInp=isPresent?'<input class="sub-detail" type="text" placeholder="brief detail (relation, severity)" value="'+esc(detail)+'" oninput="setFamDetail(\''+item.id+'\',this.value)">':'';
+    return '<div class="sub-item">'
+      +'<div class="sub-name">'+esc(item.label)+'</div>'
+      +'<div class="sub-btns">'
+        +'<button class="sb'+(isNil?' nil':'')+'" onclick="setFam(\''+item.id+'\',\'Nil\',this)">Nil</button>'
+        +'<button class="sb'+(isPresent?' curr':'')+'" onclick="setFam(\''+item.id+'\',\'Present\',this)">Present</button>'
+      +'</div>'
       +detailInp
-      +'</div>';
+    +'</div>';
   }).join('');
 }
 function setFamDetail(id,val){
@@ -4021,6 +4074,13 @@ function toggleCardiac(id,isFlag,r){S.cardiac[id]=!S.cardiac[id];var b=r.querySe
 function toggleMedical(id,isFlag,r){S.medical[id]=!S.medical[id];var b=r.querySelector('.cbox');if(b)b.className='cbox'+(S.medical[id]?(isFlag?' flag':' yes'):'');save();refresh();}
 function toggleMal(id,r){S.malingering[id]=!S.malingering[id];var b=r.querySelector('.cbox');if(b)b.className='cbox'+(S.malingering[id]?' flag':'');save();refresh();}
 function setScreening(id,val,btn,cls){
+  // Free-text score path (e.g. asrsScore, wursScore) — no button passed in.
+  if(btn===undefined){
+    if(!S.screening)S.screening={};
+    S.screening[id]=val||'';
+    save();refresh();
+    return;
+  }
   var container=btn.closest('.rbtns');
   var isPos=val.indexOf('Positive')>=0||val.indexOf('Supportive')>=0||val.indexOf('Completed')>=0;
   var isNeg=val.indexOf('Negative')>=0||val.indexOf('Not supportive')>=0;
