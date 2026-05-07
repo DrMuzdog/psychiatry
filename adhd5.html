@@ -244,6 +244,12 @@ select.inp{appearance:none}
 .sel-all-btn.desel{border-color:var(--border);background:#f1f5f9;color:var(--muted);}
 .sel-all-btn.desel:hover{background:#e2e6ed;color:var(--text);}
 .diff-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
+.qol-row{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:2px 0}
+.qol-star{font-size:24px;color:#cbd5e1;cursor:pointer;line-height:1;padding:1px 2px;-webkit-tap-highlight-color:transparent;user-select:none;transition:color .12s,transform .08s}
+.qol-star:hover{transform:scale(1.1);color:#f59e0b}
+.qol-star.on{color:#f59e0b}
+.qol-clear{margin-left:8px;padding:3px 9px;border:1px solid var(--border);background:#fff;color:var(--muted);font:600 11px var(--sans);border-radius:5px;cursor:pointer}
+.qol-clear:hover{color:var(--text);border-color:var(--text)}
 .ar-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .ar-chips .ar-chip{padding:5px 11px;border:1.5px solid #cbd5e1;border-radius:7px;background:#fff;color:#475569;font:600 12px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .12s}
 .ar-chips .ar-chip:hover{border-color:var(--primary);color:var(--primary)}
@@ -799,14 +805,16 @@ select.inp{appearance:none}
 </div>
 
 <div class="card" data-initial-only>
-    <div class="ch rose">Presenting Concerns</div>
+    <div class="ch rose">Criterion D — Functional Impairment</div>
     <div class="cb">
       <label class="fl" style="margin-top:0">Reason for seeking assessment</label>
       <div id="assess-reason-chips" class="ar-chips"></div>
       <input class="inp" id="referralReason" placeholder="Additional context (optional)…" oninput="save();refresh()" style="margin-top:8px">
       <label class="fl">Main difficulties (tap to tick)</label>
       <div id="diff-checks"></div>
-      <textarea class="nf" id="presentNotes" placeholder="Additional notes..." oninput="save();refresh()" rows="2"></textarea>
+      <label class="fl" style="margin-top:14px">Quality of life (1 = worst, 10 = best)</label>
+      <div id="qol-stars"></div>
+      <textarea class="nf" id="presentNotes" placeholder="Additional notes..." oninput="save();refresh()" rows="2" style="margin-top:10px"></textarea>
     </div>
   </div>
 <div class="card" data-initial-only>
@@ -966,13 +974,17 @@ select.inp{appearance:none}
     </div>
   </div>
 <div class="card" data-initial-only>
-    <div class="ch amber">Core ADHD Symptoms (DSM-5-TR)</div>
+    <div class="ch amber">Criterion A — Core Criteria</div>
     <div class="cb">
       <div id="core-sx-checks"></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0 0">
+      <label class="fl" style="margin-top:12px">Criterion C — Cross-situational</label>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Which settings do these symptoms appear in? <span style="font-weight:600">2 or more auto-confirms Criterion C in the DSM section.</span></div>
+      <div id="settings-checks" class="diff-grid"></div>
     </div>
   </div>
 <div class="card" data-initial-only>
-    <div class="ch indigo">Developmental History &nbsp;<span style="font-size:10px;font-weight:400;opacity:.75">-- tap ? for example questions</span></div>
+    <div class="ch indigo">Criterion B — Developmental Origin &nbsp;<span style="font-size:10px;font-weight:400;opacity:.75">-- tap ? for example questions</span></div>
     <div class="cb">
       <label class="fl" style="margin-top:0">Predisposing / risk factors</label>
       <div id="predispose-checks"></div>
@@ -982,7 +994,7 @@ select.inp{appearance:none}
     </div>
   </div>
 <div class="card" data-initial-only>
-    <div class="ch sky">Differential Diagnoses &nbsp;<span style="font-size:10px;font-weight:400;opacity:.75">-- tap ? for questions</span></div>
+    <div class="ch sky">Criterion E — Differential Diagnoses &nbsp;<span style="font-size:10px;font-weight:400;opacity:.75">-- tap ? for questions</span></div>
     <div class="cb">
       <div id="diff-rows" class="inner-2col-sm"></div>
       <textarea class="nf" id="diffNotes" placeholder="Differential notes..." oninput="save();refresh()" rows="2"></textarea>
@@ -2026,7 +2038,8 @@ const TIT_SCEN={
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{}};
+const SETTINGS_LIST=['Home','Work','School','TAFE','University','Romantic / partner relationships','Family relationships','Friendships / social','Driving','Recreational / hobbies','Sport / physical activity','Spiritual / religious','Self-care / health management','Online / digital'];
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -3783,6 +3796,43 @@ function renderScreening(){
     if(el.value!==v)el.value=v;
   });
 }
+function renderSettings(){
+  var el=$('settings-checks');if(!el)return;
+  if(!S.settings)S.settings={};
+  el.innerHTML=SETTINGS_LIST.map(function(s){
+    var key=s.replace(/[^a-zA-Z0-9]/g,'_');
+    var on=!!S.settings[key];
+    return '<div class="crow" data-setting="'+key+'"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+esc(s)+'</div></div>';
+  }).join('');
+  if(el._sh)el.removeEventListener('click',el._sh);
+  el._sh=function(e){
+    var r=e.target.closest('.crow');if(!r)return;
+    var k=r.getAttribute('data-setting');if(!k)return;
+    S.settings[k]=!S.settings[k];
+    var cb=r.querySelector('.cbox');if(cb)cb.className='cbox'+(S.settings[k]?' yes':'');
+    // Criterion C is recomputed by autoDSM() during refresh based on
+    // settings count (>=2 sets it).
+    save();refresh();
+  };
+  el.addEventListener('click',el._sh);
+}
+function renderQoL(){
+  var el=$('qol-stars');if(!el)return;
+  var v=parseInt(S.qol||0,10)||0;
+  var html='';
+  for(var i=1;i<=10;i++){
+    html+='<span class="qol-star'+(i<=v?' on':'')+'" data-qol="'+i+'" role="button" aria-label="Rate '+i+'/10">★</span>';
+  }
+  html+='<button type="button" class="qol-clear" onclick="setQoL(0)">Clear</button>';
+  el.innerHTML='<div class="qol-row">'+html+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+(v?(v+' / 10'):'Not rated')+'</div>';
+  if(el._h)el.removeEventListener('click',el._h);
+  el._h=function(e){
+    var s=e.target.closest('.qol-star');if(!s)return;
+    setQoL(parseInt(s.getAttribute('data-qol'),10));
+  };
+  el.addEventListener('click',el._h);
+}
+function setQoL(n){S.qol=n||0;save();refresh();}
 function renderCoreSx(){
   var el=$('core-sx-checks');if(!el)return;
   var inattItems=DEV.filter(function(d){return d.type==='sym'&&/^sym_inatt/.test(d.id);});
@@ -7172,7 +7222,8 @@ function autoDSM(){
   var hiN=hi.filter(function(id){return S.dev[id];}).length;
   var critAMet=inattN>=5||hiN>=5;
   var critBMet=!!S.dev['childhood'];
-  var critCMet=!!S.dev['crossSit'];
+  var settingsCount=S.settings?Object.keys(S.settings).filter(function(k){return S.settings[k];}).length:0;
+  var critCMet=!!S.dev['crossSit']||settingsCount>=2;
   var critDMet=!!S.dev['impairment'];
   var currentDiff=DIFFS.some(function(d){return S.differentials[d.id]==='Current';});
   var currentSubs=SUBS.some(function(s){return S.substances['sub_'+s.replace(/\W/g,'_')]==='Current';});
@@ -7293,7 +7344,7 @@ function initScrollSpy(){
 function init(){
   loadSaved();
 
-  renderDiffChecks();renderScreening();renderDev();renderCoreSx();renderDSM();renderDiffRows();
+  renderDiffChecks();renderScreening();renderDev();renderCoreSx();renderSettings();renderQoL();renderDSM();renderDiffRows();
   renderFactorChecks('predispose-checks',RISK_FACTORS,'predispose');
   renderFactorChecks('perpetuate-checks',PERPETUATING_FACTORS,'perpetuate');
   renderFactorChecks('protective-checks',PROTECTIVE_FACTORS,'protective');
