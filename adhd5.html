@@ -250,6 +250,10 @@ select.inp{appearance:none}
 .qol-star.on{color:#f59e0b}
 .qol-clear{margin-left:8px;padding:3px 9px;border:1px solid var(--border);background:#fff;color:var(--muted);font:600 11px var(--sans);border-radius:5px;cursor:pointer}
 .qol-clear:hover{color:var(--text);border-color:var(--text)}
+.factor-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.factor-tile{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:#475569;font:600 12px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:left;line-height:1.3;min-height:40px;display:flex;align-items:center;transition:background .12s,border-color .12s,color .12s}
+.factor-tile:hover{border-color:var(--primary);color:var(--primary)}
+.factor-tile.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary)}
 .ar-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .ar-chips .ar-chip{padding:5px 11px;border:1.5px solid #cbd5e1;border-radius:7px;background:#fff;color:#475569;font:600 12px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .12s}
 .ar-chips .ar-chip:hover{border-color:var(--primary);color:var(--primary)}
@@ -981,6 +985,7 @@ select.inp{appearance:none}
       <label class="fl" style="margin-top:12px">Criterion C — Cross-situational</label>
       <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Which settings do these symptoms appear in? <span style="font-weight:600">2 or more auto-confirms Criterion C in the DSM section.</span></div>
       <div id="settings-checks" class="diff-grid"></div>
+      <textarea class="nf" id="settingsNotes" placeholder="Notes on cross-situational impact..." oninput="save();refresh()" rows="2" style="margin-top:10px"></textarea>
     </div>
   </div>
 <div class="card" data-initial-only>
@@ -988,6 +993,7 @@ select.inp{appearance:none}
     <div class="cb">
       <label class="fl" style="margin-top:0">Predisposing / risk factors</label>
       <div id="predispose-checks"></div>
+      <textarea class="nf" id="predisposeNotes" placeholder="Notes on predisposing / childhood risk factors..." oninput="save();refresh()" rows="2" style="margin-top:8px"></textarea>
       <label class="fl" style="margin-top:14px">Developmental pattern</label>
       <div id="dev-checks"></div>
       <textarea class="nf" id="devNotes" placeholder="Developmental notes..." oninput="save();refresh()" rows="2" style="margin-top:10px"></textarea>
@@ -1047,8 +1053,10 @@ select.inp{appearance:none}
     <div class="cb">
       <label class="fl" style="margin-top:0">Perpetuating factors</label>
       <div id="perpetuate-checks"></div>
+      <textarea class="nf" id="perpetuateNotes" placeholder="Notes on perpetuating factors..." oninput="save();refresh()" rows="2" style="margin-top:8px"></textarea>
       <label class="fl" style="margin-top:14px">Protective factors</label>
       <div id="protective-checks"></div>
+      <textarea class="nf" id="protectiveNotes" placeholder="Notes on protective factors..." oninput="save();refresh()" rows="2" style="margin-top:8px"></textarea>
     </div>
   </div>
 <div class="card" data-initial-only>
@@ -3723,22 +3731,40 @@ function printTitDoc(){var pane=$('tit-pane-rich');if(!pane)return;openPrintWin(
 // ─── ASSESSMENT RENDERS ───────────────────────────────────────────────────────
 function renderDiffChecks(){$('diff-checks').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllDifficulties()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllDifficulties()">Deselect all</button></div>'+'<div class="diff-grid">'+DIFFICULTIES.map(function(d){var key=d.replace(/[^a-zA-Z0-9]/g,'_');var on=!!S.difficulties[key];return '<div class="crow" onclick="toggleDiff(\''+key+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d+'</div></div>';}).join('')+'</div>';}
 function _factorListFor(stateKey){return stateKey==='predispose'?RISK_FACTORS:stateKey==='perpetuate'?PERPETUATING_FACTORS:PROTECTIVE_FACTORS;}
-function renderFactorChecks(elId,list,stateKey){
+function renderFactorChecks(elId,list,stateKey,opts){
   var el=$(elId);if(!el)return;
-  el.innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn desel" onclick="deselectAllFactors(\''+stateKey+'\',\''+elId+'\')">Deselect all</button></div>'+
-    '<div class="diff-grid">'+
-    list.map(function(d){
-      var key=d.replace(/[^a-zA-Z0-9]/g,'_');
-      var on=!!S[stateKey][key];
-      return '<div class="crow" onclick="toggleFactor(\''+stateKey+'\',\''+key+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d+'</div></div>';
-    }).join('')+
-    '</div>';
+  opts=opts||{};
+  var header='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn desel" onclick="deselectAllFactors(\''+stateKey+'\',\''+elId+'\')">Deselect all</button></div>';
+  var inner;
+  if(opts.tile){
+    inner='<div class="factor-tiles">'+
+      list.map(function(d){
+        var key=d.replace(/[^a-zA-Z0-9]/g,'_');
+        var on=!!S[stateKey][key];
+        return '<button type="button" class="factor-tile'+(on?' on':'')+'" onclick="toggleFactor(\''+stateKey+'\',\''+key+'\',this)">'+esc(d)+'</button>';
+      }).join('')+
+      '</div>';
+  } else {
+    inner='<div class="diff-grid">'+
+      list.map(function(d){
+        var key=d.replace(/[^a-zA-Z0-9]/g,'_');
+        var on=!!S[stateKey][key];
+        return '<div class="crow" onclick="toggleFactor(\''+stateKey+'\',\''+key+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d+'</div></div>';
+      }).join('')+
+      '</div>';
+  }
+  el.innerHTML=header+inner;
 }
-function toggleFactor(stateKey,k,r){S[stateKey][k]=!S[stateKey][k];var b=r.querySelector('.cbox');if(b)b.className='cbox'+(S[stateKey][k]?' yes':'');save();refresh();}
+function toggleFactor(stateKey,k,r){
+  S[stateKey][k]=!S[stateKey][k];
+  if(r&&r.classList&&r.tagName==='BUTTON'){r.classList.toggle('on',S[stateKey][k]);}
+  else if(r){var b=r.querySelector('.cbox');if(b)b.className='cbox'+(S[stateKey][k]?' yes':'');}
+  save();refresh();
+}
 function deselectAllFactors(stateKey,elId){
   var list=_factorListFor(stateKey);
   list.forEach(function(d){S[stateKey][d.replace(/[^a-zA-Z0-9]/g,'_')]=false;});
-  renderFactorChecks(elId,list,stateKey);save();refresh();
+  renderFactorChecks(elId,list,stateKey,{tile:stateKey==='predispose'});save();refresh();
 }
 function renderAssessReasonChips(){
   var el=$('assess-reason-chips');if(!el)return;
@@ -3847,16 +3873,26 @@ function renderCoreSx(){
     return '<div style="display:flex;align-items:baseline;gap:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 2px 4px"><span>'+label+'</span><span style="font-weight:700;color:var(--text)">'+count+' / '+items.length+'</span></div>'+
       '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px;margin-bottom:10px">'+items.map(row).join('')+'</div>';
   }
-  el.innerHTML=group('Inattention',inattCount,inattItems)+group('Hyperactivity-impulsivity',hiCount,hiItems);
+  var header='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllCoreSx()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllCoreSx()">Deselect all</button></div>';
+  el.innerHTML=header+group('Inattention',inattCount,inattItems)+group('Hyperactivity-impulsivity',hiCount,hiItems);
   if(el._symHandler)el.removeEventListener('click',el._symHandler);
   el._symHandler=function(e){
     var r=e.target.closest('.sym-crow');if(!r)return;
     var id=r.getAttribute('data-devid');if(!id)return;
     S.dev[id]=!S.dev[id];
-    var cb=r.querySelector('.cbox');if(cb)cb.className='cbox'+(S.dev[id]?' yes':'');
-    save();refresh();
+    renderCoreSx();save();refresh();
   };
   el.addEventListener('click',el._symHandler);
+}
+function selectAllCoreSx(){
+  var sx=DEV.filter(function(d){return d.type==='sym';});
+  sx.forEach(function(d){S.dev[d.id]=true;});
+  renderCoreSx();save();refresh();
+}
+function deselectAllCoreSx(){
+  var sx=DEV.filter(function(d){return d.type==='sym';});
+  sx.forEach(function(d){S.dev[d.id]=false;});
+  renderCoreSx();save();refresh();
 }
 function renderDev(){
   var header='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllDev()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllDev()">Deselect all</button></div>';
@@ -7345,7 +7381,7 @@ function init(){
   loadSaved();
 
   renderDiffChecks();renderScreening();renderDev();renderCoreSx();renderSettings();renderQoL();renderDSM();renderDiffRows();
-  renderFactorChecks('predispose-checks',RISK_FACTORS,'predispose');
+  renderFactorChecks('predispose-checks',RISK_FACTORS,'predispose',{tile:true});
   renderFactorChecks('perpetuate-checks',PERPETUATING_FACTORS,'perpetuate');
   renderFactorChecks('protective-checks',PROTECTIVE_FACTORS,'protective');
   renderAssessReasonChips();
