@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ADHD Telehealth Reference Guide — Dr Benjamin Murrie</title>
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--border:#e2e6ed;--text:#1a1d23;--muted:#6b7280;--primary:#1a56db;--primary-bg:#e8f0fe;--green:#16a34a;--green-bg:#dcfce7;--amber:#b45309;--amber-bg:#fef3c7;--red:#dc2626;--red-bg:#fee2e2;--purple:#7c3aed;--purple-bg:#ede9fe;--navy:#0f172a;--teal:#0f766e;--r:10px;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;min-height:100vh;overflow-x:hidden}
+.topbar{background:var(--navy);padding:8px 14px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--primary);position:sticky;top:0;z-index:100}
+.topbar-title{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#93c5fd;white-space:nowrap}
+.topbar-sub{font-size:11px;color:#64748b;margin-left:6px}
+.tabs{background:#1e293b;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #334155;box-shadow:0 2px 6px rgba(0,0,0,.2);position:sticky;top:41px;z-index:90}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 15px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;font-family:var(--sans);flex-shrink:0}
+.tab:hover{color:#cbd5e1}
+.tab.active{color:#f1f5f9;border-bottom-color:var(--primary)}
+.content{max-width:1100px;margin:0 auto;padding:14px 12px 40px}
+.panel{display:none}.panel.active{display:block}
+/* Cards */
+.card{background:var(--surface);border:1px solid #e8ebf1;border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.ch{padding:9px 14px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:#26456b;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.ch::after{content:'▾';font-size:11px;opacity:.85;transition:transform .15s;flex-shrink:0;margin-left:8px}
+.card.collapsed .ch::after{transform:rotate(-90deg)}
+.card.collapsed .cb{display:none}
+.ch.green{background:#047857}.ch.teal{background:#0f766e}.ch.amber{background:#b45309}
+.ch.red{background:#b91c1c}.ch.purple{background:#6d28d9}.ch.rose{background:#be185d}
+.ch.sky{background:#0369a1}.ch.indigo{background:#4338ca}.ch.slate{background:#334155}
+.ch.gold{background:#b45309;color:#fefce8}.ch.emerald{background:#065f46}
+.ch.plum{background:#86198f}.ch.navy{background:#1e3a5f}
+.cb{padding:12px 14px}
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:700px){.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:440px){.g3{grid-template-columns:1fr}}
+/* Section header */
+.section-header{background:linear-gradient(90deg,#1e293b,#1e3a5f);color:#f1f5f9;padding:10px 14px;border-radius:var(--r) var(--r) 0 0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:18px 0 0;border-left:4px solid var(--primary);display:flex;align-items:center;gap:8px}
+.section-header:first-child{margin-top:0}
+.section-header .sh-num{background:var(--primary);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+/* Info blocks */
+.info-block{font-size:13px;line-height:1.65;color:#1e293b}
+.info-block p{margin:0 0 8px}
+.info-block p:last-child{margin:0}
+.info-block ul{margin:4px 0 8px 18px}
+.info-block li{margin-bottom:4px}
+.info-block strong{color:#0f172a}
+/* Tables */
+.ref-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+.ref-tbl th{background:#f1f5f9;padding:6px 9px;text-align:left;border:1px solid var(--border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.ref-tbl td{padding:6px 9px;border:1px solid #e8ebf1;vertical-align:top;line-height:1.5}
+.ref-tbl tr:nth-child(even) td{background:#f9fafb}
+.ref-tbl tr:hover td{background:#f0f6ff}
+/* Chips / badges */
+.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;margin:2px 2px}
+.chip-green{background:var(--green-bg);color:#166534;border:1px solid #bbf7d0}
+.chip-amber{background:var(--amber-bg);color:#92400e;border:1px solid #fde68a}
+.chip-red{background:var(--red-bg);color:#991b1b;border:1px solid #fecaca}
+.chip-blue{background:var(--primary-bg);color:#1e40af;border:1px solid #bfdbfe}
+.chip-purple{background:var(--purple-bg);color:#5b21b6;border:1px solid #ddd6fe}
+.chip-gray{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+/* Callout boxes */
+.callout{border-radius:8px;padding:10px 13px;margin:8px 0;font-size:13px;line-height:1.6}
+.callout-blue{background:#eff6ff;border:1.5px solid #93c5fd;color:#1e3a5f}
+.callout-green{background:var(--green-bg);border:1.5px solid #86efac;color:#14532d}
+.callout-amber{background:var(--amber-bg);border:1.5px solid #fcd34d;color:#78350f}
+.callout-red{background:var(--red-bg);border:1.5px solid #fca5a5;color:#7f1d1d}
+.callout-purple{background:var(--purple-bg);border:1.5px solid #c4b5fd;color:#4c1d95}
+.callout strong{display:block;margin-bottom:3px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.85}
+/* Criteria list */
+.criteria-list{list-style:none;margin:0;padding:0}
+.criteria-list li{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:13px;line-height:1.45}
+.criteria-list li:last-child{border-bottom:none}
+.crit-num{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.crit-num.hi{background:#7c3aed}
+.crit-num.warn{background:#b45309}
+/* Med block */
+.med-block{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.med-head{padding:9px 13px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.med-head.stim{background:#dbeafe;color:#1e3a8a;border-bottom:1px solid #bfdbfe}
+.med-head.nonstim{background:#f3e8ff;color:#4c1d95;border-bottom:1px solid #ddd6fe}
+.med-body{padding:10px 13px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.med-body{grid-template-columns:1fr}}
+.med-col label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:3px}
+.med-col p{font-size:12.5px;line-height:1.5;color:#1e293b}
+.med-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px}
+.med-tag.s8{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.med-tag.s4{background:var(--green-bg);color:#166534;border:1px solid #bbf7d0}
+.med-tag.pbs{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.med-tag.priv{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+/* State row */
+.state-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px}
+.state-row:last-child{border-bottom:none}
+.state-badge{min-width:38px;font-size:10px;font-weight:800;background:#1e3a5f;color:#fff;border-radius:5px;padding:3px 6px;text-align:center;letter-spacing:.04em;flex-shrink:0}
+.state-detail{flex:1;line-height:1.55}
+/* MBS row */
+.mbs-row{display:grid;grid-template-columns:100px 1fr auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px}
+.mbs-row:last-child{border-bottom:none}
+.mbs-item{font-family:monospace;font-weight:700;color:var(--primary);font-size:13px}
+.mbs-fee{font-weight:700;color:var(--green);white-space:nowrap}
+/* Subheading within card body */
+.sub-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:14px 0 7px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.sub-h:first-child{margin-top:0}
+/* Symptom grid */
+.sx-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+@media(max-width:500px){.sx-grid{grid-template-columns:1fr}}
+.sx-item{display:flex;gap:7px;align-items:flex-start;padding:4px 0;font-size:12.5px;line-height:1.4}
+.sx-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:4px}
+.sx-dot.hi{background:#7c3aed}
+/* Flow steps */
+.flow-step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.flow-step-num{width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-step-body{flex:1;font-size:13px;line-height:1.55;padding-top:3px}
+.flow-step-body strong{display:block;margin-bottom:2px}
+/* Monitoring table */
+.mon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px;margin:6px 0}
+.mon-tile{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;background:#fafbfc}
+.mon-tile label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:4px}
+.mon-tile p{font-size:12px;line-height:1.5;color:#1e293b}
+/* Print */
+@media print{.tabs,.topbar{display:none}.panel{display:block!important}.card.collapsed .cb{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">ADHD Telehealth Reference Guide</span>
+  <span class="topbar-sub">by Dr Benjamin Murrie · AADPA 2024</span>
+</div>
+
+<div class="tabs" id="main-tabs">
+  <button class="tab active" onclick="showTab('assessment',this)">Assessment</button>
+  <button class="tab" onclick="showTab('diagnosis',this)">Diagnosis</button>
+  <button class="tab" onclick="showTab('medications',this)">Medications</button>
+  <button class="tab" onclick="showTab('prescribing',this)">Prescribing</button>
+  <button class="tab" onclick="showTab('billing',this)">Billing</button>
+  <button class="tab" onclick="showTab('followup',this)">Follow-up</button>
+  <button class="tab" onclick="showTab('special',this)">Special Groups</button>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════════════════════
+     ASSESSMENT TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-assessment">
+
+<div class="section-header"><span class="sh-num">1</span>Telehealth Setup</div>
+
+<div class="card">
+  <div class="ch teal" onclick="toggleCard(this)">Pre-Session Checklist</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Before the Appointment</div>
+        <ul>
+          <li>Send screening questionnaires ≥48 h before (ASRS, DIVA-5, PHQ-9, GAD-7, AUDIT-C)</li>
+          <li>Request GP referral letter, previous reports, school records</li>
+          <li>Confirm patient has a private, quiet space for the session</li>
+          <li>Verify platform is encrypted and clinically compliant</li>
+          <li>Confirm patient's <strong>physical location (state/territory)</strong> — determines prescribing jurisdiction</li>
+          <li>Check RTPM / SafeScript before session starts</li>
+          <li>Consider whether collateral informant (partner, parent) should attend</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Technical Minimums</div>
+        <ul>
+          <li>Encrypted video platform (not standard Zoom for clinical care)</li>
+          <li>Patient needs stable internet, camera, microphone</li>
+          <li>Ensure you can see patient's face clearly for MSE</li>
+          <li>Phone as backup — but phone-only has more MBS restrictions</li>
+          <li>Document platform used and connection quality</li>
+          <li>Telehealth consent: verbal at minimum, written preferred; document in notes</li>
+        </ul>
+        <div class="callout callout-amber" style="margin-top:8px">
+          <strong>Jurisdiction note</strong>
+          S8 scripts must be written for the state/territory the patient is physically located in. Ask at session start.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch slate" onclick="toggleCard(this)">What Telehealth Cannot Do — Plan Accordingly</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Cannot Assess Remotely</div>
+        <ul>
+          <li>Accurate BP &amp; HR — request from patient's GP or pharmacy, or home device</li>
+          <li>Height and weight — self-report or from GP; essential for children</li>
+          <li>Cardiac auscultation (ECG via GP if indicated)</li>
+          <li>Full neurological examination</li>
+          <li>Direct observation of motor tics at rest</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Can Assess Via Video</div>
+        <ul>
+          <li>Appearance, grooming, eye contact, psychomotor activity</li>
+          <li>Speech rate, volume, fluency, latency</li>
+          <li>Mood and affect (verbal and facial expression)</li>
+          <li>Thought form and content</li>
+          <li>Insight and judgment</li>
+          <li>Observable restlessness, fidgeting, distractibility</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-blue" style="margin-top:4px">
+      <strong>Practical approach</strong>
+      Request GP to perform cardiovascular examination and baseline observations before first prescription. Advise patient to have BP/HR checked at pharmacy or own device before titration reviews.
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Screening Tools</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Rating Scales — Adult</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Scale</th><th>What it measures</th><th>Cutoff / scoring</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ASRS-v1.1</strong><br>Adult ADHD Self-Report Scale</td><td>Current inattentive + hyperactive-impulsive symptoms (18 items)</td><td>Part A: 4+ of first 6 items scoring ≥3 = screen positive. Full scale 0–72.</td><td>Free, validated, quick. Best used as pre-screen; not diagnostic.</td></tr>
+        <tr><td><strong>DIVA-5</strong><br>Diagnostic Interview for ADHD in Adults</td><td>Structured diagnostic interview mapping DSM-5 criteria in childhood AND adulthood</td><td>Meets threshold if criteria satisfied per DSM-5. Score inattention and H/I domains separately.</td><td>Gold standard for adult structured assessment. Covers Criterion A, B, C. Can be self-administered beforehand then reviewed clinically.</td></tr>
+        <tr><td><strong>WURS-25</strong><br>Wender Utah Rating Scale</td><td>Retrospective childhood ADHD symptoms</td><td>Score &gt;36 = significant childhood symptoms consistent with ADHD</td><td>25-item version (cutoff 36); 5-item short form (cutoff 14). Helps with Criterion B (onset before 12).</td></tr>
+        <tr><td><strong>BAARS-IV</strong><br>Barkley Adult ADHD Rating Scale</td><td>Current + childhood inattentive / H/I / sluggish cognitive tempo</td><td>Compare to age/sex norms. ≥93rd percentile is clinical threshold.</td><td>Has self-report and other-report forms. Useful for capturing sluggish cognitive tempo (separate construct).</td></tr>
+        <tr><td><strong>Conners CAARS</strong></td><td>Current ADHD symptoms + DSM-IV symptom subscales</td><td>T-score ≥65 on relevant subscales</td><td>Self-report and observer (CAARS-O) versions. Normed by age and sex.</td></tr>
+        <tr><td><strong>PHQ-9 / GAD-7</strong></td><td>Depression / anxiety comorbidity screen</td><td>PHQ-9: ≥10 moderate depression. GAD-7: ≥10 moderate anxiety.</td><td>Always screen — high comorbidity and differential dx importance.</td></tr>
+        <tr><td><strong>AUDIT / AUDIT-C</strong></td><td>Alcohol use</td><td>AUDIT ≥8 = hazardous. AUDIT-C ≥4 (M) / ≥3 (F) = hazardous.</td><td>Important before S8 prescribing. ADHD and AUD closely linked.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Rating Scales — Children &amp; Adolescents</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Scale</th><th>Rater</th><th>Age</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Vanderbilt ADHD Scales</strong></td><td>Parent + Teacher</td><td>6–12</td><td>Free. Screens for ADHD subtypes + comorbid ODD, anxiety, depression. Teacher version critical for cross-situational evidence.</td></tr>
+        <tr><td><strong>Conners-3</strong></td><td>Parent / Teacher / Self (≥8)</td><td>6–18</td><td>Comprehensive. T-scores vs norms. Subscales for inattention, H/I, learning problems, executive functioning, defiance.</td></tr>
+        <tr><td><strong>SDQ</strong><br>Strengths and Difficulties Questionnaire</td><td>Parent / Teacher / Self (≥11)</td><td>4–17</td><td>Free, brief. Hyperactivity subscale + emotional / conduct / peer subscales. Good for comorbidity screening.</td></tr>
+        <tr><td><strong>SNAP-IV</strong></td><td>Parent + Teacher</td><td>6–18</td><td>Free. Maps directly to DSM criteria. Items rated 0–3.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-amber" style="margin-top:8px">
+      <strong>Key point — collateral is essential</strong>
+      In children, teacher ratings are mandatory for Criterion C (cross-situational). Request school reports and/or Vanderbilt teacher form before confirming diagnosis.
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">3</span>Clinical Interview Framework</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">Structured Assessment — Recommended Order</div>
+  <div class="cb">
+    <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><strong>Presenting complaint &amp; reason for assessment</strong>Functional impairment driving referral. Work, study, relationships, self-management. Patient's own words first.</div></div>
+    <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><strong>Current core symptoms (Criterion A)</strong>Review ASRS/DIVA responses. Probe each DSM-5-TR symptom. Ask for specific examples in current life. Rate severity (mild/moderate/severe) and frequency.</div></div>
+    <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><strong>Developmental history — childhood onset (Criterion B)</strong>Symptoms before age 12. School performance (primary school is key). Reports, teacher comments, parent recollections. WURS responses. Ask: "Were you told you were restless/dreamy/couldn't concentrate at school?"</div></div>
+    <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><strong>Cross-situational evidence (Criterion C)</strong>Which settings are affected: home, work, social, driving, finances, relationships? Need ≥2 settings. Ask about each domain explicitly.</div></div>
+    <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-body"><strong>Functional impairment (Criterion D)</strong>Quantify: job loss, relationship breakdown, academic failure, financial difficulties, near-miss accidents, self-esteem impact.</div></div>
+    <div class="flow-step"><div class="flow-step-num">6</div><div class="flow-step-body"><strong>Differential diagnosis screen</strong>Anxiety, depression, bipolar, ASD, trauma, sleep disorder, substance use. Do not skip — these are both differentials AND common comorbidities.</div></div>
+    <div class="flow-step"><div class="flow-step-num">7</div><div class="flow-step-body"><strong>Psychiatric history</strong>Prior diagnoses, treatments, hospitalisations. Previous ADHD assessments or trials of medication.</div></div>
+    <div class="flow-step"><div class="flow-step-num">8</div><div class="flow-step-body"><strong>Substance use history</strong>Alcohol, cannabis, stimulants, opioids. Current use pattern. AUDIT. ADHD + SUD is common — affects medication choice.</div></div>
+    <div class="flow-step"><div class="flow-step-num">9</div><div class="flow-step-body"><strong>Medical history &amp; medications</strong>Cardiac conditions, hypertension, tics, seizures, sleep disorders, liver disease. Current medications (interactions). Allergies.</div></div>
+    <div class="flow-step"><div class="flow-step-num">10</div><div class="flow-step-body"><strong>Family history</strong>ADHD in first-degree relatives (heritability ~76%). Also: bipolar disorder, psychosis, substance use, tics/Tourette syndrome.</div></div>
+    <div class="flow-step"><div class="flow-step-num">11</div><div class="flow-step-body"><strong>Social history</strong>Living situation, relationships, occupation, support network, driving, legal history.</div></div>
+    <div class="flow-step"><div class="flow-step-num">12</div><div class="flow-step-body"><strong>MSE via video</strong>Appearance, behaviour, speech, mood/affect, thought (form + content), perception, cognition (concentration/attention observable during interview), insight, judgment.</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch navy" onclick="toggleCard(this)">Example Probing Questions by Domain</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Inattention</div>
+        <ul>
+          <li>"Do you often re-read sentences without taking in what they say?"</li>
+          <li>"Do you often make careless mistakes in your work or miss details?"</li>
+          <li>"How do you manage to-do lists, bills, appointments?"</li>
+          <li>"Do you often start tasks but find it hard to follow through?"</li>
+          <li>"Do people say you don't seem to listen when they're talking to you?"</li>
+          <li>"Do you frequently lose keys, phone, wallet?"</li>
+          <li>"Does external noise or movement easily break your concentration?"</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Childhood Onset</div>
+        <ul>
+          <li>"At primary school, did teachers comment you were dreamy, chatty, or couldn't sit still?"</li>
+          <li>"Did you find it hard to complete homework? Did parents or teachers have to help more than most kids?"</li>
+          <li>"Did you often lose or forget things at school?"</li>
+          <li>"Were you ever held back a year or receive extra support?"</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Hyperactivity / Impulsivity</div>
+        <ul>
+          <li>"Do you feel restless or find it hard to sit still for long periods?"</li>
+          <li>"Do you often talk too much or over others in conversation?"</li>
+          <li>"Do you blurt out answers or finish other people's sentences?"</li>
+          <li>"Do you make impulsive decisions — purchases, job changes, relationships?"</li>
+          <li>"Do you find queuing or waiting very difficult?"</li>
+          <li>"Do you often interrupt in meetings or social settings?"</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Functional Impact</div>
+        <ul>
+          <li>"How has this affected your career or education?"</li>
+          <li>"Has it affected your relationships — partner, friends, family?"</li>
+          <li>"Do you have trouble managing money or paying bills on time?"</li>
+          <li>"Any driving incidents — fines, accidents, near-misses?"</li>
+          <li>"How does this affect your self-esteem?"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end assessment panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     DIAGNOSIS TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-diagnosis">
+
+<div class="section-header"><span class="sh-num">1</span>DSM-5-TR Diagnostic Criteria</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">Criterion A — Core Symptoms (must meet threshold in ≥1 domain)</div>
+  <div class="cb">
+    <div class="callout callout-blue" style="margin-bottom:10px">
+      <strong>Threshold</strong>
+      Age ≤16: ≥6 symptoms in the domain(s). Age ≥17: ≥5 symptoms in the domain(s). Symptoms must have persisted for ≥6 months to a degree inconsistent with developmental level and negatively impacting social/academic/occupational activities.
+    </div>
+    <div class="g2">
+      <div>
+        <div class="sub-h" style="color:#1e40af">Inattention (9 symptoms)</div>
+        <ul class="criteria-list">
+          <li><div class="crit-num">1</div><div>Often fails to give close attention to details, or makes careless mistakes in schoolwork, work, or other activities</div></li>
+          <li><div class="crit-num">2</div><div>Often has difficulty sustaining attention in tasks or play activities</div></li>
+          <li><div class="crit-num">3</div><div>Often does not seem to listen when spoken to directly</div></li>
+          <li><div class="crit-num">4</div><div>Often does not follow through on instructions and fails to finish tasks</div></li>
+          <li><div class="crit-num">5</div><div>Often has difficulty organising tasks and activities</div></li>
+          <li><div class="crit-num">6</div><div>Often avoids, dislikes, or is reluctant to engage in tasks requiring sustained mental effort</div></li>
+          <li><div class="crit-num">7</div><div>Often loses things necessary for tasks or activities</div></li>
+          <li><div class="crit-num">8</div><div>Is often easily distracted by extraneous stimuli</div></li>
+          <li><div class="crit-num">9</div><div>Is often forgetful in daily activities</div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="sub-h" style="color:#5b21b6">Hyperactivity-Impulsivity (9 symptoms)</div>
+        <ul class="criteria-list">
+          <li><div class="crit-num hi">1</div><div>Often fidgets with or taps hands/feet, or squirms in seat</div></li>
+          <li><div class="crit-num hi">2</div><div>Often leaves seat when remaining seated is expected</div></li>
+          <li><div class="crit-num hi">3</div><div>Often runs about or climbs in inappropriate situations (adults: often feels restless)</div></li>
+          <li><div class="crit-num hi">4</div><div>Often unable to play or engage in leisure activities quietly</div></li>
+          <li><div class="crit-num hi">5</div><div>Is often "on the go," acting as if "driven by a motor"</div></li>
+          <li><div class="crit-num hi">6</div><div>Often talks excessively</div></li>
+          <li><div class="crit-num hi">7</div><div>Often blurts out an answer before a question has been completed</div></li>
+          <li><div class="crit-num hi">8</div><div>Often has difficulty waiting their turn</div></li>
+          <li><div class="crit-num hi">9</div><div>Often interrupts or intrudes on others</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">Criteria B–E &amp; Specifiers</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Remaining Criteria</div>
+        <ul class="criteria-list">
+          <li><div class="crit-num warn">B</div><div>Several inattentive or hyperactive-impulsive symptoms were present <strong>before age 12 years</strong></div></li>
+          <li><div class="crit-num warn">C</div><div>Symptoms are present in <strong>two or more settings</strong> (home, school, work, with friends, other activities)</div></li>
+          <li><div class="crit-num warn">D</div><div>Clear evidence that symptoms <strong>interfere with, or reduce the quality</strong> of social, academic, or occupational functioning</div></li>
+          <li><div class="crit-num warn">E</div><div>Symptoms do not occur exclusively during schizophrenia or another psychotic disorder, and are <strong>not better explained by another mental disorder</strong></div></li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Presentation Specifiers</div>
+        <table class="ref-tbl">
+          <thead><tr><th>Specifier</th><th>DSM code</th><th>ICD-10</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Combined</strong> (≥5/6 symptoms in both domains)</td><td>314.01</td><td>F90.2</td></tr>
+            <tr><td><strong>Predominantly Inattentive</strong> (threshold Inattention, &lt;5/6 H/I)</td><td>314.00</td><td>F90.0</td></tr>
+            <tr><td><strong>Predominantly Hyperactive-Impulsive</strong> (threshold H/I, &lt;5/6 Inattention)</td><td>314.01</td><td>F90.1</td></tr>
+            <tr><td><em>In partial remission</em> (previously met criteria, currently sub-threshold)</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="sub-h" style="margin-top:10px">Severity Specifiers</div>
+        <ul>
+          <li><span class="chip chip-green">Mild</span> Few symptoms beyond threshold; minor functional impairment</li>
+          <li><span class="chip chip-amber">Moderate</span> Symptoms/impairment between mild and severe</li>
+          <li><span class="chip chip-red">Severe</span> Many symptoms beyond threshold; marked functional impairment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Differential Diagnosis</div>
+
+<div class="card">
+  <div class="ch amber" onclick="toggleCard(this)">Key Differentials — Clinical Distinguishing Features</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Condition</th><th>Overlapping features</th><th>Key distinguishing features</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Anxiety Disorders</strong></td><td>Poor concentration, restlessness, avoidance of tasks</td><td>Worry is the driver of inattention (not wandering mind); restlessness is tension/dread-based; typically episodic. ADHD inattention is pervasive, lifelong, and consistent across situations.</td></tr>
+        <tr><td><strong>Major Depression</strong></td><td>Poor concentration, fatigue, low motivation, executive dysfunction</td><td>Onset correlates with depressive episode; concentration returns with remission. ADHD is chronic and present even when euthymic.</td></tr>
+        <tr><td><strong>Bipolar Disorder</strong></td><td>Impulsivity, distractibility, racing thoughts, increased activity, talkativeness</td><td>Bipolar: episodic, with periods of normality. ADHD: persistent, continuous since childhood. Family history, sleep changes, and grandiosity distinguish bipolar hypomanic/manic states.</td></tr>
+        <tr><td><strong>ASD</strong></td><td>Inattention (to non-special-interest topics), social difficulties, rigidity, sensory sensitivity</td><td>ASD inattention is domain-specific (hyperfocus on special interests, inattention to non-interests). Social difficulties are qualitatively different. Can be comorbid — DSM-5 allows dual diagnosis.</td></tr>
+        <tr><td><strong>Borderline PD</strong></td><td>Impulsivity, emotional lability, interpersonal difficulties, self-harm</td><td>BPD: emotion regulation as primary driver; identity disturbance; interpersonal hypersensitivity; trauma history common. Can be comorbid with ADHD.</td></tr>
+        <tr><td><strong>PTSD / Complex Trauma</strong></td><td>Concentration difficulties, hyperarousal, hypervigilance, emotional dysregulation</td><td>PTSD: onset after trauma; hypervigilance is threat-driven not novelty-seeking. However, ADHD increases trauma risk and both commonly co-occur.</td></tr>
+        <tr><td><strong>Sleep Disorders</strong></td><td>Inattention, irritability, impulsivity, fatigue, poor executive function</td><td>OSA: daytime somnolence, snoring, witnessed apnoeas. Insomnia: can co-occur with and worsen ADHD. Always screen sleep — treat sleep disorders first or concurrently.</td></tr>
+        <tr><td><strong>Substance Use Disorders</strong></td><td>Impulsivity, inattention, poor functioning, mood instability</td><td>SUD symptoms may remit with sobriety. However ADHD co-occurs in ~30–50% of adults with SUD. If possible, assess after a period of sobriety.</td></tr>
+        <tr><td><strong>Thyroid dysfunction</strong></td><td>Restlessness (hyper), cognitive slowing (hypo), anxiety</td><td>Thyroid function tests rule in/out. Hyperthyroidism can mimic ADHD-HI.</td></tr>
+        <tr><td><strong>Learning Disorders</strong></td><td>Academic underperformance, task avoidance, frustration</td><td>Learning disorder: difficulty is domain-specific (reading, maths). ADHD: impairment is broad and context-dependent. Often co-occur.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">3</span>Common Comorbidities</div>
+
+<div class="card">
+  <div class="ch green" onclick="toggleCard(this)">Comorbidity Prevalence &amp; Clinical Implications</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Comorbidity</th><th>Prevalence in ADHD</th><th>Clinical note</th></tr></thead>
+      <tbody>
+        <tr><td>Anxiety disorders</td><td>~50% adults</td><td>Treat ADHD first; stimulants may worsen anxiety in some — monitor. Atomoxetine has anxiolytic properties.</td></tr>
+        <tr><td>Major depression</td><td>~20–30%</td><td>ADHD chronically impairs function → secondary depression. Treat both. Stimulants alone may improve mood via treating ADHD.</td></tr>
+        <tr><td>ASD</td><td>~20–50% of ADHD have ASD features; ~50–70% of ASD meet ADHD criteria</td><td>Dual diagnosis is valid per DSM-5. Stimulants less effective and more side effects in ASD — start low, go slow.</td></tr>
+        <tr><td>Bipolar disorder</td><td>~20%</td><td>Carefully distinguish. If genuine comorbidity, mood stabiliser first, then consider non-stimulant or cautious stimulant under cover.</td></tr>
+        <tr><td>SUD (alcohol/drugs)</td><td>~25–50% adults</td><td>Prefer LDX (prodrug) or non-stimulants. Avoid IR stimulants in active stimulant SUD. Treating ADHD may reduce SUD severity.</td></tr>
+        <tr><td>ODD / Conduct disorder</td><td>~60% children with ADHD</td><td>Parent management training essential. Stimulants reduce ODD symptoms in ADHD. Guanfacine helpful for aggression.</td></tr>
+        <tr><td>Tic disorders / Tourette</td><td>~20% ADHD have tics</td><td>Stimulants may worsen tics in some — use lowest effective dose. Guanfacine/clonidine have anti-tic effects. Atomoxetine is tic-neutral.</td></tr>
+        <tr><td>Sleep disorders</td><td>&gt;50%</td><td>Insomnia, delayed sleep phase, restless legs. Address sleep actively — poor sleep amplifies all ADHD symptoms.</td></tr>
+        <tr><td>Eating disorders</td><td>Elevated, especially binge eating</td><td>Lisdexamfetamine is PBS-approved for binge eating disorder (BED). ADHD impulsivity drives binge eating.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- end diagnosis panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     MEDICATIONS TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-medications">
+
+<div class="section-header"><span class="sh-num">1</span>Medication Selection Algorithm</div>
+
+<div class="card">
+  <div class="ch emerald" onclick="toggleCard(this)">Choosing First-Line Treatment</div>
+  <div class="cb">
+    <div class="callout callout-blue" style="margin-bottom:10px">
+      <strong>AADPA 2024 — First-line pharmacotherapy for adults</strong>
+      Lisdexamfetamine (Vyvanse) or long-acting methylphenidate. For children ≥6: methylphenidate preferred first-line; amphetamines second-line per TGA indication.
+    </div>
+    <table class="ref-tbl">
+      <thead><tr><th>Clinical Scenario</th><th>Preferred Choice</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td>Adults — standard first-line</td><td>Lisdexamfetamine (Vyvanse) or Methylphenidate LA/ER</td><td>Efficacy, single daily dose, PBS listed</td></tr>
+        <tr><td>Children ≥6 — standard first-line</td><td>Methylphenidate IR/LA or Concerta</td><td>TGA indication; most paediatric safety data</td></tr>
+        <tr><td>Active substance use disorder</td><td>Lisdexamfetamine (lower diversion risk) or Atomoxetine</td><td>Prodrug reduces misuse potential</td></tr>
+        <tr><td>Comorbid tics / Tourette</td><td>Atomoxetine or Guanfacine XR</td><td>Tic-neutral or anti-tic properties</td></tr>
+        <tr><td>Comorbid anxiety (significant)</td><td>Atomoxetine first; cautious stimulant trial if suboptimal</td><td>Atomoxetine has anxiolytic properties</td></tr>
+        <tr><td>Comorbid binge eating disorder</td><td>Lisdexamfetamine (Vyvanse)</td><td>PBS listed for BED as well as ADHD</td></tr>
+        <tr><td>Sleep is a major problem</td><td>Guanfacine XR nocte as add-on; consider clonidine</td><td>Sedating properties; avoid afternoon stimulants</td></tr>
+        <tr><td>Stimulants contraindicated / failed</td><td>Atomoxetine → then Guanfacine XR</td><td>Non-stimulant pathway</td></tr>
+        <tr><td>Comorbid hypertension (mild–moderate)</td><td>Caution with stimulants; monitor closely; consider non-stimulants</td><td>Stimulants increase BP 2–4 mmHg on average</td></tr>
+        <tr><td>Cardiac disease / arrhythmia</td><td>Avoid stimulants unless cardiology clearance. Consider atomoxetine with caution.</td><td>Significant cardiovascular risk</td></tr>
+        <tr><td>Pregnancy</td><td>Non-pharmacological preferred. Individual risk-benefit discussion.</td><td>Limited safety data for all agents</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Stimulants</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Lisdexamfetamine — Vyvanse (prodrug amphetamine)</div>
+  <div class="cb">
+    <div class="med-block">
+      <div class="med-head stim">Lisdexamfetamine (Vyvanse) <span class="med-tag s8">Schedule 8</span> <span class="med-tag pbs">PBS Listed</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Available strengths</label><p>20 mg, 30 mg, 40 mg, 50 mg, 60 mg, 70 mg capsules</p></div>
+        <div class="med-col"><label>Duration of effect</label><p>12–14 hours. Take in the morning.</p></div>
+        <div class="med-col"><label>Starting dose</label><p>20–30 mg mane</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase by 20 mg every 2 weeks as tolerated</p></div>
+        <div class="med-col"><label>Target / usual range</label><p>30–70 mg/day. Most adults: 40–70 mg.</p></div>
+        <div class="med-col"><label>Maximum</label><p>70 mg/day (state-independent ceiling)</p></div>
+        <div class="med-col"><label>PBS authority</label><p>Required. ADHD (adults + children ≥6) and Binge Eating Disorder (adults). PRODA.</p></div>
+        <div class="med-col"><label>Micro-titration method</label><p>Open capsule, dissolve in 70 mL water → 1 mg/mL solution. Take measured volume. Remainder discard.</p></div>
+      </div>
+    </div>
+    <div class="callout callout-blue" style="margin-top:4px">
+      <strong>Why prefer as first-line</strong>
+      Prodrug — inactive until converted to d-amphetamine by RBC enzymes. Lower abuse potential, less diversion risk, cannot be snorted or injected effectively. Once-daily dosing.
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Dexamphetamine — IR tablets</div>
+  <div class="cb">
+    <div class="med-block">
+      <div class="med-head stim">Dexamphetamine IR <span class="med-tag s8">Schedule 8</span> <span class="med-tag pbs">PBS Listed</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Available strengths</label><p>5 mg tablets (Aspen Dexamphetamine, generic brands)</p></div>
+        <div class="med-col"><label>Duration of effect</label><p>4–6 hours per dose</p></div>
+        <div class="med-col"><label>Starting dose</label><p>5 mg mane; or 5 mg BD (morning + midday)</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase by 5 mg/day per week. Most patients require BD–TDS dosing.</p></div>
+        <div class="med-col"><label>Target / usual range</label><p>15–40 mg/day in divided doses</p></div>
+        <div class="med-col"><label>Maximum</label><p>60 mg/day (most states). Check RTPM/state authority for higher doses.</p></div>
+        <div class="med-col"><label>Typical regimen</label><p>e.g. 10 mg mane + 10 mg midday + 5–10 mg early afternoon</p></div>
+        <div class="med-col"><label>Avoid dose after</label><p>~3 pm (insomnia risk). Adjust to individual's schedule.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Methylphenidate — IR, LA (Ritalin), ER/OROS (Concerta)</div>
+  <div class="cb">
+    <div class="med-block">
+      <div class="med-head stim">Methylphenidate IR — Ritalin / Artige <span class="med-tag s8">Schedule 8</span> <span class="med-tag pbs">PBS Listed</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Strengths</label><p>10 mg tablets</p></div>
+        <div class="med-col"><label>Duration</label><p>3–5 hours per dose</p></div>
+        <div class="med-col"><label>Start</label><p>5–10 mg BD–TDS (morning, midday, ± early afternoon)</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase 5–10 mg/dose per week</p></div>
+        <div class="med-col"><label>Max</label><p>60 mg/day (most states). Can divide into 3 doses.</p></div>
+        <div class="med-col"><label>Notes</label><p>Fastest onset; useful for flexible coverage. Higher rebound rate than LA preparations.</p></div>
+      </div>
+    </div>
+    <div class="med-block" style="margin-top:8px">
+      <div class="med-head stim">Methylphenidate LA — Ritalin LA <span class="med-tag s8">Schedule 8</span> <span class="med-tag pbs">PBS Listed</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Strengths</label><p>10, 20, 30, 40, 60 mg capsules (50% IR beads + 50% ER beads)</p></div>
+        <div class="med-col"><label>Duration</label><p>8–10 hours</p></div>
+        <div class="med-col"><label>Start</label><p>20 mg mane</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase 10 mg per week</p></div>
+        <div class="med-col"><label>Max</label><p>60 mg/day</p></div>
+        <div class="med-col"><label>Notes</label><p>Can open capsule and sprinkle on food — do not crush beads. Useful if tablet swallowing difficult.</p></div>
+      </div>
+    </div>
+    <div class="med-block" style="margin-top:8px">
+      <div class="med-head stim">Methylphenidate OROS — Concerta <span class="med-tag s8">Schedule 8</span> <span class="med-tag pbs">PBS Listed</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Strengths</label><p>18, 27, 36, 54 mg tablets (OROS: 22% immediate + 78% extended release)</p></div>
+        <div class="med-col"><label>Duration</label><p>10–12 hours</p></div>
+        <div class="med-col"><label>Start</label><p>18 mg mane (children), 27–36 mg mane (adults)</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase by 18 mg per week</p></div>
+        <div class="med-col"><label>Max</label><p>54 mg/day standard; some states allow 72–108 mg with authority</p></div>
+        <div class="med-col"><label>Notes</label><p>Do NOT crush/chew. Tablet shell may appear in stool — normal. Smooth, consistent release profile.</p></div>
+      </div>
+    </div>
+    <div class="callout callout-amber" style="margin-top:8px">
+      <strong>Methylphenidate IR → LA conversion guide</strong>
+      MPH IR 5 mg TDS (15 mg) ≈ Ritalin LA 20 mg OR Concerta 18 mg. MPH IR 10 mg TDS (30 mg) ≈ Ritalin LA 30–40 mg OR Concerta 36 mg. MPH IR 20 mg TDS (60 mg) ≈ Ritalin LA 60 mg OR Concerta 54 mg.
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">3</span>Non-Stimulants</div>
+
+<div class="card">
+  <div class="ch purple" onclick="toggleCard(this)">Atomoxetine — Strattera (SNRI)</div>
+  <div class="cb">
+    <div class="med-block">
+      <div class="med-head nonstim">Atomoxetine (Strattera) <span class="med-tag s4">Schedule 4</span> <span class="med-tag pbs">PBS Listed</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Strengths</label><p>10, 18, 25, 40, 60, 80, 100 mg capsules</p></div>
+        <div class="med-col"><label>Onset</label><p>4–12 weeks for full therapeutic effect</p></div>
+        <div class="med-col"><label>Start</label><p>40 mg mane (adults &gt;70 kg). &lt;70 kg: 0.5 mg/kg/day.</p></div>
+        <div class="med-col"><label>Titration</label><p>After ≥3 days → 80 mg/day. After ≥4 weeks → 100 mg/day if needed.</p></div>
+        <div class="med-col"><label>Target dose</label><p>Adults: 80–100 mg/day. Weight-based: 1.2 mg/kg (max 1.4 mg/kg or 100 mg).</p></div>
+        <div class="med-col"><label>Dosing</label><p>Once daily mane; or split BD if tolerability issues (nausea reduced with food)</p></div>
+        <div class="med-col"><label>Key advantages</label><p>Not S8 (no RTPM/authority requirement in most states). Tic-neutral. Anxiolytic properties. No diversion potential. Safe in SUD.</p></div>
+        <div class="med-col"><label>Key cautions</label><p>Hepatotoxicity (rare — monitor LFTs if symptoms). Suicidal ideation black box (children/adolescents). Urinary retention (males). Sexual dysfunction.</p></div>
+      </div>
+    </div>
+    <div class="callout callout-purple" style="margin-top:8px">
+      <strong>Counselling point — must emphasise onset</strong>
+      Patient must be told atomoxetine takes 4–12 weeks for full effect. Early discontinuation due to perceived "not working" is common. Set expectations clearly at initiation.
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch purple" onclick="toggleCard(this)">Guanfacine XR — Intuniv (alpha-2A agonist)</div>
+  <div class="cb">
+    <div class="med-block">
+      <div class="med-head nonstim">Guanfacine XR (Intuniv) <span class="med-tag s4">Schedule 4</span> <span class="med-tag pbs">PBS (children 6–17)</span> <span class="med-tag priv">Private (adults)</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Strengths</label><p>1, 2, 3, 4 mg modified-release tablets</p></div>
+        <div class="med-col"><label>Onset</label><p>4–8 weeks for full effect</p></div>
+        <div class="med-col"><label>Start</label><p>1 mg nocte (evening — reduces sedation impact)</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase by 1 mg per week as tolerated</p></div>
+        <div class="med-col"><label>Target</label><p>3–4 mg/day for most adults</p></div>
+        <div class="med-col"><label>Cessation</label><p>Must taper — reduce by 1 mg per week. Abrupt stop risks rebound hypertension.</p></div>
+        <div class="med-col"><label>Advantages</label><p>Reduces tics, improves sleep, reduces aggression and emotional dysregulation. Good add-on to stimulants.</p></div>
+        <div class="med-col"><label>Side effects</label><p>Somnolence (common, usually improves), hypotension/dizziness, bradycardia, dry mouth, constipation.</p></div>
+      </div>
+    </div>
+    <div class="callout callout-red" style="margin-top:8px">
+      <strong>Do not stop abruptly</strong>
+      Rebound hypertension on sudden cessation. Always taper over several weeks. Document this in shared care letters.
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch slate" onclick="toggleCard(this)">Clonidine — off-label add-on (Catapres / Dixarit)</div>
+  <div class="cb">
+    <div class="med-block">
+      <div class="med-head nonstim">Clonidine (Catapres / Dixarit) <span class="med-tag s4">Schedule 4</span> <span class="med-tag priv">Off-label — Private Script</span></div>
+      <div class="med-body">
+        <div class="med-col"><label>Strengths</label><p>Catapres: 50 mcg, 100 mcg, 150 mcg. Dixarit: 25 mcg.</p></div>
+        <div class="med-col"><label>Use in ADHD</label><p>Insomnia, tics, impulsivity, hyperarousal. Add-on therapy; rarely monotherapy.</p></div>
+        <div class="med-col"><label>Nocte dosing</label><p>50 mcg nocte → increase to 100–150 mcg nocte over 2–4 weeks</p></div>
+        <div class="med-col"><label>BD dosing</label><p>50 mcg BD → 100 mcg BD (morning + night)</p></div>
+        <div class="med-col"><label>Cessation</label><p>Must taper — rebound hypertension risk on abrupt cessation</p></div>
+        <div class="med-col"><label>Side effects</label><p>Sedation (nocte dose often beneficial), hypotension, dry mouth, bradycardia</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">4</span>Side Effects &amp; Monitoring</div>
+
+<div class="card">
+  <div class="ch red" onclick="toggleCard(this)">Side Effect Reference — Stimulants</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Common (>10%)</div>
+        <ul>
+          <li>Decreased appetite (usually most prominent mid-morning to afternoon)</li>
+          <li>Weight loss (dose-dependent; significant in children)</li>
+          <li>Insomnia / sleep onset delay (timing-dependent — dose too late)</li>
+          <li>Headache (usually resolves in first 1–2 weeks)</li>
+          <li>Dry mouth</li>
+          <li>Nausea (take with food)</li>
+          <li>BP increase (~2–4 mmHg systolic average)</li>
+          <li>HR increase (~2–4 bpm average)</li>
+          <li>Irritability / emotional lability (often at peak concentration or "rebound")</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Uncommon / Serious</div>
+        <ul>
+          <li>Anxiety exacerbation (especially in anxiety-prone individuals)</li>
+          <li>Mood elevation / mania (risk in undiagnosed bipolar)</li>
+          <li>Psychotic symptoms (risk in vulnerable individuals)</li>
+          <li>Tic emergence or worsening (reassess — usually manageable)</li>
+          <li>Growth suppression (children — monitor height/weight 6-monthly)</li>
+          <li>Rebound effect (irritability, tearfulness as dose wears off)</li>
+          <li>Cardiovascular events (very rare; mainly in pre-existing disease)</li>
+          <li>Priapism (very rare)</li>
+          <li>Substance misuse / diversion</li>
+        </ul>
+        <div class="callout callout-amber" style="margin-top:8px">
+          <strong>Telehealth monitoring</strong>
+          BP/HR cannot be directly measured. Instruct patients to check BP at pharmacy or use home device before each titration review. Get baseline from GP before starting.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch green" onclick="toggleCard(this)">Monitoring Parameters — All Medications</div>
+  <div class="cb">
+    <div class="mon-grid">
+      <div class="mon-tile"><label>Blood Pressure</label><p>Baseline. Every review during titration. 3–6 monthly when stable. Target: &lt;140/90 mmHg.</p></div>
+      <div class="mon-tile"><label>Heart Rate</label><p>Baseline. Each titration visit. Consider ECG if pre-existing cardiac Hx or abnormal HR.</p></div>
+      <div class="mon-tile"><label>Weight (adults)</label><p>Baseline; 6-monthly. Significant loss (&gt;5 kg or &gt;5%) — reassess dose timing, dietary strategies.</p></div>
+      <div class="mon-tile"><label>Height + Weight (children)</label><p>Every 3–6 months. Plot on growth chart. Stimulant dose holidays over school breaks if significant growth suppression.</p></div>
+      <div class="mon-tile"><label>Sleep</label><p>Each visit. Poor sleep amplifies all ADHD symptoms. Adjust timing of doses.</p></div>
+      <div class="mon-tile"><label>Appetite</label><p>Each visit. Encourage calorie-dense breakfast before morning dose. Main meal in evening when appetite returns.</p></div>
+      <div class="mon-tile"><label>Mood / Psychiatric sx</label><p>Screen for anxiety, depression, mania at each visit. PHQ-9/GAD-7 at baseline and annually.</p></div>
+      <div class="mon-tile"><label>ADHD symptoms</label><p>ASRS or clinician global impression each visit. Compare to baseline.</p></div>
+      <div class="mon-tile"><label>RTPM / SafeScript</label><p>Before each S8 script. Mandatory in all Australian states. Document check in notes.</p></div>
+      <div class="mon-tile"><label>Substance use</label><p>Screen at baseline and periodically. UDS if WA patient ≥16 or clinical concern.</p></div>
+      <div class="mon-tile"><label>LFTs (atomoxetine)</label><p>If hepatic symptoms develop (jaundice, abdominal pain, fatigue). Not routine unless symptomatic.</p></div>
+      <div class="mon-tile"><label>Adherence &amp; Diversion</label><p>Ask directly each visit. Pill counts if concern. RTPM cross-reference. Clinical judgment.</p></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end medications panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PRESCRIBING TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-prescribing">
+
+<div class="section-header"><span class="sh-num">1</span>Australian State &amp; Territory Requirements</div>
+
+<div class="card">
+  <div class="ch navy" onclick="toggleCard(this)">State-by-State Prescribing Authorities — Stimulants (Adult ADHD)</div>
+  <div class="cb">
+    <div class="callout callout-amber" style="margin-bottom:10px">
+      <strong>Key principle for telehealth</strong>
+      S8 prescriptions must comply with the laws of the state/territory where the patient is physically located at the time of the consultation, not where the clinician is located. Confirm patient location at start of each session.
+    </div>
+    <div class="state-row"><div class="state-badge">NSW</div><div class="state-detail"><strong>SafeScript NSW</strong> — mandatory check before every S8 script. Psychiatrists: prescribe without prior approval. Max doses: dexamphetamine 60 mg/day, methylphenidate 60 mg/day, lisdexamfetamine 70 mg/day. Exceeding these requires Individual Patient Authority from NSW Ministry of Health. Controlled Medicines Patient Treatment Register (CMPRT) if high-risk.</div></div>
+    <div class="state-row"><div class="state-badge">VIC</div><div class="state-detail"><strong>SafeScript VIC</strong> — mandatory. Psychiatrists: prescribe directly. Max: dexamphetamine 60 mg, methylphenidate 80 mg (authority for &gt;60 mg), lisdexamfetamine 70 mg. Authority required from Drugs, Poisons and Controlled Substances Unit for higher doses or complex cases.</div></div>
+    <div class="state-row"><div class="state-badge">QLD</div><div class="state-detail"><strong>QScript</strong> — mandatory. Psychiatrists: prescribe under authority — Queensland Health's Stimulant Prescribing Reference Guide. Max: dexamphetamine 60 mg, methylphenidate 60 mg, lisdexamfetamine 70 mg. Private patients require private authority approval. PBS items require separate authority application (PRODA).</div></div>
+    <div class="state-row"><div class="state-badge">WA</div><div class="state-detail"><strong>ScriptCheckWA</strong> — mandatory. <strong>UDS mandatory before initiating treatment in adults ≥16 years</strong>. Psychiatrists: can prescribe for ADHD. Max: dexamphetamine 60 mg, methylphenidate 60 mg, lisdexamfetamine 70 mg. DAA / DOHWA oversight. Higher doses require WA DoH authority.</div></div>
+    <div class="state-row"><div class="state-badge">SA</div><div class="state-detail"><strong>ScriptCheckSA</strong> — mandatory. Psychiatrists: prescribe directly. SA Drug and Alcohol Services (DASSA) notification may be required for complex cases. Max: dexamphetamine 60 mg, methylphenidate 60 mg, lisdexamfetamine 70 mg.</div></div>
+    <div class="state-row"><div class="state-badge">TAS</div><div class="state-detail"><strong>TasScript</strong> — mandatory. Psychiatrists: can prescribe directly. Tasmanian Controlled Medicines framework. Standard dose caps as per other states. Report to TGA Adverse Event system if unusual reactions.</div></div>
+    <div class="state-row"><div class="state-badge">ACT</div><div class="state-detail"><strong>Canberra Script</strong> — mandatory. Psychiatrists: prescribe directly under ACT Medicines, Poisons and Therapeutic Goods Act. Max: standard per national guidelines. Similar framework to NSW.</div></div>
+    <div class="state-row"><div class="state-badge">NT</div><div class="state-detail"><strong>NTScript</strong> — mandatory. Additional requirements apply for remote and Aboriginal communities. Psychiatrists: prescribe under NT Poisons and Dangerous Drugs Act. Max doses as per national guidelines.</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch navy" onclick="toggleCard(this)">PBS Authority &amp; eScripting</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">PBS Authority Process (PRODA / phone)</div>
+        <ul>
+          <li>All ADHD stimulants require PBS Authority — apply via PRODA (online) or Services Australia (phone)</li>
+          <li>Authority number must appear on script</li>
+          <li>PRODA online: fastest option — real-time for most ADHD items</li>
+          <li>Telephone authority: 1800 888 333 (business hours)</li>
+          <li>Document authority number in patient notes</li>
+          <li>Authority is for the specific medication, dose range, and indication</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Total tablets per day calculation</div>
+        <ul>
+          <li>PBS calculates supply based on total tabs/day × 20 days = qty per script</li>
+          <li>Dex 5 mg: 12 tabs/day max → 240 tabs for 20 days</li>
+          <li>Repeat interval: minimum 20 days between fills for S8 stimulants (most states)</li>
+          <li>Repeats: varies by state. Document number of repeats on script.</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">eScripting for S8</div>
+        <ul>
+          <li>Electronic prescribing (eScript) is now available for S8 medications in most states</li>
+          <li>Patient receives token via SMS or email → dispenses at pharmacy</li>
+          <li>Particularly useful in telehealth — no paper script to mail</li>
+          <li>Confirm state allows eScript for S8 — most now do</li>
+          <li>RTPM check required regardless of whether eScript or paper</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Private Scripts</div>
+        <ul>
+          <li>Non-PBS stimulants (e.g. higher doses, off-label): write as private S8</li>
+          <li>Must include all mandatory S8 script requirements per state</li>
+          <li>Clonidine, guanfacine (adults): private S4 script</li>
+          <li>Atomoxetine: PBS listed; does not require S8 authority</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch red" onclick="toggleCard(this)">Contraindications &amp; Cautions for Stimulant Prescribing</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Absolute Contraindications (stimulants)</div>
+        <ul>
+          <li>Structural cardiac disease with significant arrhythmia risk</li>
+          <li>Severe hypertension (uncontrolled)</li>
+          <li>Glaucoma (narrow-angle)</li>
+          <li>Hyperthyroidism (untreated)</li>
+          <li>Active psychotic disorder (or within past 12 months)</li>
+          <li>MAOIs (within 14 days)</li>
+          <li>Known hypersensitivity to amphetamines/methylphenidate</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Cautions — Proceed Carefully / Consider Non-Stimulant</div>
+        <ul>
+          <li>Tics / Tourette syndrome (monitor; may exacerbate in some)</li>
+          <li>Active substance use disorder (prefer LDX; avoid IR agents)</li>
+          <li>Bipolar disorder (mood stabiliser cover preferred first)</li>
+          <li>History of psychosis (careful risk-benefit; monitoring)</li>
+          <li>Anxiety disorders (start low; may worsen)</li>
+          <li>Borderline hypertension — baseline &gt;135/85 mmHg</li>
+          <li>Pregnancy / breastfeeding</li>
+          <li>Severe hepatic impairment (especially atomoxetine)</li>
+          <li>Raynaud phenomenon</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch amber" onclick="toggleCard(this)">Drug Interactions — Key Pairs</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Drug / Class</th><th>Interaction with stimulants</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>MAOIs (phenelzine, tranylcypromine, moclobemide)</td><td>Severe hypertensive crisis risk</td><td>Contraindicated — 14-day washout required</td></tr>
+        <tr><td>SSRIs / SNRIs</td><td>Mild serotonergic effects; possible mild BP increase</td><td>Generally safe. Monitor. Fluoxetine inhibits CYP2D6 — may raise atomoxetine levels.</td></tr>
+        <tr><td>Antihypertensives</td><td>Stimulants counteract antihypertensive effect</td><td>Monitor BP closely; may need to adjust antihypertensive dose</td></tr>
+        <tr><td>Warfarin</td><td>Amphetamines may potentiate anticoagulant effect</td><td>Monitor INR more frequently on initiation/dose change</td></tr>
+        <tr><td>Lithium</td><td>May blunt amphetamine effect; some interaction possible</td><td>Monitor; generally usable together</td></tr>
+        <tr><td>Tricyclics (TCAs)</td><td>Combined adrenergic effects; increased CV risk</td><td>Caution; monitor HR/BP</td></tr>
+        <tr><td>Alkalinising agents (antacids, citric acid)</td><td>Increase amphetamine absorption and may prolong effect</td><td>Avoid high-dose antacids around dosing time</td></tr>
+        <tr><td>Acidifying agents (ammonium chloride, vit C)</td><td>Increase urinary excretion of amphetamines, reducing effect</td><td>Avoid large doses of vitamin C around dose times</td></tr>
+        <tr><td>Atomoxetine + CYP2D6 inhibitors (fluoxetine, paroxetine, bupropion)</td><td>Significantly raise atomoxetine plasma levels</td><td>Start at lower dose or reduce dose; monitor side effects</td></tr>
+        <tr><td>Guanfacine + CYP3A4 inhibitors/inducers</td><td>Increased/decreased guanfacine levels</td><td>Adjust dose; monitor BP</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- end prescribing panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     BILLING TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-billing">
+
+<div class="section-header"><span class="sh-num">1</span>MBS Telehealth Item Numbers — Psychiatrist</div>
+
+<div class="card">
+  <div class="ch green" onclick="toggleCard(this)">Video Consultation Items</div>
+  <div class="cb">
+    <div class="sub-h">Initial / Assessment</div>
+    <div class="mbs-row"><div class="mbs-item">92437</div><div>Initial psychiatric consultation via video (equivalent to 296). Includes ongoing reviews. Psychiatrist to patient.</div><div class="mbs-fee">$262.10</div></div>
+    <div class="mbs-row"><div class="mbs-item">92434</div><div>Complex neurodevelopmental disorder management plan, video (equivalent to 289). NDD includes ADHD, ASD, ID.</div><div class="mbs-fee">$265.60</div></div>
+    <div class="mbs-row"><div class="mbs-item">92435</div><div>GP management plan (psychiatrist component), video (equivalent to 291). Requires GP management plan referral. Use once per year unless exceptional circumstances.</div><div class="mbs-fee">$455.60</div></div>
+    <div class="mbs-row"><div class="mbs-item">92436</div><div>GP management plan follow-up, video (equivalent to 293).</div><div class="mbs-fee">$284.80</div></div>
+    <div class="sub-h" style="margin-top:12px">Follow-up (Video — psychiatrist to patient)</div>
+    <div class="mbs-row"><div class="mbs-item">91827</div><div>Follow-up ≤15 min, video (equivalent to 300)</div><div class="mbs-fee">$43.65</div></div>
+    <div class="mbs-row"><div class="mbs-item">91828</div><div>Follow-up 15–30 min, video (equivalent to 302)</div><div class="mbs-fee">$87.05</div></div>
+    <div class="mbs-row"><div class="mbs-item">91829</div><div>Follow-up 30–45 min, video (equivalent to 304)</div><div class="mbs-fee">$134.00</div></div>
+    <div class="mbs-row"><div class="mbs-item">91830</div><div>Follow-up 45–75 min, video (equivalent to 306)</div><div class="mbs-fee">$184.90</div></div>
+    <div class="mbs-row"><div class="mbs-item">91831</div><div>Follow-up &gt;75 min, video (equivalent to 308)</div><div class="mbs-fee">$214.55</div></div>
+    <div class="sub-h" style="margin-top:12px">Non-patient Consultations (Collateral — video)</div>
+    <div class="mbs-row"><div class="mbs-item">91874</div><div>Non-patient ≤15 min, video (equivalent to 341) — e.g. parent, partner interview</div><div class="mbs-fee">$43.65</div></div>
+    <div class="mbs-row"><div class="mbs-item">91875</div><div>Non-patient 15–30 min, video (equivalent to 343)</div><div class="mbs-fee">$87.05</div></div>
+    <div class="mbs-row"><div class="mbs-item">91876</div><div>Non-patient 30–45 min, video (equivalent to 345)</div><div class="mbs-fee">$134.00</div></div>
+    <div class="mbs-row"><div class="mbs-item">91877</div><div>Non-patient 45–75 min, video (equivalent to 347)</div><div class="mbs-fee">$184.90</div></div>
+    <div class="mbs-row"><div class="mbs-item">91878</div><div>Non-patient &gt;75 min, video (equivalent to 349)</div><div class="mbs-fee">$214.55</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch green" onclick="toggleCard(this)">Phone Consultation Items</div>
+  <div class="cb">
+    <div class="sub-h">Follow-up (Phone — psychiatrist to patient)</div>
+    <div class="callout callout-amber" style="margin-bottom:8px">
+      <strong>Note</strong>
+      Phone-only items are more restricted than video. Phone is acceptable where video is not practicable. No phone equivalent for initial assessments.
+    </div>
+    <div class="mbs-row"><div class="mbs-item">91837</div><div>Follow-up ≤15 min, phone (equivalent to 300)</div><div class="mbs-fee">$43.65</div></div>
+    <div class="mbs-row"><div class="mbs-item">91838</div><div>Follow-up 15–30 min, phone (equivalent to 302)</div><div class="mbs-fee">$87.05</div></div>
+    <div class="mbs-row"><div class="mbs-item">91839</div><div>Follow-up 30–45 min, phone (equivalent to 304)</div><div class="mbs-fee">$134.00</div></div>
+    <div class="sub-h" style="margin-top:12px">Non-patient Consultations (Phone)</div>
+    <div class="mbs-row"><div class="mbs-item">91882</div><div>Non-patient ≤15 min, phone (equivalent to 341)</div><div class="mbs-fee">$43.65</div></div>
+    <div class="mbs-row"><div class="mbs-item">91883</div><div>Non-patient 15–30 min, phone (equivalent to 343)</div><div class="mbs-fee">$87.05</div></div>
+    <div class="mbs-row"><div class="mbs-item">91884</div><div>Non-patient 30–45 min, phone (equivalent to 345)</div><div class="mbs-fee">$134.00</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Billing Strategy by Practice Model</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Model</th><th>Initial item</th><th>Follow-up (video)</th><th>Key requirement</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Specialist-led (no shared care)</strong></td><td>92437</td><td>91827–91831 (time-based)</td><td>Ongoing referral from GP. No prior 291/92435 needed.</td></tr>
+        <tr><td><strong>GP Management Plan model</strong></td><td>92435 (once/year)</td><td>91827–91831 or 92436</td><td>GP must have a current management plan. 291/92435 can only be billed once in a 12-month period (with exceptions).</td></tr>
+        <tr><td><strong>NDD Complex Plan</strong></td><td>92434</td><td>92436 or 91827–91831</td><td>Must be a neurodevelopmental disorder. ADHD qualifies.</td></tr>
+        <tr><td><strong>Titration-only reviews</strong></td><td>—</td><td>91827–91828 (usually 15–30 min)</td><td>Short reviews; bill by time. Document time in notes.</td></tr>
+        <tr><td><strong>Script-only / monitoring</strong></td><td>—</td><td>91827 (≤15 min)</td><td>Brief check-in; stable patient. Document adequately.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-blue" style="margin-top:8px">
+      <strong>291 / 92435 rule</strong>
+      Can be claimed once per 12-month period per patient. Check whether it has been claimed before billing. Item 293/92436 (follow-up management plan) can be claimed multiple times but only after a 291/92435 has been billed in the past 12 months.
+    </div>
+  </div>
+</div>
+
+</div><!-- end billing panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     FOLLOW-UP TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-followup">
+
+<div class="section-header"><span class="sh-num">1</span>Titration Follow-up Schedule</div>
+
+<div class="card">
+  <div class="ch teal" onclick="toggleCard(this)">Recommended Monitoring Cadence During Titration</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Phase</th><th>Frequency</th><th>Agenda</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Initiation</strong> (weeks 1–4)</td><td>2–4 weekly (telehealth or phone)</td><td>Tolerability, initial efficacy signal, side effects, BP/HR (patient self-reports), sleep, appetite, mood. Dose adjustment.</td></tr>
+        <tr><td><strong>Titration</strong> (weeks 4–12)</td><td>3–5 weekly</td><td>Escalating dose — confirm efficacy at each step. Identify optimal dose ("best dose with fewest side effects"). Re-assess ASRS. Check RTPM before each script.</td></tr>
+        <tr><td><strong>Stabilisation</strong> (months 3–6)</td><td>Monthly initially → 2-monthly</td><td>Confirm stable dose. Address lifestyle/non-pharmacological. Psychoeducation. Consider sharing with GP.</td></tr>
+        <tr><td><strong>Stable / Maintenance</strong></td><td>3–6 monthly</td><td>Ongoing efficacy, side effects, RTPM, BP/HR. Annual comprehensive review. Consider GP handover.</td></tr>
+        <tr><td><strong>After any dose change</strong></td><td>2–4 weeks</td><td>Return to more frequent monitoring until stable again on new dose.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-amber" style="margin-top:8px">
+      <strong>High-risk groups — more frequent review</strong>
+      ASD, OPMH (older adults), significant comorbidities, stimulant SUD risk, children, complex presentations. Review every 2–3 weeks until clearly stable.
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch teal" onclick="toggleCard(this)">What to Cover at Every Follow-up (Telehealth Checklist)</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <ul>
+          <li><strong>Efficacy:</strong> Is the ADHD better? Which domains? Global impression.</li>
+          <li><strong>Coverage:</strong> Does it last long enough across the day?</li>
+          <li><strong>Adherence:</strong> Taking as prescribed? Missing doses?</li>
+          <li><strong>Side effects:</strong> Appetite, sleep, mood, anxiety, cardiovascular symptoms</li>
+          <li><strong>BP/HR:</strong> Has patient measured? Review numbers.</li>
+          <li><strong>Sleep:</strong> Onset, duration, quality. Timing of last dose.</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <ul>
+          <li><strong>Mood:</strong> Any depression, anxiety, irritability, elevated mood?</li>
+          <li><strong>Substance use:</strong> Screen periodically. Any change?</li>
+          <li><strong>Function:</strong> Work, study, relationships improving?</li>
+          <li><strong>RTPM check:</strong> Mandatory before signing S8 script</li>
+          <li><strong>Prescription:</strong> Adequate supply? Date last script filled?</li>
+          <li><strong>Plan:</strong> Document treatment decision clearly (keep same / up-titrate / down-titrate / switch / cease)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Shared Care &amp; Handover</div>
+
+<div class="card">
+  <div class="ch emerald" onclick="toggleCard(this)">Shared Care Models</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Model</th><th>Description</th><th>When appropriate</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Full specialist care</strong></td><td>Psychiatrist manages all ADHD prescribing and monitoring</td><td>Complex comorbidities, titration phase, high-risk, recent diagnosis</td></tr>
+        <tr><td><strong>Specialist-initiated shared care</strong></td><td>Psychiatrist initiates; GP continues ongoing prescribing under guidance; psychiatrist remains available</td><td>Stable patient, willing/able GP, established diagnosis and dose</td></tr>
+        <tr><td><strong>GP management plan (291/92435 model)</strong></td><td>GP creates management plan; psychiatrist provides specialist assessment and plan; GP prescribes</td><td>Common model; enables higher-value GP visits</td></tr>
+        <tr><td><strong>Full GP handover</strong></td><td>Psychiatrist writes comprehensive handover; GP takes over all ADHD care</td><td>Fully stable; simple presentation; confident GP; state allows GP prescribing</td></tr>
+        <tr><td><strong>PRN specialist</strong></td><td>GP manages day-to-day; specialist available for complex issues on referral</td><td>Long-established stable patients</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch emerald" onclick="toggleCard(this)">GP Handover Letter — Required Elements</div>
+  <div class="cb">
+    <div class="info-block">
+      <ul>
+        <li><strong>Diagnosis:</strong> DSM-5-TR subtype, severity specifier, ICD-10 code, date established</li>
+        <li><strong>Diagnostic basis:</strong> Brief formulation — screening tools used, developmental history, functional impairment, criteria met</li>
+        <li><strong>Comorbidities:</strong> List current and relevant past psychiatric and medical diagnoses</li>
+        <li><strong>Current medication and dose:</strong> Drug, dose, timing, formulation, number of repeats, interval</li>
+        <li><strong>Optimal dose reached:</strong> State the maintenance dose clearly</li>
+        <li><strong>Prescribing authority:</strong> State-specific S8 authority for GP (varies by state — include relevant guidance)</li>
+        <li><strong>Monitoring requirements:</strong> BP/HR frequency, weight (if child), RTPM check every script, annual review</li>
+        <li><strong>Side effects to watch:</strong> Which ones, what action to take if seen</li>
+        <li><strong>When to refer back:</strong> Loss of efficacy, significant side effects, new psychiatric symptoms, dose limit reached, patient request</li>
+        <li><strong>Your contact:</strong> For GP queries</li>
+        <li><strong>Non-pharmacological strategies discussed</strong></li>
+        <li><strong>Cessation protocol</strong> (if applicable — especially guanfacine/clonidine: must taper)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">3</span>Safety &amp; Risk Management</div>
+
+<div class="card">
+  <div class="ch red" onclick="toggleCard(this)">Risk Scenarios &amp; Telehealth Management</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Scenario</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Patient discloses <strong>active suicidality</strong> during video call</td><td>Safety plan; involve emergency contacts; instruct to call 000 or go to ED if imminent risk. Cannot do welfare check remotely. Document. Consider calling police for welfare check if unable to ensure safety. Follow up with GP urgently.</td></tr>
+        <tr><td><strong>BP significantly elevated</strong> (patient reports &gt;160/100)</td><td>Withhold stimulant dose. Refer to GP/ED for urgent evaluation. Do not escalate dose. Review cardiovascular history. Resume only after medically cleared.</td></tr>
+        <tr><td>Signs of <strong>medication diversion</strong> or misuse</td><td>RTPM cross-reference. Direct clinical discussion. Consider urine drug screen via GP. Adjust prescribing (smaller quantities, more frequent reviews, consider non-stimulant switch).</td></tr>
+        <tr><td><strong>New manic / hypomanic symptoms</strong></td><td>Cease stimulant; initiate urgent review; consider mood stabiliser need; emergency services if severely elevated or dangerous.</td></tr>
+        <tr><td><strong>New psychotic symptoms</strong></td><td>Cease stimulant immediately. Urgent in-person or ED review. Do not restart until psychosis fully resolved and cause attributed.</td></tr>
+        <tr><td>Patient not at location they claimed (<strong>interstate</strong>)</td><td>Cannot write S8 script for wrong jurisdiction. Postpone; write for correct state at next contact. In urgent situations: interim non-S8 options, or advise patient to contact local prescriber.</td></tr>
+        <tr><td><strong>Video fails mid-session</strong></td><td>Phone fallback acceptable for completing a review. Document: "session commenced via video, completed via telephone due to connection failure." Use phone MBS item for billing if predominantly phone.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- end followup panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     SPECIAL GROUPS TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-special">
+
+<div class="section-header"><span class="sh-num">1</span>Women &amp; Girls</div>
+
+<div class="card">
+  <div class="ch rose" onclick="toggleCard(this)">Female Presentation — Clinical Pearls</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Why Women Are Underdiagnosed</div>
+        <ul>
+          <li>Predominantly inattentive presentation is more common in girls (less visible hyperactivity)</li>
+          <li>Compensatory masking — high effort to "keep up" conceals deficits at school</li>
+          <li>Diagnosis often delayed until mid-adulthood when masking strategies fail (career, parenthood)</li>
+          <li>Internalising symptoms (anxiety, depression) often dominate the clinical picture</li>
+          <li>Social motivation drives compliance — symptoms less obvious to teachers</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Comorbidity Pattern in Women</div>
+        <ul>
+          <li>Higher rates of anxiety, depression, eating disorders, borderline PD</li>
+          <li>ADHD often secondary to these presentations — dig deeper if multiple comorbidities</li>
+          <li>Emotional dysregulation prominent (often misattributed to BPD or cyclothymia)</li>
+          <li>Self-harm and suicidality: ADHD is an independent risk factor — screen thoroughly</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Hormonal Influences</div>
+        <ul>
+          <li>Oestrogen potentiates dopaminergic function — fluctuations alter ADHD severity</li>
+          <li>ADHD symptoms commonly worsen premenstrually (low oestrogen phase)</li>
+          <li>Perimenopause: significant ADHD exacerbation common as oestrogen declines</li>
+          <li>May need dose increase perimenstrually or perimenopausal period</li>
+          <li>HRT may reduce ADHD symptom severity in perimenopause (not well-studied)</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Prescribing Considerations</div>
+        <ul>
+          <li>Contraception: no significant pharmacokinetic interaction with stimulants</li>
+          <li>Pregnancy: see pregnancy section — non-pharmacological strongly preferred</li>
+          <li>Lisdexamfetamine: dual indication for ADHD + BED — relevant in women with both</li>
+          <li>Discuss contraception plans before starting medications in women of childbearing age</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Pregnancy &amp; Breastfeeding</div>
+
+<div class="card">
+  <div class="ch rose" onclick="toggleCard(this)">Pharmacotherapy in Pregnancy &amp; Lactation</div>
+  <div class="cb">
+    <div class="callout callout-amber" style="margin-bottom:10px">
+      <strong>General principle</strong>
+      Non-pharmacological management is preferred throughout pregnancy. The decision to continue or cease medication requires individual risk-benefit discussion involving the patient, obstetrician, and psychiatrist.
+    </div>
+    <table class="ref-tbl">
+      <thead><tr><th>Medication</th><th>Pregnancy</th><th>Breastfeeding</th></tr></thead>
+      <tbody>
+        <tr><td>Methylphenidate</td><td>Limited human data. Animal studies show some teratogenicity at high doses. Generally avoided, especially 1st trimester. If severe functional impairment and risk of stopping outweighs risk, discuss with patient + obstetrics.</td><td>Excreted in breast milk at low levels. Infant dose estimated &lt;1% maternal dose. Limited safety data. Generally avoided; monitor infant if continued.</td></tr>
+        <tr><td>Amphetamines (dex, LDX)</td><td>Associated with premature birth, low birth weight, fetal growth restriction in some studies. Avoid if possible. Neonatal withdrawal syndrome reported.</td><td>Excreted in breast milk. Higher levels than methylphenidate. Generally avoid.</td></tr>
+        <tr><td>Atomoxetine</td><td>Animal data shows developmental toxicity at high doses. Limited human data. Avoid.</td><td>Unknown excretion. Avoid.</td></tr>
+        <tr><td>Guanfacine</td><td>Limited data. Avoid unless compelling benefit.</td><td>Limited data. Avoid.</td></tr>
+        <tr><td>Clonidine</td><td>Some data in pre-eclampsia. Avoid for ADHD.</td><td>Excreted in breast milk. Avoid.</td></tr>
+      </tbody>
+    </table>
+    <div class="info-block" style="margin-top:10px">
+      <div class="sub-h">Non-Pharmacological Support in Pregnancy</div>
+      <ul>
+        <li>ADHD coaching / CBT for ADHD — maintain structure and routines</li>
+        <li>Environmental modifications (reduce clutter, external reminders, smartphone tools)</li>
+        <li>Partner/family support and psychoeducation about ADHD in pregnancy</li>
+        <li>Occupational support / workplace accommodations if needed</li>
+        <li>Exercise (evidence-based; safe in uncomplicated pregnancy; improves ADHD symptoms)</li>
+        <li>Adequate sleep (hardest to maintain but critical)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">3</span>Older Adults (≥65)</div>
+
+<div class="card">
+  <div class="ch amber" onclick="toggleCard(this)">ADHD in Older Adults</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Diagnostic Challenges</div>
+        <ul>
+          <li>Must distinguish from early dementia / mild cognitive impairment (MCI)</li>
+          <li>ADHD: lifelong course; cognitive decline in dementia is progressive and differs in profile</li>
+          <li>Depression and anxiety are major confounders — treat first and reassess</li>
+          <li>Many older adults present late — decades of undiagnosed ADHD with significant impairment history</li>
+          <li>Neuropsychological testing helpful when diagnosis uncertain</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Prescribing Considerations</div>
+        <ul>
+          <li>Start low, go slow — higher sensitivity to cardiovascular side effects</li>
+          <li>Polypharmacy risk — check all interactions carefully</li>
+          <li>Methylphenidate generally preferred over amphetamines in older adults (better tolerability data)</li>
+          <li>Lower target doses: often 10–20 mg methylphenidate or 20–30 mg LDX</li>
+          <li>More frequent BP/HR monitoring (every 2–4 weeks during titration)</li>
+          <li>Renal and hepatic function may affect drug clearance</li>
+          <li>Atomoxetine requires dose adjustment in hepatic impairment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">4</span>ASD + ADHD</div>
+
+<div class="card">
+  <div class="ch purple" onclick="toggleCard(this)">Co-occurring ASD and ADHD</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Epidemiology &amp; Diagnosis</div>
+        <ul>
+          <li>50–70% of individuals with ASD meet criteria for ADHD</li>
+          <li>20–50% of individuals with ADHD have ASD features</li>
+          <li>DSM-5 (2013) removed the exclusion criterion — dual diagnosis now valid</li>
+          <li>ASD inattention is qualitatively different: domain-specific, driven by cognitive style, not executive dysregulation</li>
+          <li>Comprehensive ASD assessment needed before dual diagnosis — consider neuropsychology</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Pharmacotherapy in ASD+ADHD</div>
+        <ul>
+          <li>Stimulants often less effective and produce more side effects in ASD</li>
+          <li>Start at half the usual starting dose; titrate more slowly</li>
+          <li>More irritability, emotional dysregulation, and appetite suppression reported</li>
+          <li>Non-stimulants (atomoxetine, guanfacine) often better tolerated</li>
+          <li>Guanfacine: particularly useful for irritability, aggression, and hyperactivity in ASD</li>
+          <li>Behavioural interventions and OT are crucial — do not rely on medication alone</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">5</span>Substance Use Disorder</div>
+
+<div class="card">
+  <div class="ch amber" onclick="toggleCard(this)">ADHD with Substance Use Disorder (SUD)</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Epidemiology &amp; Rationale for Treatment</div>
+        <ul>
+          <li>25–50% of adults with SUD meet ADHD criteria</li>
+          <li>ADHD is a significant risk factor for developing SUD</li>
+          <li>Treating ADHD may reduce substance use behaviours</li>
+          <li>If possible: assess ADHD after a period of sobriety (ideally ≥1 month) to distinguish substance-induced symptoms from genuine ADHD</li>
+          <li>Do not defer ADHD treatment indefinitely — untreated ADHD maintains SUD cycle</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Prescribing in Active SUD</div>
+        <ul>
+          <li><strong>Preferred:</strong> Lisdexamfetamine (prodrug; significantly lower abuse potential)</li>
+          <li><strong>Consider:</strong> Atomoxetine (non-stimulant; no misuse potential) as first-line if stimulant SUD</li>
+          <li><strong>Avoid:</strong> IR stimulants (dexamphetamine IR, MPH IR) in active stimulant use disorder</li>
+          <li>Long-acting preparations always preferred over IR</li>
+          <li>Regular RTPM checks; shorter prescription intervals; smaller quantities</li>
+          <li>Urine drug screening (periodic; via GP)</li>
+          <li>Coordinate with addiction medicine / drug and alcohol service</li>
+          <li>Prescribe with clear parameters for cessation if diversion detected</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">6</span>Children &amp; Adolescents</div>
+
+<div class="card">
+  <div class="ch green" onclick="toggleCard(this)">Paediatric ADHD — Key Differences</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Assessment Differences</div>
+        <ul>
+          <li>Teacher ratings are mandatory (Vanderbilt, Conners-3 teacher form)</li>
+          <li>Parent interview is the primary source (not child self-report alone)</li>
+          <li>School reports / developmental records highly valuable</li>
+          <li>Consider neuropsychological testing if learning disorder overlap</li>
+          <li>Rule out hearing/vision impairment in young children</li>
+          <li>Assess family functioning and parenting — both affect symptom severity</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Telehealth Considerations in Children</div>
+        <ul>
+          <li>Parent may need to be present initially to assist with technology and rapport</li>
+          <li>Observe child's behaviour during the video call (attentiveness, activity level, impulsivity)</li>
+          <li>School-age children: morning sessions when medication may have worn off → observe unmedicated state</li>
+          <li>Collateral from school via written reports or separate consultation (item 91874–91878)</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Pharmacotherapy in Children (≥6 years)</div>
+        <ul>
+          <li><strong>First-line:</strong> Methylphenidate IR or LA (most evidence, TGA-approved)</li>
+          <li><strong>Second-line:</strong> Lisdexamfetamine (TGA-approved ≥6 years); dexamphetamine</li>
+          <li><strong>Non-stimulants:</strong> Atomoxetine (4–12 weeks onset); Guanfacine XR (PBS-listed 6–17 years)</li>
+          <li>Weight-based dosing: 0.3–1 mg/kg/day methylphenidate (start 0.3, max 1 mg/kg or 60 mg)</li>
+          <li>Monitor height and weight every 3–6 months; plot on growth chart</li>
+          <li>Consider medication holidays (school holidays) if growth suppression is significant</li>
+          <li>Parent Management Training (PMT) is first-line for preschool children and important for all ages</li>
+          <li>School-based accommodations: extended time, preferential seating, movement breaks</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-amber" style="margin-top:8px">
+      <strong>Preschool children (&lt;6 years)</strong>
+      Non-pharmacological treatment (parent management training, behavioural interventions) is the recommended first-line approach. Methylphenidate may be considered in preschool children only when behavioural interventions have been optimised and ADHD is severely impairing — specialist decision only.
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">7</span>Non-Pharmacological Management</div>
+
+<div class="card">
+  <div class="ch emerald" onclick="toggleCard(this)">Evidence-Based Non-Pharmacological Interventions</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Psychoeducation (Essential — All Patients)</div>
+        <ul>
+          <li>Neurobiological model of ADHD — reduces shame</li>
+          <li>Executive function deficits — working memory, inhibition, time blindness</li>
+          <li>ADHD as a lifelong trait, not a character flaw</li>
+          <li>Impact on relationships, work, self-esteem</li>
+          <li>Medication as a tool, not a cure</li>
+          <li>Resources: ADHD Australia, CHADD (international), AADPA guidelines</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">CBT for ADHD</div>
+        <ul>
+          <li>Structured, skills-based (not insight-based like traditional CBT)</li>
+          <li>Targets: time management, organisation, procrastination, emotional regulation</li>
+          <li>Can be delivered via telehealth effectively</li>
+          <li>Programs: "Mastering Your Adult ADHD" (Safren); "ADHD in Adults" (Bramham)</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">ADHD Coaching</div>
+        <ul>
+          <li>Goal-oriented; practical skills; real-world accountability</li>
+          <li>Telephone / video coaching highly effective</li>
+          <li>Complements medication well</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Lifestyle — Strong Evidence</div>
+        <ul>
+          <li><strong>Exercise:</strong> 20–30 min aerobic daily → equivalent to low-dose stimulant acutely. Improves dopamine, executive function, mood.</li>
+          <li><strong>Sleep:</strong> Critical — poor sleep dramatically worsens all ADHD symptoms. Prioritise sleep hygiene before adjusting medication dose.</li>
+          <li><strong>Diet:</strong> Regular meals; avoid blood glucose fluctuations; omega-3 supplementation (modest evidence)</li>
+          <li><strong>Mindfulness:</strong> Moderate evidence for attention and emotion regulation</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Environmental Strategies</div>
+        <ul>
+          <li>External systems (calendars, reminders, apps) — don't rely on working memory</li>
+          <li>Reduce environmental distractors (noise-cancelling headphones, clear workspace)</li>
+          <li>Time-boxing and structured routines</li>
+          <li>Workplace / study accommodations (extended deadlines, quiet rooms)</li>
+          <li>Body doubling (working alongside others — in person or virtual)</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Relationships &amp; Family</div>
+        <ul>
+          <li>ADHD-informed couple therapy if relationship strain is significant</li>
+          <li>Partner psychoeducation — essential for understanding and reducing blame</li>
+          <li>Parent management training (children with ADHD)</li>
+          <li>Family therapy where indicated</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end special panel -->
+
+</div><!-- end .content -->
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  var p=document.getElementById('panel-'+id);
+  if(p)p.classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+function toggleCard(chEl){
+  var card=chEl.closest('.card');
+  if(card)card.classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
