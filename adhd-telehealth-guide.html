@@ -119,6 +119,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .mon-tile{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;background:#fafbfc}
 .mon-tile label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:4px}
 .mon-tile p{font-size:12px;line-height:1.5;color:#1e293b}
+/* Nav buttons */
+.nav-btns{display:flex;justify-content:space-between;align-items:center;margin:22px 0 6px;gap:10px}
+.nav-btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:background .15s;font-family:var(--sans);letter-spacing:.02em}
+.nav-btn.nav-prev{background:#e2e8f0;color:#334155}
+.nav-btn.nav-prev:hover{background:#cbd5e1}
+.nav-btn.nav-next{background:var(--primary);color:#fff}
+.nav-btn.nav-next:hover{background:#1245b5}
 /* Print */
 @media print{.tabs,.topbar{display:none}.panel{display:block!important}.card.collapsed .cb{display:block!important}}
 </style>
@@ -137,6 +144,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   <button class="tab" onclick="showTab('prescribing',this)">Prescribing</button>
   <button class="tab" onclick="showTab('billing',this)">Billing</button>
   <button class="tab" onclick="showTab('followup',this)">Follow-up</button>
+  <button class="tab" onclick="showTab('psychoeducation',this)">Psychoeducation</button>
   <button class="tab" onclick="showTab('special',this)">Special Groups</button>
 </div>
 
@@ -146,6 +154,24 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
      ASSESSMENT TAB
 ══════════════════════════════════════════════════════════════ -->
 <div class="panel active" id="panel-assessment">
+
+<div class="card" style="margin-bottom:14px">
+  <div class="ch red" onclick="toggleCard(this)">Consent Script — Assessment &amp; Financial</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h" style="color:#b91c1c">Assessment Consent</div>
+        <div class="callout callout-red" style="margin-bottom:8px"><strong>Say this at the start of every assessment</strong></div>
+        <p style="font-size:13px;line-height:1.75;font-style:italic;background:#fef2f2;border-radius:6px;padding:11px 14px;border-left:3px solid #dc2626;color:#1e293b">"Before we begin, I want to be upfront with you about a few things. Today is a holistic psychiatric assessment — I'm going to look at everything, not just ADHD. I can't guarantee that I'll make an ADHD diagnosis, because that depends on what I find during the assessment. And even if I do diagnose ADHD, I can't guarantee that we'll end up on stimulant medication — that depends on your medical history, what's safe for you, and what makes clinical sense. What I can guarantee is that I want to do the very best by you. This is a thorough, holistic assessment and whatever we find, we'll work out the best path forward together."</p>
+      </div>
+      <div class="info-block">
+        <div class="sub-h" style="color:#b45309">Financial Consent</div>
+        <div class="callout callout-amber" style="margin-bottom:8px"><strong>Cover this before starting</strong></div>
+        <p style="font-size:13px;line-height:1.75;font-style:italic;background:#fffbeb;border-radius:6px;padding:11px 14px;border-left:3px solid #f59e0b;color:#1e293b">"I also want to be transparent about the cost. Today's assessment is one appointment, but depending on what comes up, there may be follow-up appointments — for example if we need to monitor how medication is going during titration. I'm always mindful of the financial impact and I'll only recommend follow-up when it's genuinely clinically necessary. I'll do everything I safely can to be efficient with your time and money."</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="section-header"><span class="sh-num">1</span>Telehealth Setup</div>
 
@@ -322,6 +348,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <span></span>
+  <button class="nav-btn nav-next" onclick="navToTab('diagnosis')">Diagnosis →</button>
+</div>
 </div><!-- end assessment panel -->
 
 
@@ -452,6 +482,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('assessment')">← Assessment</button>
+  <button class="nav-btn nav-next" onclick="navToTab('medications')">Medications →</button>
+</div>
 </div><!-- end diagnosis panel -->
 
 
@@ -467,12 +501,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   <div class="cb">
     <div class="callout callout-blue" style="margin-bottom:10px">
       <strong>AADPA 2024 — First-line pharmacotherapy for adults</strong>
-      Lisdexamfetamine (Vyvanse) or long-acting methylphenidate. For children ≥6: methylphenidate preferred first-line; amphetamines second-line per TGA indication.
+      Lisdexamfetamine (Vyvanse), long-acting methylphenidate, and dexamphetamine IR are all acceptable first-line options for adults. Lisdexamfetamine and long-acting methylphenidate are often preferred for their once-daily, smooth profile — but dexamphetamine IR is a suitable first-line choice, particularly where flexible multi-dose coverage or cost is a factor. For children ≥6: methylphenidate preferred first-line; amphetamines second-line per TGA indication.
     </div>
     <table class="ref-tbl">
       <thead><tr><th>Clinical Scenario</th><th>Preferred Choice</th><th>Rationale</th></tr></thead>
       <tbody>
-        <tr><td>Adults — standard first-line</td><td>Lisdexamfetamine (Vyvanse) or Methylphenidate LA/ER</td><td>Efficacy, single daily dose, PBS listed</td></tr>
+        <tr><td>Adults — standard first-line</td><td>Lisdexamfetamine (Vyvanse), Methylphenidate LA/ER, or Dexamphetamine IR</td><td>All have strong efficacy. LDX and long-acting MPH preferred for once-daily dosing; Dex IR is a valid first-line choice for flexible coverage or cost reasons</td></tr>
         <tr><td>Children ≥6 — standard first-line</td><td>Methylphenidate IR/LA or Concerta</td><td>TGA indication; most paediatric safety data</td></tr>
         <tr><td>Active substance use disorder</td><td>Lisdexamfetamine (lower diversion risk) or Atomoxetine</td><td>Prodrug reduces misuse potential</td></tr>
         <tr><td>Comorbid tics / Tourette</td><td>Atomoxetine or Guanfacine XR</td><td>Tic-neutral or anti-tic properties</td></tr>
@@ -702,6 +736,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('diagnosis')">← Diagnosis</button>
+  <button class="nav-btn nav-next" onclick="navToTab('prescribing')">Prescribing →</button>
+</div>
 </div><!-- end medications panel -->
 
 
@@ -731,43 +769,59 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <div class="card">
-  <div class="ch navy" onclick="toggleCard(this)">PBS Authority &amp; eScripting</div>
+  <div class="ch navy" onclick="toggleCard(this)">Private Prescribing vs PBS Authority — Key Distinction</div>
   <div class="cb">
+    <div class="callout callout-green" style="margin-bottom:12px">
+      <strong>You do NOT need PBS authority to prescribe</strong>
+      As a psychiatrist with state pre-approval (or individual state authorisation), you can write a <strong>private script</strong> for any of these medications. PBS authority (via PRODA) is only needed if you want the patient to get the medication at the PBS-subsidised price. PBS authority does not determine your right to prescribe — state authority does.
+    </div>
     <div class="g2">
       <div class="info-block">
-        <div class="sub-h">PBS Authority Process (PRODA / phone)</div>
+        <div class="sub-h">PBS Authority Process — for subsidised scripts</div>
         <ul>
-          <li>All ADHD stimulants require PBS Authority — apply via PRODA (online) or Services Australia (phone)</li>
-          <li>Authority number must appear on script</li>
-          <li>PRODA online: fastest option — real-time for most ADHD items</li>
-          <li>Telephone authority: 1800 888 333 (business hours)</li>
-          <li>Document authority number in patient notes</li>
-          <li>Authority is for the specific medication, dose range, and indication</li>
+          <li>Apply via <strong>PRODA</strong> (online, fastest) → HPOS → My Providers → Authorities → Request Authority</li>
+          <li>You need your authority script authorisation number (next to your prescriber number on eScripts)</li>
+          <li>You need a new authority for every new script — even if represcribing</li>
+          <li>Enter the <strong>total tablets per day</strong> and the total repeats you'll actually prescribe</li>
+          <li>Vyvanse needs individual PRODA authority for each capsule strength</li>
+          <li>Telephone authority: 1800 888 333 (business hours) — use if PRODA unavailable</li>
+          <li>For dex IR or MPH IR at 5+ tabs/day, enter <strong>200 tablets</strong> (not default 100) — the 20-day rule means patients on high doses need 200 tabs to not run out</li>
         </ul>
-        <div class="sub-h" style="margin-top:10px">Total tablets per day calculation</div>
+        <div class="sub-h" style="margin-top:10px">eScripting for S8</div>
         <ul>
-          <li>PBS calculates supply based on total tabs/day × 20 days = qty per script</li>
-          <li>Dex 5 mg: 12 tabs/day max → 240 tabs for 20 days</li>
-          <li>Repeat interval: minimum 20 days between fills for S8 stimulants (most states)</li>
-          <li>Repeats: varies by state. Document number of repeats on script.</li>
+          <li>eScripts are available for S8 in most states — patient receives a token via SMS/email</li>
+          <li>Particularly useful in telehealth — no paper script to mail or fax</li>
+          <li>RTPM check required regardless of eScript or paper</li>
+          <li>Confirm your state allows eScript for S8 stimulants — most now do</li>
         </ul>
       </div>
       <div class="info-block">
-        <div class="sub-h">eScripting for S8</div>
+        <div class="sub-h">Private Scripts — When &amp; How</div>
         <ul>
-          <li>Electronic prescribing (eScript) is now available for S8 medications in most states</li>
-          <li>Patient receives token via SMS or email → dispenses at pharmacy</li>
-          <li>Particularly useful in telehealth — no paper script to mail</li>
-          <li>Confirm state allows eScript for S8 — most now do</li>
-          <li>RTPM check required regardless of whether eScript or paper</li>
+          <li>Write a private script whenever: patient is not PBS-eligible, dose exceeds PBS maximum, off-label indication, or PBS authority unavailable</li>
+          <li>Example: prescribing Vyvanse for BED requires a private script — only ADHD is PBS-listed for Vyvanse</li>
+          <li>Must include all mandatory S8 script elements per your state</li>
+          <li>Clonidine (adults, ADHD): always private — not PBS-listed for ADHD</li>
+          <li>Guanfacine (adults): private S4 script (PBS only for children 6–17)</li>
+          <li>Atomoxetine: PBS streamlined — no PRODA required; write PBS script directly</li>
         </ul>
-        <div class="sub-h" style="margin-top:10px">Private Scripts</div>
-        <ul>
-          <li>Non-PBS stimulants (e.g. higher doses, off-label): write as private S8</li>
-          <li>Must include all mandatory S8 script requirements per state</li>
-          <li>Clonidine, guanfacine (adults): private S4 script</li>
-          <li>Atomoxetine: PBS listed; does not require S8 authority</li>
-        </ul>
+        <div class="sub-h" style="margin-top:10px">Authority Requirements &amp; Private Costs (Chemist Warehouse, Jan 2026)</div>
+        <table class="ref-tbl" style="margin-top:4px">
+          <thead><tr><th>Medication</th><th>PBS Authority</th><th>Private Cost/month</th></tr></thead>
+          <tbody>
+            <tr><td>Authority script fee (any)</td><td>—</td><td>$25</td></tr>
+            <tr><td>Lisdexamfetamine (Vyvanse)</td><td>PRODA required</td><td>$30–$35</td></tr>
+            <tr><td>Methylphenidate IR (Ritalin/Artige)</td><td>PRODA required</td><td>$25.99</td></tr>
+            <tr><td>Ritalin LA 40 mg</td><td>PRODA required</td><td>$42.99</td></tr>
+            <tr><td>Ritalin LA 60 mg</td><td>PRODA required</td><td>$56.99</td></tr>
+            <tr><td>Concerta 36 mg</td><td>PRODA (Dx before age 18)</td><td>$47.99</td></tr>
+            <tr><td>Concerta 54 mg</td><td>PRODA (Dx before age 18)</td><td>$56.99</td></tr>
+            <tr><td>Atomoxetine (Strattera)</td><td>Streamlined 7876/7890 (Dx before 18)</td><td>$35.99</td></tr>
+            <tr><td>Guanfacine XR (Intuniv)</td><td>Streamlined (Dx before 18, children only)</td><td>$58.99</td></tr>
+            <tr><td>Clonidine (Catapres)</td><td>Not PBS-listed for ADHD — always private</td><td>$19.99</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">Prices at Chemist Warehouse. Private script = $25 authority fee + medication cost above.</p>
       </div>
     </div>
   </div>
@@ -828,6 +882,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('medications')">← Medications</button>
+  <button class="nav-btn nav-next" onclick="navToTab('billing')">Billing →</button>
+</div>
 </div><!-- end prescribing panel -->
 
 
@@ -899,6 +957,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('prescribing')">← Prescribing</button>
+  <button class="nav-btn nav-next" onclick="navToTab('followup')">Follow-up →</button>
+</div>
 </div><!-- end billing panel -->
 
 
@@ -1017,7 +1079,688 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('billing')">← Billing</button>
+  <button class="nav-btn nav-next" onclick="navToTab('psychoeducation')">Psychoeducation →</button>
+</div>
 </div><!-- end followup panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PSYCHOEDUCATION TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-psychoeducation">
+
+<div class="section-header"><span class="sh-num">1</span>Understanding ADHD</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">Explaining ADHD</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Key message:</strong> ADHD is not a deficit of attention — it is a regulation problem. The brain runs on interest, urgency, and novelty rather than importance alone. When something genuinely captures your interest, you can hyperfocus brilliantly. When something feels dull or unrewarding, starting it can feel genuinely impossible — not because of laziness, but because the brain's motivational circuitry works differently.</p>
+      <p><strong>Neurobiology:</strong> The prefrontal cortex — the region managing planning, organising, task initiation, working memory, and emotional regulation — is underactive and less connected to the rest of the brain in ADHD. This reduces dopamine and noradrenaline signalling, which are the neurotransmitters responsible for focus, motivation, and impulse control. Medication restores these neurotransmitters in the prefrontal cortex.</p>
+      <p><strong>What this looks like daily:</strong> Starting tasks feels insurmountable. Losing the thread mid-task. Forgetting why you walked into a room. Emotions that hit fast and hard. Acting before thinking. Constant inner restlessness. Time feeling abstract until a deadline is imminent.</p>
+      <p><strong>Key facts:</strong> Affects 5–10% of adults. One of the most heritable conditions in medicine. ADHD medications are among the most effective treatments in all of psychiatry. When medication works well, people often describe it as finally having access to the version of themselves they always knew was there.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">How ADHD Manifests</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Core symptoms:</strong> Inattention, executive dysfunction (organising, starting, time management, working memory), impulsivity, and hyperactivity — often internalised in adults as a constant inner restlessness rather than visible movement.</p>
+      <p><strong>Often missed features — the most disabling aspects are frequently not on the official list:</strong></p>
+      <ul>
+        <li><strong>Emotional dysregulation:</strong> Emotions arrive faster and more intensely because the prefrontal "braking system" is less effective. Frustration, excitement, rejection, and disappointment hit harder. This is neurological, not a personality trait.</li>
+        <li><strong>Rejection Sensitive Dysphoria (RSD):</strong> Intense emotional pain triggered by perceived rejection, criticism, or failure — even when mild or imagined. Can dominate relationships and cause avoidance of challenge. Extremely common, rarely discussed.</li>
+        <li><strong>Time blindness:</strong> The internal sense of time is impaired. Time exists in two states: "now" and "not now." Deadlines days away feel unreal, producing chronic lateness and last-minute rushes.</li>
+        <li><strong>Working memory deficits:</strong> The mental notepad used to hold information while doing something else is impaired — causing thought loss mid-sentence, forgetting what you walked into a room for, re-reading the same paragraph repeatedly.</li>
+        <li><strong>Hyperfocus:</strong> The same dysregulation causing inattention can flip to tunnel-vision absorption where hours pass unnoticed. Same system, different direction.</li>
+        <li><strong>Sleep problems, appetite dysregulation, low frustration tolerance, chronic underachievement despite high ability.</strong></li>
+      </ul>
+      <p><strong>Adult presentation:</strong> Many people — especially those who are intellectually capable — compensated through school via intelligence or anxiety-driven perfectionism, then found that when demands exceeded coping strategies, everything unravelled.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">How Treatable ADHD Is</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Response rates:</strong> 70–80% in children, 60–75% in adults. If one stimulant class does not work, switching to the other class helps many non-responders.</p>
+      <p><strong>The evidence base:</strong></p>
+      <ul>
+        <li>21% reduction in all-cause mortality with ADHD medication</li>
+        <li>25% reduction in unnatural-cause deaths (accidents, suicide)</li>
+        <li>~13% reduction in substance use disorder risk per year on stimulants</li>
+        <li>72% of measured long-term outcomes improved — academic, work, social, driving</li>
+        <li>Lower motor vehicle crash rates while on medication</li>
+        <li>Reduced criminal offending during treatment periods</li>
+        <li>Better employment outcomes and improved relationship stability</li>
+      </ul>
+      <p><strong>Key message:</strong> The risks of not treating ADHD are substantially greater than the risks of properly managed treatment.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">What to Expect from Treatment</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>When medication is working well, most people describe:</strong></p>
+      <ul>
+        <li>Calm clarity — genuinely quiet in your own head</li>
+        <li>Boring-but-important tasks becoming manageable</li>
+        <li>More pause between feeling and reacting</li>
+        <li>Anxiety often improves (much ADHD anxiety is downstream from chronic underperformance)</li>
+        <li>Low mood lifts when you are no longer falling short of your own capabilities</li>
+      </ul>
+      <p><strong>What it should NOT feel like:</strong> Robotic, flat, zombie-like, or like a different person. If it feels that way, the dose is probably too high — that is a signal to adjust, not tolerate.</p>
+      <p><strong>Starting out:</strong> We start at a low dose and increase gradually. Stimulants work the same day at therapeutic dose. Appetite suppression is common especially at lunch. The first few doses may feel unremarkable as the body acclimatises.</p>
+      <p><strong>Missing a dose:</strong> Take it when you remember, unless it is late afternoon — then skip it. Never double up the next day.</p>
+      <p><strong>If it stops working as well:</strong> Sleep, stress, hormones, appetite, and routine all affect medication response. Sometimes dose or timing needs review — contact your psychiatrist rather than adjusting independently.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">Commonly Asked Questions</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Will it change my personality?</strong> No — at therapeutic doses you feel more like yourself. Flat or robotic = dose too high.</p>
+      <p><strong>Will I need it forever?</strong> ADHD is typically lifelong. Most prefer continuing because symptoms return when stopped. Long-term stimulant use is safe.</p>
+      <p><strong>Are stimulants addictive?</strong> Used correctly for ADHD, they actually lower addiction risk. Careful prescribing is why robust diagnosis matters.</p>
+      <p><strong>Can I drive?</strong> Yes. No restrictions in Australia. Evidence shows lower crash rates on medication.</p>
+      <p><strong>Coffee on stimulants?</strong> Moderate is fine (1–2 cups morning). Excess worsens anxiety and insomnia.</p>
+      <p><strong>What if it does not work?</strong> Try the other stimulant class. If stimulants not tolerated, non-stimulant options are effective.</p>
+      <p><strong>Cannabis?</strong> Avoid — worsens ADHD symptoms, reduces treatment benefit, increases psychosis risk in vulnerable individuals.</p>
+      <p><strong>How will I know when it is working?</strong> Everyday tasks feel easier to start and finish. Your mind feels quieter, less overwhelmed. Often the change is subtle at first.</p>
+      <p><strong>I have never taken medication before!</strong> Very common. We start low, increase gradually, review how you respond. You are not locked in.</p>
+      <p><strong>What if it is not ADHD?</strong> Diagnosis is based on a proper assessment, not just a feeling. Doubting yourself does not mean you are wrong.</p>
+      <p><strong>Why was I not diagnosed as a kid?</strong> Many adults were missed — especially if they were bright, quiet, anxious, or coping reasonably well.</p>
+      <p><strong>Do I have autism too?</strong> ADHD and autism overlap in 50–70% of cases. If you have long-standing social differences, sensory sensitivities, or a strong need for routine, it is worth discussing.</p>
+      <p><strong>Can I travel with stimulant medications?</strong> Usually yes. Keep them in original packaging with a prescription or doctor letter. Check rules for each country.</p>
+      <p><strong>Can I let someone else try my medication?</strong> No. Never share prescription medication. Sharing controlled substances is illegal.</p>
+      <p><strong>The meds are not working as well anymore — why?</strong> Sleep, stress, hormones, appetite, and routine all affect medication response. Sometimes dose or timing needs review.</p>
+      <p><strong>How do I not lean into the diagnosis as an excuse?</strong> Use it as a tool, not an identity. It should help you understand yourself and make better choices, not limit you.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Medication Information</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Medication Options — Overview</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>First-line — Stimulants</strong> (block reuptake of dopamine and noradrenaline; amphetamines also trigger release):</p>
+      <table class="ref-tbl">
+        <thead><tr><th>Medication</th><th>Duration</th><th>Key practical notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dex IR</strong></td><td>4–6 hrs</td><td>Amphetamine. Flexible, 2–3x/day. Good for tailoring coverage. Rebound possible.</td></tr>
+          <tr><td><strong>Vyvanse</strong></td><td>10–12 hrs</td><td>Amphetamine prodrug. Smoothest once-daily. Can open capsule in water. Low abuse potential.</td></tr>
+          <tr><td><strong>Ritalin IR</strong></td><td>3–4 hrs</td><td>Methylphenidate. Milder than dex. 2–3x/day. Rebound common.</td></tr>
+          <tr><td><strong>Ritalin LA</strong></td><td>~8 hrs</td><td>Methylphenidate. Once daily. 50/50 two-pulse delivery. Some add small afternoon IR top-up.</td></tr>
+          <tr><td><strong>Concerta</strong></td><td>10–12 hrs</td><td>Methylphenidate. Once daily. Ascending OROS delivery. Must swallow whole — never crush. PBS: Dx before age 18.</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:8px"><strong>All stimulants:</strong> Avoid acidic drinks (juice, soft drink) at dosing time — reduces absorption. Take with food to reduce nausea.</p>
+      <p><strong>Second-line — Non-stimulants</strong> (no abuse potential; slower onset):</p>
+      <table class="ref-tbl">
+        <thead><tr><th>Medication</th><th>Onset</th><th>Key practical notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Atomoxetine (Strattera)</strong></td><td>4–12 wks</td><td>SNRI. Good for anxiety, tics, substance use history. PBS streamlined.</td></tr>
+          <tr><td><strong>Guanfacine XR (Intuniv)</strong></td><td>4–8 wks</td><td>Alpha-2A agonist. Helpful for emotional dysregulation and impulsivity. Taper on cessation.</td></tr>
+          <tr><td><strong>Clonidine (Catapres)</strong></td><td>Gradual</td><td>Alpha-2 agonist. Useful for sleep, hyperarousal, tics. Private script. Taper on cessation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Key Side Effects &amp; Monitoring</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Common stimulant side effects:</strong> Reduced appetite (especially lunch), dry mouth, insomnia if taken late, increased heart rate, headache (usually resolves 2–3 weeks), irritability, jaw clenching, rebound as medication wears off.</p>
+      <p><strong>Less common:</strong> Elevated blood pressure, emotional blunting at higher doses (reduce dose — do not tolerate), anxiety worsening in some.</p>
+      <p><strong>Monitoring:</strong> BP and heart rate at each review. GP for routine monitoring between psychiatric appointments.</p>
+      <p><strong>Red flags — contact doctor if:</strong> Elevated mood + reduced sleep + rapid speech (possible mania), chest pain or palpitations, severe anxiety, marked personality change.</p>
+      <p><strong>Atomoxetine-specific:</strong> Nausea initially — take with food. Rare: liver injury (jaundice, dark urine → stop and seek help urgently).</p>
+      <p><strong>Key interactions:</strong> MAOIs absolute contraindication. Pseudoephedrine — discuss before combining. Alcohol — stimulants mask sedating effects, risk of drinking more than intended.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch sky" onclick="toggleCard(this)">Dexamphetamine IR (immediate release)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> Stimulant — increases dopamine and noradrenaline by blocking recycling AND triggering extra release. Slightly stronger effect than methylphenidate, with slightly higher side effect risk.</p>
+      <p><strong>Practical details:</strong> Short-acting tablet. Effects begin 30–45 min, last 4–6 hrs. Usually 2–3x/day. Avoid acidic drinks at same time; take after food to reduce nausea.</p>
+      <p><strong>What to expect:</strong> Improved task initiation and sustained effort, quieter internal restlessness, better impulse control. Appetite suppression common at lunchtime. Rebound (mood/focus drop as it wears off) can occur.</p>
+      <p><strong>Common side effects:</strong> Reduced appetite, dry mouth, insomnia if taken too late, increased heart rate, headache (settles 2–3 weeks), irritability/anxiety in some, jaw clenching, rebound.</p>
+      <p><strong>Interactions:</strong> MAOIs — absolute contraindication. Pseudoephedrine decongestants — discuss with doctor. Acidic drinks reduce absorption.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch sky" onclick="toggleCard(this)">Vyvanse (lisdexamfetamine)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> Dexamphetamine in prodrug form — released gradually after swallowing for a smoother, longer effect. Very low abuse potential by design (must be metabolised to become active).</p>
+      <p><strong>Practical details:</strong> Capsule — swallow whole or open and dissolve in water. Effects start within 1–2 hrs, last 10–12 hrs (longest-acting stimulant in Australia). Once daily in the morning. Avoid acidic drinks.</p>
+      <p><strong>What to expect:</strong> Smooth, consistent effect with fewer peaks and troughs than IR. Useful for sustained evening coverage or when rebound from dex IR is difficult. Appetite suppression common.</p>
+      <p><strong>Common side effects:</strong> Reduced appetite (often improves after first weeks), dry mouth, insomnia if taken too late, headache, irritability as it wears off in the evening, increased heart rate.</p>
+      <p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch sky" onclick="toggleCard(this)">Ritalin IR / Artige (methylphenidate IR)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> Blocks dopamine and noradrenaline transporters (reuptake inhibition only — does NOT trigger release). Slightly milder effect than dexamphetamine.</p>
+      <p><strong>Practical details:</strong> Short-acting tablet. Effects begin 30–45 min, last 3–4 hrs. Usually 2–3x/day. Avoid acidic drinks, vitamin C, citric acid at dosing time — reduces absorption. Take after food to reduce nausea.</p>
+      <p><strong>Common side effects:</strong> Reduced appetite at lunchtime, headache (settles 2–3 weeks), insomnia if afternoon dose too late, increased heart rate, jitteriness or anxiety in some, stomach discomfort.</p>
+      <p><strong>Less common:</strong> Elevated blood pressure, rebound (mood drop as it wears off — discuss if significant), mania in bipolar disorder.</p>
+      <p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch sky" onclick="toggleCard(this)">Ritalin LA (methylphenidate long-acting)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> Same mechanism as Ritalin IR but delivers 50% immediately then 50% over the next 4–8 hours via two-pulse SODAS system. Smooth onset, longer coverage.</p>
+      <p><strong>Practical details:</strong> Capsule — swallow whole. Approximately 8 hrs from one morning dose. Avoid acidic drinks. Some add a small Ritalin IR afternoon dose for extended coverage.</p>
+      <p><strong>Common side effects:</strong> Reduced appetite (less pronounced than IR), insomnia if taken too late, headache, increased heart rate, jitteriness or anxiety in some.</p>
+      <p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch sky" onclick="toggleCard(this)">Concerta (methylphenidate ER)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> OROS osmotic pump: 22% delivered immediately, 78% released gradually over 10–12 hrs. Creates a slowly ascending blood level. Same reuptake inhibition mechanism as Ritalin.</p>
+      <p><strong>Practical details:</strong> Tablet — <strong>must swallow whole</strong> (do not crush or chew). Empty shell may appear in stool (normal). 10–12 hrs from one morning dose. Avoid acidic drinks.</p>
+      <p><strong>What to expect:</strong> Gradual ascending delivery rather than an early peak. Extended duration suits people needing afternoon/evening coverage.</p>
+      <p><strong>Common side effects:</strong> Reduced appetite, insomnia (take in morning), headache, increased heart rate, dry mouth.</p>
+      <p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch purple" onclick="toggleCard(this)">Strattera (atomoxetine)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> NOT a stimulant. Selective noradrenaline reuptake inhibitor (SNRI). Blocks the noradrenaline transporter — which in the prefrontal cortex also indirectly increases dopamine. No abuse potential; not a controlled substance.</p>
+      <p><strong>Practical details:</strong> Takes <strong>4–12 weeks</strong> for full effect. Once or twice daily, titrated slowly. 24-hr coverage at therapeutic dose. Good option for anxiety, tic disorders, substance use history, or as add-on to stimulants.</p>
+      <p><strong>Common side effects:</strong> Nausea/stomach discomfort (take with food — helps significantly), dry mouth, constipation, dizziness, mood changes during titration, urinary hesitancy, reduced appetite (milder than stimulants).</p>
+      <p><strong>Rare but important:</strong> Liver injury — if jaundice (yellow skin/eyes), dark urine, or persistent abdominal pain, stop and seek urgent help immediately.</p>
+      <p><strong>Interactions:</strong> Fluoxetine, paroxetine, bupropion dramatically increase atomoxetine levels — avoid combination. Salbutamol (Ventolin) may increase cardiovascular effects.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch purple" onclick="toggleCard(this)">Intuniv (guanfacine XR)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> Non-stimulant. Acts on alpha-2A adrenergic receptors in the prefrontal cortex, strengthening neural connections that control attention and impulse regulation. No abuse potential.</p>
+      <p><strong>Practical details:</strong> Once daily, same time each day. Therapeutic effect develops over 4–8 weeks. Avoid high-fat meals at dose time. <strong>Do not stop suddenly</strong> — can cause rebound hypertension and tachycardia. Always taper under medical guidance.</p>
+      <p><strong>What to expect:</strong> Particularly helpful for emotional dysregulation, impulsivity, and hyperactivity. Often combined with stimulants. Initial sedation usually settles.</p>
+      <p><strong>Common side effects:</strong> Drowsiness/sedation (especially first weeks — evening dosing helps), decreased blood pressure (dizziness on standing), decreased heart rate, headache, dry mouth, constipation.</p>
+      <p><strong>Interactions:</strong> Other blood pressure medications — effects add. Avoid high-fat meals at dose time.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch slate" onclick="toggleCard(this)">Catapres (clonidine)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How it works:</strong> Non-stimulant. Acts on alpha-2 adrenergic receptors in the brain and peripheral nervous system. Helps regulate arousal, reduce impulsivity, and improve sleep onset. No abuse potential.</p>
+      <p><strong>Practical details:</strong> Titrated slowly. <strong>Do not stop suddenly</strong> — can cause rebound elevated blood pressure and heart rate. Always taper gradually. Alcohol significantly increases sedation — avoid or strictly limit.</p>
+      <p><strong>What to expect:</strong> Useful for hyperarousal, impulsivity, and sleep difficulties. Sedation common initially. Low BP and dizziness (especially on standing) usually diminish after weeks at a stable dose.</p>
+      <p><strong>Common side effects:</strong> Sedation (can be significant when starting), dizziness on standing, decreased blood pressure, decreased heart rate, dry mouth, constipation, headache, low mood or fatigue in some.</p>
+      <p><strong>Interactions:</strong> Alcohol significantly increases sedation — avoid/limit. Other blood pressure medications — effects add. Inform all doctors you are taking it.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">3</span>Non-Pharmacological Strategies</div>
+
+<div class="card">
+  <div class="ch emerald" onclick="toggleCard(this)">Non-Pharmacological Approaches &amp; Techniques</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Psychological therapies:</strong></p>
+      <ul>
+        <li><strong>CBT for ADHD</strong> (strong evidence): Targets procrastination, disorganisation, time management, avoidance, and negative self-beliefs. Skills-based and practical. ~60–70% show meaningful functional gains.</li>
+        <li><strong>ACT — Acceptance and Commitment Therapy</strong> (moderate–strong): Teaches psychological flexibility. Key techniques: defusion ("I notice I am having the thought that I am useless" rather than "I am useless"), values clarification, committed action. Particularly helpful for those exhausted by trying to control their mind.</li>
+        <li><strong>DBT skills training</strong> (moderate–strong): Especially for emotional dysregulation and rejection sensitivity. Four modules — mindfulness, distress tolerance, emotion regulation, interpersonal effectiveness — map directly onto ADHD's most impairing features.</li>
+        <li><strong>ADHD coaching</strong> (moderate): Practical and present-focused. Goal attainment, accountability, routine-building. Best for functionally stable people needing structured accountability. Look for ICF-accredited coaches with ADHD training.</li>
+        <li><strong>Occupational therapy</strong> (emerging): Hands-on solutions — workspace organisation, routine scaffolding, sensory strategies, assistive technology. May be fundable through NDIS.</li>
+      </ul>
+      <p><strong>Practical strategies:</strong></p>
+      <ul>
+        <li><strong>Body doubling:</strong> Working in the presence of another person — physically or via video — without necessarily collaborating. Many people with ADHD initiate and sustain tasks dramatically better when someone is simply present. Focusmate (focusmate.com) provides free online sessions.</li>
+        <li><strong>Brain dump + priority matrix:</strong> Get everything out of your head onto a list — everything, regardless of size or urgency. Then sort by importance and urgency. Externalising the task list is itself calming.</li>
+        <li><strong>Time blocking with visual timers:</strong> Allocate specific tasks to specific time slots. Pomodoro technique: 25 minutes on, 5-minute break. Time Timer (visual countdown as shrinking red disc) makes time passage concrete.</li>
+        <li><strong>If-then planning:</strong> "If it is 9am and I sit at my desk, then I will open the document I need to work on first." More specific = more effective. Write it down.</li>
+        <li><strong>Reward pairing:</strong> Listen to a favourite podcast only while doing routine tasks. Set a small, concrete reward for completing a defined block.</li>
+        <li><strong>Exercise:</strong> A single session of aerobic exercise produces immediate, measurable improvement in attention, working memory, and impulse control for 1–4 hours — comparable to a low-dose stimulant. Aim for 20+ minutes aerobic, earlier in the day.</li>
+        <li><strong>Decision fatigue:</strong> Automate recurring decisions — weekly meal structure, default answers to common requests. Do cognitively demanding work during your medication peak.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Reducing Phone &amp; Social Media Use</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>Smartphones are engineered to capture attention. For ADHD brains, the goal is not willpower — it is <strong>friction</strong>. Make undesirable habits physically harder.</p>
+      <ul>
+        <li><strong>Hidden folders:</strong> Move Instagram/TikTok into a folder within a folder on the last page. Extra taps break the automatic reflex.</li>
+        <li><strong>Grayscale mode:</strong> Settings → Accessibility → Colour Filters → Greyscale. Makes the phone boring. Works.</li>
+        <li><strong>Screen Time limits:</strong> Set daily limits per app. Have someone else set the passcode if you override impulsively.</li>
+        <li><strong>Brick:</strong> Physical NFC card (brickself.com) that locks apps for a set period.</li>
+        <li><strong>Notification audit:</strong> Turn off all non-essential notifications. Every interruption costs 10–20 minutes of reorientation.</li>
+        <li><strong>Charge outside bedroom:</strong> Eliminates late-night scrolling and morning phone-grab before medication kicks in.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Emotional Regulation Strategies</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>Emotional dysregulation in ADHD is neurological — the same prefrontal circuits managing attention also regulate emotional responses. Emotions arrive faster, feel more intense, and take longer to settle. This is not a character flaw; it is the same mechanism as the attention problems.</p>
+      <p><strong>In the moment — when already activated:</strong></p>
+      <ul>
+        <li><strong>TIPP (DBT):</strong> Temperature (submerge face in cold water 15–30 seconds — activates the mammalian dive reflex, rapidly lowers heart rate); Intense exercise (60 seconds of jumping jacks burns physiological activation); Paced breathing (exhale longer than inhale: 4 in, 7 out); Progressive muscle relaxation.</li>
+        <li><strong>STOP skill (DBT):</strong> Stop. Take a step back physically if possible. Observe what you are feeling without acting on it. Proceed mindfully — even 30 seconds changes outcomes.</li>
+        <li><strong>90-second rule:</strong> The physiological component of an emotional response lasts approximately 90 seconds if you do not feed it with rumination. Ride the wave without acting and it naturally subsides.</li>
+      </ul>
+      <p><strong>Longer-term regulation:</strong></p>
+      <ul>
+        <li><strong>PLEASE skills (DBT):</strong> Treat physical illness. Eat regularly. Avoid mood-altering substances. Sleep adequately. Exercise daily. These are prerequisites, not optional extras.</li>
+        <li><strong>Opposite Action (DBT):</strong> When the emotion prompts an action that makes things worse, do the opposite. Shame says withdraw — opposite is to reach out.</li>
+        <li><strong>Defusion (ACT):</strong> Create distance from intense thoughts. "I notice I am having the thought that I am worthless" instead of "I am worthless."</li>
+        <li><strong>Emotion naming:</strong> Accurately labelling the feeling ("I feel rejected and ashamed" not just "bad") activates the prefrontal cortex and reduces amygdala reactivity.</li>
+        <li><strong>Map RSD triggers in advance:</strong> Identify situations that reliably activate rejection sensitivity. Knowing the trigger in advance lets you apply skills before you are flooded.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Study Tips</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>Standard study advice is written for neurotypical brains. ADHD requires techniques that work with the interest-driven attention system.</p>
+      <ul>
+        <li><strong>Active recall, not re-reading:</strong> Read a section, close it, write everything you remember, then check. Flashcards with spaced repetition (Anki app) are ideal.</li>
+        <li><strong>Remove the phone:</strong> Get a smartwatch and put your phone in another room. Non-negotiable.</li>
+        <li><strong>Feynman Technique:</strong> Explain the concept aloud as if teaching someone. Where you get stuck is the exact gap. Fill it, then explain again.</li>
+        <li><strong>Body doubling for study:</strong> Library, cafe, or Focusmate (virtual body doubling service).</li>
+        <li><strong>Study during medication peak:</strong> Schedule demanding work 60–90 minutes after taking stimulant. Do not save it for when medication has worn off.</li>
+        <li><strong>Interest bridging:</strong> Find the angle that connects the material to something you care about. ADHD brains learn through interest.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Binge Eating &amp; Appetite</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>Binge eating is significantly more common in ADHD. The ADHD brain seeks dopamine; highly palatable food provides a reliable, immediate hit. Impulsivity reduces the pause between urge and action. Skipping meals (especially when stimulants suppress lunch appetite) drives hunger that accelerates loss of control later.</p>
+      <ul>
+        <li><strong>Eat regularly:</strong> Small, scheduled lunch — even if not hungry — prevents significant hunger driving evening overconsumption.</li>
+        <li><strong>Reduce friction for healthy eating:</strong> Keep easy, adequate food accessible; make high-stimulation binge foods harder to reach.</li>
+        <li><strong>Identify the emotional trigger:</strong> Binge urges often follow boredom, procrastination, frustration, or overwhelm — not just hunger.</li>
+        <li><strong>Address the dopamine need directly:</strong> Movement, music, or a brief engaging task can reduce the urge without eating.</li>
+        <li><strong>If significantly impacting life:</strong> Raise with your psychiatrist. Medication adjustments and/or psychological support (CBT-E or DBT) have good evidence.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Sleep &amp; ADHD</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Why ADHD and sleep do not mix:</strong> The ADHD brain struggles to disengage at bedtime — thoughts keep firing when you want to wind down. Delayed sleep phase (being a natural night owl) is more common in ADHD. Stimulant timing can also affect sleep onset.</p>
+      <p><strong>What actually helps:</strong></p>
+      <ul>
+        <li><strong>Bright light therapy:</strong> Morning bright light (10,000 lux light box or Re-Timer glasses worn for 30–60 minutes on waking) is one of the higher-yield sleep interventions in ADHD. It resets the circadian rhythm and makes falling asleep at night easier.</li>
+        <li><strong>Consistent wake time</strong> — including weekends — anchors the circadian rhythm more effectively than a consistent bedtime.</li>
+        <li><strong>Review stimulant timing</strong> with your psychiatrist if sleep onset is problematic.</li>
+        <li><strong>Sleep hygiene basics:</strong> Cool, dark room; no screens 1 hour before bed; white noise if helpful.</li>
+        <li><strong>Melatonin or clonidine</strong> can assist with sleep onset — discuss with your psychiatrist.</li>
+        <li>If sleep problems persist despite these measures, ask your GP about a formal sleep assessment.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Disclosing Your Diagnosis</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>You are never obligated to disclose your diagnosis. It is a personal decision with real trade-offs.</p>
+      <p><strong>Before disclosing, consider:</strong></p>
+      <ul>
+        <li>Stigma remains real. Not everyone understands ADHD or believes in it. Some will see it as an excuse.</li>
+        <li>Disclosure does not guarantee protection or accommodation.</li>
+        <li>Some contexts are safer than others (close relationships vs workplace vs casual acquaintances).</li>
+      </ul>
+      <p><strong>When disclosure may help:</strong></p>
+      <ul>
+        <li>Requesting specific, practical accommodations that would meaningfully help your performance.</li>
+        <li>Partners and close family — understanding often significantly reduces relationship friction.</li>
+        <li>Trusted colleagues who can provide informal support or accountability.</li>
+      </ul>
+      <p><strong>If people are sceptical:</strong> You do not need to convince them. A simple response: "I have had a thorough assessment and I am comfortable with the diagnosis." You do not owe anyone a debate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Workplace Adjustments</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Disclosure:</strong> Not legally required. Disclose on a need-to-know basis only. Stigma remains real — proceed thoughtfully.</p>
+      <p><strong>Useful adjustments:</strong> Quiet or people-filled workspace (choose what works), noise-cancelling headphones, standing desk, regular brief check-ins with manager, written task lists and clear deadlines.</p>
+      <p><strong>Self-employed:</strong> Batch admin into one weekly block, automate invoicing, fixed daily start routine, external accountability via coach or colleague.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Body-Focused Repetitive Behaviours (BFRBs)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>What they are:</strong> Skin picking, hair pulling (trichotillomania), nail biting, cheek chewing. Significantly more common with ADHD.</p>
+      <p><strong>Why they occur:</strong> Stimulation-seeking, impulsivity, emotional regulation via habit loop, often automatic/unconscious.</p>
+      <p><strong>What helps:</strong> Habit Reversal Training (most evidence-based), barrier strategies (pimple patches, gloves while driving), fidget substitutes, awareness training. ADHD treatment itself often reduces frequency.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Communication &amp; ADHD</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>How ADHD affects communication:</strong> Impulsive interrupting, losing the conversational thread, emotional reactivity in conflict, inconsistency between intention and follow-through.</p>
+      <p><strong>For the person with ADHD:</strong> Write things down immediately, ask for written summaries, time important conversations for when medication is active.</p>
+      <p><strong>For partners/family:</strong> Short direct requests, written reminders, do not take forgetfulness personally, repair conflict quickly, assume positive intent.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch emerald" onclick="toggleCard(this)">Pregnancy &amp; Breastfeeding</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>Stimulants in pregnancy:</strong> Small increased risk of preterm birth and low birth weight. Usual approach: discuss stopping or reducing, especially first trimester, unless risks of untreated ADHD are significant.</p>
+      <p><strong>Non-stimulants:</strong> Atomoxetine, guanfacine, clonidine — generally stopped in pregnancy due to limited safety data.</p>
+      <p><strong>Breastfeeding:</strong> Small amounts pass into breast milk. Ritalin has lowest excretion and is generally preferred. Monitor infant for reduced feeding or irritability.</p>
+      <p><strong>Key message:</strong> Individual decision with psychiatrist and obstetrician. Plan early. Non-pharmacological strategies become particularly important during this period.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">4</span>Products &amp; Resources</div>
+
+<div class="card collapsed">
+  <div class="ch gold" onclick="toggleCard(this)">Re-timer 3 (Light Therapy Glasses)</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>Light therapy glasses worn for 30–60 minutes each morning. Help regulate circadian rhythm, improve mood, and advance sleep timing — particularly useful for the delayed sleep phase common in ADHD.</p>
+      <p><strong>How to use:</strong> Wear on waking, continue normal morning activities (eating, reading). Consistency matters more than duration.</p>
+      <p><strong>Where to get:</strong> retimer.com.au — use code <strong>BMURRIE</strong> for 20% off the Re-timer 3.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch gold" onclick="toggleCard(this)">Manta Sleep Masks</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>High-quality blackout sleep masks — particularly the <strong>Manta Sleep SOUND</strong>, which combines a comfortable blackout eye mask with the ability to listen to calming music or white noise. Excellent for the ADHD brain that struggles to disengage at bedtime.</p>
+      <p><strong>Where to get:</strong> mantasleep.com.au — use code <strong>SLEEPBETTER_15</strong> for 15% off non-promotional items.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch gold" onclick="toggleCard(this)">Loop Earplugs</div>
+  <div class="cb">
+    <div class="info-block">
+      <p>High-quality reusable earplugs useful for both sleep and reducing daytime distractions. Different models offer different levels of noise reduction — some designed to reduce volume without distorting sound (good for work/social settings), others for fuller noise blocking.</p>
+      <p><strong>Where to get:</strong> au.loopearplugs.com — discounts frequently available on the site.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch gold" onclick="toggleCard(this)">Recommended Books</div>
+  <div class="cb">
+    <div class="info-block">
+      <ul>
+        <li><strong>ADHD 2.0</strong> — Edward Hallowell and John Ratey. Highly readable, compassionate, and evidence-based. Good starting point for newly diagnosed adults.</li>
+        <li><strong>Driven to Distraction</strong> — Hallowell and Ratey. The original classic. Excellent for understanding the lived experience.</li>
+        <li><strong>Smart but Stuck</strong> — Thomas Brown. Particularly good for high-achieving adults with ADHD who cannot understand why they keep underperforming.</li>
+        <li><strong>The ADHD Advantage</strong> — Dale Archer. Useful reframe for strengths-based thinking.</li>
+        <li><strong>Scattered Minds</strong> — Gabor Maté. More psychodynamic lens; good for understanding early developmental patterns.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card collapsed">
+  <div class="ch gold" onclick="toggleCard(this)">Other Useful Resources &amp; Products</div>
+  <div class="cb">
+    <div class="info-block">
+      <ul>
+        <li><strong>Kaiko Fidgets</strong> — Good quality fidget toys and harm reduction tools. Useful for managing restlessness and focus. kaikofidgets.com</li>
+        <li><strong>Focusmate</strong> — Free body doubling service. Schedule 50-minute virtual co-working sessions with strangers. Remarkably effective for task initiation. focusmate.com</li>
+        <li><strong>Melodic Forest</strong> — Kalimba, tongue drums. The kalimba is an excellent phone replacement — soothing and stimulating. melodicforest.com.au</li>
+        <li><strong>Neptune Blanket</strong> — Weighted blankets. Can help with sleep onset and sensory regulation. neptuneblanket.com.au</li>
+        <li><strong>Lovevery</strong> — High quality developmental play kits for young children. Great for parents with ADHD. lovevery.com.au</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">5</span>Women &amp; Girls with ADHD</div>
+
+<div class="card">
+  <div class="ch rose" onclick="toggleCard(this)">Why Women and Girls Are Underdiagnosed</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">The Diagnostic Gap</div>
+        <p>Women and girls with ADHD are diagnosed on average <strong>5–10 years later</strong> than males, and many are never diagnosed at all. This is not because ADHD is rarer in females — prevalence is similar — but because the condition presents differently and the diagnostic criteria were historically developed from research on young boys.</p>
+        <ul>
+          <li>Predominantly inattentive presentation is more common in girls — less visible, less disruptive, easier to miss</li>
+          <li>Girls are more likely to compensate through intense effort, people-pleasing, and masking — presenting as "coping" while exhausted internally</li>
+          <li>Internalising symptoms (anxiety, depression, low self-esteem) dominate the clinical picture and attract diagnostic attention first</li>
+          <li>Social motivation drives compliance — symptoms are less obvious to teachers in structured settings</li>
+          <li>Hyperactivity in girls is often internalised (racing thoughts, inner restlessness) rather than externalised movement</li>
+          <li>Teachers and parents are less likely to refer girls, even when symptoms are equivalent to boys</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Why Late Diagnosis Matters</div>
+        <ul>
+          <li>Years of unexplained underperformance → profound shame, self-blame, and identity damage</li>
+          <li>Diagnosis in adulthood often follows life events: new academic demands, first job, parenthood, relationship breakdown, perimenopause</li>
+          <li>Many women describe the diagnosis as "finally making sense of my whole life"</li>
+          <li>Higher rates of self-harm, eating disorders, and suicide attempts in undiagnosed women with ADHD</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Presentation Differences in Women</div>
+        <ul>
+          <li><strong>Masking / camouflaging:</strong> Intense effort to appear neurotypical — mimicking peers, scripting conversations, exhausting social "performance." Leads to profound fatigue and burnout.</li>
+          <li><strong>Emotional dysregulation:</strong> Often the dominant complaint — intense emotional reactions, RSD, mood swings. Frequently misdiagnosed as BPD or cyclothymia.</li>
+          <li><strong>Perfectionism as compensation:</strong> Extremely high standards mask executive dysfunction — until demands exceed capacity, then sudden collapse.</li>
+          <li><strong>People-pleasing and difficulty saying no:</strong> Impulsivity + fear of rejection → chronic overcommitment.</li>
+          <li><strong>Internal hyperactivity:</strong> Racing thoughts, inability to switch off, constant inner commentary.</li>
+          <li><strong>Chronic disorganisation as a private shame:</strong> Many women are visibly "together" publicly while their home/finances/inner life are chaotic.</li>
+          <li><strong>Hyperfocus on relationships:</strong> Intense investment in friendships and romantic relationships; devastation when they end.</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Comorbidity Pattern in Women</div>
+        <ul>
+          <li>Higher rates of anxiety, depression, eating disorders (especially binge eating), BPD, PTSD, fibromyalgia</li>
+          <li>Emotional dysregulation often misattributed to BPD — ADHD neurological basis is key to accurate diagnosis</li>
+          <li>Self-harm and suicidality: ADHD is an independent risk factor — screen thoroughly</li>
+          <li>Burnout: particularly common in women who have masked for decades</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch rose" onclick="toggleCard(this)">Hormonal Influences on ADHD in Women</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Oestrogen &amp; Dopamine</div>
+        <p>Oestrogen potentiates dopaminergic function in the prefrontal cortex — the same system impaired in ADHD. This means fluctuations in oestrogen directly and significantly affect ADHD symptom severity.</p>
+        <div class="sub-h" style="margin-top:10px">Menstrual Cycle</div>
+        <ul>
+          <li>ADHD symptoms commonly <strong>worsen premenstrually</strong> (late luteal phase) when oestrogen falls</li>
+          <li>Women may notice: increased emotional dysregulation, executive dysfunction, rejection sensitivity, difficulty with medication efficacy in the week before menstruation</li>
+          <li>Perimenstrual symptom worsening can look like PMDD — the two often co-occur but are distinct</li>
+          <li>Clinical response: may need temporary dose adjustment perimenstrually — document the pattern and review with psychiatrist</li>
+          <li>Combined oral contraceptive pill (stable oestrogen) may improve symptom consistency — discuss with GP/gynaecologist</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Perimenopause &amp; Menopause</div>
+        <ul>
+          <li>Perimenopause: significant and often abrupt ADHD exacerbation as oestrogen begins declining (typically late 30s–50s)</li>
+          <li>Women who previously coped well may suddenly find ADHD symptoms debilitating — a common trigger for first diagnosis in midlife</li>
+          <li>Medication dose may need to increase during perimenopause</li>
+          <li>HRT (hormone replacement therapy) may improve ADHD symptom severity by stabilising oestrogen — not yet well-studied but consistent with mechanism</li>
+          <li>Post-menopausal: symptoms often stabilise at a new (higher) baseline — medication dose recalibration may be needed</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Pregnancy &amp; Postpartum</div>
+        <ul>
+          <li>Pregnancy: oestrogen rises dramatically — some women find ADHD symptoms actually improve, others worsen</li>
+          <li>Postpartum: abrupt oestrogen drop + sleep deprivation + demands of newborn care → often severe ADHD exacerbation</li>
+          <li>Postpartum period is high-risk for first ADHD recognition in women — previously coped; now overwhelmed</li>
+          <li>Non-pharmacological management preferred in pregnancy and breastfeeding — see Pregnancy card</li>
+          <li>Plan ahead: discuss medication strategy before or early in pregnancy with psychiatrist + obstetrician</li>
+        </ul>
+        <div class="sub-h" style="margin-top:10px">Prescribing Notes for Women</div>
+        <ul>
+          <li>Contraception: no clinically significant pharmacokinetic interaction with ADHD stimulants</li>
+          <li>Document menstrual cycle tracking to identify perimenstrual symptom patterns</li>
+          <li>Lisdexamfetamine: dual PBS indication for ADHD and Binge Eating Disorder — particularly relevant in women</li>
+          <li>In perimenopause: coordinate with GP regarding HRT and ADHD medication — both may need adjustment</li>
+          <li>Discuss contraception plans before starting medications in women of childbearing age</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch rose" onclick="toggleCard(this)">Girls with ADHD — Developmental Considerations</div>
+  <div class="cb">
+    <div class="info-block">
+      <div class="g2">
+        <div>
+          <div class="sub-h">Why Girls Are Missed</div>
+          <ul>
+            <li>Girls' ADHD symptoms are often attributed to personality ("she's a daydreamer," "she's emotional," "she's sensitive")</li>
+            <li>Academic masking through anxiety-driven perfectionism: grades may look fine while the effort required is unsustainable</li>
+            <li>Teachers less likely to refer girls — classroom behaviour is often compliant even when internally overwhelmed</li>
+            <li>Social consequences are significant: girls depend more on social cohesion, and social difficulties from ADHD can be devastating</li>
+            <li>Adolescence is the peak crisis point: puberty brings hormonal fluctuation + increasing academic demands + social complexity → masking capacity collapses</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sub-h">Clinical Presentation in Adolescent Girls</div>
+          <ul>
+            <li>Anxiety and depression as the presenting complaint (underlying ADHD often missed)</li>
+            <li>Eating disorders (restrictive or binge/purge) — ADHD impulsivity + dopamine-seeking drives disordered eating</li>
+            <li>Self-harm — emotional dysregulation + impulsivity + shame</li>
+            <li>Social difficulties: intense friendships followed by explosive endings; rejection sensitivity prominent</li>
+            <li>Academic "potential vs performance" gap: teachers note she could do better "if she tried"</li>
+            <li>Hyperfixations on interests that may be mistaken for typical teen behaviour</li>
+          </ul>
+          <div class="sub-h" style="margin-top:10px">Assessment Tips</div>
+          <ul>
+            <li>Ask directly about internal experience — not just external behaviour</li>
+            <li>Explore masking: "How much effort does it take to appear organised/calm?"</li>
+            <li>Get collateral from parents and ideally a teacher — girl may appear composed in the appointment</li>
+            <li>Screen for eating disorders, self-harm, and anxiety as standard</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch rose" onclick="toggleCard(this)">Masking, Burnout &amp; Identity in Women with ADHD</div>
+  <div class="cb">
+    <div class="info-block">
+      <div class="g2">
+        <div>
+          <div class="sub-h">What is Masking?</div>
+          <p>Masking is the process of suppressing, camouflaging, or compensating for ADHD symptoms to appear neurotypical. It is learned — often unconsciously — as a survival strategy in a world that penalises deviation from expected behaviour.</p>
+          <p>Common masking strategies include:</p>
+          <ul>
+            <li>Studying peers and mimicking social behaviour</li>
+            <li>Scripting conversations in advance</li>
+            <li>Over-apologising to pre-empt perceived failure</li>
+            <li>Extreme organisation systems to hide executive dysfunction</li>
+            <li>Suppressing emotional reactions at enormous energy cost</li>
+            <li>People-pleasing to avoid perceived rejection</li>
+          </ul>
+          <p><strong>The cost of masking:</strong> It works — until it doesn't. Chronic masking is extraordinarily energy-intensive. It often produces a public persona of competence alongside private collapse: missed meals, chaotic home environments, exhaustion, and profound shame about the gap between how one appears and how one feels.</p>
+        </div>
+        <div>
+          <div class="sub-h">ADHD Burnout</div>
+          <p>ADHD burnout occurs when the cumulative load of managing unrecognised ADHD symptoms — masking, compensating, overcommitting — exceeds capacity. It is distinct from depression, though the two overlap.</p>
+          <p><strong>Features of ADHD burnout:</strong></p>
+          <ul>
+            <li>Profound physical and cognitive exhaustion</li>
+            <li>Inability to mask — symptoms suddenly visible where they were previously hidden</li>
+            <li>Emotional flatness or emotional flooding, alternating</li>
+            <li>Withdrawal from responsibilities and relationships</li>
+            <li>Loss of capacity that seemed intact before</li>
+          </ul>
+          <p><strong>Recovery requires:</strong> Rest (not productivity), reduction of demands, removal of masking pressure, medication review, and often psychological support specifically for ADHD.</p>
+          <div class="sub-h" style="margin-top:10px">Identity &amp; Diagnosis</div>
+          <p>Many women describe ADHD diagnosis as both a relief and a grief — relief at finally understanding themselves, grief for the years of mislabelling, shame, and paths not taken. The diagnostic process should honour both experiences. Psychoeducation about ADHD as a neurological difference — not a character flaw — is core to recovery.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('followup')">← Follow-up</button>
+  <button class="nav-btn nav-next" onclick="navToTab('special')">Special Groups →</button>
+</div>
+</div><!-- end psychoeducation panel -->
 
 
 <!-- ══════════════════════════════════════════════════════════════
@@ -1301,6 +2044,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
   </div>
 </div>
 
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('psychoeducation')">← Psychoeducation</button>
+  <span></span>
+</div>
 </div><!-- end special panel -->
 
 </div><!-- end .content -->
@@ -1316,6 +2063,15 @@ function showTab(id,btn){
 function toggleCard(chEl){
   var card=chEl.closest('.card');
   if(card)card.classList.toggle('collapsed');
+}
+function navToTab(id){
+  var btn=null;
+  document.querySelectorAll('.tab').forEach(function(t){
+    var oc=t.getAttribute('onclick')||'';
+    if(oc.indexOf("'"+id+"'")>-1)btn=t;
+  });
+  showTab(id,btn);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
 </body>
