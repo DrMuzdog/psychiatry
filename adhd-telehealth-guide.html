@@ -128,6 +128,85 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .nav-btn.nav-next:hover{background:#1245b5}
 /* Print */
 @media print{.tabs,.topbar{display:none}.panel{display:block!important}.card.collapsed .cb{display:block!important}}
+/* ? button / expandable question system */
+.q-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+.q-row:last-child{border-bottom:none}
+.q-label{flex:1;font-size:12.5px;line-height:1.45;color:#1e293b;padding-top:2px}
+.q-num{width:18px;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;padding-top:3px}
+.q-btn{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:800;cursor:pointer;font-family:var(--sans);flex-shrink:0;margin-top:1px}
+.q-btn:hover,.q-btn.active{background:#1e40af;color:#fff}
+.q-box{display:none;width:100%;background:#f0f7ff;border-left:3px solid var(--primary);padding:8px 12px;border-radius:0 6px 6px;font-size:12px;line-height:1.6;color:#1e3a5f;margin-top:4px}
+.q-box.open{display:block}
+.q-box ul{margin:0 0 0 16px;padding:0}
+.q-box li{margin-bottom:3px;font-style:italic}
+/* Safety grid */
+.safety-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 0}
+@media(max-width:640px){.safety-grid{grid-template-columns:1fr}}
+.safety-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:#f9fafb;border-radius:6px;border:1px solid #e8ebf1;flex-wrap:wrap}
+.safety-item.flag{background:#fff5f5;border-color:#fca5a5}
+.safety-item.abs{background:#fee2e2;border-color:#f87171}
+.si-label{flex:1;font-size:12px;font-weight:500;line-height:1.4;padding-top:1px}
+/* Titration */
+.tit-pg-section{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin:18px 0 8px;padding-top:4px;border-top:1px solid #e5e7eb}
+.tit-pg-card{background:#f0f6ff;border:1px solid #bfdbfe;border-radius:8px;margin-bottom:12px;overflow:hidden}
+.tit-pg-head{background:#1e3a5f;color:#fff;font-size:.82rem;font-weight:700;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.tit-pg-note{font-size:.75rem;color:#bfdbfe;font-weight:400;font-style:italic}
+.tit-pg-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.tit-pg-table th{background:#1e3a5f;color:#fff;padding:5px 9px;text-align:left;font-size:.75rem;font-weight:600}
+.tit-pg-table td{padding:5px 9px;border-bottom:1px solid #dbeafe;vertical-align:top;line-height:1.4}
+.tit-pg-table tr:nth-child(even) td{background:#eff6ff}
+.tit-pg-phase{font-weight:600;color:#1e3a5f;white-space:nowrap}
+.tit-pg-note-cell{font-style:italic;color:#b45309;font-size:.75rem}
+.conv-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.conv-table th{background:#1e3a5f;color:#fff;padding:5px 9px;text-align:left;font-size:.75rem;font-weight:600}
+.conv-table td{padding:5px 9px;border-bottom:1px solid #dbeafe}
+.conv-table tr:nth-child(even) td{background:#eff6ff}
+/* Step headers — flat, compact, no expand needed */
+.step-hdr{background:#1e3a5f;color:#f1f5f9;padding:7px 11px;border-radius:6px;margin:14px 0 6px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;flex-wrap:wrap}
+.step-hdr:first-child,.step-hdr.no-top{margin-top:0}
+.step-sn{background:rgba(255,255,255,.2);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;text-align:center}
+.step-note{font-size:10px;font-weight:400;opacity:.8;font-style:italic;margin-left:auto;letter-spacing:0;text-transform:none;white-space:nowrap}
+/* Consent inline */
+.consent-box{border-radius:7px;padding:9px 13px;margin-bottom:8px;font-size:12.5px;font-style:italic;line-height:1.7;color:#1e293b}
+.consent-box.red{background:#fef2f2;border:1.5px solid #fca5a5;border-left:4px solid #dc2626}
+.consent-box.amber{background:#fffbeb;border:1.5px solid #fcd34d;border-left:4px solid #f59e0b}
+.consent-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;font-style:normal}
+.consent-lbl.red{color:#dc2626}
+.consent-lbl.amber{color:#b45309}
+/* Differentials compact grid */
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin:4px 0}
+@media(max-width:600px){.diff-grid{grid-template-columns:1fr}}
+.diff-item{display:flex;align-items:flex-start;gap:6px;padding:5px 8px;background:#fafbfc;border:1px solid #e8ebf1;border-radius:5px;flex-wrap:wrap}
+.diff-label{flex:1;font-size:12px;font-weight:600;color:#1e293b;padding-top:1px;line-height:1.35}
+/* Compact 2-col list */
+.compact-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media(max-width:600px){.compact-2col{grid-template-columns:1fr}}
+.compact-item{display:flex;align-items:flex-start;gap:5px;padding:3px 0;font-size:12px;line-height:1.4;border-bottom:1px solid #f1f5f9;color:#1e293b}
+.compact-item:last-child{border-bottom:none}
+.ci-dot{width:5px;height:5px;border-radius:50%;background:#94a3b8;flex-shrink:0;margin-top:5px}
+.ci-dot.warn{background:#dc2626}
+/* Formulation criteria */
+.crit-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px}
+.crit-row:last-child{border-bottom:none}
+.cr-badge{min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
+.cr-badge.blue{background:var(--primary)}
+.cr-badge.warn{background:#b45309}
+.cr-badge.green{background:#16a34a}
+
+/* ── Symptom blocks (always-visible questions) ── */
+.sx-block{background:#fff;border:1px solid #dde3ee;border-left:3px solid #1a56db;border-radius:0 7px 7px 0;padding:8px 10px 7px;margin:0 0 5px}
+.sx-hd{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+.sx-n{background:#1a56db;color:#fff;min-width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;line-height:1}
+.sx-n.hi{background:#7c3aed}
+.sx-n.dev{background:#92400e;border-radius:4px;font-size:9px}
+.sx-title{font-size:12.5px;font-weight:700;color:#0f172a;line-height:1.3}
+.sx-qs{padding-left:28px;margin-bottom:4px;display:flex;flex-direction:column;gap:3px}
+.sx-qs span{font-size:12px;color:#374151;font-style:italic;line-height:1.4}
+.sx-qs span::before{content:"→ ";color:#94a3b8;font-style:normal;font-size:10px}
+.sx-note{font-size:11px;color:#64748b;padding-left:28px;padding-top:4px;border-top:1px solid #f1f5f9;line-height:1.4}
+/* Differentials with visible hint */
+.diff-hint{font-size:11px;color:#64748b;font-style:italic;margin-top:3px;line-height:1.3}
+.diff-label-col{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -138,361 +217,792 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <div class="tabs" id="main-tabs">
-  <button class="tab active" onclick="showTab('assessment',this)">Assessment</button>
-  <button class="tab" onclick="showTab('diagnosis',this)">Diagnosis</button>
+  <button class="tab active" onclick="showTab('overview',this)">Overview</button>
+  <button class="tab" onclick="showTab('assessment',this)">Assessment</button>
   <button class="tab" onclick="showTab('medications',this)">Medications</button>
+  <button class="tab" onclick="showTab('titration',this)">Titration</button>
   <button class="tab" onclick="showTab('prescribing',this)">Prescribing</button>
   <button class="tab" onclick="showTab('billing',this)">Billing</button>
   <button class="tab" onclick="showTab('followup',this)">Follow-up</button>
   <button class="tab" onclick="showTab('psychoeducation',this)">Psychoeducation</button>
   <button class="tab" onclick="showTab('special',this)">Special Groups</button>
+  <button class="tab" onclick="showTab('extrainfo',this)">Extra Info</button>
 </div>
 
 <div class="content">
 
 <!-- ══════════════════════════════════════════════════════════════
-     ASSESSMENT TAB
+     OVERVIEW TAB
 ══════════════════════════════════════════════════════════════ -->
-<div class="panel active" id="panel-assessment">
+<div class="panel active" id="panel-overview">
 
-<div class="card" style="margin-bottom:14px">
-  <div class="ch red" onclick="toggleCard(this)">Consent Script — Assessment &amp; Financial</div>
-  <div class="cb">
-    <div class="g2">
-      <div class="info-block">
-        <div class="sub-h" style="color:#b91c1c">Assessment Consent</div>
-        <div class="callout callout-red" style="margin-bottom:8px"><strong>Say this at the start of every assessment</strong></div>
-        <p style="font-size:13px;line-height:1.75;font-style:italic;background:#fef2f2;border-radius:6px;padding:11px 14px;border-left:3px solid #dc2626;color:#1e293b">"Before we begin, I want to be upfront with you about a few things. Today is a holistic psychiatric assessment — I'm going to look at everything, not just ADHD. I can't guarantee that I'll make an ADHD diagnosis, because that depends on what I find during the assessment. And even if I do diagnose ADHD, I can't guarantee that we'll end up on stimulant medication — that depends on your medical history, what's safe for you, and what makes clinical sense. What I can guarantee is that I want to do the very best by you. This is a thorough, holistic assessment and whatever we find, we'll work out the best path forward together."</p>
-      </div>
-      <div class="info-block">
-        <div class="sub-h" style="color:#b45309">Financial Consent</div>
-        <div class="callout callout-amber" style="margin-bottom:8px"><strong>Cover this before starting</strong></div>
-        <p style="font-size:13px;line-height:1.75;font-style:italic;background:#fffbeb;border-radius:6px;padding:11px 14px;border-left:3px solid #f59e0b;color:#1e293b">"I also want to be transparent about the cost. Today's assessment is one appointment, but depending on what comes up, there may be follow-up appointments — for example if we need to monitor how medication is going during titration. I'm always mindful of the financial impact and I'll only recommend follow-up when it's genuinely clinically necessary. I'll do everything I safely can to be efficient with your time and money."</p>
-      </div>
-    </div>
-  </div>
+<div class="callout callout-blue" style="margin:10px 0">
+  <strong>Assessment philosophy &amp; heuristics moved</strong>
+  Background on how we assess, clinical heuristics, masking, and assessment prep are in the <strong>Extra Info</strong> tab — keeping this tab clear for the live assessment flow.
 </div>
 
-<div class="section-header"><span class="sh-num">1</span>Telehealth Setup</div>
-
-<div class="card">
-  <div class="ch teal" onclick="toggleCard(this)">Pre-Session Checklist</div>
-  <div class="cb">
-    <div class="g2">
-      <div class="info-block">
-        <div class="sub-h">Before the Appointment</div>
-        <ul>
-          <li>Send screening questionnaires ≥48 h before (ASRS, DIVA-5, PHQ-9, GAD-7, AUDIT-C)</li>
-          <li>Request GP referral letter, previous reports, school records</li>
-          <li>Confirm patient has a private, quiet space for the session</li>
-          <li>Verify platform is encrypted and clinically compliant</li>
-          <li>Confirm patient's <strong>physical location (state/territory)</strong> — determines prescribing jurisdiction</li>
-          <li>Check RTPM / SafeScript before session starts</li>
-          <li>Consider whether collateral informant (partner, parent) should attend</li>
-        </ul>
-      </div>
-      <div class="info-block">
-        <div class="sub-h">Technical Minimums</div>
-        <ul>
-          <li>Encrypted video platform (not standard Zoom for clinical care)</li>
-          <li>Patient needs stable internet, camera, microphone</li>
-          <li>Ensure you can see patient's face clearly for MSE</li>
-          <li>Phone as backup — but phone-only has more MBS restrictions</li>
-          <li>Document platform used and connection quality</li>
-          <li>Telehealth consent: verbal at minimum, written preferred; document in notes</li>
-        </ul>
-        <div class="callout callout-amber" style="margin-top:8px">
-          <strong>Jurisdiction note</strong>
-          S8 scripts must be written for the state/territory the patient is physically located in. Ask at session start.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="ch slate" onclick="toggleCard(this)">What Telehealth Cannot Do — Plan Accordingly</div>
-  <div class="cb">
-    <div class="g2">
-      <div class="info-block">
-        <div class="sub-h">Cannot Assess Remotely</div>
-        <ul>
-          <li>Accurate BP &amp; HR — request from patient's GP or pharmacy, or home device</li>
-          <li>Height and weight — self-report or from GP; essential for children</li>
-          <li>Cardiac auscultation (ECG via GP if indicated)</li>
-          <li>Full neurological examination</li>
-          <li>Direct observation of motor tics at rest</li>
-        </ul>
-      </div>
-      <div class="info-block">
-        <div class="sub-h">Can Assess Via Video</div>
-        <ul>
-          <li>Appearance, grooming, eye contact, psychomotor activity</li>
-          <li>Speech rate, volume, fluency, latency</li>
-          <li>Mood and affect (verbal and facial expression)</li>
-          <li>Thought form and content</li>
-          <li>Insight and judgment</li>
-          <li>Observable restlessness, fidgeting, distractibility</li>
-        </ul>
-      </div>
-    </div>
-    <div class="callout callout-blue" style="margin-top:4px">
-      <strong>Practical approach</strong>
-      Request GP to perform cardiovascular examination and baseline observations before first prescription. Advise patient to have BP/HR checked at pharmacy or own device before titration reviews.
-    </div>
-  </div>
-</div>
-
-<div class="section-header"><span class="sh-num">2</span>Screening Tools</div>
-
-<div class="card">
-  <div class="ch sky" onclick="toggleCard(this)">Rating Scales — Adult</div>
-  <div class="cb">
-    <table class="ref-tbl">
-      <thead><tr><th>Scale</th><th>What it measures</th><th>Cutoff / scoring</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td><strong>ASRS-v1.1</strong><br>Adult ADHD Self-Report Scale</td><td>Current inattentive + hyperactive-impulsive symptoms (18 items)</td><td>Part A: 4+ of first 6 items scoring ≥3 = screen positive. Full scale 0–72.</td><td>Free, validated, quick. Best used as pre-screen; not diagnostic.</td></tr>
-        <tr><td><strong>DIVA-5</strong><br>Diagnostic Interview for ADHD in Adults</td><td>Structured diagnostic interview mapping DSM-5 criteria in childhood AND adulthood</td><td>Meets threshold if criteria satisfied per DSM-5. Score inattention and H/I domains separately.</td><td>Gold standard for adult structured assessment. Covers Criterion A, B, C. Can be self-administered beforehand then reviewed clinically.</td></tr>
-        <tr><td><strong>WURS-25</strong><br>Wender Utah Rating Scale</td><td>Retrospective childhood ADHD symptoms</td><td>Score &gt;36 = significant childhood symptoms consistent with ADHD</td><td>25-item version (cutoff 36); 5-item short form (cutoff 14). Helps with Criterion B (onset before 12).</td></tr>
-        <tr><td><strong>BAARS-IV</strong><br>Barkley Adult ADHD Rating Scale</td><td>Current + childhood inattentive / H/I / sluggish cognitive tempo</td><td>Compare to age/sex norms. ≥93rd percentile is clinical threshold.</td><td>Has self-report and other-report forms. Useful for capturing sluggish cognitive tempo (separate construct).</td></tr>
-        <tr><td><strong>Conners CAARS</strong></td><td>Current ADHD symptoms + DSM-IV symptom subscales</td><td>T-score ≥65 on relevant subscales</td><td>Self-report and observer (CAARS-O) versions. Normed by age and sex.</td></tr>
-        <tr><td><strong>PHQ-9 / GAD-7</strong></td><td>Depression / anxiety comorbidity screen</td><td>PHQ-9: ≥10 moderate depression. GAD-7: ≥10 moderate anxiety.</td><td>Always screen — high comorbidity and differential dx importance.</td></tr>
-        <tr><td><strong>AUDIT / AUDIT-C</strong></td><td>Alcohol use</td><td>AUDIT ≥8 = hazardous. AUDIT-C ≥4 (M) / ≥3 (F) = hazardous.</td><td>Important before S8 prescribing. ADHD and AUD closely linked.</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="card">
-  <div class="ch sky" onclick="toggleCard(this)">Rating Scales — Children &amp; Adolescents</div>
-  <div class="cb">
-    <table class="ref-tbl">
-      <thead><tr><th>Scale</th><th>Rater</th><th>Age</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Vanderbilt ADHD Scales</strong></td><td>Parent + Teacher</td><td>6–12</td><td>Free. Screens for ADHD subtypes + comorbid ODD, anxiety, depression. Teacher version critical for cross-situational evidence.</td></tr>
-        <tr><td><strong>Conners-3</strong></td><td>Parent / Teacher / Self (≥8)</td><td>6–18</td><td>Comprehensive. T-scores vs norms. Subscales for inattention, H/I, learning problems, executive functioning, defiance.</td></tr>
-        <tr><td><strong>SDQ</strong><br>Strengths and Difficulties Questionnaire</td><td>Parent / Teacher / Self (≥11)</td><td>4–17</td><td>Free, brief. Hyperactivity subscale + emotional / conduct / peer subscales. Good for comorbidity screening.</td></tr>
-        <tr><td><strong>SNAP-IV</strong></td><td>Parent + Teacher</td><td>6–18</td><td>Free. Maps directly to DSM criteria. Items rated 0–3.</td></tr>
-      </tbody>
-    </table>
-    <div class="callout callout-amber" style="margin-top:8px">
-      <strong>Key point — collateral is essential</strong>
-      In children, teacher ratings are mandatory for Criterion C (cross-situational). Request school reports and/or Vanderbilt teacher form before confirming diagnosis.
-    </div>
-  </div>
-</div>
-
-<div class="section-header"><span class="sh-num">3</span>Clinical Interview Framework</div>
-
-<div class="card">
-  <div class="ch indigo" onclick="toggleCard(this)">Structured Assessment — Recommended Order</div>
-  <div class="cb">
-    <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-body"><strong>Presenting complaint &amp; reason for assessment</strong>Functional impairment driving referral. Work, study, relationships, self-management. Patient's own words first.</div></div>
-    <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-body"><strong>Current core symptoms (Criterion A)</strong>Review ASRS/DIVA responses. Probe each DSM-5-TR symptom. Ask for specific examples in current life. Rate severity (mild/moderate/severe) and frequency.</div></div>
-    <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-body"><strong>Developmental history — childhood onset (Criterion B)</strong>Symptoms before age 12. School performance (primary school is key). Reports, teacher comments, parent recollections. WURS responses. Ask: "Were you told you were restless/dreamy/couldn't concentrate at school?"</div></div>
-    <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-body"><strong>Cross-situational evidence (Criterion C)</strong>Which settings are affected: home, work, social, driving, finances, relationships? Need ≥2 settings. Ask about each domain explicitly.</div></div>
-    <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-body"><strong>Functional impairment (Criterion D)</strong>Quantify: job loss, relationship breakdown, academic failure, financial difficulties, near-miss accidents, self-esteem impact.</div></div>
-    <div class="flow-step"><div class="flow-step-num">6</div><div class="flow-step-body"><strong>Differential diagnosis screen</strong>Anxiety, depression, bipolar, ASD, trauma, sleep disorder, substance use. Do not skip — these are both differentials AND common comorbidities.</div></div>
-    <div class="flow-step"><div class="flow-step-num">7</div><div class="flow-step-body"><strong>Psychiatric history</strong>Prior diagnoses, treatments, hospitalisations. Previous ADHD assessments or trials of medication.</div></div>
-    <div class="flow-step"><div class="flow-step-num">8</div><div class="flow-step-body"><strong>Substance use history</strong>Alcohol, cannabis, stimulants, opioids. Current use pattern. AUDIT. ADHD + SUD is common — affects medication choice.</div></div>
-    <div class="flow-step"><div class="flow-step-num">9</div><div class="flow-step-body"><strong>Medical history &amp; medications</strong>Cardiac conditions, hypertension, tics, seizures, sleep disorders, liver disease. Current medications (interactions). Allergies.</div></div>
-    <div class="flow-step"><div class="flow-step-num">10</div><div class="flow-step-body"><strong>Family history</strong>ADHD in first-degree relatives (heritability ~76%). Also: bipolar disorder, psychosis, substance use, tics/Tourette syndrome.</div></div>
-    <div class="flow-step"><div class="flow-step-num">11</div><div class="flow-step-body"><strong>Social history</strong>Living situation, relationships, occupation, support network, driving, legal history.</div></div>
-    <div class="flow-step"><div class="flow-step-num">12</div><div class="flow-step-body"><strong>MSE via video</strong>Appearance, behaviour, speech, mood/affect, thought (form + content), perception, cognition (concentration/attention observable during interview), insight, judgment.</div></div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="ch navy" onclick="toggleCard(this)">Example Probing Questions by Domain</div>
-  <div class="cb">
-    <div class="g2">
-      <div class="info-block">
-        <div class="sub-h">Inattention</div>
-        <ul>
-          <li>"Do you often re-read sentences without taking in what they say?"</li>
-          <li>"Do you often make careless mistakes in your work or miss details?"</li>
-          <li>"How do you manage to-do lists, bills, appointments?"</li>
-          <li>"Do you often start tasks but find it hard to follow through?"</li>
-          <li>"Do people say you don't seem to listen when they're talking to you?"</li>
-          <li>"Do you frequently lose keys, phone, wallet?"</li>
-          <li>"Does external noise or movement easily break your concentration?"</li>
-        </ul>
-        <div class="sub-h" style="margin-top:10px">Childhood Onset</div>
-        <ul>
-          <li>"At primary school, did teachers comment you were dreamy, chatty, or couldn't sit still?"</li>
-          <li>"Did you find it hard to complete homework? Did parents or teachers have to help more than most kids?"</li>
-          <li>"Did you often lose or forget things at school?"</li>
-          <li>"Were you ever held back a year or receive extra support?"</li>
-        </ul>
-      </div>
-      <div class="info-block">
-        <div class="sub-h">Hyperactivity / Impulsivity</div>
-        <ul>
-          <li>"Do you feel restless or find it hard to sit still for long periods?"</li>
-          <li>"Do you often talk too much or over others in conversation?"</li>
-          <li>"Do you blurt out answers or finish other people's sentences?"</li>
-          <li>"Do you make impulsive decisions — purchases, job changes, relationships?"</li>
-          <li>"Do you find queuing or waiting very difficult?"</li>
-          <li>"Do you often interrupt in meetings or social settings?"</li>
-        </ul>
-        <div class="sub-h" style="margin-top:10px">Functional Impact</div>
-        <ul>
-          <li>"How has this affected your career or education?"</li>
-          <li>"Has it affected your relationships — partner, friends, family?"</li>
-          <li>"Do you have trouble managing money or paying bills on time?"</li>
-          <li>"Any driving incidents — fines, accidents, near-misses?"</li>
-          <li>"How does this affect your self-esteem?"</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="nav-btns">
+<div class="nav-btns" style="margin-top:8px">
   <span></span>
-  <button class="nav-btn nav-next" onclick="navToTab('diagnosis')">Diagnosis →</button>
+  <button class="nav-btn nav-next" onclick="navToTab('assessment')">Start Assessment →</button>
 </div>
-</div><!-- end assessment panel -->
+
+</div><!-- end overview panel -->
 
 
 <!-- ══════════════════════════════════════════════════════════════
-     DIAGNOSIS TAB
+     ASSESSMENT TAB
 ══════════════════════════════════════════════════════════════ -->
-<div class="panel" id="panel-diagnosis">
+<div class="panel" id="panel-assessment">
 
-<div class="section-header"><span class="sh-num">1</span>DSM-5-TR Diagnostic Criteria</div>
-
-<div class="card">
-  <div class="ch indigo" onclick="toggleCard(this)">Criterion A — Core Symptoms (must meet threshold in ≥1 domain)</div>
-  <div class="cb">
-    <div class="callout callout-blue" style="margin-bottom:10px">
-      <strong>Threshold</strong>
-      Age ≤16: ≥6 symptoms in the domain(s). Age ≥17: ≥5 symptoms in the domain(s). Symptoms must have persisted for ≥6 months to a degree inconsistent with developmental level and negatively impacting social/academic/occupational activities.
-    </div>
-    <div class="g2">
-      <div>
-        <div class="sub-h" style="color:#1e40af">Inattention (9 symptoms)</div>
-        <ul class="criteria-list">
-          <li><div class="crit-num">1</div><div>Often fails to give close attention to details, or makes careless mistakes in schoolwork, work, or other activities</div></li>
-          <li><div class="crit-num">2</div><div>Often has difficulty sustaining attention in tasks or play activities</div></li>
-          <li><div class="crit-num">3</div><div>Often does not seem to listen when spoken to directly</div></li>
-          <li><div class="crit-num">4</div><div>Often does not follow through on instructions and fails to finish tasks</div></li>
-          <li><div class="crit-num">5</div><div>Often has difficulty organising tasks and activities</div></li>
-          <li><div class="crit-num">6</div><div>Often avoids, dislikes, or is reluctant to engage in tasks requiring sustained mental effort</div></li>
-          <li><div class="crit-num">7</div><div>Often loses things necessary for tasks or activities</div></li>
-          <li><div class="crit-num">8</div><div>Is often easily distracted by extraneous stimuli</div></li>
-          <li><div class="crit-num">9</div><div>Is often forgetful in daily activities</div></li>
-        </ul>
-      </div>
-      <div>
-        <div class="sub-h" style="color:#5b21b6">Hyperactivity-Impulsivity (9 symptoms)</div>
-        <ul class="criteria-list">
-          <li><div class="crit-num hi">1</div><div>Often fidgets with or taps hands/feet, or squirms in seat</div></li>
-          <li><div class="crit-num hi">2</div><div>Often leaves seat when remaining seated is expected</div></li>
-          <li><div class="crit-num hi">3</div><div>Often runs about or climbs in inappropriate situations (adults: often feels restless)</div></li>
-          <li><div class="crit-num hi">4</div><div>Often unable to play or engage in leisure activities quietly</div></li>
-          <li><div class="crit-num hi">5</div><div>Is often "on the go," acting as if "driven by a motor"</div></li>
-          <li><div class="crit-num hi">6</div><div>Often talks excessively</div></li>
-          <li><div class="crit-num hi">7</div><div>Often blurts out an answer before a question has been completed</div></li>
-          <li><div class="crit-num hi">8</div><div>Often has difficulty waiting their turn</div></li>
-          <li><div class="crit-num hi">9</div><div>Often interrupts or intrudes on others</div></li>
-        </ul>
-      </div>
-    </div>
+<div class="g2" style="margin-bottom:8px">
+  <div class="consent-box red">
+    <div class="consent-lbl red">Assessment consent — say at start</div>
+    "Before we begin, I want to be upfront. Today is a holistic assessment — I'm looking at everything, not just ADHD. I can't guarantee a diagnosis because that depends on what I find. And even if I do diagnose ADHD, I can't guarantee we'll end up on stimulant medication — that depends on your medical history and what's clinically safe. What I can guarantee is I want to do the very best by you."
+  </div>
+  <div class="consent-box amber">
+    <div class="consent-lbl amber">Financial consent — cover before starting</div>
+    "I also want to be transparent about cost. Today is one appointment, but depending on what comes up there may be follow-up — for example to monitor how medication is going during titration. I'll only recommend follow-up when it's genuinely clinically necessary and I'll be as efficient with your time and money as I safely can."
   </div>
 </div>
 
-<div class="card">
-  <div class="ch indigo" onclick="toggleCard(this)">Criteria B–E &amp; Specifiers</div>
-  <div class="cb">
-    <div class="g2">
-      <div class="info-block">
-        <div class="sub-h">Remaining Criteria</div>
-        <ul class="criteria-list">
-          <li><div class="crit-num warn">B</div><div>Several inattentive or hyperactive-impulsive symptoms were present <strong>before age 12 years</strong></div></li>
-          <li><div class="crit-num warn">C</div><div>Symptoms are present in <strong>two or more settings</strong> (home, school, work, with friends, other activities)</div></li>
-          <li><div class="crit-num warn">D</div><div>Clear evidence that symptoms <strong>interfere with, or reduce the quality</strong> of social, academic, or occupational functioning</div></li>
-          <li><div class="crit-num warn">E</div><div>Symptoms do not occur exclusively during schizophrenia or another psychotic disorder, and are <strong>not better explained by another mental disorder</strong></div></li>
-        </ul>
-      </div>
-      <div class="info-block">
-        <div class="sub-h">Presentation Specifiers</div>
-        <table class="ref-tbl">
-          <thead><tr><th>Specifier</th><th>DSM code</th><th>ICD-10</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Combined</strong> (≥5/6 symptoms in both domains)</td><td>314.01</td><td>F90.2</td></tr>
-            <tr><td><strong>Predominantly Inattentive</strong> (threshold Inattention, &lt;5/6 H/I)</td><td>314.00</td><td>F90.0</td></tr>
-            <tr><td><strong>Predominantly Hyperactive-Impulsive</strong> (threshold H/I, &lt;5/6 Inattention)</td><td>314.01</td><td>F90.1</td></tr>
-            <tr><td><em>In partial remission</em> (previously met criteria, currently sub-threshold)</td><td>—</td><td>—</td></tr>
-          </tbody>
-        </table>
-        <div class="sub-h" style="margin-top:10px">Severity Specifiers</div>
-        <ul>
-          <li><span class="chip chip-green">Mild</span> Few symptoms beyond threshold; minor functional impairment</li>
-          <li><span class="chip chip-amber">Moderate</span> Symptoms/impairment between mild and severe</li>
-          <li><span class="chip chip-red">Severe</span> Many symptoms beyond threshold; marked functional impairment</li>
-        </ul>
-      </div>
+<div class="step-hdr no-top"><span class="step-sn">1</span>Opening<span class="step-note">Patient's own words first — listen for domains, duration, whose idea this was</span></div>
+<div class="sx-block" style="border-left-color:#374151">
+  <div class="sx-hd"><span class="sx-n" style="background:#374151">▶</span><span class="sx-title">Start open — don't lead</span></div>
+  <div class="sx-qs">
+    <span>"Tell me in your own words what's been going on and what brought you here today."</span>
+    <span>"What areas of your life are being affected most right now?"</span>
+    <span>"How long has this been a problem? Whose idea was it to get assessed?"</span>
+  </div>
+  <div class="sx-note">Listen for: Impact domains (work, study, home, relationships) · Duration · Insight level · Who initiated · Episodic vs lifelong pattern</div>
+</div>
+
+<div class="step-hdr"><span class="step-sn">2</span>Inattention — Criterion A<span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;padding-left:5px">Adults ≥17: ≥5 symptoms · Under-17: ≥6 · Present ≥6 months · Inconsistent with developmental level</span></div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">1</span><span class="sx-title">Careless mistakes / fails close attention to detail</span></div>
+  <div class="sx-qs">
+    <span>"Do you often make careless mistakes at work, study, or in daily tasks?"</span>
+    <span>"Do you miss details in reading, forms, or emails — even important ones?"</span>
+    <span>"Rush through things and then notice obvious errors afterward?"</span>
+  </div>
+  <div class="sx-note">Look for: Recurring pattern across settings, not one-off. Not solely explained by rushing due to anxiety.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">2</span><span class="sx-title">Difficulty sustaining attention in tasks or play</span></div>
+  <div class="sx-qs">
+    <span>"Can you only concentrate when something is genuinely interesting or urgent?"</span>
+    <span>"Do you drift off mid-conversation, meeting, or lecture — even when you want to focus?"</span>
+    <span>"Do you re-read sentences over and over without taking anything in?"</span>
+  </div>
+  <div class="sx-note">Look for: Present even for self-chosen tasks; not just boring or aversive tasks. Hyperfocus on high-interest tasks doesn't exclude ADHD.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">3</span><span class="sx-title">Doesn't seem to listen when spoken to directly</span></div>
+  <div class="sx-qs">
+    <span>"Do people say you weren't listening even when you were right there in front of them?"</span>
+    <span>"Find yourself mid-conversation thinking about something completely different?"</span>
+    <span>"Have to ask people to repeat what they just said?"</span>
+  </div>
+  <div class="sx-note">Look for: Happens even in important conversations, not just disinterest. "Mind goes elsewhere" rather than deliberate tuning out.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">4</span><span class="sx-title">Doesn't follow through / fails to finish tasks</span></div>
+  <div class="sx-qs">
+    <span>"Lots of half-finished projects or tasks — at home, work, study?"</span>
+    <span>"Start things with good intentions but drift away before finishing?"</span>
+    <span>"Not because you lost interest in the goal — just somehow stop partway through?"</span>
+  </div>
+  <div class="sx-note">Look for: Executive dropout, not oppositionality or loss of motivation. Task initiation often fine; completion the problem.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">5</span><span class="sx-title">Difficulty organising tasks and activities</span></div>
+  <div class="sx-qs">
+    <span>"How would you describe your ability to organise your time, tasks, and belongings?"</span>
+    <span>"Hard to break a big project into steps and work through it systematically?"</span>
+    <span>"Workspace, digital files, or finances chronically disorganised despite effort?"</span>
+  </div>
+  <div class="sx-note">Look for: Not just "messy" — actual functional impairment. Time blindness (underestimates how long things take) is a core feature here.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">6</span><span class="sx-title">Avoids tasks requiring sustained mental effort</span></div>
+  <div class="sx-qs">
+    <span>"Put off paperwork, admin, forms, or writing — even when the stakes are high?"</span>
+    <span>"Does starting certain tasks feel almost physically aversive or impossible?"</span>
+    <span>"Do you come alive once in crisis or deadline pressure but can't start without it?"</span>
+  </div>
+  <div class="sx-note">Look for: Avoidance driven by executive difficulty (task initiation), not anxiety or defiance. "I know I need to, I want to, I just can't start."</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">7</span><span class="sx-title">Loses things necessary for tasks (keys, phone, wallet, documents)</span></div>
+  <div class="sx-qs">
+    <span>"Frequently lose keys, phone, wallet, charger, or other everyday items?"</span>
+    <span>"How much time each week searching for things you've put down 'somewhere'?"</span>
+    <span>"Put objects in 'safe' places and then can't find them?"</span>
+  </div>
+  <div class="sx-note">Look for: Chronic, effortful, frustrating pattern — not occasional forgetfulness. Automated/habitual storage absent.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">8</span><span class="sx-title">Easily distracted by extraneous stimuli or unrelated thoughts</span></div>
+  <div class="sx-qs">
+    <span>"Does nearby noise or movement easily break your concentration?"</span>
+    <span>"Does your mind jump to unrelated thoughts unprompted when you're trying to focus?"</span>
+    <span>"Is open-plan or background-noise environments especially hard to work in?"</span>
+  </div>
+  <div class="sx-note">Look for: Both external (noise/movement) AND internal (unrelated thoughts) distractibility count. Internal is more prominent in adults.</div>
+</div>
+
+<div class="sx-block">
+  <div class="sx-hd"><span class="sx-n">9</span><span class="sx-title">Forgetful in daily activities (chores, appointments, returning calls)</span></div>
+  <div class="sx-qs">
+    <span>"Forget appointments, tasks, or things someone just told you?"</span>
+    <span>"Walk into a room and forget why, or lose track of what you were doing mid-task?"</span>
+    <span>"Rely heavily on phone alarms, notes, or lists just to function day-to-day?"</span>
+  </div>
+  <div class="sx-note">Look for: Working memory (hold + manipulate info) AND prospective memory (remember to do things) failures. Coping systems shouldn't mask severity.</div>
+</div>
+
+<div class="step-hdr" style="background:#4c1d95"><span class="step-sn">3</span>Hyperactivity / Impulsivity — Criterion A<span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;padding-left:5px">Adults ≥17: ≥5 symptoms · In adults H/I often = internal restlessness, not overt</span><span class="step-note">Observe during the interview</span></div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">1</span><span class="sx-title">Fidgets / taps / squirms when seated</span></div>
+  <div class="sx-qs">
+    <span>"Find yourself fidgeting, tapping, or physically restless when sitting still?"</span>
+    <span>"Hard to sit through long meetings, lectures, or meals without moving?"</span>
+    <span>"Notice others react to movement or noise you're making?"</span>
+  </div>
+  <div class="sx-note">Observe now: leg jiggling, pen tapping, chair swivelling, posture shifting. Adults often redirect motor restlessness into smaller movements.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">2</span><span class="sx-title">Often leaves seat when staying seated is expected</span></div>
+  <div class="sx-qs">
+    <span>"Do you find yourself getting up frequently when you're supposed to stay seated?"</span>
+    <span>"In meetings, classes, or restaurants — do you find reasons to get up and move?"</span>
+  </div>
+  <div class="sx-note">In adults: often expressed as inability to stay seated for full duration; finds excuses to leave, stands to work, paces. Less common but present.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">3</span><span class="sx-title">Runs about / climbs — in adults: inner sense of restlessness</span></div>
+  <div class="sx-qs">
+    <span>"Do you have a constant inner sense of restlessness — like an internal motor that won't stop?"</span>
+    <span>"Do you feel much better when you're moving or doing something rather than sitting still?"</span>
+    <span>"Is it hard to just 'be' without needing to keep busy?"</span>
+  </div>
+  <div class="sx-note">Key adult presentation: internal not external. "I look calm on the outside but inside I'm buzzing." This is the most clinically important H/I item in adults.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">4</span><span class="sx-title">Unable to engage in leisure activities quietly</span></div>
+  <div class="sx-qs">
+    <span>"Hard to genuinely relax or do quiet, passive activities?"</span>
+    <span>"Always need to be doing something — multiple tabs, TV on in the background, phone in hand?"</span>
+    <span>"Feel uncomfortable or irritable when forced to slow down or be idle?"</span>
+  </div>
+  <div class="sx-note">Look for: Chronic restlessness during downtime; always needs stimulation. Not just a preference for activity — feels driven.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">5</span><span class="sx-title">"On the go" / driven by a motor</span></div>
+  <div class="sx-qs">
+    <span>"Do people say you always seem to be 'on the go' or that they can't keep up with you?"</span>
+    <span>"Do you feel driven to keep busy even when you'd prefer to slow down?"</span>
+    <span>"When you do stop, does your mind immediately race to the next thing?"</span>
+  </div>
+  <div class="sx-note">Look for: Consistent across settings; internal experience matches external observation. Not driven by anxiety or avoidance of stillness (overlap — clarify).</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">6</span><span class="sx-title">Talks excessively</span></div>
+  <div class="sx-qs">
+    <span>"Do people say you talk too much, too fast, or dominate conversations?"</span>
+    <span>"Do you go off on tangents and struggle to get back to the point?"</span>
+    <span>"Still talking when you've already made your point?"</span>
+  </div>
+  <div class="sx-note">Look for: Pattern across relationships, not just with specific people. Causes social friction. Note: tangential speech is observable in the interview.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">7</span><span class="sx-title">Blurts out answers / finishes others' sentences</span></div>
+  <div class="sx-qs">
+    <span>"Do you blurt out answers before questions are fully finished?"</span>
+    <span>"Find yourself finishing other people's sentences?"</span>
+    <span>"Jump in with a response before fully hearing what was asked?"</span>
+  </div>
+  <div class="sx-note">Observable now: does the patient interrupt, pre-empt, or finish your questions? Noting this in the MSE adds direct clinical evidence.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">8</span><span class="sx-title">Difficulty waiting their turn / impulsive decisions</span></div>
+  <div class="sx-qs">
+    <span>"Find queuing, waiting on hold, or waiting your turn very difficult?"</span>
+    <span>"Make impulsive decisions — purchases, messages, commitments — and regret them later?"</span>
+    <span>"Hard to wait in conversation — feel you must respond immediately?"</span>
+  </div>
+  <div class="sx-note">Look for: Impulsivity across domains (social, financial, occupational). Acts before thinking; regret is common. Distinct from deliberate risk-taking.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#7c3aed">
+  <div class="sx-hd"><span class="sx-n hi">9</span><span class="sx-title">Interrupts or intrudes on others</span></div>
+  <div class="sx-qs">
+    <span>"Do you often interrupt conversations or activities even when you're trying not to?"</span>
+    <span>"Do you jump into others' conversations or tasks without being invited?"</span>
+    <span>"Do you take over tasks from others because you can't wait for them to finish?"</span>
+  </div>
+  <div class="sx-note">Look for: Pattern across multiple relationships and settings. Not just with specific people or in high-conflict situations.</div>
+</div>
+
+<div class="step-hdr" style="background:#92400e"><span class="step-sn">4</span>Developmental History — Criteria B · C · D<span class="step-note">B = pre-age 12 onset · C = ≥2 settings · D = functional impairment</span></div>
+
+<div class="sx-block" style="border-left-color:#92400e">
+  <div class="sx-hd"><span class="sx-n dev">B</span><span class="sx-title">Primary school / early childhood pattern</span></div>
+  <div class="sx-qs">
+    <span>"When you picture yourself in primary school — what sort of kid were you at school and at home?"</span>
+    <span>"What did teachers or parents keep correcting you for, over and over?"</span>
+    <span>"'Bright but not applying yourself'? 'Could do better'? Daydreamy, chatty, fidgety, always on the go?"</span>
+    <span>"Did things seem inconsistent — you could do it sometimes, but not reliably?"</span>
+    <span>"What themes would I expect to see repeated across your primary school reports?"</span>
+  </div>
+  <div class="sx-note">Criterion B: symptoms must have been present before age 12, but don't need to have been formally identified. Retrospective recognition is common and valid.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#92400e">
+  <div class="sx-hd"><span class="sx-n dev">B</span><span class="sx-title">Adolescence — what happened when structure dropped?</span></div>
+  <div class="sx-qs">
+    <span>"What happened when school became less supervised and more self-directed?"</span>
+    <span>"Did homework, deadlines, studying, or organisation become much harder in high school?"</span>
+    <span>"Did the presentation shift from obvious hyperactivity to internal restlessness, procrastination, disorganisation?"</span>
+    <span>"Did risk-taking, emotional impulsivity, or substance use start showing up?"</span>
+    <span>"Did teachers or family feel you had potential you weren't living up to?"</span>
+  </div>
+  <div class="sx-note">Many late-diagnosed adults managed primary school but decompensated when external structure fell away in adolescence. This is a key diagnostic window.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#92400e">
+  <div class="sx-hd"><span class="sx-n dev">A</span><span class="sx-title">Current adult pattern — what fails despite insight and effort?</span></div>
+  <div class="sx-qs">
+    <span>"How do these traits show up now — in work, study, home admin, finances, or relationships?"</span>
+    <span>"What happens for you with tasks that are boring, repetitive, delayed-reward, or paperwork-heavy?"</span>
+    <span>"Do you function much better only when there's urgency, novelty, pressure, or strong personal interest?"</span>
+    <span>"What failures of everyday executive function keep recurring despite your insight and effort?"</span>
+  </div>
+  <div class="sx-note">The "interest-based nervous system" is characteristic: performance is variable, not consistently impaired. Look for the interest/urgency/novelty dependency.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#b45309">
+  <div class="sx-hd"><span class="sx-n dev" style="background:#b45309">+</span><span class="sx-title">Masking and compensation — adjusts true severity estimate</span></div>
+  <div class="sx-qs">
+    <span>"Was your functioning maintained because someone was externally organising you — parent, teacher, partner, workplace?"</span>
+    <span>"Did intelligence, perfectionism, anxiety, or overwork help you compensate and hide the gaps?"</span>
+    <span>"Did things fall apart when those supports dropped away?"</span>
+    <span>"Were you functioning at the cost of exhaustion, chronic stress, or shame?"</span>
+  </div>
+  <div class="sx-note">Masking is common in women, high-IQ individuals, and those raised in structured environments. The real severity is what emerges when scaffolding is removed.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#b45309">
+  <div class="sx-hd"><span class="sx-n dev" style="background:#1e3a5f">C</span><span class="sx-title">Cross-situational — symptoms in ≥2 settings</span></div>
+  <div class="sx-qs">
+    <span>"Has this pattern shown up across more than one setting — school, home, work, social life?"</span>
+    <span>"Were there settings where problems completely disappeared, and if so, what was different there?"</span>
+    <span>"Did people in different parts of your life notice similar traits independently?"</span>
+    <span>"Was the problem limited to one teacher, one job, one relationship — or has it broadly recurred?"</span>
+  </div>
+  <div class="sx-note">Criterion C threshold: ≥2 settings. Setting-specific problems suggest situational factors. If it truly disappears in all unstructured environments, reconsider. Collateral evidence helps.</div>
+</div>
+
+<div class="sx-block" style="border-left-color:#b45309">
+  <div class="sx-hd"><span class="sx-n dev" style="background:#1e3a5f">D</span><span class="sx-title">Functional impairment — what did it cost?</span></div>
+  <div class="sx-qs">
+    <span>"What did these traits cost you academically, socially, emotionally, financially, or occupationally?"</span>
+    <span>"What opportunities did you miss because of inconsistency or poor follow-through?"</span>
+    <span>"Were there repeated consequences — underachievement, warnings, unfinished courses, job instability, relationship strain?"</span>
+    <span>"Did the impairment happen even when you were genuinely trying hard?"</span>
+  </div>
+  <div class="sx-note">Criterion D: More than mild interference; clear negative impact. Distress alone isn't sufficient — there must be functional consequences. "Coping" with enormous effort still counts.</div>
+</div>
+
+<div class="step-hdr" style="background:#7f1d1d"><span class="step-sn">5</span>Differential Diagnosis — Screen All<span class="step-note">These are also common comorbidities — not either/or · tap ? for distinguishing questions</span></div>
+<div class="diff-grid">
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Depression</strong>
+      <div class="diff-hint">Mood-contingent vs always present? Episodic vs lifelong pattern?</div>
     </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"When your mood is normal, do attention and organisation problems still remain?"</li>
+      <li>"Did concentration problems begin only during depressive episodes?"</li>
+      <li>"Has low mood been present more days than not for 2+ years, or in discrete episodes?"</li>
+      <li>"Does the picture feel more like low mood and drive, or lifelong distractibility?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Bipolar-spectrum</strong>
+      <div class="diff-hint">Discrete elevated/irritable episodes with reduced sleep? Energy cycling?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Have there been clear episodes of elevated or irritable mood with reduced need for sleep?"</li>
+      <li>"Do periods of high energy and risk-taking alternate with more normal or low periods?"</li>
+      <li>"Are there recurrent swings between low-grade depression and elevated energy?"</li>
+      <li>"Is distractibility tied mainly to mood episodes rather than being lifelong?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Anxiety disorder</strong>
+      <div class="diff-hint">Mind stuck on worry vs generally distractible? Anxiety-contingent vs constant?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Does your mind wander due to general distractibility, or because it gets stuck on worry?"</li>
+      <li>"When anxiety settles, do focus and organisation improve substantially?"</li>
+      <li>"Is avoidance driven more by fear or perfectionism than boredom or difficulty starting?"</li>
+      <li>"Do symptoms largely resolve in familiar or low-stakes settings?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">PTSD</strong>
+      <div class="diff-hint">Onset after trauma? Trigger-contingent vs constant? Hypervigilance vs distractibility?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Did concentration problems begin after trauma exposure?"</li>
+      <li>"Is attention hijacked by hypervigilance, intrusive memories, or dissociation?"</li>
+      <li>"Do symptoms spike around triggers rather than being constant?"</li>
+      <li>"Is there a history of prolonged or repeated interpersonal trauma?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Autism spectrum disorder</strong>
+      <div class="diff-hint">Social communication differences? Rigidity/sensory overload vs distractibility?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Have there been longstanding differences in social communication and flexibility?"</li>
+      <li>"Are task problems driven more by rigidity or sensory overload than distractibility?"</li>
+      <li>"Were autistic traits present before academic attention issues were noticed?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">OCD-spectrum</strong>
+      <div class="diff-hint">Time lost to rituals or intrusive thoughts? Compulsion-driven lateness?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Is time lost to rituals, checking, or intrusive thoughts rather than distractibility?"</li>
+      <li>"Are you late because of compulsions rather than losing track of time?"</li>
+      <li>"When compulsions are managed, do executive problems substantially resolve?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Personality disorder</strong>
+      <div class="diff-hint">Identity/relationship instability predominates? Affect-contingent impulsivity?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Is the main difficulty unstable relationships, identity, and affect rather than inattention?"</li>
+      <li>"Are impulsive acts mostly linked to relational crises or intense emotional states?"</li>
+      <li>"When affect is regulated, do executive symptoms largely resolve?"</li>
+      <li>"Is there chronic emptiness or identity disturbance beyond time-blindness?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Schizophrenia-spectrum</strong>
+      <div class="diff-hint">Positive symptoms? Change in concentration tracking psychosis onset?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Are there positive symptoms such as hallucinations, delusions, or disorganised thinking?"</li>
+      <li>"Did the concentration picture change markedly around the time of psychotic symptoms?"</li>
+      <li>"Has there been a discrete period of psychotic symptoms?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Sleep disorder</strong>
+      <div class="diff-hint">Cognitive problems track sleep quality? OSA, circadian, or insomnia symptoms?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Are you consistently short on sleep or unrefreshed on waking?"</li>
+      <li>"Do you snore loudly, stop breathing, or have restless legs at night?"</li>
+      <li>"Do cognitive problems track sleep quality more than anything else?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Substance-induced</strong>
+      <div class="diff-hint">Resolves or substantially improves on sustained abstinence? Active SUD?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Could stimulant, cannabis, alcohol, or other substance or medication use explain or worsen the picture?"</li>
+      <li>"Do cognitive symptoms resolve or substantially improve during sustained abstinence?"</li>
+      <li>"Is there an active substance use disorder that needs prioritising?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Neurodegenerative disorder</strong>
+      <div class="diff-hint">Decline from higher baseline? Progressive vs lifelong pattern?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Is there a noticeable decline from a previously higher level of functioning?"</li>
+      <li>"Are memory, language, or processing speed declining over months to years?"</li>
+      <li>"Is this a change from baseline rather than a lifelong pattern?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Acquired brain injury</strong>
+      <div class="diff-hint">Post-injury onset or significant worsening? Formal neuropsych assessment done?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Did cognitive difficulties begin or worsen significantly after a head injury?"</li>
+      <li>"Has there been formal neuropsychological assessment post-injury?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Binge eating disorder</strong>
+      <div class="diff-hint">Impulsivity mainly expressed through eating? Improves independent of eating behaviour?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Are there recurrent episodes of eating large amounts with loss of control and marked distress?"</li>
+      <li>"Is impulsivity mainly expressed through eating rather than across domains?"</li>
+      <li>"Does the attention picture improve independently of eating behaviour?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item">
+    <div class="diff-label-col">
+      <strong class="diff-label">Medical / neurological cause</strong>
+      <div class="diff-hint">Post-illness onset? Thyroid, anaemia, seizures, autoimmune, medications?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Did symptoms start after a medical illness, injury, or medication change?"</li>
+      <li>"Could thyroid, anaemia, seizures, autoimmune, or other medical issues be contributing?"</li>
+      <li>"Has relevant medical investigation been completed?"</li>
+    </ul></div>
+  </div>
+
+  <div class="diff-item" style="border-color:#fca5a5;background:#fef2f2">
+    <div class="diff-label-col">
+      <strong class="diff-label" style="color:#dc2626">Suicidal ideation</strong>
+      <div class="diff-hint" style="color:#dc2626">Active ideation? Plan or intent? Protective factors?</div>
+    </div>
+    <button class="q-btn" onclick="toggleQ(this)">?</button>
+    <div class="q-box"><ul>
+      <li>"Are there current thoughts of suicide or self-harm?"</li>
+      <li>"Has there been any recent planning, intent, or preparatory behaviour?"</li>
+      <li>"What protective factors are in place and how robust are they?"</li>
+    </ul></div>
+  </div>
+
+</div>
+
+<div class="step-hdr" style="background:#374151"><span class="step-sn">6</span>Psychiatric · Substance · Medical<span class="step-note">Both differentials and comorbidities — screen all</span></div>
+<div class="g2" style="margin:4px 0 10px">
+  <div>
+    <div class="sub-h" style="font-size:10px;margin:0 0 5px">Psychiatric history</div>
+    <div class="compact-2col">
+      <div class="compact-item"><span class="ci-dot"></span>Prior diagnoses &amp; treating clinicians</div>
+      <div class="compact-item"><span class="ci-dot"></span>Previous ADHD assessments — outcome?</div>
+      <div class="compact-item"><span class="ci-dot"></span>Previous ADHD medication trials</div>
+      <div class="compact-item"><span class="ci-dot"></span>Current psychiatric medications</div>
+      <div class="compact-item"><span class="ci-dot"></span>Hospitalisations / crisis presentations</div>
+      <div class="compact-item"><span class="ci-dot"></span>Psychotherapy history</div>
+      <div class="compact-item"><span class="ci-dot"></span>Family: ADHD, bipolar, psychosis, SUD</div>
+      <div class="compact-item"><span class="ci-dot"></span>Social: occupation, relationships, driving, legal</div>
+    </div>
+    <div class="sub-h" style="font-size:10px;margin:10px 0 5px">Substance use</div>
+    <div class="compact-2col">
+      <div class="compact-item"><span class="ci-dot"></span>Alcohol — AUDIT score</div>
+      <div class="compact-item"><span class="ci-dot"></span>Cannabis — frequency, functional impact</div>
+      <div class="compact-item"><span class="ci-dot"></span>Stimulants (meth, cocaine, MDMA)</div>
+      <div class="compact-item"><span class="ci-dot"></span>Opioids / benzodiazepines</div>
+    </div>
+    <p style="font-size:11px;color:#b45309;margin-top:5px;font-style:italic">ADHD + SUD common. Affects med choice — prefer LDX or non-stimulants; avoid IR dex if diversion risk.</p>
+  </div>
+  <div>
+    <div class="sub-h" style="font-size:10px;margin:0 0 5px">Cardiac flags <span style="font-weight:400;color:#dc2626">(defer stimulants if flagged)</span></div>
+    <div class="compact-2col">
+      <div class="compact-item"><span class="ci-dot warn"></span>Exertional chest pain / SOB</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Palpitations / syncope</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Family: SCD &lt;40, long QT, cardiomyopathy</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Known arrhythmia / structural disease</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Hypertension</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>MAOI use — <strong>absolute CI</strong></div>
+    </div>
+    <div class="sub-h" style="font-size:10px;margin:10px 0 5px">Medical</div>
+    <div class="compact-2col">
+      <div class="compact-item"><span class="ci-dot warn"></span>Epilepsy / seizures</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Glaucoma</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Pregnancy / breastfeeding</div>
+      <div class="compact-item"><span class="ci-dot warn"></span>Current eating disorder</div>
+      <div class="compact-item"><span class="ci-dot"></span>Tic disorder → ATX or GXR preferred</div>
+      <div class="compact-item"><span class="ci-dot"></span>Thyroid → stabilise first</div>
+      <div class="compact-item"><span class="ci-dot"></span>Low BMI → appetite suppression risk</div>
+      <div class="compact-item"><span class="ci-dot"></span>Current medications / interactions</div>
+    </div>
+    <p style="font-size:11px;color:#1e40af;margin-top:5px">→ Full safety grid with clinical notes: Medications tab</p>
   </div>
 </div>
 
-<div class="section-header"><span class="sh-num">2</span>Differential Diagnosis</div>
+<div class="step-hdr" style="background:#1e3a5f"><span class="step-sn">7</span>MSE — Observe Throughout<span class="step-note">Scored during interview, not a separate section</span></div>
+<table class="ref-tbl" style="margin:4px 0 10px">
+  <thead><tr><th>Domain</th><th>ADHD-consistent</th><th>Flag if instead</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Attention</strong></td><td>Loses thread, forgets question, needs redirection</td><td>Intact throughout — reconsider dx</td></tr>
+    <tr><td><strong>Psychomotor</strong></td><td>Fidgety, rocking, swivelling, restless</td><td>Gross agitation → rule out mania, stimulant intox</td></tr>
+    <tr><td><strong>Impulsivity</strong></td><td>Interrupts, blurts answers, tangential</td><td>—</td></tr>
+    <tr><td><strong>Speech</strong></td><td>May be fast, tangential, or verbose</td><td>Pressured + elevated → rule out hypomania</td></tr>
+    <tr><td><strong>Mood / affect</strong></td><td>Euthymic or anxious; reactive, variable affect</td><td>Low / flat → depression as primary or comorbid</td></tr>
+    <tr><td><strong>Thought form</strong></td><td>Circumstantial; tangential; loses thread</td><td>Loosening / FOI → rule out bipolar or psychosis</td></tr>
+    <tr><td><strong>Thought content</strong></td><td>Self-critical / ruminative; no psychotic content</td><td>Delusions / hallucinations → psychosis workup</td></tr>
+    <tr><td><strong>Insight</strong></td><td>Usually good; often frustrated by their own gaps</td><td>Limited insight → consider other explanations</td></tr>
+  </tbody>
+</table>
 
-<div class="card">
-  <div class="ch amber" onclick="toggleCard(this)">Key Differentials — Clinical Distinguishing Features</div>
-  <div class="cb">
-    <table class="ref-tbl">
-      <thead><tr><th>Condition</th><th>Overlapping features</th><th>Key distinguishing features</th></tr></thead>
+
+<div class="step-hdr" style="background:#065f46"><span class="step-sn">8</span>Diagnosis &amp; Formulation</div>
+<div class="g2" style="margin:6px 0 0">
+  <div>
+    <div class="sub-h" style="font-size:10px;margin:0 0 5px">DSM-5-TR Criteria — Adults (≥17)</div>
+    <div class="crit-row"><span class="cr-badge blue">A</span><div>≥5 inattention <strong>and/or</strong> ≥5 H/I symptoms · ≥6 months · inconsistent with developmental level</div></div>
+    <div class="crit-row"><span class="cr-badge warn">B</span><div>Several symptoms present <strong>before age 12</strong></div></div>
+    <div class="crit-row"><span class="cr-badge warn">C</span><div>Symptoms in <strong>≥2 settings</strong> (home, work, school, social)</div></div>
+    <div class="crit-row"><span class="cr-badge warn">D</span><div>Clear <strong>functional impairment</strong> in social, academic, or occupational functioning</div></div>
+    <div class="crit-row"><span class="cr-badge green">E</span><div>Not better explained by another mental disorder</div></div>
+  </div>
+  <div>
+    <div class="sub-h" style="font-size:10px;margin:0 0 5px">Presentation &amp; Severity</div>
+    <table class="ref-tbl" style="margin:0 0 8px">
       <tbody>
-        <tr><td><strong>Anxiety Disorders</strong></td><td>Poor concentration, restlessness, avoidance of tasks</td><td>Worry is the driver of inattention (not wandering mind); restlessness is tension/dread-based; typically episodic. ADHD inattention is pervasive, lifelong, and consistent across situations.</td></tr>
-        <tr><td><strong>Major Depression</strong></td><td>Poor concentration, fatigue, low motivation, executive dysfunction</td><td>Onset correlates with depressive episode; concentration returns with remission. ADHD is chronic and present even when euthymic.</td></tr>
-        <tr><td><strong>Bipolar Disorder</strong></td><td>Impulsivity, distractibility, racing thoughts, increased activity, talkativeness</td><td>Bipolar: episodic, with periods of normality. ADHD: persistent, continuous since childhood. Family history, sleep changes, and grandiosity distinguish bipolar hypomanic/manic states.</td></tr>
-        <tr><td><strong>ASD</strong></td><td>Inattention (to non-special-interest topics), social difficulties, rigidity, sensory sensitivity</td><td>ASD inattention is domain-specific (hyperfocus on special interests, inattention to non-interests). Social difficulties are qualitatively different. Can be comorbid — DSM-5 allows dual diagnosis.</td></tr>
-        <tr><td><strong>Borderline PD</strong></td><td>Impulsivity, emotional lability, interpersonal difficulties, self-harm</td><td>BPD: emotion regulation as primary driver; identity disturbance; interpersonal hypersensitivity; trauma history common. Can be comorbid with ADHD.</td></tr>
-        <tr><td><strong>PTSD / Complex Trauma</strong></td><td>Concentration difficulties, hyperarousal, hypervigilance, emotional dysregulation</td><td>PTSD: onset after trauma; hypervigilance is threat-driven not novelty-seeking. However, ADHD increases trauma risk and both commonly co-occur.</td></tr>
-        <tr><td><strong>Sleep Disorders</strong></td><td>Inattention, irritability, impulsivity, fatigue, poor executive function</td><td>OSA: daytime somnolence, snoring, witnessed apnoeas. Insomnia: can co-occur with and worsen ADHD. Always screen sleep — treat sleep disorders first or concurrently.</td></tr>
-        <tr><td><strong>Substance Use Disorders</strong></td><td>Impulsivity, inattention, poor functioning, mood instability</td><td>SUD symptoms may remit with sobriety. However ADHD co-occurs in ~30–50% of adults with SUD. If possible, assess after a period of sobriety.</td></tr>
-        <tr><td><strong>Thyroid dysfunction</strong></td><td>Restlessness (hyper), cognitive slowing (hypo), anxiety</td><td>Thyroid function tests rule in/out. Hyperthyroidism can mimic ADHD-HI.</td></tr>
-        <tr><td><strong>Learning Disorders</strong></td><td>Academic underperformance, task avoidance, frustration</td><td>Learning disorder: difficulty is domain-specific (reading, maths). ADHD: impairment is broad and context-dependent. Often co-occur.</td></tr>
+        <tr><td><strong>Combined</strong> — ≥5/6 both domains</td><td>F90.2 / 314.01</td></tr>
+        <tr><td><strong>Inattentive</strong> — threshold inatt, &lt;5/6 H/I</td><td>F90.0 / 314.00</td></tr>
+        <tr><td><strong>H/I</strong> — threshold H/I, &lt;5/6 inatt</td><td>F90.1 / 314.01</td></tr>
+        <tr><td><em>Partial remission</em> (previously met, now sub-threshold)</td><td>—</td></tr>
       </tbody>
     </table>
-  </div>
-</div>
-
-<div class="section-header"><span class="sh-num">3</span>Common Comorbidities</div>
-
-<div class="card">
-  <div class="ch green" onclick="toggleCard(this)">Comorbidity Prevalence &amp; Clinical Implications</div>
-  <div class="cb">
-    <table class="ref-tbl">
-      <thead><tr><th>Comorbidity</th><th>Prevalence in ADHD</th><th>Clinical note</th></tr></thead>
-      <tbody>
-        <tr><td>Anxiety disorders</td><td>~50% adults</td><td>Treat ADHD first; stimulants may worsen anxiety in some — monitor. Atomoxetine has anxiolytic properties.</td></tr>
-        <tr><td>Major depression</td><td>~20–30%</td><td>ADHD chronically impairs function → secondary depression. Treat both. Stimulants alone may improve mood via treating ADHD.</td></tr>
-        <tr><td>ASD</td><td>~20–50% of ADHD have ASD features; ~50–70% of ASD meet ADHD criteria</td><td>Dual diagnosis is valid per DSM-5. Stimulants less effective and more side effects in ASD — start low, go slow.</td></tr>
-        <tr><td>Bipolar disorder</td><td>~20%</td><td>Carefully distinguish. If genuine comorbidity, mood stabiliser first, then consider non-stimulant or cautious stimulant under cover.</td></tr>
-        <tr><td>SUD (alcohol/drugs)</td><td>~25–50% adults</td><td>Prefer LDX (prodrug) or non-stimulants. Avoid IR stimulants in active stimulant SUD. Treating ADHD may reduce SUD severity.</td></tr>
-        <tr><td>ODD / Conduct disorder</td><td>~60% children with ADHD</td><td>Parent management training essential. Stimulants reduce ODD symptoms in ADHD. Guanfacine helpful for aggression.</td></tr>
-        <tr><td>Tic disorders / Tourette</td><td>~20% ADHD have tics</td><td>Stimulants may worsen tics in some — use lowest effective dose. Guanfacine/clonidine have anti-tic effects. Atomoxetine is tic-neutral.</td></tr>
-        <tr><td>Sleep disorders</td><td>&gt;50%</td><td>Insomnia, delayed sleep phase, restless legs. Address sleep actively — poor sleep amplifies all ADHD symptoms.</td></tr>
-        <tr><td>Eating disorders</td><td>Elevated, especially binge eating</td><td>Lisdexamfetamine is PBS-approved for binge eating disorder (BED). ADHD impulsivity drives binge eating.</td></tr>
-      </tbody>
-    </table>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <span class="chip chip-green">Mild — few beyond threshold; minor impairment</span>
+      <span class="chip chip-amber">Moderate — between mild and severe</span>
+      <span class="chip chip-red">Severe — many beyond threshold; marked impairment</span>
+    </div>
+    <div class="sub-h" style="font-size:10px;margin:0 0 4px">Documentation</div>
+    <div class="compact-2col">
+      <div class="compact-item"><span class="ci-dot"></span>Collateral sources used</div>
+      <div class="compact-item"><span class="ci-dot"></span>Rating scales (ASRS, DIVA-5)</div>
+      <div class="compact-item"><span class="ci-dot"></span>RTPM / SafeScript check</div>
+      <div class="compact-item"><span class="ci-dot"></span>Comorbidities noted</div>
+    </div>
   </div>
 </div>
 
 <div class="nav-btns">
-  <button class="nav-btn nav-prev" onclick="navToTab('assessment')">← Assessment</button>
+  <button class="nav-btn nav-prev" onclick="navToTab('overview')">← Overview</button>
   <button class="nav-btn nav-next" onclick="navToTab('medications')">Medications →</button>
 </div>
-</div><!-- end diagnosis panel -->
+
+</div><!-- end assessment panel -->
 
 
 <!-- ══════════════════════════════════════════════════════════════
      MEDICATIONS TAB
 ══════════════════════════════════════════════════════════════ -->
 <div class="panel" id="panel-medications">
+
+<div class="section-header" style="background:linear-gradient(90deg,#7f1d1d,#991b1b)"><span class="sh-num" style="background:#dc2626">!</span>Safety Screen — Run Before Prescribing</div>
+
+<div class="card">
+  <div class="ch red" onclick="toggleCard(this)">Cardiac Safety — 10 Items to Screen (tap ? for clinical note)</div>
+  <div class="cb">
+    <div class="callout callout-red" style="margin-bottom:8px"><strong>Absolute contraindication</strong> Current MAOI use. Do not prescribe stimulants or atomoxetine until full washout.</div>
+    <div class="safety-grid">
+      <div class="safety-item flag">
+        <span class="si-label">Exertional chest pain / unexplained SOB / exercise intolerance</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Possible structural heart disease or ischaemia. <strong>Defer stimulants</strong> and obtain medical or cardiology assessment first.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Palpitations / syncope or fainting</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Possible arrhythmia or conduction disorder. Obtain history, exam and ECG, and usually defer stimulants until clarified.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Dizziness on standing</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Check orthostatic vitals and hydration first. Use extra caution with clonidine or guanfacine as they can worsen hypotension.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Family history: sudden cardiac death &lt;40 / unexplained syncope or seizures</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Suggests possible inherited arrhythmia. Get ECG and have a low threshold for cardiology review before stimulants.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Family history: cardiomyopathy / long QT / channelopathy</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Suggests inherited structural or electrical disease. Seek cardiology input before stimulant treatment.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Family history: early-onset coronary artery disease (M &lt;55, F &lt;65)</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Increases vascular risk relevance in adults. Optimise risk factors and monitor blood pressure carefully when using stimulants.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Known congenital or structural heart disease</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Liaise with the treating cardiologist before prescribing stimulants. If used, start low and monitor BP, pulse and symptoms closely.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Known arrhythmia / tachyarrhythmia / long QT syndrome</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Higher risk with sympathomimetic drugs. Use stimulants only with cardiology oversight and consider non-stimulants where appropriate.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Hypertension</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Control blood pressure before starting stimulants and monitor regularly during treatment.</div>
+      </div>
+      <div class="safety-item abs">
+        <span class="si-label"><strong>Current MAOI use — ABSOLUTE CONTRAINDICATION</strong></span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Do not prescribe stimulants or atomoxetine until an appropriate washout period is completed. This is an absolute contraindication.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch amber" onclick="toggleCard(this)">Medical Safety — 18 Items (tap ? for prescribing note)</div>
+  <div class="cb">
+    <div class="safety-grid">
+      <div class="safety-item flag">
+        <span class="si-label">Epilepsy or seizure disorder</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants may lower seizure threshold. Check recent control and neurology input, start low and monitor.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Glaucoma</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Avoid stimulants and atomoxetine in narrow-angle glaucoma. Consider non-stimulant alternatives.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Thyroid disorder</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Treat or stabilise hyperthyroidism before starting stimulants due to additive sympathomimetic effects.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Raynaud's phenomenon</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants can worsen vasospasm. Monitor digits and consider dose reduction or switch if symptomatic.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Tic disorder</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants can exacerbate tics in some patients. Consider atomoxetine or alpha-2 agonists, or cautious stimulant trial with close monitoring.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Hepatic impairment</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Atomoxetine exposure increases significantly in moderate-severe hepatic impairment. Use lower doses and monitor LFTs.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Renal impairment</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Clonidine and guanfacine may accumulate in renal impairment. Titrate slowly and monitor for hypotension and sedation.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Pregnancy</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Use non-pharmacological strategies where possible. If prescribing in pregnancy, use the lowest effective dose and agents with the best safety data, with obstetric input.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Breastfeeding</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants pass into breast milk in small amounts. Methylphenidate has the lowest excretion. Discuss risks/benefits with the patient and monitor infant for irritability or feeding changes.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Coronary artery disease</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants increase HR and BP. Optimise vascular risk factors, consider cardiology input, start low and monitor closely.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Obesity with metabolic syndrome</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants may reduce appetite and weight. Monitor weight, blood pressure and metabolic parameters during treatment.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Low BMI</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Appetite suppression can be problematic. Prefer non-stimulants or very cautious stimulant use with close weight monitoring.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Current or recent eating disorder</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Stimulants may worsen dietary restriction. Avoid or minimise stimulants and prioritise nutritional rehabilitation.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Obstructive sleep apnoea</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Optimise sleep and OSA treatment first. Time doses to minimise insomnia. Consider alpha-2 agonists for nocturnal hyperarousal.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Benign prostatic hyperplasia</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Atomoxetine can worsen urinary retention. Monitor lower urinary tract symptoms or avoid in severe cases.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">End-stage renal disease</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Use clonidine and guanfacine very cautiously. Coordinate with nephrology and monitor haemodynamics carefully.</div>
+      </div>
+      <div class="safety-item">
+        <span class="si-label">Chronic dizziness or high falls risk</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Alpha-2 agonists can increase orthostatic symptoms and falls risk. Minimise dose and monitor standing blood pressure.</div>
+      </div>
+      <div class="safety-item flag">
+        <span class="si-label">Endocrine/autonomic disorder with labile BP (e.g. Addison disease, autonomic neuropathy)</span>
+        <button class="q-btn" onclick="toggleQ(this)">?</button>
+        <div class="q-box">Both stimulants (raise BP) and alpha-2 agonists (lower BP, with rebound on cessation) can destabilise blood pressure. Titrate very cautiously with frequent postural checks.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="section-header"><span class="sh-num">1</span>Medication Selection Algorithm</div>
 
@@ -511,7 +1021,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
         <tr><td>Active substance use disorder</td><td>Lisdexamfetamine (lower diversion risk) or Atomoxetine</td><td>Prodrug reduces misuse potential</td></tr>
         <tr><td>Comorbid tics / Tourette</td><td>Atomoxetine or Guanfacine XR</td><td>Tic-neutral or anti-tic properties</td></tr>
         <tr><td>Comorbid anxiety (significant)</td><td>Atomoxetine first; cautious stimulant trial if suboptimal</td><td>Atomoxetine has anxiolytic properties</td></tr>
-        <tr><td>Comorbid binge eating disorder</td><td>Lisdexamfetamine (Vyvanse)</td><td>PBS listed for BED as well as ADHD</td></tr>
+        <tr><td>Comorbid binge eating disorder</td><td>Lisdexamfetamine (Vyvanse)</td><td>TGA approved for BED (private script — NOT PBS listed for BED). PBS only for ADHD.</td></tr>
         <tr><td>Sleep is a major problem</td><td>Guanfacine XR nocte as add-on; consider clonidine</td><td>Sedating properties; avoid afternoon stimulants</td></tr>
         <tr><td>Stimulants contraindicated / failed</td><td>Atomoxetine → then Guanfacine XR</td><td>Non-stimulant pathway</td></tr>
         <tr><td>Comorbid hypertension (mild–moderate)</td><td>Caution with stimulants; monitor closely; consider non-stimulants</td><td>Stimulants increase BP 2–4 mmHg on average</td></tr>
@@ -536,7 +1046,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
         <div class="med-col"><label>Titration</label><p>Increase by 20 mg every 2 weeks as tolerated</p></div>
         <div class="med-col"><label>Target / usual range</label><p>30–70 mg/day. Most adults: 40–70 mg.</p></div>
         <div class="med-col"><label>Maximum</label><p>70 mg/day (state-independent ceiling)</p></div>
-        <div class="med-col"><label>PBS authority</label><p>Required. ADHD (adults + children ≥6) and Binge Eating Disorder (adults). PRODA.</p></div>
+        <div class="med-col"><label>PBS authority</label><p>Required for ADHD (adults + children ≥6) via PRODA. BED = TGA approved but <strong>NOT PBS listed</strong> — private script required.</p></div>
         <div class="med-col"><label>Micro-titration method</label><p>Open capsule, dissolve in 70 mL water → 1 mg/mL solution. Take measured volume. Remainder discard.</p></div>
       </div>
     </div>
@@ -737,10 +1247,166 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <div class="nav-btns">
-  <button class="nav-btn nav-prev" onclick="navToTab('diagnosis')">← Diagnosis</button>
-  <button class="nav-btn nav-next" onclick="navToTab('prescribing')">Prescribing →</button>
+  <button class="nav-btn nav-prev" onclick="navToTab('assessment')">← Assessment</button>
+  <button class="nav-btn nav-next" onclick="navToTab('titration')">Titration →</button>
 </div>
 </div><!-- end medications panel -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     TITRATION TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-titration">
+
+<div class="callout callout-blue" style="margin-bottom:12px">
+  <strong>How to use this tab</strong>
+  Choose the protocol matching your starting medication. Titrate to lowest effective dose — don't push to maximum unless needed. Review at 2–4 weeks per phase. BP and HR at each review.
+</div>
+
+<p class="tit-pg-section">Stimulants — Amphetamine-based</p>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Dexamphetamine IR (5mg tabs)</div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Days 1–2</td><td>2 days</td><td>Morning: 2.5mg · Midday: 2.5mg</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Days 3–9</td><td>7 days</td><td>Morning: 5mg · Midday: 5mg</td><td class="tit-pg-note-cell">If tolerating, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Days 10–16</td><td>7 days</td><td>Morning: 10mg · Midday: 5mg</td><td class="tit-pg-note-cell">If tolerating but not fully effective, increase.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 10mg · Midday: 10mg</td><td class="tit-pg-note-cell">Adjust at review. Consider afternoon 5–10mg if needed.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Vyvanse 30+20mg <span class="tit-pg-note">No requirement to start with short-acting dex first — titrate Vyvanse directly</span></div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Morning: 30mg capsule</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Weeks 2–3</td><td>14 days</td><td>Morning: 30mg + 20mg (50mg total)</td><td class="tit-pg-note-cell">If tolerating well, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Week 4+ if needed</td><td>—</td><td>Morning: 30mg + 20mg + 20mg (70mg total)</td><td class="tit-pg-note-cell">Only if tolerating 50mg but still symptomatic.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Vyvanse 30mg → 50mg (simple)</div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Weeks 1–3</td><td>21 days</td><td>Morning: 30mg capsule</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 50mg capsule</td><td class="tit-pg-note-cell">Only if tolerating 30mg but still symptomatic.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Vyvanse — Water Dissolution Method <span class="tit-pg-note">For very sensitive patients or micro-titration</span></div>
+  <p style="font-size:.77rem;color:#374151;margin:6px 10px 4px;font-style:italic">Dissolve 70mg capsule in 70mL water (1mg/mL). Draw prescribed mL, drink immediately, discard rest. Switch to capsule once stable dose found.</p>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dose (mL = mg)</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Morning: 30mL (30mg)</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Week 2</td><td>7 days</td><td>Morning: 40mL (40mg)</td><td class="tit-pg-note-cell">If tolerating, continue increasing.</td></tr>
+    <tr><td class="tit-pg-phase">Week 3</td><td>7 days</td><td>Morning: 50mL (50mg)</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Week 4</td><td>7 days</td><td>Morning: 60mL (60mg)</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 60–70mL (60–70mg)</td><td class="tit-pg-note-cell">Stay at lowest effective dose.</td></tr>
+  </table>
+</div>
+
+<p class="tit-pg-section">Stimulants — Methylphenidate</p>
+<p style="font-size:.79rem;color:#374151;margin:0 0 10px;font-style:italic">Preferred approach: start with Ritalin IR to establish effective dose, then convert to long-acting. Direct titration with long-acting is also reasonable.</p>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Ritalin IR (10mg tabs)</div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Days 1–2</td><td>2 days</td><td>Morning: 5mg · Midday: 5mg</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Days 3–9</td><td>7 days</td><td>Morning: 10mg · Midday: 10mg</td><td class="tit-pg-note-cell">If tolerating, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Days 10–16</td><td>7 days</td><td>Morning: 20mg · Midday: 10mg</td><td class="tit-pg-note-cell">If tolerating but not fully effective, increase.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 20mg · Midday: 20mg</td><td class="tit-pg-note-cell">Consider afternoon 10–20mg at follow-up if needed.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Ritalin LA (modified-release capsules)</div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Morning: 10mg</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Weeks 2–3</td><td>14 days</td><td>Morning: 20mg</td><td class="tit-pg-note-cell">If tolerating, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Weeks 4–5</td><td>14 days</td><td>Morning: 30mg</td><td class="tit-pg-note-cell">If tolerating but not fully effective, increase.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 40mg</td><td class="tit-pg-note-cell">Adjust at review. 60mg available if needed.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Concerta (OROS methylphenidate) <span class="tit-pg-note">Swallow whole — never crush</span></div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Morning: 18mg</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Weeks 2–3</td><td>14 days</td><td>Morning: 27mg</td><td class="tit-pg-note-cell">If tolerating, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Weeks 4–5</td><td>14 days</td><td>Morning: 36mg</td><td class="tit-pg-note-cell">If tolerating but not fully effective, increase.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 54mg</td><td class="tit-pg-note-cell">Empty tablet shell in stool is normal.</td></tr>
+  </table>
+</div>
+
+<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin-bottom:14px">
+  <p style="font-size:.8rem;font-weight:700;color:#92400e;margin:0 0 6px">Methylphenidate IR → Long-Acting Conversion</p>
+  <p style="font-size:.76rem;color:#374151;margin:0 0 8px;font-style:italic">Ritalin LA: 10, 20, 30, 40, 60mg. Concerta: 18, 27, 36, 54mg. * = nearest available dose — reassess at follow-up.</p>
+  <table class="conv-table">
+    <tr><th>Daily IR dose</th><th>Ritalin LA</th><th>Concerta</th></tr>
+    <tr><td><strong>10mg/day</strong></td><td>10mg once daily</td><td>18mg once daily</td></tr>
+    <tr><td><strong>20mg/day</strong></td><td>20mg once daily</td><td>18mg once daily *</td></tr>
+    <tr><td><strong>30mg/day</strong></td><td>30mg once daily</td><td>27mg once daily</td></tr>
+    <tr><td><strong>40mg/day</strong></td><td>40mg once daily</td><td>36mg once daily</td></tr>
+    <tr><td><strong>50mg/day</strong></td><td>40mg once daily *</td><td>54mg once daily *</td></tr>
+    <tr><td><strong>60mg/day</strong></td><td>60mg once daily</td><td>54mg once daily</td></tr>
+    <tr><td><strong>80mg/day</strong></td><td>60mg once daily *</td><td>54mg once daily *</td></tr>
+  </table>
+</div>
+
+<p class="tit-pg-section">Non-Stimulants</p>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Atomoxetine (Strattera) <span class="tit-pg-note">Not a controlled drug — full effect takes 4–12 weeks</span></div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Morning: 40mg</td><td class="tit-pg-note-cell">Take with food.</td></tr>
+    <tr><td class="tit-pg-phase">Weeks 2–5</td><td>28 days</td><td>Morning: 80mg</td><td class="tit-pg-note-cell">Allow 4 weeks at this dose before assessing effect.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 80–100mg</td><td class="tit-pg-note-cell">Increase to 100mg if tolerating but not fully effective.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Guanfacine XR (Intuniv) <span class="tit-pg-note">Must taper on cessation — do not stop abruptly</span></div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Weeks 1–2</td><td>14 days</td><td>Evening: 1mg</td><td class="tit-pg-note-cell">Monitor BP.</td></tr>
+    <tr><td class="tit-pg-phase">Weeks 3–4</td><td>14 days</td><td>Evening: 2mg</td><td class="tit-pg-note-cell">If tolerating, continue increasing.</td></tr>
+    <tr><td class="tit-pg-phase">Weeks 5–6</td><td>14 days</td><td>Evening: 3mg</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Evening: 4mg</td><td class="tit-pg-note-cell">Taper gradually if stopping.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Clonidine nocte (Catapres) <span class="tit-pg-note">Private script — must taper on cessation</span></div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Day 1</td><td>1 day</td><td>Night: 50mcg (half tab)</td><td class="tit-pg-note-cell">Expect drowsiness.</td></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Night: 100mcg (1 tab)</td><td class="tit-pg-note-cell">If tolerating, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Night: 100–200mcg</td><td class="tit-pg-note-cell">Increase to 200mcg if tolerating but not fully effective. Taper on cessation.</td></tr>
+  </table>
+</div>
+
+<div class="tit-pg-card">
+  <div class="tit-pg-head">Clonidine BD (Catapres) <span class="tit-pg-note">Private script — must taper on cessation</span></div>
+  <table class="tit-pg-table">
+    <tr><th>Phase</th><th>Duration</th><th>Dosing</th><th>Note</th></tr>
+    <tr><td class="tit-pg-phase">Week 1</td><td>7 days</td><td>Morning: 50mcg · Afternoon: 50mcg</td><td></td></tr>
+    <tr><td class="tit-pg-phase">Week 2</td><td>7 days</td><td>Morning: 100mcg · Afternoon: 100mcg</td><td class="tit-pg-note-cell">If tolerating, continue.</td></tr>
+    <tr><td class="tit-pg-phase">Ongoing</td><td>—</td><td>Morning: 100mcg · Midday: 100mcg · Afternoon: 100mcg</td><td class="tit-pg-note-cell">Add midday dose if tolerating BD but not fully effective. Taper on cessation.</td></tr>
+  </table>
+</div>
+
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('medications')">← Medications</button>
+  <button class="nav-btn nav-next" onclick="navToTab('prescribing')">Prescribing →</button>
+</div>
+</div><!-- end titration panel -->
 
 
 <!-- ══════════════════════════════════════════════════════════════
@@ -883,7 +1549,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <div class="nav-btns">
-  <button class="nav-btn nav-prev" onclick="navToTab('medications')">← Medications</button>
+  <button class="nav-btn nav-prev" onclick="navToTab('titration')">← Titration</button>
   <button class="nav-btn nav-next" onclick="navToTab('billing')">Billing →</button>
 </div>
 </div><!-- end prescribing panel -->
@@ -2050,6 +2716,254 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 </div><!-- end special panel -->
 
+<!-- ══════════════════════════════════════════════════════════════
+     EXTRA INFO TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-extrainfo">
+
+<div class="section-header"><span class="sh-num">0</span>How We Assess for ADHD</div>
+
+
+<div class="section-header"><span class="sh-num">1</span>How We Assess for ADHD</div>
+
+<div class="card">
+  <div class="ch navy" onclick="toggleCard(this)">The Clinical Approach — What We're Actually Looking For</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>ADHD is a trait, not a state.</strong> The key question is not "do you have symptoms today?" but "have you always been this way, across most of your life, in most of your contexts?" We're looking for a lifelong pattern of executive dysregulation — not a recent change, not a situational response to stress, not something that appeared last year.</p>
+      <p><strong>Interest-based attention.</strong> The ADHD brain runs on interest, urgency, novelty, and challenge — not importance alone. When something genuinely captures their interest, they can hyperfocus brilliantly for hours. When something is dull, repetitive, or lacks a proximate deadline, starting it can feel genuinely impossible — not laziness, but a different motivational architecture. This is diagnostic gold when you hear it.</p>
+      <p><strong>Masking and late diagnosis.</strong> Many intelligent adults were never identified. They compensated through school via intelligence, anxiety-driven perfectionism, or a highly structured environment someone else provided. The diagnosis often surfaces when supports drop away — leaving school, losing a partner, starting a job with less external structure. Always explore: "Were you coping because of your own systems, or because someone or something else was organising you?"</p>
+      <p><strong>Trait not state — practical heuristic.</strong> ADHD symptoms should be present across a wide range of contexts. If they only appear in one relationship, one job, or one life stage, consider whether something else explains the picture. True ADHD is pervasive — though it may be more obvious in some settings than others.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch teal" onclick="toggleCard(this)">Assessment Heuristics — Patterns That Make the Diagnosis More Likely</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Strong positive signals</div>
+        <ul>
+          <li>Consistent lifelong pattern across multiple settings (home, school, work, relationships)</li>
+          <li>Interest-based attention: hyperfocus on engaging tasks, shut-down on boring ones</li>
+          <li>"Bright but not applying themselves" — teacher comments, report card themes</li>
+          <li>Internal restlessness, not just external — in adults, hyperactivity internalises</li>
+          <li>Time blindness: time exists as "now" vs "not now" — chronic lateness, missed deadlines</li>
+          <li>Rejection sensitive dysphoria — intense emotional response to perceived criticism</li>
+          <li>First-degree relative with ADHD (heritability ~76%)</li>
+          <li>Things improved substantially in structured environments or with urgency/novelty</li>
+          <li>Compensated until a major life transition removed their external scaffolding</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Features that should prompt reconsideration</div>
+        <ul>
+          <li>Onset clearly after a discrete life event or trauma (consider PTSD, adjustment)</li>
+          <li>Symptoms only in one setting or one relationship</li>
+          <li>Clear episodic pattern — symptoms much better between episodes (consider mood disorder)</li>
+          <li>Attention hijacked by worry, not wandering (consider anxiety disorder)</li>
+          <li>Concentration improves significantly when anxiety or mood is treated</li>
+          <li>Symptoms track sleep quality almost perfectly (consider primary sleep disorder)</li>
+          <li>Requesting only one specific medication by name, reluctant to consider alternatives</li>
+          <li>No functional impairment despite reported severe symptoms</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch sky" onclick="toggleCard(this)">Session Timing Guide — Telehealth Assessment (60–90 min)</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Time</th><th>Domain</th><th>Goal</th></tr></thead>
+      <tbody>
+        <tr><td>0–5 min</td><td>Consent &amp; setup</td><td>Assessment + financial consent; confirm location (state); check RTPM done</td></tr>
+        <tr><td>5–15 min</td><td>Presenting complaint</td><td>Patient's own words. What brought them here. Current functional impact.</td></tr>
+        <tr><td>15–30 min</td><td>Core symptoms — DSM Criterion A</td><td>9 inattention + 9 H/I symptoms. Rate frequency. Get specific examples from current life.</td></tr>
+        <tr><td>30–40 min</td><td>Developmental history — Criteria B &amp; C</td><td>Childhood onset (pre-12), cross-situational evidence. School reports, teacher themes.</td></tr>
+        <tr><td>40–50 min</td><td>Differential diagnosis screen</td><td>Anxiety, depression, bipolar, ASD, trauma, sleep, substance. These are both differentials AND comorbidities.</td></tr>
+        <tr><td>50–60 min</td><td>Psychiatric, medical, substance history</td><td>Prior diagnoses, medications, substance use, cardiac/medical safety.</td></tr>
+        <tr><td>60–70 min</td><td>MSE &amp; formulation</td><td>Observe throughout; summarise. Run DSM criteria. Provide diagnostic impression.</td></tr>
+        <tr><td>Last 5–10 min</td><td>Plan &amp; psychoeducation</td><td>If prescribing: discuss medication, titration, monitoring. Referrals if needed.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">What to Send Patients Pre-Appointment</div>
+  <div class="cb">
+    <div class="g2">
+      <div class="info-block">
+        <div class="sub-h">Send ≥48 hours before</div>
+        <ul>
+          <li><strong>ASRS v1.1</strong> — adult self-report; Part A screen + full 18-item scale</li>
+          <li><strong>DIVA-5</strong> — structured diagnostic interview; gold standard for adult ADHD</li>
+          <li><strong>PHQ-9</strong> — depression screen (comorbidity + differential)</li>
+          <li><strong>GAD-7</strong> — anxiety screen (comorbidity + differential)</li>
+          <li><strong>AUDIT or AUDIT-C</strong> — alcohol use (important before S8 prescribing)</li>
+          <li>Observer ASRS if partner/parent available and willing</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <div class="sub-h">Request from patient / GP</div>
+        <ul>
+          <li>GP referral letter (supportive referral letter with relevant history)</li>
+          <li>Primary school reports — most valuable; secondary school less so</li>
+          <li>Previous psychology or neuropsychology reports if available</li>
+          <li>Specialist letters from prior psychiatric/paediatric assessments</li>
+          <li>RTPM/SafeScript check (do before session, not during)</li>
+        </ul>
+        <div class="callout callout-amber" style="margin-top:8px">
+          <strong>Jurisdiction check</strong>
+          Ask at session start: "Where are you physically located today?" — S8 scripts must be for the state/territory the patient is in.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch emerald" onclick="toggleCard(this)">The Diagnostic Standard — What Makes a Valid Assessment</div>
+  <div class="cb">
+    <div class="info-block">
+      <p><strong>AADPA 2024 standard:</strong> A valid ADHD assessment requires comprehensive psychiatric interview covering all DSM-5-TR criteria, developmental history, functional impairment, differential diagnosis, psychiatric comorbidities, medical history, substance use, MSE, and collateral information where available.</p>
+      <p>Rating scales (ASRS, DIVA) <strong>support</strong> but do not replace clinical interview. A positive ASRS alone does not make a diagnosis. A negative ASRS does not exclude ADHD in a high-masking individual.</p>
+      <p><strong>Minimum collateral standard:</strong> In adults, collateral from a partner, parent, or close other is strongly preferred. In children, teacher and parent ratings are mandatory (Criterion C requires cross-situational evidence). For adults without available collateral, document the attempt and rely more heavily on developmental history exploration and school records.</p>
+    </div>
+    <div class="callout callout-blue" style="margin-top:4px">
+      <strong>Telehealth-specific note</strong>
+      You cannot measure BP/HR, assess cardiac auscultation, or perform neurological exam via video. Request GP to perform baseline cardiovascular examination and observations before first prescription. Advise patient to check BP/HR at pharmacy or with home device at each titration step.
+    </div>
+  </div>
+</div>
+
+
+
+<div class="section-header"><span class="sh-num">1</span>DSM-5-TR Full Criteria — ADHD</div>
+
+<div class="card">
+  <div class="ch amber" onclick="toggleCard(this)">Criterion A — Core Symptoms (Inattention and/or H/I)</div>
+  <div class="cb">
+    <div class="callout callout-blue" style="margin-bottom:10px">
+      <strong>Threshold</strong>
+      Adults (≥17 years): ≥5 symptoms in either or both domains, present for ≥6 months, at a level that is inconsistent with developmental level.<br>
+      Children (under 17): ≥6 symptoms in either or both domains.
+    </div>
+    <div class="g2">
+      <div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1a56db;margin-bottom:6px">Inattention (A1–A9)</div>
+        <div class="crit-row"><span class="cr-badge blue">A1</span><div><strong>Careless mistakes</strong> — Often fails to give close attention to details or makes careless mistakes in schoolwork, work, or other activities</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A2</span><div><strong>Sustaining attention</strong> — Often has difficulty sustaining attention in tasks or play activities</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A3</span><div><strong>Doesn't seem to listen</strong> — Often does not seem to listen when spoken to directly</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A4</span><div><strong>Doesn't follow through</strong> — Often does not follow through on instructions and fails to finish schoolwork, chores, or duties (not due to oppositional behavior)</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A5</span><div><strong>Organising difficulties</strong> — Often has difficulty organising tasks and activities</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A6</span><div><strong>Avoids mental effort</strong> — Often avoids, dislikes, or is reluctant to engage in tasks requiring sustained mental effort</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A7</span><div><strong>Loses things</strong> — Often loses things necessary for tasks or activities</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A8</span><div><strong>Easily distracted</strong> — Is often easily distracted by extraneous stimuli (in older adolescents and adults: may include unrelated thoughts)</div></div>
+        <div class="crit-row"><span class="cr-badge blue">A9</span><div><strong>Forgetful</strong> — Is often forgetful in daily activities</div></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#7c3aed;margin-bottom:6px">Hyperactivity / Impulsivity (B1–B9)</div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H1</span><div><strong>Fidgets / squirms</strong> — Often fidgets with or taps hands or feet, or squirms in seat</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H2</span><div><strong>Leaves seat</strong> — Often leaves seat in situations where remaining seated is expected</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H3</span><div><strong>Runs/climbs / inner restlessness</strong> — Often runs about or climbs where inappropriate; in adults: inner sense of restlessness</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H4</span><div><strong>Quiet leisure difficult</strong> — Often unable to play or engage in leisure activities quietly</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H5</span><div><strong>"On the go" / driven by a motor</strong> — Often "on the go," acting as if driven by a motor</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H6</span><div><strong>Talks excessively</strong> — Often talks excessively</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H7</span><div><strong>Blurts out answers</strong> — Often blurts out an answer before a question has been completed</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H8</span><div><strong>Difficulty waiting turn</strong> — Often has difficulty waiting their turn</div></div>
+        <div class="crit-row"><span class="cr-badge" style="background:#7c3aed">H9</span><div><strong>Interrupts / intrudes</strong> — Often interrupts or intrudes on others (butts into conversations/games)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch indigo" onclick="toggleCard(this)">Criteria B–E — Context, Impairment, and Exclusions</div>
+  <div class="cb">
+    <div class="crit-row"><span class="cr-badge warn">B</span><div><strong>Developmental origin (pre-age 12)</strong> — Several inattentive or hyperactive-impulsive symptoms were present before age 12 years. Note: symptoms do not need to have been formally identified before age 12; retrospective account is acceptable.</div></div>
+    <div class="crit-row"><span class="cr-badge warn">C</span><div><strong>Cross-situational (≥2 settings)</strong> — Several symptoms are present in two or more settings (e.g., at home, school, work, with friends or relatives, or in other activities). This requirement prevents over-diagnosis of situational presentations.</div></div>
+    <div class="crit-row"><span class="cr-badge warn">D</span><div><strong>Functional impairment</strong> — There is clear evidence that the symptoms interfere with, or reduce the quality of, social, academic, or occupational functioning. Distress alone is insufficient; there must be functional consequences.</div></div>
+    <div class="crit-row"><span class="cr-badge green">E</span><div><strong>Differential exclusion</strong> — The symptoms do not occur exclusively during the course of schizophrenia or another psychotic disorder and are not better explained by another mental disorder (e.g., mood disorder, anxiety disorder, dissociative disorder, personality disorder, substance intoxication or withdrawal).</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch gold" onclick="toggleCard(this)">Specifiers, Subtypes, and Severity</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Presentation</th><th>Criteria</th><th>ICD-10</th><th>DSM-5 Code</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Combined</strong></td><td>≥5 (or ≥6 under-17) inattention AND ≥5 (or ≥6) H/I</td><td>F90.2</td><td>314.01</td></tr>
+        <tr><td><strong>Predominantly Inattentive</strong></td><td>≥5 inattention, &lt;5 H/I</td><td>F90.0</td><td>314.00</td></tr>
+        <tr><td><strong>Predominantly H/I</strong></td><td>≥5 H/I, &lt;5 inattention</td><td>F90.1</td><td>314.01</td></tr>
+        <tr><td><em>In partial remission</em></td><td>Previously met full criteria; now sub-threshold</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="g2" style="margin-top:6px">
+      <div class="callout callout-green"><strong>Mild</strong> Few, if any, symptoms beyond threshold. Minor impairment in social or occupational functioning.</div>
+      <div class="callout callout-amber"><strong>Moderate</strong> Symptoms or functional impairment between mild and severe.</div>
+    </div>
+    <div class="callout callout-red" style="margin-top:0"><strong>Severe</strong> Many symptoms beyond threshold. Marked impairment in social, school, or occupational functioning.</div>
+    <div class="callout callout-blue" style="margin-top:8px"><strong>Note on age of onset</strong> The DSM-5-TR requires that "several" symptoms were present before age 12 — it does not require that the full diagnostic threshold was met before age 12. Many late-diagnosed adults had symptoms present but not clinically significant until demands increased.</div>
+  </div>
+</div>
+
+<div class="section-header"><span class="sh-num">2</span>Formulation Framework</div>
+<div class="card">
+  <div class="ch slate" onclick="toggleCard(this)">DSM-5-TR Summary Checklist</div>
+  <div class="cb">
+    <div class="g2">
+      <div>
+        <div class="sub-h" style="font-size:10px;margin:0 0 5px">Criteria met?</div>
+        <div class="crit-row"><span class="cr-badge blue">A</span><div>≥5 inattention <strong>and/or</strong> ≥5 H/I symptoms, ≥6 months, inconsistent with developmental level</div></div>
+        <div class="crit-row"><span class="cr-badge warn">B</span><div>Several symptoms present <strong>before age 12</strong></div></div>
+        <div class="crit-row"><span class="cr-badge warn">C</span><div>Symptoms in <strong>≥2 settings</strong> (home, work, school, social, other)</div></div>
+        <div class="crit-row"><span class="cr-badge warn">D</span><div>Clear <strong>functional impairment</strong> in social, academic, or occupational functioning</div></div>
+        <div class="crit-row"><span class="cr-badge green">E</span><div>Not better explained by another mental disorder (Criterion E)</div></div>
+      </div>
+      <div>
+        <div class="sub-h" style="font-size:10px;margin:0 0 5px">Documentation</div>
+        <div class="compact-2col">
+          <div class="compact-item"><span class="ci-dot"></span>Collateral sources used</div>
+          <div class="compact-item"><span class="ci-dot"></span>Rating scale results (ASRS, DIVA-5)</div>
+          <div class="compact-item"><span class="ci-dot"></span>RTPM / SafeScript check date</div>
+          <div class="compact-item"><span class="ci-dot"></span>Symptom count recorded (X/9, Y/9)</div>
+          <div class="compact-item"><span class="ci-dot"></span>Comorbidities identified</div>
+          <div class="compact-item"><span class="ci-dot"></span>Severity specifier noted</div>
+          <div class="compact-item"><span class="ci-dot"></span>Diagnostic uncertainty / monitoring plan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch teal" onclick="toggleCard(this)">5 Ps Formulation Template</div>
+  <div class="cb">
+    <table class="ref-tbl">
+      <thead><tr><th>Factor</th><th>For ADHD context</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Predisposing</strong></td><td>Family history of ADHD (heritability ~76%); premature birth; prenatal substance exposure; early adversity/attachment difficulties; neurodevelopmental comorbidities</td></tr>
+        <tr><td><strong>Precipitating</strong></td><td>Life transition removing external structure (school→uni, uni→work, relationship breakdown); new responsibilities exceeding compensatory capacity; sleep or medical changes</td></tr>
+        <tr><td><strong>Perpetuating</strong></td><td>Ongoing chaotic environment; untreated comorbidities (anxiety, depression, SUD); maladaptive coping (avoidance, substance use); inadequate environmental support; negative self-schema</td></tr>
+        <tr><td><strong>Protective</strong></td><td>High IQ; supportive relationships; structured environment; insight and willingness to engage; stable housing and employment; absence of active SUD</td></tr>
+        <tr><td><strong>Presenting</strong></td><td>The specific symptoms, settings, and domains of impairment that led to this assessment</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('special')">← Special Groups</button>
+  <span></span>
+</div>
+</div><!-- end extrainfo panel -->
+
+
 </div><!-- end .content -->
 
 <script>
@@ -2072,6 +2986,13 @@ function navToTab(id){
   });
   showTab(id,btn);
   window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleQ(btn){
+  var box=btn.nextElementSibling;
+  if(!box)return;
+  var open=box.classList.toggle('open');
+  btn.classList.toggle('active',open);
+  btn.textContent=open?'×':'?';
 }
 </script>
 </body>
