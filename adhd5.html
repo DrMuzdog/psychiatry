@@ -785,18 +785,13 @@ select.inp{appearance:none}
     <label class="fl" style="margin-top:14px">What would you like to get out of today?</label>
     <textarea class="nf" id="patientGoals" placeholder="Patient goals for the session — e.g. assessment outcome, medication, work strategies, partner understanding..." oninput="save();refresh()" rows="2"></textarea>
 
-    <details class="intro-box" style="margin:14px 0 0">
-      <summary>Consent and disclosure script — tap to expand</summary>
+    <details class="intro-box" open style="margin:14px 0 0">
+      <summary>Consent and disclosure script — read at the start</summary>
       <div class="intro-body">
         <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px">Read the following to the patient before proceeding:</p>
-        <p><strong>Identity &amp; safety:</strong> Can you confirm your full name, date of birth, and the address you are at right now? If we get disconnected I'll call you straight back; if there is a serious safety concern I may need to contact emergency services or your nominated contact.</p>
-        <p><strong>Telehealth:</strong> This consultation is by Telehealth. Please make sure you are in a private space and not driving. Nothing is being recorded. If you would prefer an in-person assessment at any point, that can be arranged.</p>
-        <p><strong>Confidentiality:</strong> What we discuss is confidential and stored in your medical record. The exceptions are if I'm seriously concerned about your safety or someone else's, or if records are subpoenaed by a court. A summary letter will be sent to your referring GP, with your consent.</p>
-        <p><strong>Assessment process:</strong> Today is a comprehensive psychiatric assessment for ADHD. I'll ask about current concerns, developmental and life history, mental health, substance use, and medical background. I may also use validated rating scales.</p>
-        <p><strong>Diagnosis &amp; treatment:</strong> I may or may not confirm an ADHD diagnosis today. If criteria are met we'll discuss treatment options, including pros and cons of medication and non-medication strategies. Medication is initiated only with your informed consent.</p>
-        <p><strong>Stimulant medications</strong> are S8 controlled substances; prescribing is monitored and a 20-day rule applies between scripts.</p>
-        <p><strong>Financial consent (important):</strong> Today's consultation fee is as discussed at booking. A Medicare rebate applies if eligibility criteria are met (valid GP referral, MBS-eligible item). Any out-of-pocket gap is your responsibility. Follow-up review fees and titration appointments are billed separately. Letters or documents requested outside the consultation may incur an additional fee.</p>
-        <p><strong>Right to withdraw:</strong> You can stop the assessment, decline any question, or seek a second opinion at any point.</p>
+        <p>“Before we begin, I want to be upfront with you about a few things. Today is a holistic psychiatric assessment — I'm going to look at everything, not just ADHD. I can't guarantee that I'll make an ADHD diagnosis, because that depends on what I find during the assessment. And even if I do diagnose ADHD, I can't guarantee that we'll end up on stimulant medication — that depends on your medical history, what's safe for you, and what makes clinical sense. What I can guarantee is that I want to do the very best by you. This is a thorough, holistic assessment and whatever we find, we'll work out the best path forward together.”</p>
+        <p>“I also want to be transparent about the cost. Today's assessment is one appointment, but depending on what comes up, there may be follow-up appointments — for example if we need to monitor how medication is going during titration. I'm always mindful of the financial impact and I'll only recommend follow-up when it's genuinely clinically necessary. I'll do everything I safely can to be efficient with your time and money.”</p>
+        <p style="font-weight:700;color:#1e3a5f;margin-top:10px">“Are you happy to continue?”</p>
       </div>
     </details>
 
