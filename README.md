@@ -21,8 +21,18 @@ This has everything you need — suitable for both initial assessments and follo
 
 Perfect for beginners and experienced psychiatrists alike.
 
+### [ADHD Telehealth Reference Guide](adhd-telehealth-guide.html)
+A reference guide for conducting ADHD assessments and reviews via telehealth.
+
 ### [Old ADHD Assessment Generator](adhd3.html)
 The first one I made. Subtle differences and not as good — kept here for reference.
+
+---
+
+## ASD Assessment
+
+### [ASD Assessment v2](asd.html)
+A structured assessment tool for autism spectrum disorder.
 
 ---
 
