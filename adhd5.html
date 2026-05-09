@@ -775,6 +775,38 @@ select.inp{appearance:none}
     </div>
   </div>
 
+<div class="card" data-initial-only>
+  <div class="ch rose">Reason for assessment &amp; consent</div>
+  <div class="cb">
+    <label class="fl" style="margin-top:0">Reason for seeking assessment</label>
+    <div id="assess-reason-chips" class="ar-chips"></div>
+    <input class="inp" id="referralReason" placeholder="Additional context (optional)…" oninput="save();refresh()" style="margin-top:8px">
+
+    <label class="fl" style="margin-top:14px">What would you like to get out of today?</label>
+    <textarea class="nf" id="patientGoals" placeholder="Patient goals for the session — e.g. assessment outcome, medication, work strategies, partner understanding..." oninput="save();refresh()" rows="2"></textarea>
+
+    <details class="intro-box" style="margin:14px 0 0">
+      <summary>Consent and disclosure script — tap to expand</summary>
+      <div class="intro-body">
+        <p style="font-weight:700;color:#1e3a5f;margin-bottom:6px">Read the following to the patient before proceeding:</p>
+        <p><strong>Identity &amp; safety:</strong> Can you confirm your full name, date of birth, and the address you are at right now? If we get disconnected I'll call you straight back; if there is a serious safety concern I may need to contact emergency services or your nominated contact.</p>
+        <p><strong>Telehealth:</strong> This consultation is by Telehealth. Please make sure you are in a private space and not driving. Nothing is being recorded. If you would prefer an in-person assessment at any point, that can be arranged.</p>
+        <p><strong>Confidentiality:</strong> What we discuss is confidential and stored in your medical record. The exceptions are if I'm seriously concerned about your safety or someone else's, or if records are subpoenaed by a court. A summary letter will be sent to your referring GP, with your consent.</p>
+        <p><strong>Assessment process:</strong> Today is a comprehensive psychiatric assessment for ADHD. I'll ask about current concerns, developmental and life history, mental health, substance use, and medical background. I may also use validated rating scales.</p>
+        <p><strong>Diagnosis &amp; treatment:</strong> I may or may not confirm an ADHD diagnosis today. If criteria are met we'll discuss treatment options, including pros and cons of medication and non-medication strategies. Medication is initiated only with your informed consent.</p>
+        <p><strong>Stimulant medications</strong> are S8 controlled substances; prescribing is monitored and a 20-day rule applies between scripts.</p>
+        <p><strong>Financial consent (important):</strong> Today's consultation fee is as discussed at booking. A Medicare rebate applies if eligibility criteria are met (valid GP referral, MBS-eligible item). Any out-of-pocket gap is your responsibility. Follow-up review fees and titration appointments are billed separately. Letters or documents requested outside the consultation may incur an additional fee.</p>
+        <p><strong>Right to withdraw:</strong> You can stop the assessment, decline any question, or seek a second opinion at any point.</p>
+      </div>
+    </details>
+
+    <label class="rb-check" style="display:flex;align-items:flex-start;gap:8px;margin-top:12px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:#fff">
+      <input type="checkbox" id="consentGiven" onchange="save();refresh()" style="margin-top:2px;flex-shrink:0;width:18px;height:18px">
+      <span style="font-size:13px;line-height:1.4"><strong>Patient gave verbal consent</strong> to proceed, including financial consent and Telehealth consent.</span>
+    </label>
+  </div>
+</div>
+
 <!-- Follow-Up Assessment (shown when review type != Initial) -->
 <div class="card" data-followup-only id="card-fu-assessment" style="display:none">
   <div class="ch teal">Follow-Up Assessment</div>
@@ -837,10 +869,7 @@ select.inp{appearance:none}
 <div class="card" data-initial-only>
     <div class="ch rose">Criterion D — Functional Impairment</div>
     <div class="cb">
-      <label class="fl" style="margin-top:0">Reason for seeking assessment</label>
-      <div id="assess-reason-chips" class="ar-chips"></div>
-      <input class="inp" id="referralReason" placeholder="Additional context (optional)…" oninput="save();refresh()" style="margin-top:8px">
-      <label class="fl">Main difficulties (tap to tick)</label>
+      <label class="fl" style="margin-top:0">Main difficulties (tap to tick)</label>
       <div id="diff-checks"></div>
       <label class="fl" style="margin-top:14px">Quality of life (1 = worst, 10 = best)</label>
       <div id="qol-stars"></div>
@@ -5170,6 +5199,7 @@ function buildFullReportFollowUp(rt){
   if(gp) idItems.push(['Referring GP', esc(gp)]);
   if(f('mbsItem')) idItems.push(['MBS item', esc(f('mbsItem'))]);
   if(S.tier) idItems.push(['Complexity tier', 'Tier '+S.tier]);
+  if($('consentGiven')&&$('consentGiven').checked) idItems.push(['Consent', 'Verbal consent obtained (incl. financial &amp; Telehealth)']);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
     +buildIdRowsFu(idItems)+'</table>';
 
@@ -5328,6 +5358,7 @@ function buildFullReport(){
   if(f('ptOtherPresent')) idItems.push(['Others present', esc(f('ptOtherPresent'))]);
   if(f('mbsItem')) idItems.push(['MBS item', esc(f('mbsItem'))]);
   if(S.tier) idItems.push(['Complexity tier', 'Tier '+S.tier]);
+  if($('consentGiven')&&$('consentGiven').checked) idItems.push(['Consent', 'Verbal consent obtained (incl. financial &amp; Telehealth)']);
   h+='<table style="border-collapse:collapse;width:100%;'+F+'font-size:11pt;margin:0 0 14pt 0;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">'
     +buildIdRows(idItems)+'</table>';
 
@@ -5344,6 +5375,7 @@ function buildFullReport(){
   h+=sec('Referral and Presenting Concerns');
   var refBits=[];
   if(f('referralReason')) refBits.push('<strong>Reason for seeking assessment:</strong> '+esc(f('referralReason')));
+  if(f('patientGoals')) refBits.push('<strong>Patient-stated goals for today:</strong> '+esc(f('patientGoals')));
   if(refBits.length) h+=p(refBits.join(' &nbsp;·&nbsp; '));
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length){ h+=p('<strong>Difficulties endorsed:</strong>'); h+=list(diffs.map(esc)); }
@@ -6089,10 +6121,11 @@ function buildLetterReport(){
 
   // Sign-off
   h+='<div class="letter-sig"><p>Yours sincerely,</p><p style="margin-top:18px"><span class="sig-name">'+esc(clin)+'</span>'+(quals?'<br><span class="sig-quals">'+esc(quals)+'</span>':'')+'<br><span class="sig-quals">Consultant Psychiatrist</span></p></div>';
-  if(f('mbsItem')||S.tier){
+  if(f('mbsItem')||S.tier||$('consentGiven')&&$('consentGiven').checked){
     var footBits=[];
     if(f('mbsItem'))footBits.push('MBS item: '+esc(f('mbsItem')));
     if(S.tier)footBits.push('Complexity tier: '+S.tier);
+    if($('consentGiven')&&$('consentGiven').checked)footBits.push('Verbal consent obtained');
     h+='<p style="margin-top:14px;font-size:9.5pt;color:#6b7280">'+footBits.join(' &nbsp;·&nbsp; ')+'</p>';
   }
 
