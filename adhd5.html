@@ -270,6 +270,17 @@ select.inp{appearance:none}
 .qol-clear{margin-left:8px;padding:3px 9px;border:1px solid var(--border);background:#fff;color:var(--muted);font:600 11px var(--sans);border-radius:5px;cursor:pointer}
 .qol-clear:hover{color:var(--text);border-color:var(--text)}
 .factor-tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.dev-block{margin-bottom:6px}
+.dev-block .dev-qrow{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;display:flex;align-items:center;gap:8px;cursor:pointer}
+.dev-block .dev-qrow:hover{border-color:var(--primary);background:#f8fafc}
+.dev-caret{margin-left:auto;background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 6px;border-radius:4px}
+.dev-caret:hover{background:#f1f5f9;color:var(--text)}
+.dev-opts{padding:6px 8px 4px 36px;display:grid;grid-template-columns:1fr;gap:3px;background:#fafbff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;margin-top:-3px}
+.dev-opts.hidden{display:none}
+.dev-opt-row{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:5px;cursor:pointer;font-size:12px;line-height:1.3;color:#475569}
+.dev-opt-row:hover{background:#eef2ff;color:var(--text)}
+.dev-opt-label{flex:1}
+.dev-opt-badge{display:inline-block;margin-left:6px;background:var(--primary-bg);color:var(--primary);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle}
 .factor-tile{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:#475569;font:600 12px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:left;line-height:1.3;min-height:40px;display:flex;align-items:center;transition:background .12s,border-color .12s,color .12s}
 .factor-tile:hover{border-color:var(--primary);color:var(--primary)}
 .factor-tile.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary)}
@@ -1550,20 +1561,56 @@ const ASSESS_REASON_NARR={
 };
 const SCREENING=[{id:'asrs',label:'Patient ASRS',opts:['Positive','Negative','Not provided']},{id:'diva',label:'DIVA-5',opts:['Completed - positive','Completed - negative','Not provided']},{id:'obs',label:'Observer ASRS',opts:['Supportive','Not supportive','Not provided']},{id:'gpReferral',label:'GP referral',opts:['Supportive','Not supportive','N/A']},{id:'schoolReports',label:'School reports',opts:['Supportive','Not supportive','Not provided']},{id:'psychReport',label:'Psychologist / neuropsychological report',opts:['Supportive','Not supportive','Not provided']},{id:'vanderbiltParent',label:'Vanderbilt (parents)',opts:['Positive','Negative','Not provided']},{id:'vanderbiltTeacher',label:'Vanderbilt (teacher)',opts:['Positive','Negative','Not provided']}];
 const DEV=[
-  {id:'childhood',label:'Clear childhood ADHD pattern (pre-age 12)',qs:['When you picture yourself in primary school, what sort of child were you at school and at home?','What did adults keep correcting you for, over and over?','Were you often described as bright but not applying yourself, careless, messy, chatty, daydreamy, or always on the go?','Did things seem inconsistent rather than impossible - you could do it sometimes but not reliably?','What themes would I expect to see repeatedly in your primary school reports?','Were there clear examples of inattention, hyperactivity, or impulsivity before age 12?']},
-  {id:'adolescent',label:'Consistent pattern through adolescence',qs:['What happened when school became less supervised and more self-directed?','Did homework, deadlines, studying, lateness, or organisation become much harder in high school?','Did the presentation shift from obvious hyperactivity to internal restlessness, procrastination, disorganisation?','Did risk-taking, emotional impulsivity, substance use, or chaotic routines start showing up?','Did teachers or family feel you had potential you were not turning into consistent performance?']},
-  {id:'adult',label:'Current adult pattern consistent with ADHD',qs:['How do these traits show up now in work, study, home admin, finances, or relationships?','What happens for you with tasks that are boring, repetitive, delayed-reward, or paperwork-heavy?','Do you struggle more with starting, organising, prioritising, switching, following through, or tracking time?','Do you function much better only when there is urgency, novelty, pressure, or strong personal interest?','What failures of everyday executive function keep recurring despite insight and effort?']},
-  {id:'lifelong',label:'Lifelong / ego-syntonic ("just who I am")',qs:['Have these traits felt like part of who you are for as long as you can remember?','Have you ever known yourself any other way?','Did you assume "everyone is like this" until something prompted you to question it?']},
-  {id:'famObserved',label:'Family / partner observed similar traits',qs:['What do your parents or family say about you as a child compared to siblings or peers?','Has your partner / spouse / close friend independently noticed these patterns?','Have you been told repeatedly "you don\'t listen", "you\'re always late", or similar?']},
-  {id:'reportsMatch',label:'School / academic reports consistent',qs:['Do your school reports describe the same themes — distractible, talkative, daydreamy, careless mistakes, not living up to potential?','Are there old reports, certificates, or written feedback you can show me?']},
-  {id:'capabilityGap',label:'Capability vs achievement gap',qs:['Has there been a long-standing gap between what you know you are capable of and what you actually deliver?','Have you been told repeatedly "you have so much potential" but underperformed?']},
-  {id:'transitionWorse',label:'Worse with reduced external structure',qs:['Did things deteriorate when external scaffolding dropped away — leaving school, leaving home, university, working from home?','Did becoming a parent, becoming self-employed, or losing a partner make symptoms more obvious?']},
-  {id:'effortInconsistent',label:'Inconsistency despite effort',qs:['Do you describe your performance as inconsistent rather than impossible — you can do it sometimes, just not reliably?','Have you tried hard at things and still not got the result you wanted?']},
-  {id:'hyperfocus',label:'Hyperfocus on preferred / novel tasks',qs:['Are there things you can lose hours in — gaming, hobbies, creative projects, work you find genuinely interesting?','Do you switch from "can\'t engage at all" to "can\'t stop" depending on the task?']},
-  {id:'selfMed',label:'Self-medication pattern',qs:['Do you rely heavily on caffeine, nicotine, or other stimulant-like substances to get going or stay focused?','Has cannabis, alcohol, or another substance become a way to wind down from internal restlessness?']},
-  {id:'underachieve',label:'Chronic underperformance / underachievement',qs:['Looking back, do you feel you have underachieved relative to your ability?','Have you started but not finished courses, jobs, projects, or relationships repeatedly?']},
-  {id:'impairment',label:'Significant functional impairment present',qs:['What did these traits cost you academically, socially, emotionally, financially, or occupationally?','What opportunities do you think you missed because of inconsistency or poor follow-through?','Were there repeated consequences - underachievement, warnings, unfinished courses, job instability, relationship strain?','Did the impairment happen even when you were genuinely trying hard?']},
-  {id:'masking',label:'Evidence of masking / compensatory strategies',qs:['How much of your functioning depended on structure provided by someone else?','Were you coping because a parent, teacher, partner, or workplace was externally organising you?','Did symptoms become more obvious when those supports dropped away?','Did intelligence, perfectionism, anxiety, or overwork help you compensate?','Were you functioning at the cost of exhaustion, chronic stress, or shame?']},
+  {id:'childhood',label:'Childhood pattern (pre-age 12)',
+    qs:['When you picture yourself in primary school, what sort of child were you at school and at home?','What did adults keep correcting you for, over and over?','Were you often described as bright but not applying yourself, careless, messy, chatty, daydreamy, or always on the go?','What themes would I expect to see repeatedly in your primary school reports?','Were there clear examples of inattention, hyperactivity, or impulsivity before age 12?'],
+    options:[
+      'Bright but "not applying themselves"',
+      'Daydreamer / off in own world',
+      'Always on the go / climbed everything',
+      'Forgetful, lost belongings frequently',
+      'Talkative or disruptive in class',
+      'Compensated through high IQ — symptoms hidden by capability',
+      'Quiet inattentive / "good girl" presentation (often missed)',
+      'School reports themed around "potential" and inconsistency'
+    ]},
+  {id:'adolescent',label:'Adolescent pattern',
+    qs:['What happened when school became less supervised and more self-directed?','Did homework, deadlines, studying, lateness, or organisation become much harder in high school?','Did the presentation shift from obvious hyperactivity to internal restlessness, procrastination, disorganisation?','Did risk-taking, emotional impulsivity, substance use, or chaotic routines start showing up?','Did teachers or family feel you had potential you were not turning into consistent performance?'],
+    options:[
+      'Procrastination intensified as study became self-directed',
+      'Lateness, disorganisation became more obvious',
+      'Hyperactivity internalised — restless rather than running around',
+      'Risk-taking, impulsive substance use, reckless driving',
+      'Underperformed despite measured intelligence',
+      'Anxiety / perfectionism developed as compensation',
+      'Symptoms masked by structured / high-support schooling',
+      'Difficulties only emerged at uni / first job (loss of structure)'
+    ]},
+  {id:'adult',label:'Adult pattern',
+    qs:['How do these traits show up now in work, study, home admin, finances, or relationships?','What happens for you with tasks that are boring, repetitive, delayed-reward, or paperwork-heavy?','Do you struggle more with starting, organising, prioritising, switching, following through, or tracking time?','Do you function much better only when there is urgency, novelty, pressure, or strong personal interest?','What failures of everyday executive function keep recurring despite insight and effort?'],
+    options:[
+      'Procrastination on important tasks; last-minute completion',
+      'Difficulty starting tasks despite genuine intent',
+      'Time blindness / chronic lateness',
+      'Forgetfulness in daily life — keys, appointments, bills',
+      'Disorganised home / work environment',
+      'Better functioning under pressure, urgency or strong interest',
+      'Inconsistency rather than impossibility — can do it sometimes',
+      'Job hopping, unfinished projects, chronic underachievement'
+    ]},
+  {id:'realworld',label:'Real-world manifestations',
+    qs:['Beyond the textbook symptoms, how does ADHD actually show up day-to-day?','Are there compensations or other neurodevelopmental traits that are part of the picture?','How does the patient describe the emotional texture of their experience?'],
+    options:[
+      'Need for external scaffolding (partner, parent, assistant, system)',
+      'Masking strategies (lists, alarms, perfectionism, over-preparation)',
+      'Binging — food, scrolling, shopping, gaming, content',
+      'Emotional dysregulation',
+      'Overcompensation leading to chronic exhaustion / burnout',
+      'Sensory sensitivities (sounds, textures, lights, crowds)',
+      'Rejection sensitivity dysphoria (RSD)',
+      'Chronic anxiety without specific worry content',
+      'Dysphoria without negative cognitive content',
+      'Hyperfocus on preferred / novel tasks'
+    ]},
   {id:'__sym_label',label:'Core Symptoms',type:'label'},
   {id:'sym_inatt1',label:'Often fails to give close attention to detail / makes careless mistakes',type:'sym'},
   {id:'sym_inatt2',label:'Often has difficulty sustaining attention in tasks or activities',type:'sym'},
@@ -2105,7 +2152,7 @@ const TIT_SCEN={
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 const SETTINGS_LIST=['Home','Work','School','TAFE','University','Romantic / partner relationships','Family relationships','Friendships / social','Driving','Recreational / hobbies','Sport / physical activity','Spiritual / religious','Self-care / health management','Online / digital'];
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0,tier:0};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0,tier:0,devOpts:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -3983,66 +4030,88 @@ function deselectAllCoreSx(){
   renderCoreSx();save();refresh();
 }
 function renderDev(){
+  if(!S.devOpts)S.devOpts={};
+  var devEl=$('dev-checks');if(!devEl)return;
   var header='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllDev()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllDev()">Deselect all</button></div>';
   var html=header;
-  // Open the regular items grid
-  html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-bottom:4px">';
-  var inRegGrid=true;
-  var inSymGrid=false;
   DEV.forEach(function(d){
     // Skip core symptom rows + the 'Core Symptoms' label — they live in their
     // own card now (renderCoreSx).
-    if(d.type==='sym'||(d.type==='label'&&/core/i.test(d.label||'')))return;
-    if(d.type==='label'){
-      // Close regular grid, open label + sym grid
-      if(inRegGrid){html+='</div>';inRegGrid=false;}
-      if(inSymGrid){html+='</div>';inSymGrid=false;}
-      html+='<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:8px 2px 4px">'+d.label+'</div>';
-      html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px;margin-bottom:8px">';
-      inSymGrid=true;
-    } else if(d.type==='sym'){
-      var on=!!S.dev[d.id];
-      html+='<div class="crow sym-crow" data-devid="'+d.id+'" style="font-size:11px;padding:5px 8px"><div class="cbox'+(on?' yes':'')+'" style="width:16px;height:16px;flex-shrink:0"></div><div class="clabel" style="font-size:11px;line-height:1.3">'+d.label+'</div></div>';
-    } else {
-      // Regular item - close sym grid if open, re-open reg grid if needed
-      if(inSymGrid){html+='</div>';inSymGrid=false;}
-      if(!inRegGrid){html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-bottom:4px">';inRegGrid=true;}
-      var on=!!S.dev[d.id];
-      html+='<div class="crow dev-qrow" data-devid2="'+d.id+'"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d.label+'</div>'+(d.qs&&d.qs.length?'<button class="qbtn dev-qbtn" data-qid2="'+d.id+'">?</button>':'')+'</div>';
+    if(d.type==='sym'||d.type==='label')return;
+    var on=!!S.dev[d.id];
+    var open=!!(devEl._openIds&&devEl._openIds[d.id]);
+    var optHtml='';
+    var checkedOptCount=0;
+    if(d.options&&d.options.length){
+      d.options.forEach(function(o,i){
+        var ok=d.id+'_'+i;
+        if(S.devOpts[ok])checkedOptCount++;
+      });
+      optHtml='<div class="dev-opts'+(open?'':' hidden')+'" data-devid3="'+d.id+'">'+
+        d.options.map(function(o,i){
+          var ok=d.id+'_'+i;
+          var oOn=!!S.devOpts[ok];
+          return '<div class="dev-opt-row" data-optkey="'+ok+'"><div class="cbox'+(oOn?' yes':'')+'" style="width:14px;height:14px"></div><div class="dev-opt-label">'+esc(o)+'</div></div>';
+        }).join('')+'</div>';
     }
+    var caret=d.options&&d.options.length?'<button type="button" class="dev-caret" data-caret="'+d.id+'" aria-expanded="'+open+'">'+(open?'▾':'▸')+'</button>':'';
+    var qBtn=d.qs&&d.qs.length?'<button class="qbtn dev-qbtn" data-qid2="'+d.id+'">?</button>':'';
+    var optBadge=d.options&&checkedOptCount?'<span class="dev-opt-badge">'+checkedOptCount+'</span>':'';
+    html+='<div class="dev-block">'+
+      '<div class="crow dev-qrow" data-devid2="'+d.id+'">'+
+        '<div class="cbox dev-cbox'+(on?' yes':'')+'" data-cboxfor="'+d.id+'"></div>'+
+        '<div class="clabel">'+esc(d.label)+optBadge+'</div>'+
+        qBtn+caret+
+      '</div>'+
+      optHtml+
+    '</div>';
   });
-  if(inSymGrid)html+='</div>';
-  if(inRegGrid)html+='</div>';
-  $('dev-checks').innerHTML=html;
-  // Delegated click for sym-crow items (avoids inline quote issues)
-  var devEl=$('dev-checks');
-  if(devEl._symHandler)devEl.removeEventListener('click',devEl._symHandler);
-  devEl._symHandler=function(e){
-    var row=e.target.closest('.sym-crow');
-    if(!row)return;
-    var id=row.getAttribute('data-devid');
-    if(!id)return;
-    S.dev[id]=!S.dev[id];
-    var cb=row.querySelector('.cbox');
-    if(cb)cb.className='cbox'+(S.dev[id]?' yes':'');
-    save();refresh();
-  };
-  devEl.addEventListener('click',devEl._symHandler);
-  // Delegation for regular dev items (dev-qrow)
-  if(devEl._devHandler)devEl.removeEventListener('click',devEl._devHandler);
-  devEl._devHandler=function(e){
-    var qbtn=e.target.closest('.dev-qbtn');
-    if(qbtn){e.stopPropagation();openDrawer(e,qbtn.getAttribute('data-qid2'),'dev');return;}
+  devEl.innerHTML=html;
+  if(!devEl._openIds)devEl._openIds={};
+  if(devEl._h)devEl.removeEventListener('click',devEl._h);
+  devEl._h=function(e){
+    // ? button → open questions drawer
+    var q=e.target.closest('.dev-qbtn');
+    if(q){e.stopPropagation();openDrawer(e,q.getAttribute('data-qid2'),'dev');return;}
+    // Caret → toggle dropdown only
+    var c=e.target.closest('.dev-caret');
+    if(c){
+      var id=c.getAttribute('data-caret');
+      devEl._openIds[id]=!devEl._openIds[id];
+      renderDev();return;
+    }
+    // Sub-option click → toggle option + auto-tick parent
+    var opt=e.target.closest('.dev-opt-row');
+    if(opt){
+      var key=opt.getAttribute('data-optkey');
+      var parentId=key.replace(/_\d+$/,'');
+      S.devOpts[key]=!S.devOpts[key];
+      // Auto-tick parent if any option is on
+      var anyOn=false;
+      var d=DEV.filter(function(x){return x.id===parentId;})[0];
+      if(d&&d.options){
+        d.options.forEach(function(o,i){if(S.devOpts[parentId+'_'+i])anyOn=true;});
+      }
+      if(anyOn)S.dev[parentId]=true;
+      renderDev();save();refresh();return;
+    }
+    // Cbox click → toggle parent only (no expand)
+    var cbox=e.target.closest('.dev-cbox');
+    if(cbox){
+      var id=cbox.getAttribute('data-cboxfor');
+      S.dev[id]=!S.dev[id];
+      renderDev();save();refresh();return;
+    }
+    // Anywhere else on the row label → also toggle the parent (matches existing
+    // crow click affordance) but do NOT expand.
     var row=e.target.closest('.dev-qrow');
-    if(!row)return;
-    var id=row.getAttribute('data-devid2');
-    if(!id)return;
-    S.dev[id]=!S.dev[id];
-    var cb=row.querySelector('.cbox');
-    if(cb)cb.className='cbox'+(S.dev[id]?' yes':'');
-    save();refresh();
+    if(row){
+      var id2=row.getAttribute('data-devid2');
+      S.dev[id2]=!S.dev[id2];
+      renderDev();save();refresh();return;
+    }
   };
-  devEl.addEventListener('click',devEl._devHandler);
+  devEl.addEventListener('click',devEl._h);
 }
 function renderDSM(){$('dsm-checks').innerHTML='<div style="display:flex;gap:6px;margin-bottom:8px"><button class="sel-all-btn" onclick="selectAllDSM()">Select all</button><button class="sel-all-btn desel" onclick="deselectAllDSM()">Deselect all</button></div>'+DSM.map(function(d){var on=!!S.dsm[d.id];return '<div class="crow" onclick="toggleCheck(\'dsm\',\''+d.id+'\',this)"><div class="cbox'+(on?' yes':'')+'"></div><div class="clabel">'+d.label+'</div></div>';}).join('');}
 function renderDiffRows(){
