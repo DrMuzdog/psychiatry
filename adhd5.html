@@ -1740,6 +1740,10 @@ const MEDICAL=[
     note:'Clonidine and guanfacine add to sedation and hypotension. Adjust other sedatives and monitor carefully.'},
   {id:'labile_bp',flag:true,label:'Endocrine or autonomic disorders with labile BP (e.g. Addison disease, autonomic neuropathy)',
     note:"Both stimulants (raise BP) and alpha-2 agonists (lower BP, with rebound on cessation) can destabilise blood pressure. Titrate very cautiously with frequent postural checks."},
+  {id:'migraine',flag:false,label:'Migraine or chronic headache',
+    note:'Stimulants can both trigger migraine (vasoconstriction, increased BP) and, in some patients, reduce attack frequency by improving sleep and stress regulation. If propranolol or topiramate is being used for prophylaxis, watch for additive blood-pressure effects with stimulants and additive cognitive blunting with topiramate. Start low, titrate slowly, monitor headache frequency.'},
+  {id:'postural_dizziness',flag:true,label:'Dizziness on standing / postural hypotension',
+    note:'Suggests autonomic instability. Check standing / lying BP and HR before initiating; correct hydration and any contributing medications. Alpha-2 agonists (clonidine, guanfacine) will worsen this; stimulants raise standing BP slightly but can mask underlying autonomic dysfunction. Refer for autonomic / cardiology workup if marked or progressive.'},
 ];
 const SUBS=['Alcohol','Cannabis','Methamphetamine','Cocaine/stimulants','MDMA','Opioids','Benzodiazepines','Tobacco/nicotine','Caffeine (excess)','Other'];
 const MSE=[
@@ -2264,11 +2268,12 @@ function getMedSafetyConcerns(){
       add('cardiac_'+c.id,_letterCleanLabel(c.label),c.note||'Consider further work-up before initiating stimulant therapy.');
     });
   }
-  // Medical-flagged conditions (pregnancy, breastfeeding, glaucoma, eating
-  // disorder, etc.) — each carried through as its own safety concern
+  // Medical conditions — every ticked item gets its own card with the
+  // prescribing implications written in the MEDICAL[].note field. (Was
+  // previously limited to flag:true items only.)
   if(typeof MEDICAL!=='undefined'&&S.medical){
     MEDICAL.forEach(function(m){
-      if(!m.flag||!S.medical[m.id])return;
+      if(!S.medical[m.id])return;
       add('medical_'+m.id,_letterCleanLabel(m.label),m.note||'Consider implications for prescribing and adjust the plan accordingly.');
     });
   }
@@ -2306,22 +2311,34 @@ function getMedSafetyConcerns(){
       }
     });
   }
-  // Differentials marked Current that materially change prescribing risk
+  // Differentials marked Current — each becomes its own card with a
+  // treatment-interaction plan covering whether ADHD treatment is likely
+  // to help, hurt, or need to be sequenced around the comorbidity.
   if(typeof DIFFS!=='undefined'&&S.differentials){
     var DIFF_PLAN={
-      bipolar:'Active bipolar disorder substantially raises the risk of stimulant-induced manic switch. Mood stabilisation should precede any stimulant trial, and stimulants should generally be initiated only with psychiatric oversight, slowly, and with a clear early-warning plan for hypomania.',
-      schizophrenia:'Active psychotic disorder is a relative contraindication to stimulant therapy given exacerbation risk. Stabilise psychosis first; if stimulants are still considered, do so under specialist psychiatric care with cautious titration and close monitoring.',
-      suicidality:'Current suicidality requires an active safety plan: means restriction (especially around any controlled medications), agreed contacts and follow-up, and clear escalation pathways. Consider whether stimulant initiation is appropriate at this time or should be deferred until risk is reduced.',
-      anorexia:'Active anorexia nervosa: stimulants suppress appetite and worsen weight loss. Treat the eating disorder first; defer stimulants; if pharmacotherapy is needed for ADHD in the interim, prefer non-appetite-suppressing options.',
-      bulimia:'Active bulimia nervosa: stimulants can both reduce binge frequency and worsen restriction patterns. Coordinate with eating disorder services; weigh risk vs benefit carefully; favour structured eating reviews alongside any stimulant trial.',
-      tbi:'History of significant traumatic brain injury can lower seizure threshold and complicate cognitive presentation. Confirm neurological stability and consider neurology input before stimulant initiation.',
-      substance_induced:'Symptoms attributed to substance use require sustained abstinence and reassessment before an ADHD diagnosis is made or stimulants are prescribed.',
+      depression:'When depressive symptoms are secondary to ADHD chaos and demoralisation, treating ADHD often improves mood substantially. In a current major depressive episode however, stimulants can either help (improving anhedonia, motivation, executive function) or worsen mood — start low, monitor closely, and consider treating depression in parallel with antidepressant or psychological therapy. Atomoxetine has SNRI-like activity that may help both. Defer stimulants if suicidality is prominent until stabilised.',
+      anxiety:'Anxiety is often secondary to ADHD-driven overwhelm and life chaos — treating ADHD frequently reduces baseline anxiety. However, stimulants can worsen anxiety (especially generalised, panic, or somatic), particularly at higher doses. Consider lower starting dose and slow titration; atomoxetine or guanfacine as non-stimulant alternatives; or co-treating with an SSRI. Differentiate anxious worry from ADHD inattention before attributing residual symptoms.',
+      bipolar:'Active bipolar disorder substantially raises the risk of stimulant-induced mood elevation, rapid cycling, or full manic switch. Mood stabilisation must precede any stimulant trial. If stimulants are still considered, initiate only with psychiatric oversight, very slow titration, alongside an established mood stabiliser, and a clear early-warning plan for hypomania.',
+      ptsd:'ADHD treatment can address residual attentional symptoms after trauma but stimulants may worsen hypervigilance, sleep, and arousal in active PTSD. Trauma-focused therapy (EMDR, TF-CBT) should be the primary treatment. If stimulants are used, start low and monitor for triggered re-experiencing or worsening sleep / arousal; alpha-2 agonists may help with autonomic hyperarousal.',
+      autism:'ADHD and autism co-occur in 30–50% of cases. Stimulants treat ADHD symptoms but do not address core autistic features. Sensory sensitivities and rigidity may make stimulant side effects less tolerable; titrate slowly, start at the lowest dose, and discuss expectations carefully so the patient knows what stimulants will and will not change.',
+      neurodevel_other:'Co-occurring neurodevelopmental disorders may share executive features with ADHD. Confirm the primary diagnosis, coordinate with relevant supports (speech, OT, psychology), and tailor the ADHD treatment plan to complement rather than override existing strategies.',
+      tic_tourette:'Stimulants can exacerbate tics in some patients. Consider atomoxetine or alpha-2 agonists (clonidine, guanfacine) as first-line, or a cautious stimulant trial with close monitoring. Tics often improve with reduced stress, sleep optimisation, and ADHD treatment overall.',
+      schizophrenia:'Active psychotic disorder is a relative contraindication to stimulant therapy given exacerbation risk. Stabilise psychosis first; if stimulants are still considered, do so under specialist psychiatric care with cautious titration and close monitoring for re-emergence of positive symptoms.',
+      ocd:'Stimulants can worsen obsessive thinking and compulsive checking in active OCD. Treat OCD first with SSRI / CBT-ERP; consider atomoxetine as a non-stimulant alternative if pharmacotherapy for ADHD is also needed; cautious stimulant trial only after OCD is well-managed.',
+      personality:'Borderline / emotional dysregulation features may be improved by treating ADHD (impulsivity, affect lability), but stimulants carry abuse and diversion risk in this group. Pair any prescribing with stable psychotherapy (DBT or similar), favour non-stimulants where reasonable, document risk, and review frequently.',
+      anorexia:'Stimulants suppress appetite and can worsen restriction. Treat the eating disorder first; defer stimulants until weight is restored and the disorder is in remission; if pharmacotherapy is needed for ADHD in the interim, prefer non-appetite-suppressing options (atomoxetine, guanfacine).',
+      bulimia:'Mixed evidence — stimulants sometimes reduce binge frequency, but can also worsen restrictive elements. Coordinate with eating disorder services, monitor weight and eating patterns closely, and weigh risk-benefit on a case-by-case basis.',
+      bed:'Lisdexamfetamine has FDA approval for moderate-severe binge eating disorder. When BED and ADHD co-occur, lisdexamfetamine is a reasonable dual-target choice with appropriate eating-pattern monitoring.',
+      sleep:'Untreated sleep disorders (OSA, restless legs, delayed sleep phase) mimic and amplify ADHD symptoms. Optimise sleep diagnosis and treatment first — symptoms often improve substantially. If stimulants are still needed, time the last dose well before bedtime to avoid further sleep disruption.',
       neurodegen:'A neurodegenerative process changes the differential and the prescribing calculus. Confirm the underlying diagnosis and discuss management with the relevant specialist before stimulant initiation.',
+      tbi:'History of significant traumatic brain injury can lower seizure threshold and complicate the cognitive presentation. Confirm neurological stability and consider neurology input before stimulant initiation.',
+      suicidality:'Current suicidality requires an active safety plan: means restriction (especially around any controlled medications), agreed contacts and follow-up, and clear escalation pathways. Consider whether stimulant initiation is appropriate at this time or should be deferred until risk is reduced.',
+      substance_induced:'Symptoms attributed to substance use require sustained abstinence and reassessment before an ADHD diagnosis is confirmed or stimulants are prescribed.',
       medical:'A medical or neurological cause is suspected as the primary explanation. Investigate and exclude before treating as ADHD; defer stimulants until the medical picture is clarified.'
     };
     DIFFS.forEach(function(d){
-      if(S.differentials[d.id]==='Current'&&DIFF_PLAN[d.id]){
-        add('diff_'+d.id,_letterCleanLabel(d.label)+' — current',DIFF_PLAN[d.id]);
+      if(S.differentials[d.id]==='Current'){
+        add('diff_'+d.id,_letterCleanLabel(d.label)+' — current',DIFF_PLAN[d.id]||'Coordinate ADHD treatment with management of this comorbidity. Tailor agent choice and titration accordingly.');
       }
     });
   }
@@ -2808,8 +2825,10 @@ function fuQuickInit(){
   fuQuickPreview();
 }
 function renderSafetyConcerns(){
-  var fuEl=$('fu-safety-concerns');
   var alertEl=$('medsafety-panel');
+  // Legacy fu-safety-concerns container — clear it; cards live in the Alerts
+  // tab now (#medsafety-panel) so they aren't repeated inside the FU plan.
+  var fuEl=$('fu-safety-concerns');if(fuEl)fuEl.innerHTML='';
   var concerns=getMedSafetyConcerns();
   function cards(){
     return concerns.map(function(c){
@@ -2822,11 +2841,6 @@ function renderSafetyConcerns(){
         +'<div class="ms-plan"><strong>Plan:</strong> '+esc(c.plan)+'</div>'
       +'</div>';
     }).join('');
-  }
-  if(fuEl){
-    fuEl.innerHTML=concerns.length
-      ?'<div class="fl" style="margin-top:12px">Medical safety concerns from this review</div>'+cards()
-      :'';
   }
   if(alertEl){
     alertEl.innerHTML=concerns.length
