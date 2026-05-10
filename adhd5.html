@@ -398,9 +398,10 @@ select.inp{appearance:none}
 #out-report.letter-mode .mgmt-sub{font-family:Arial,sans-serif;font-size:10.5pt;color:#1e40af;font-weight:700;margin:12px 0 4px}
 .ms-card{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;margin-top:6px;display:flex;flex-direction:column;gap:6px}
 .ms-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ms-include{padding:4px 10px;border-radius:6px;border:1.5px solid var(--green);background:var(--green-bg);color:#166534;font:700 11px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ms-include:not(.on){border-color:#cbd5e1;background:#fff;color:#94a3b8}
-.ms-concern{font:600 12px var(--sans);color:#9a3412;flex:1}
+.ms-concern{font:600 12.5px var(--sans);color:#9a3412;flex:1}
+.ms-includes{display:flex;gap:14px;flex-wrap:wrap;padding:2px 0}
+.ms-inc-chk{display:inline-flex;align-items:center;gap:5px;font:600 11.5px var(--sans);color:#475569;cursor:pointer;user-select:none;-webkit-user-select:none}
+.ms-inc-chk input{width:15px;height:15px;accent-color:var(--green);cursor:pointer;margin:0}
 .ms-plan{font:12.5px/1.5 var(--sans);padding:8px 11px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;white-space:normal;word-break:normal;overflow-wrap:break-word}
 .ms-plan strong{color:#1e3a5f}
 .ms-tabs{display:flex;gap:4px;margin-top:2px}
@@ -2256,7 +2257,14 @@ function getMedSafetyConcerns(){
       plan:ov.plan!=null?ov.plan:plan,
       defaultLetterText:letterText||plan,
       letterText:ov.letterText!=null?ov.letterText:(letterText||plan),
-      include:ov.include!==false
+      // Default: rationale included, recommendation not. Maintains the prior
+      // behaviour (letter version is what flows to the GP letter) while making
+      // the recommendation opt-in.
+      includeRec:ov.includeRec===true,
+      includeRationale:ov.includeRationale!==false,
+      // legacy alias kept so any old code paths that read .include still see
+      // "is anything from this concern included?"
+      include:(ov.includeRec===true)||(ov.includeRationale!==false)
     });
   }
   var sysBP=parseInt(f('bpSystolic')||'',10),diaBP=parseInt(f('bpDiastolic')||'',10);
@@ -2926,36 +2934,28 @@ function renderSafetyConcerns(){
   alertEl.innerHTML=concerns.length
     ?'<div class="fl" style="margin-top:12px;padding:0 4px">Medical safety concerns</div>'+
       concerns.map(function(c){
-        var off=!c.include;
-        var tab=tabState[c.key]||'letter';
-        return '<div class="ms-card'+(off?' off':'')+'" data-mskey="'+c.key+'">'
-          +'<div class="ms-head">'
-            +'<button class="ms-include'+(off?'':' on')+'" data-mstoggle="'+c.key+'">'+(off?'Excluded':'Included')+'</button>'
-            +'<span class="ms-concern">'+esc(c.concern)+'</span>'
+        var tab=tabState[c.key]||'rec';
+        return '<div class="ms-card" data-mskey="'+c.key+'">'
+          +'<div class="ms-head"><span class="ms-concern">'+esc(c.concern)+'</span></div>'
+          +'<div class="ms-includes">'
+            +'<label class="ms-inc-chk"><input type="checkbox" data-mstoggle="includeRec|'+c.key+'"'+(c.includeRec?' checked':'')+'> <span>Include recommendation</span></label>'
+            +'<label class="ms-inc-chk"><input type="checkbox" data-mstoggle="includeRationale|'+c.key+'"'+(c.includeRationale?' checked':'')+'> <span>Include rationale</span></label>'
           +'</div>'
           +'<div class="ms-tabs">'
-            +'<button class="ms-tab'+(tab==='letter'?' active':'')+'" data-msview="letter|'+c.key+'">Letter</button>'
             +'<button class="ms-tab'+(tab==='rec'?' active':'')+'" data-msview="rec|'+c.key+'">Recommendation</button>'
+            +'<button class="ms-tab'+(tab==='letter'?' active':'')+'" data-msview="letter|'+c.key+'">Rationale for letter</button>'
+          +'</div>'
+          +'<div class="ms-pane'+(tab==='rec'?'':' hidden')+'" data-mspane="rec|'+c.key+'">'
+            +'<div class="ms-plan">'+esc(c.plan)+'</div>'
           +'</div>'
           +'<div class="ms-pane'+(tab==='letter'?'':' hidden')+'" data-mspane="letter|'+c.key+'">'
             +'<textarea class="ms-letter" data-mslettertext="'+c.key+'" rows="3">'+esc(c.letterText)+'</textarea>'
           +'</div>'
-          +'<div class="ms-pane'+(tab==='rec'?'':' hidden')+'" data-mspane="rec|'+c.key+'">'
-            +'<div class="ms-plan"><strong>Recommendation:</strong> '+esc(c.plan)+'</div>'
-          +'</div>'
         +'</div>';
       }).join('')
     :'';
-  // Delegated click handler for include + tab toggle
   if(alertEl._h)alertEl.removeEventListener('click',alertEl._h);
   alertEl._h=function(e){
-    var t=e.target.closest('[data-mstoggle]');
-    if(t){
-      var k=t.getAttribute('data-mstoggle');
-      var cur=getMedSafetyConcerns().filter(function(c){return c.key===k;})[0];
-      setSafetyOverride(k,'include',cur?!cur.include:true);
-      return;
-    }
     var v=e.target.closest('[data-msview]');
     if(v){
       var parts=v.getAttribute('data-msview').split('|');
@@ -2965,6 +2965,14 @@ function renderSafetyConcerns(){
     }
   };
   alertEl.addEventListener('click',alertEl._h);
+  if(alertEl._c)alertEl.removeEventListener('change',alertEl._c);
+  alertEl._c=function(e){
+    var t=e.target.closest('input[type="checkbox"][data-mstoggle]');
+    if(!t)return;
+    var parts=t.getAttribute('data-mstoggle').split('|');
+    setSafetyOverride(parts[1],parts[0],t.checked);
+  };
+  alertEl.addEventListener('change',alertEl._c);
   // Save edits to the letter textarea
   if(alertEl._i)alertEl.removeEventListener('input',alertEl._i);
   alertEl._i=function(e){
@@ -6430,7 +6438,7 @@ function buildLetterReport(){
   var fuProvideList=(typeof getFuProvideList==='function')?getFuProvideList():[];
   var fuConKeys=(typeof fuCon!=='undefined')?Array.from(fuCon):[];
   var fuNotes=f('fuNotes');
-  var includedMedSafety=getMedSafetyConcerns().filter(function(c){return c.include;});
+  var includedMedSafety=getMedSafetyConcerns().filter(function(c){return c.includeRec||c.includeRationale;});
   var hasMgmt=titMeds.length||f('rxNotes');
   var hasNonPharm=psychoedItems.length||nonpharmItems.length||fuNPList.length;
   var hasPatientTasks=fuProvideList.length>0;
@@ -6446,13 +6454,15 @@ function buildLetterReport(){
       h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(_lowerPreserveAcronyms(fuProvideList.join(', ')))+'.</p>';
     }
 
-    // 2. Medical safety (only if any concerns are flagged AND user hasn't excluded them).
-    // The letter version of each concern is what gets emitted; clinician
-    // can override per-concern via the Letter pane in the Alerts area.
+    // 2. Medical safety — per concern, emit the rationale (letter version)
+    // and / or the recommendation, in line with the Include checkboxes.
     if(includedMedSafety.length){
       h+='<div class="mgmt-sub">Medical safety</div>';
       h+=includedMedSafety.map(function(c){
-        return '<p>'+esc(c.letterText||c.plan||c.defaultPlan)+'</p>';
+        var parts=[];
+        if(c.includeRationale)parts.push('<p>'+esc(c.letterText||c.plan||c.defaultPlan)+'</p>');
+        if(c.includeRec)parts.push('<p><em>Recommendation:</em> '+esc(c.plan||c.defaultPlan)+'</p>');
+        return parts.join('');
       }).join('');
     }
 
