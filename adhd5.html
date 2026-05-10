@@ -5885,16 +5885,6 @@ function buildLetterReport(){
       h+='<p>'+prCap+' described a longstanding pattern of difficulty with '+_joinList(topPhrase)+(diffs.length>5?', amongst other concerns':'')+'. These difficulties have been pervasive across multiple settings and have caused clinically significant functional impairment.</p>';
     }
     if(f('presentNotes'))h+=_letterParas(f('presentNotes'));
-    var curDiffs=getCurrentComorbidities().map(function(d){return _smartLower(_letterCleanLabel(d.label));});
-    if(curDiffs.length){
-      // The trailing clause depends on dx state — when there's no primary
-      // diagnosis (No / Deferred / Insufficient) we can't say "alongside the
-      // primary diagnosis below".
-      var trailing=(S.dx==='Yes')
-        ? 'which '+(curDiffs.length>1?'are':'is')+' considered alongside the primary diagnosis below'
-        : 'which '+(curDiffs.length>1?'were':'was')+' noted as part of the broader clinical picture';
-      h+='<p>'+prCap+' also endorsed features consistent with comorbid '+_joinList(curDiffs)+', '+trailing+'.</p>';
-    }
   }
 
   // Pre-screening & collateral — three buckets: supportive, unsupportive, not provided
@@ -5930,9 +5920,11 @@ function buildLetterReport(){
     if(f('screenNotes'))h+=_letterParas(f('screenNotes'));
   }
 
-  // Developmental and symptom history — prose form. Weaves selected
-  // sub-options under each pattern heading (childhood / adolescent / adult /
-  // real-world). No commentary on what wasn't selected.
+  // Developmental and symptom history — narrative form. Weaves family
+  // history + predisposing risk factors as the lead-in, then childhood /
+  // adolescent / adult / real-world phenotypes, and closes with the
+  // functional impact (cross-situational settings, ticked difficulties,
+  // and quality-of-life rating).
   var devParentsP=(typeof DEV!=='undefined')?DEV.filter(function(d){return d.type!=='sym'&&d.type!=='label';}):[];
   var devActiveP=devParentsP.filter(function(d){
     if(S.dev&&S.dev[d.id])return true;
@@ -5941,27 +5933,83 @@ function buildLetterReport(){
   });
   var inattSx=DEV.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0&&S.dev&&S.dev[d.id];});
   var hiSx=DEV.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0&&S.dev&&S.dev[d.id];});
-  if(devActiveP.length||inattSx.length||hiSx.length||f('devNotes')){
+  // Lead-in: family history Present + predisposing / childhood risk factors
+  var famHxLeadItems=(typeof FAM_PSYCH!=='undefined'&&S.fam)
+    ? FAM_PSYCH.filter(function(i){return S.fam[i.id]==='Present';}).map(function(i){
+        var det=(S.famDetail&&S.famDetail[i.id]||'').trim();
+        var lbl=_smartLower(_letterCleanLabel(i.label));
+        return det?lbl+' ('+det+')':lbl;
+      })
+    : [];
+  var riskItems=(typeof RISK_FACTORS!=='undefined'&&S.predispose)
+    ? RISK_FACTORS.filter(function(d){return S.predispose[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower)
+    : [];
+  var hasLeadIn=famHxLeadItems.length||riskItems.length;
+  // Functional impact components
+  var settingsList=(typeof SETTINGS_LIST!=='undefined'&&S.settings)
+    ? SETTINGS_LIST.filter(function(s){return S.settings[s.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower)
+    : [];
+  var diffList=DIFFICULTIES.filter(function(d){return S.difficulties&&S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var qol=parseInt(S.qol||0,10)||0;
+  var hasFunctional=settingsList.length||diffList.length||qol;
+  if(devActiveP.length||inattSx.length||hiSx.length||hasLeadIn||hasFunctional||f('devNotes')){
     h+='<h3>Developmental and symptom history</h3>';
+    // Para 1 — family history + predisposing factors
+    if(hasLeadIn){
+      var leadBits=[];
+      if(famHxLeadItems.length)leadBits.push('a family history of '+_joinList(famHxLeadItems));
+      if(riskItems.length)leadBits.push((famHxLeadItems.length?'predisposing factors including ':'')+_joinList(riskItems));
+      h+='<p>'+prCap+' '+_vAgree(gender,'reported','reported')+' '+esc(_joinList(leadBits))+'.</p>';
+    }
+    // Symptom counts
     if(inattSx.length||hiSx.length){
       h+='<p>'+prCap+' endorsed <strong>'+inattSx.length+'/9</strong> core inattention symptoms and <strong>'+hiSx.length+'/9</strong> core hyperactivity / impulsivity symptoms in adulthood.</p>';
     }
-    var DEV_LEAD={
-      childhood:{withOpts:'In childhood, ',bare:'In childhood, a developmental pattern consistent with ADHD was endorsed.'},
-      adolescent:{withOpts:'In adolescence, ',bare:'In adolescence, a developmental pattern consistent with ADHD was endorsed.'},
-      adult:{withOpts:'As an adult, ',bare:'As an adult, a developmental pattern consistent with ADHD was endorsed.'},
-      realworld:{withOpts:'Real-world manifestations described included ',bare:'Real-world manifestations consistent with ADHD were described.'}
-    };
-    devActiveP.forEach(function(d){
-      var opts=(d.options||[]).filter(function(_,i){return S.devOpts&&S.devOpts[d.id+'_'+i];});
-      var lead=DEV_LEAD[d.id]||{withOpts:d.label+': ',bare:d.label+'.'};
-      if(opts.length){
-        var phrases=opts.map(function(o){return _smartLower(o);});
-        h+='<p>'+esc(lead.withOpts)+esc(_joinList(phrases))+'.</p>';
-      } else {
-        h+='<p>'+esc(lead.bare)+'</p>';
+    // Per-stage paragraphs
+    function _stageOpts(id){
+      var d=DEV.filter(function(x){return x.id===id;})[0];
+      if(!d||!d.options||!S.devOpts)return [];
+      return d.options.filter(function(_,i){return S.devOpts[id+'_'+i];}).map(_smartLower);
+    }
+    var childOpts=_stageOpts('childhood');
+    var adolOpts=_stageOpts('adolescent');
+    var adultOpts=_stageOpts('adult');
+    var rwOpts=_stageOpts('realworld');
+    if(childOpts.length){
+      h+='<p>'+prCap+' described a childhood of emerging ADHD symptoms, including '+esc(_joinList(childOpts))+'.</p>';
+    } else if(S.dev&&S.dev.childhood){
+      h+='<p>'+prCap+' described a childhood pattern consistent with ADHD.</p>';
+    }
+    if(adolOpts.length){
+      h+='<p>These patterns persisted into adolescence, with '+esc(_joinList(adolOpts))+'.</p>';
+    } else if(S.dev&&S.dev.adolescent){
+      h+='<p>These patterns persisted into adolescence.</p>';
+    }
+    if(adultOpts.length||rwOpts.length||(S.dev&&S.dev.adult)||(S.dev&&S.dev.realworld)){
+      var adultSentence='As an adult, '+po+' symptoms have become more pronounced under increased life demands';
+      if(adultOpts.length)adultSentence+=', with '+_joinList(adultOpts);
+      adultSentence+='.';
+      h+='<p>'+adultSentence+'</p>';
+      if(rwOpts.length){
+        h+='<p>'+prCap+' also recalled '+esc(_joinList(rwOpts))+' as ongoing real-world manifestations.</p>';
       }
-    });
+    }
+    // Functional impact + quality of life
+    if(hasFunctional){
+      var bits=[];
+      if(settingsList.length){
+        bits.push(prCap+' reported that these symptoms were affecting '+po+' ability to function across '+_joinList(settingsList));
+      }
+      var sentence=bits.length?bits[0]+'.':'';
+      if(diffList.length){
+        sentence+=(sentence?' Namely, '+pr+' reported ':prCap+' reported difficulty with ')+_joinList(diffList)+'.';
+      }
+      if(qol){
+        var qolInterp=qol<=3?', indicating low quality of life':qol<=6?', indicating moderate impact on quality of life':', with relatively preserved quality of life';
+        sentence+=' '+prCap+' rated '+po+' quality of life as '+qol+'/10'+qolInterp+'.';
+      }
+      if(sentence)h+='<p>'+esc(sentence)+'</p>';
+    }
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
@@ -5980,10 +6028,14 @@ function buildLetterReport(){
     var lbl=_letterCleanLabel(d.label);
     return det?lbl+' ('+det+')':lbl;
   }
-  if(pastDiffs.length||nilDiffs.length||notPresDiffs.length||S.noPastPsych){
+  var curDiffsP=getCurrentComorbidities();
+  if(pastDiffs.length||nilDiffs.length||notPresDiffs.length||curDiffsP.length||S.noPastPsych){
     h+='<h3>Past psychiatric history</h3>';
+    if(curDiffsP.length){
+      h+='<p>'+prCap+' currently '+_vAgree(gender,'has','have')+' '+esc(_joinList(curDiffsP.map(_diffEntry)))+'.</p>';
+    }
     if(pastDiffs.length){
-      h+='<p>'+prCap+' has previously experienced '+esc(_joinList(pastDiffs.map(_diffEntry)))+'.</p>';
+      h+='<p>'+prCap+' '+_vAgree(gender,'has','have')+' previously experienced '+esc(_joinList(pastDiffs.map(_diffEntry)))+'.</p>';
     }
     var nilLabels=nilDiffs.map(function(d){return _smartLower(_letterCleanLabel(d.label));});
     if(S.noPastPsych && nilLabels.length){
