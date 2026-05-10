@@ -134,8 +134,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ch.emerald{background:#047857}
 .ch.plum{background:#86198f}
 .cb{padding:12px 14px}
-.crow{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #f4f5f8;cursor:pointer;user-select:none;-webkit-user-select:none;min-height:36px}
-.crow:last-child{border-bottom:none}
+.crow{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #e5e7eb;cursor:pointer;user-select:none;-webkit-user-select:none;min-height:36px}
 .crow:active{background:#f8faff;margin:0 -13px;padding:7px 13px}
 .cbox{width:20px;height:20px;border:2px solid #cbd5e1;border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#fff}
 .cbox.yes{background:var(--green);border-color:var(--green);color:#fff}
@@ -145,8 +144,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .clabel{flex:1;font-size:13px;line-height:1.4}
 .qbtn{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:1.5px solid #cbd5e1;background:#f8faff;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;font-family:var(--sans)}
 .qbtn:hover{border-color:var(--primary);color:var(--primary)}
-.rrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f4f5f8;flex-wrap:wrap}
-.rrow:last-child{border-bottom:none}
+.rrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #e5e7eb;flex-wrap:wrap}
 .rlabel{flex:1;font-size:13px;min-width:110px}
 .rbtns{display:flex;gap:6px;flex-wrap:wrap}
 .rb{padding:6px 12px;border-radius:8px;border:1px solid transparent;background:#eef1f6;color:#475569;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
@@ -239,8 +237,7 @@ select.inp{appearance:none}
 .pe-grid{display:flex;flex-wrap:wrap;gap:5px}
 .pchip{padding:5px 10px;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-size:12px;cursor:pointer;font-family:var(--sans);user-select:none}
 .pchip.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary);font-weight:600}
-.mse-row{padding:9px 0;border-bottom:1px solid #f4f5f8}
-.mse-row:last-child{border-bottom:none}
+.mse-row{padding:9px 0;border-bottom:1px solid #e5e7eb}
 .mse-row-flag{background:#fff9ef;border:1.5px solid #b45309;border-radius:8px;padding:9px 11px;margin:6px 0;border-bottom:1.5px solid #b45309}
 .mse-row-flag .mse-label{color:#b45309}
 .mse-label{font-size:13px;font-weight:600;color:#334155;margin-bottom:5px}
@@ -1176,10 +1173,10 @@ select.inp{appearance:none}
         </div>
         <label class="fl" style="margin-top:10px">Formulation</label>
         <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;align-items:center">
-          <button type="button" class="fmln-btn on" data-style="dotpoints" onclick="pickFormulation('dotpoints')">5 Ps</button>
-          <button type="button" class="fmln-btn" data-style="clinical" onclick="pickFormulation('clinical')">Clinical</button>
-          <button type="button" class="fmln-btn" data-style="narrative" onclick="pickFormulation('narrative')">Narrative</button>
+          <button type="button" class="fmln-btn on" data-style="narrative" onclick="pickFormulation('narrative')">Narrative</button>
+          <button type="button" class="fmln-btn" data-style="clinical" onclick="pickFormulation('clinical')">Narrative 2</button>
           <button type="button" class="fmln-btn" data-style="functional" onclick="pickFormulation('functional')">Functional</button>
+          <button type="button" class="fmln-btn" data-style="dotpoints" onclick="pickFormulation('dotpoints')">5 Ps</button>
           <button type="button" class="fmln-btn" style="margin-left:auto" onclick="copyFormulation(this)" title="Copy this formulation to the clipboard">Copy</button>
           <span id="fmln-edited-tag" style="display:none;font-size:10px;color:#b45309;font-weight:600">✎ edited — picking a style overwrites</span>
         </div>
@@ -1576,9 +1573,9 @@ select.inp{appearance:none}
 <script>
 'use strict';
 
-const DIFFICULTIES=['Attention / focus difficulties','Task initiation / completion difficulties','Disorganisation','Time management / time blindness','Forgetfulness / memory difficulties','Impulsivity / risk-taking','Restlessness / internal hyperactivity','Emotional dysregulation','Rejection sensitivity','Low mood','Anxiety','Burnout / chronic exhaustion','Sleep difficulties','Substance / behavioural regulation','Eating dysregulation','Relationship / social difficulties','Workplace or academic underperformance','Financial difficulties','Driving / safety concerns','Sensory sensitivities'];
+const DIFFICULTIES=['Attention difficulties','Task initiation difficulties','Disorganisation','Time management','Forgetfulness','Impulsivity','Restlessness','Emotional dysregulation','Rejection sensitivity','Low mood','Anxiety','Burnout','Sleep difficulties','Substance regulation','Eating dysregulation','Relationship difficulties','Workplace underperformance','Financial difficulties','Driving safety','Sensory sensitivities'];
 const RISK_FACTORS=['Family hx of ADHD','Family hx of autism / NDD','Family hx of mental illness','Prematurity / low birth weight','Prenatal substance exposure','Perinatal complications','Maternal stress / illness in pregnancy','Chronic medical illness in childhood','Childhood TBI','Childhood seizures / epilepsy','Lead / neurotoxin exposure','Early childhood trauma','Insecure attachment','Frequent school changes','Childhood bullying','Childhood neglect or abuse'];
-const PERPETUATING_FACTORS=['Untreated or under-treated ADHD symptoms','Poor sleep / disrupted circadian rhythm','Iron deficiency, low vitamin D, or other nutritional issue','Untreated comorbid mental illness (anxiety, depression, SUD)','Stimulant or other substance misuse','Cannabis use','Excessive caffeine','Insufficient workplace or educational supports','Maladaptive coping (procrastination, avoidance, all-or-nothing effort)','Learned helplessness / negative self-concept','Internalised shame / low self-esteem','Lack of structure (no routines, planning systems, or external scaffolding)','Chronic stress or relational conflict','Caregiver burden','Financial or housing instability','Low physical activity','Excessive screen / social media use','Lack of psychoeducation about ADHD','Carer or partner accommodating dysfunction'];
+const PERPETUATING_FACTORS=['Untreated ADHD symptoms','Poor sleep','Medical issues','Comorbid mental illness','Stimulant misuse','Cannabis use','Excessive caffeine','Insufficient workplace supports','Maladaptive coping','Learned helplessness','Internalised shame','Lack of structure','Chronic stress','Relational conflict','Caregiver burden','Financial instability','Housing instability','Low physical activity','Excessive screen use','Lack of psychoeducation about ADHD','Partner accommodating dysfunction'];
 const PROTECTIVE_FACTORS=['Established treatment / engaged with care','Strong family or social supports','Supportive partner','Stable housing and finances','Effective routines and structure','Regular exercise','Good sleep hygiene','Healthy diet','Workplace or educational accommodations in place','Engaged with psychology / coaching','Insight and motivation for change','Positive therapeutic alliance','Above-average intellectual ability','Strong interests or sense of purpose','Spiritual or community engagement','Absence of substance use'];
 const ASSESS_REASONS=['Self-recognised symptoms','GP recommended','Psychologist recommended','Partner / spouse recommended','Child(ren) recently diagnosed','Family member recently diagnosed','Workplace or academic difficulties'];
 const UDS_POS_DRUGS=['Amphetamines','Benzodiazepines','Cannabis','Cocaine','Opiates'];
@@ -2668,22 +2665,31 @@ function _formulationDeferred(c){
 function formulationClinical(c){
   if(S.dx==='No')return _formulationNoDx(c);
   if(S.dx==='Deferred'||S.dx==='Insufficient evidence')return _formulationDeferred(c);
+  // Narrative 2 — alternate flowing-prose framing. Less imperative and
+  // more biographical than Narrative; keeps the same 5P scaffolding.
+  var pron=c.pron||'they',poss=c.poss||'their';
   var bits=[];
   var demo=_demoPhrase(c);
-  bits.push(c.name+' is '+(demo?demo+' ':'')+'presenting with a longstanding pattern of '+(c.subPhrase?c.subPhrase+' symptoms ':'attentional and self-regulatory symptoms ')+'consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+'.');
-  bits.push('Symptoms have been present since childhood, are pervasive across multiple settings, and cause clinically significant functional impairment'+(c.allDiffs.length?' — particularly in the areas of '+_joinList(c.allDiffs):'')+'.');
-  bits.push('These symptoms are not better explained by another disorder.');
-  if(c.current.length)bits.push('Comorbid '+_joinList(c.current)+' will be addressed alongside '+(c.pron==='they'?'their':'his/her')+' primary concerns.');
-  if(c.assessReasonNarr)bits.push(c.name.split(' ')[0]+' presented for assessment after '+c.assessReasonNarr+'.');
-  if(c.predispose.length)bits.push('Predisposing factors include '+_joinList(c.predispose)+'.');
-  if(c.perpetuate.length)bits.push('Perpetuating factors include '+_joinList(c.perpetuate)+'.');
-  if(c.protective.length)bits.push('Protective factors include '+_joinList(c.protective)+'.');
+  var who=c.name+(demo?', '+demo+',':'');
+  var firstName=(c.name||'').split(' ')[0]||c.name;
+  var topPhrase=c.allDiffs.length?_joinList(c.allDiffs):'difficulty regulating attention, organisation, and internal restlessness';
+  bits.push(who+' presents with a clinical picture consistent with Attention Deficit Hyperactivity Disorder'+(c.sub?', '+c.sub+' presentation':'')+', characterised by '+topPhrase+'.');
+  if(c.predispose.length||c.assessReasonNarr){
+    var biog=[];
+    if(c.predispose.length)biog.push('background factors of '+_joinList(c.predispose));
+    if(c.assessReasonNarr)biog.push('the recent context of '+c.assessReasonNarr);
+    bits.push('Set against '+_joinList(biog)+', '+pron+' '+_vAgree(c.gender,'has','have')+' come to assessment at this time.');
+  }
+  bits.push('Symptoms have been present since childhood, persist across settings, and have caused clinically significant functional impact.');
+  if(c.current.length)bits.push('The picture is complicated by '+_joinList(c.current)+', which '+(c.current.length>1?'are':'is')+' considered alongside the primary diagnosis.');
+  if(c.perpetuate.length)bits.push('Ongoing functioning is being maintained or worsened by '+_joinList(c.perpetuate)+', and '+_joinList(c.perpetuate.slice(0,1))+(c.perpetuate.length>1?' (and related factors)':'')+' will form a focus of management.');
+  if(c.protective.length)bits.push('On the positive side, '+_joinList(c.protective)+' '+(c.protective.length>1?'serve':'serves')+' as a protective scaffold for treatment.');
   // Treatment rationale
   var rationaleBits=[];
-  rationaleBits.push('pharmacological management to target the core attentional and regulatory symptoms');
-  if(c.perpetuate.length)rationaleBits.push('non-pharmacological strategies addressing the perpetuating factors above');
-  else rationaleBits.push('non-pharmacological strategies (psychoeducation, structure, routines, sleep)');
-  if(c.current.length)rationaleBits.push('parallel management of comorbid '+_joinList(c.current));
+  rationaleBits.push('pharmacological treatment targeted at the core attentional and regulatory symptoms');
+  if(c.perpetuate.length)rationaleBits.push('non-pharmacological strategies aimed at the perpetuating factors above');
+  else rationaleBits.push('non-pharmacological strategies including psychoeducation, structure, routines, and sleep optimisation');
+  if(c.current.length)rationaleBits.push('parallel management of '+_joinList(c.current));
   bits.push('Treatment is indicated and will involve '+_joinList(rationaleBits)+'.');
   return bits.join(' ');
 }
@@ -2743,7 +2749,7 @@ function formulationDotPoints(c){
   return lines.map(function(l){return '• '+l;}).join('\n');
 }
 var FORMULATION_BUILDERS={clinical:formulationClinical,narrative:formulationNarrative,functional:formulationFunctional,dotpoints:formulationDotPoints};
-var _fmlnEdited=false,_fmlnActiveStyle='dotpoints',_fmlnDxAtGen='';
+var _fmlnEdited=false,_fmlnActiveStyle='narrative',_fmlnDxAtGen='';
 function pickFormulation(style){
   var fn=FORMULATION_BUILDERS[style];if(!fn)return;
   var ta=$('dxNotes');if(!ta)return;
@@ -4763,6 +4769,15 @@ function _udsLine(){
   if(d)v+=' ('+d+')';
   return v;
 }
+function _assessReasonLine(){
+  // Combine the selected reason chips and any free-text in referralReason
+  // into one human-readable string for non-formulation output paths.
+  if(typeof ASSESS_REASONS==='undefined')return f('referralReason');
+  var chips=ASSESS_REASONS.filter(function(r){return S.assessReason&&S.assessReason[r.replace(/[^a-zA-Z0-9]/g,'_')];}).map(_smartLower);
+  var free=f('referralReason');
+  if(!chips.length)return free;
+  return _joinList(chips)+(free?' ('+free+')':'');
+}
 function calcBMI(){
   var w=parseFloat(f('ptWeight')), h=parseFloat(f('ptHeight'));
   var el=document.getElementById('bmi-display');if(!el)return;
@@ -5094,7 +5109,8 @@ function buildHeidi(){
   if(dr)o+='Psychiatrist: '+dr+(f('drQuals')?' ('+f('drQuals')+')':'')+'\n';if(gp)o+='Referring GP: '+gp+'\n';
   if(f('ptOtherPresent'))o+='Others present: '+f('ptOtherPresent')+'\n';
   if(mbs)o+='MBS item: '+mbs+'\n';if(S.prevPsych)o+='291/92435 in past 12 months: '+S.prevPsych+'\n';
-  if(f('referralReason'))o+='Reason for seeking assessment: '+f('referralReason')+'\n';o+='\n';
+  var _assessReasonText=_assessReasonLine();
+  if(_assessReasonText)o+='Reason for seeking assessment: '+_assessReasonText+'\n';o+='\n';
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
   if(diffs.length){o+='PRESENTING DIFFICULTIES:\n';diffs.forEach(function(d){o+='- '+d+'\n';});}
   if(f('presentNotes'))o+=f('presentNotes')+'\n';
@@ -5773,7 +5789,8 @@ function buildFullReport(){
   // 1. Referral & Presenting Concerns
   h+=sec('Referral and Presenting Concerns');
   var refBits=[];
-  if(f('referralReason')) refBits.push('<strong>Reason for seeking assessment:</strong> '+esc(f('referralReason')));
+  var _arText=_assessReasonLine();
+  if(_arText) refBits.push('<strong>Reason for seeking assessment:</strong> '+esc(_arText));
   if(f('patientGoals')) refBits.push('<strong>Patient-stated goals for today:</strong> '+esc(f('patientGoals')));
   if(refBits.length) h+=p(refBits.join(' &nbsp;·&nbsp; '));
   var diffs=DIFFICULTIES.filter(function(d){return S.difficulties[d.replace(/[^a-zA-Z0-9]/g,'_')];});
@@ -6040,7 +6057,7 @@ function buildLetterReport(){
 
   // Opening — demographic clause is a single optional ", …," insert so the
   // sentence reads cleanly when age / gender are missing.
-  var referral=f('referralReason');
+  var referral=_assessReasonLine();
   var demoClause='';
   if(age){
     demoClause=', a '+esc(age)+'-year-old';
