@@ -403,7 +403,8 @@ select.inp{appearance:none}
 .ms-include:not(.on){border-color:#cbd5e1;background:#fff;color:#94a3b8}
 .ms-concern{font:600 12px var(--sans);color:#9a3412;flex:1}
 .ms-card.off .ms-concern{color:#475569;text-decoration:line-through}
-.ms-plan{font:12px var(--sans);padding:6px 9px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;resize:vertical}
+.ms-plan{font:12.5px/1.5 var(--sans);padding:8px 11px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;white-space:normal;word-break:normal;overflow-wrap:break-word}
+.ms-plan strong{color:#1e3a5f}
 .ms-card.off .ms-plan{display:none}
 .ps-tile{background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .ps-tile-label{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#475569;margin:0}
@@ -1291,9 +1292,9 @@ select.inp{appearance:none}
 <!-- ALERTS -->
 <div class="section-header" id="sec-alerts"><span class="sh-num">3</span>Alerts<span class="sh-badge" id="sh-badge-alerts">--</span></div>
 <div class="panel active" id="panel-alerts">
-  <div id="flags-panel"></div>
-  <div id="gaps-panel"></div>
   <div id="medsafety-panel"></div>
+  <div id="gaps-panel"></div>
+  <div id="flags-panel"></div>
 </div>
 
 <!-- EDUCATION -->
@@ -2271,6 +2272,74 @@ function getMedSafetyConcerns(){
       add('medical_'+m.id,_letterCleanLabel(m.label),m.note||'Consider implications for prescribing and adjust the plan accordingly.');
     });
   }
+  // SafeScript / RTPM not checked — mandatory before stimulant prescribing
+  if(!S.safeScript||S.safeScript==='Not checked'){
+    add('safescript_unchecked','SafeScript / RTPM not yet checked','Real-time prescription monitoring is mandatory before prescribing any stimulant in every Australian state and territory. Patients can surprise you — past benzodiazepine, opioid, or stimulant scripts often surface here that were not volunteered. Check before initiating, and re-check at every script renewal.');
+  }
+  // ECG abnormal
+  if(S.ecg==='Abnormal'){
+    add('ecg_abnormal','ECG abnormal'+(f('ecgDetail')?' — '+f('ecgDetail'):''),'Review the abnormality before initiating stimulants. Discuss with the GP and consider cardiology referral if there are conduction abnormalities, structural concerns, prolonged QT, or any features that increase the risk of stimulant-induced arrhythmia. Hold stimulants until cleared if uncertain.');
+  }
+  // Drug-dependent
+  if(S.drugDep==='Yes'){
+    add('drugdep_yes','Assessed as a drug-dependent person','State authorities require a Schedule 8 permit / authority for any controlled drug to a drug-dependent person. Cross-check SafeScript / RTPM, document the rationale, and apply for the relevant state authority before issuing a stimulant script. Consider non-stimulant or supervised dispensing where appropriate.');
+  }
+  // Substances marked Current — one card per substance
+  if(typeof SUBS!=='undefined'&&S.substances){
+    var SUB_PLAN={
+      Alcohol:'Active alcohol use disorder increases the dependence risk of stimulants and amplifies cardiovascular load. Address the substance use; consider non-stimulant alternatives if pharmacotherapy is needed; coordinate with addiction services where appropriate.',
+      Cannabis:'Current cannabis use raises the risk of psychosis and cardiovascular strain when combined with stimulants. First clarify illicit vs prescribed medicinal cannabis. Counsel toward abstinence and repeat UDS in 4 weeks before initiating a stimulant, or offer a non-stimulant alternative (atomoxetine or guanfacine).',
+      Methamphetamine:'Active methamphetamine use is a contraindication to stimulant initiation given the combined cardiovascular and dependence risk. Address the substance use first, defer stimulants until sustained abstinence, and consider non-stimulant ADHD pharmacotherapy if needed in the interim.',
+      'Cocaine/stimulants':'Active stimulant misuse is a contraindication to prescribing further stimulants. Address the substance use, defer stimulant pharmacotherapy until sustained abstinence, and consider non-stimulant ADHD options if pharmacotherapy is clinically indicated.',
+      MDMA:'Recent MDMA use raises serotonergic, cardiovascular, and psychiatric risk when combined with stimulants. Counsel toward abstinence; defer stimulants until use is no longer current; consider non-stimulant alternatives.',
+      Opioids:'Current opioid use complicates the combined sedative / cardiovascular risk profile. Cross-check prescribed analgesia or opioid agonist therapy on SafeScript / RTPM. If prescribed, proceed cautiously and document. If unprescribed, defer stimulants and engage integrated addiction care.',
+      Benzodiazepines:'Cross-check SafeScript / RTPM. If prescribed, weigh whether co-prescribing with a stimulant will pull in opposing directions (sedation vs activation) and blunt benefit; mind dependence and overdose risk especially with opioids. If unprescribed, defer stimulants and address SUD.',
+      'Tobacco/nicotine':'Smoking adds cardiovascular load to stimulant therapy. Discuss cessation supports; document; lower threshold for cardiac monitoring.',
+      'Caffeine (excess)':'Excess caffeine compounds stimulant cardiovascular and sleep effects. Counsel to reduce intake before initiating, and revisit at each review — patients often underestimate their caffeine load.',
+      Other:'Document the substance, frequency, and route; assess dependence risk and cardiovascular implications; tailor prescribing accordingly.'
+    };
+    SUBS.forEach(function(s){
+      var key='sub_'+s.replace(/\W/g,'_');
+      if(S.substances[key]==='Current'){
+        var detail=(S.subDetail&&S.subDetail[key])||'';
+        add('subcur_'+key,'Current '+s.toLowerCase()+' use'+(detail?' ('+detail+')':''),SUB_PLAN[s]||'Document use, assess dependence and cardiovascular risk, and tailor prescribing accordingly.');
+      }
+    });
+  }
+  // Differentials marked Current that materially change prescribing risk
+  if(typeof DIFFS!=='undefined'&&S.differentials){
+    var DIFF_PLAN={
+      bipolar:'Active bipolar disorder substantially raises the risk of stimulant-induced manic switch. Mood stabilisation should precede any stimulant trial, and stimulants should generally be initiated only with psychiatric oversight, slowly, and with a clear early-warning plan for hypomania.',
+      schizophrenia:'Active psychotic disorder is a relative contraindication to stimulant therapy given exacerbation risk. Stabilise psychosis first; if stimulants are still considered, do so under specialist psychiatric care with cautious titration and close monitoring.',
+      suicidality:'Current suicidality requires an active safety plan: means restriction (especially around any controlled medications), agreed contacts and follow-up, and clear escalation pathways. Consider whether stimulant initiation is appropriate at this time or should be deferred until risk is reduced.',
+      anorexia:'Active anorexia nervosa: stimulants suppress appetite and worsen weight loss. Treat the eating disorder first; defer stimulants; if pharmacotherapy is needed for ADHD in the interim, prefer non-appetite-suppressing options.',
+      bulimia:'Active bulimia nervosa: stimulants can both reduce binge frequency and worsen restriction patterns. Coordinate with eating disorder services; weigh risk vs benefit carefully; favour structured eating reviews alongside any stimulant trial.',
+      tbi:'History of significant traumatic brain injury can lower seizure threshold and complicate cognitive presentation. Confirm neurological stability and consider neurology input before stimulant initiation.',
+      substance_induced:'Symptoms attributed to substance use require sustained abstinence and reassessment before an ADHD diagnosis is made or stimulants are prescribed.',
+      neurodegen:'A neurodegenerative process changes the differential and the prescribing calculus. Confirm the underlying diagnosis and discuss management with the relevant specialist before stimulant initiation.',
+      medical:'A medical or neurological cause is suspected as the primary explanation. Investigate and exclude before treating as ADHD; defer stimulants until the medical picture is clarified.'
+    };
+    DIFFS.forEach(function(d){
+      if(S.differentials[d.id]==='Current'&&DIFF_PLAN[d.id]){
+        add('diff_'+d.id,_letterCleanLabel(d.label)+' — current',DIFF_PLAN[d.id]);
+      }
+    });
+  }
+  // Suicidality / harm to others on MSE
+  if(typeof mseVals==='function'){
+    var harmV=mseVals('harm_others');
+    if(harmV.length&&!harmV.every(function(v){return /Nil/i.test(v);})){
+      add('mse_harm','Risk to others flagged on MSE','Document the specific risk, target if any, intent and means. Consider duty-of-warn / public-protection obligations, escalation to the relevant authorities if required, and a clear safety plan. Defer or restrict prescribing until risk is reduced.');
+    }
+  }
+  // MBS billing flags — important to surface so the wrong item isn't billed
+  var mbs=f('mbsItem'),prev=S.prevPsych||'';
+  if((mbs==='291'||mbs==='92435')&&prev==='Yes'){
+    add('mbs_repeat_29x','MBS '+mbs+' but a 291/92435 has been billed in the past 12 months','Item 291/92435 cannot be claimed twice within a 13-month window. Switch to a review item (296/92437) or document the rationale before billing.');
+  }
+  if((mbs==='293'||mbs==='92436')&&prev==='No'){
+    add('mbs_review_no_prior','MBS '+mbs+' (review) without a prior 291/92435','The review items 293/92436 require a 291/92435 plan to have been billed in the past 12 months. Consider 296/92437 if no prior plan applies.');
+  }
   return out;
 }
 function setSafetyOverride(key,field,val){
@@ -2742,7 +2811,7 @@ function renderSafetyConcerns(){
   var fuEl=$('fu-safety-concerns');
   var alertEl=$('medsafety-panel');
   var concerns=getMedSafetyConcerns();
-  function cards(idSuffix){
+  function cards(){
     return concerns.map(function(c){
       var off=!c.include;
       return '<div class="ms-card'+(off?' off':'')+'">'
@@ -2750,18 +2819,18 @@ function renderSafetyConcerns(){
           +'<button class="ms-include'+(off?'':' on')+'" onclick="setSafetyOverride(\''+c.key+'\',\'include\','+off+')">'+(off?'Excluded':'Included')+'</button>'
           +'<span class="ms-concern">'+esc(c.concern)+'</span>'
         +'</div>'
-        +'<textarea class="ms-plan" rows="2" placeholder="Plan for this concern…" oninput="setSafetyOverride(\''+c.key+'\',\'plan\',this.value)">'+esc(c.plan)+'</textarea>'
+        +'<div class="ms-plan"><strong>Plan:</strong> '+esc(c.plan)+'</div>'
       +'</div>';
     }).join('');
   }
   if(fuEl){
     fuEl.innerHTML=concerns.length
-      ?'<div class="fl" style="margin-top:12px">Medical safety concerns from this review</div>'+cards('fu')
+      ?'<div class="fl" style="margin-top:12px">Medical safety concerns from this review</div>'+cards()
       :'';
   }
   if(alertEl){
     alertEl.innerHTML=concerns.length
-      ?'<div class="fl" style="margin-top:12px;padding:0 4px">Medical safety concerns</div>'+cards('al')
+      ?'<div class="fl" style="margin-top:12px;padding:0 4px">Medical safety concerns</div>'+cards()
       :'';
   }
 }
@@ -4479,6 +4548,21 @@ function _bmiStr(){
   var b=w/((h/100)*(h/100));
   return b.toFixed(1)+(b<18.5?' (underweight)':'');
 }
+function _udsPosDrugsList(){
+  if(!S.udsPos)return [];
+  return UDS_POS_DRUGS.filter(function(d){return S.udsPos[d.replace(/[^a-zA-Z0-9]/g,'_')];});
+}
+function _udsLine(){
+  // Returns the value half of the 'UDS:' line for reports.
+  var v=S.uds||'Not done';
+  if(v==='Positive'){
+    var drugs=_udsPosDrugsList();
+    if(drugs.length)v='Positive — '+drugs.join(', ');
+  }
+  var d=f('udsDetail');
+  if(d)v+=' ('+d+')';
+  return v;
+}
 function calcBMI(){
   var w=parseFloat(f('ptWeight')), h=parseFloat(f('ptHeight'));
   var el=document.getElementById('bmi-display');if(!el)return;
@@ -4666,9 +4750,11 @@ function getGapsPatient(){
   return gaps;
 }
 function renderFlags(){
-  var flags=getFlags(),gaps=getGaps();
+  // Safety flags now render as rich cards via renderSafetyConcerns into
+  // #medsafety-panel; the legacy flat list in #flags-panel is empty.
+  var gaps=getGaps();
   var fp=$('flags-panel'),gp=$('gaps-panel');
-  if(fp)fp.innerHTML=flags.length?'<div class="flags-box"><h3>Safety Flags</h3>'+flags.map(function(fl){return '<div class="fitem'+(fl.level==='red'?' red':'')+'">'+fl.text+'</div>';}).join('')+'</div>':'';
+  if(fp)fp.innerHTML='';
   var clinGaps=getGapsClinician(), patGaps=getGapsPatient();
   var allGaps=clinGaps.concat(patGaps);
   if(gp){
@@ -4761,7 +4847,7 @@ function buildHeidiFollowUp(rt){
   if(f('ptWeight'))invItems.push('Weight: '+f('ptWeight')+' kg');
   if(f('ptHeight'))invItems.push('Height: '+f('ptHeight')+' cm');
   if(S.ecg&&S.ecg!=='Not done')invItems.push('ECG: '+S.ecg+(f('ecgDetail')?' ('+f('ecgDetail')+')':''));
-  if(S.uds&&S.uds!=='Not done')invItems.push('UDS: '+S.uds+(f('udsDetail')?' ('+f('udsDetail')+')':''));
+  if(S.uds&&S.uds!=='Not done')invItems.push('UDS: '+_udsLine());
   if(invItems.length)o+='INVESTIGATIONS:\n- '+invItems.join('\n- ')+'\n\n';
   if(titMeds.length){
     o+='TREATMENT PLAN:\n';
@@ -4871,7 +4957,7 @@ function buildHeidi(){
   if(f('ssDetail'))o+='  Detail: '+f('ssDetail')+'\n';
   o+='- Drug dependent: '+(S.drugDep||'Not assessed')+'\n';
   o+='- SUD differential: '+(S.sudDiff||'Not rated')+'\n';
-  o+='- UDS: '+(S.uds||'Not done')+(f('udsDetail')?' ('+f('udsDetail')+')':'')+'\n';
+  o+='- UDS: '+_udsLine()+'\n';
   o+='- ECG: '+(S.ecg||'Not done')+(f('ecgDetail')?' ('+f('ecgDetail')+')':'')+'\n';
   if(f('bpReading'))o+='- BP: '+f('bpReading')+'\n';if(f('hrReading'))o+='- HR: '+f('hrReading')+'\n';
   if(f('ptWeight'))o+='- Weight: '+f('ptWeight')+' kg\n';if(f('ptHeight'))o+='- Height: '+f('ptHeight')+' cm\n';
@@ -5356,7 +5442,7 @@ function buildFullReportFollowUp(rt){
   if(f('ptHeight')) invItems.push('<strong>Height:</strong> '+esc(f('ptHeight'))+' cm');
   var _bmiFu=_bmiStr(); if(_bmiFu) invItems.push('<strong>BMI:</strong> '+esc(_bmiFu));
   if(S.ecg&&S.ecg!=='Not done') invItems.push('<strong>ECG:</strong> '+esc(S.ecg)+(f('ecgDetail')?' ('+esc(f('ecgDetail'))+')':''));
-  if(S.uds&&S.uds!=='Not done') invItems.push('<strong>UDS:</strong> '+esc(S.uds)+(f('udsDetail')?' ('+esc(f('udsDetail'))+')':''));
+  if(S.uds&&S.uds!=='Not done') invItems.push('<strong>UDS:</strong> '+esc(_udsLine()));
   if(invItems.length){
     h+=sec('Investigations');
     h+=list(invItems);
@@ -5589,7 +5675,7 @@ function buildFullReport(){
   safeItems.push('<strong>SafeScript:</strong> '+esc(S.safeScript||'Not checked')+(f('ssDetail')?' — '+esc(f('ssDetail')):''));
   safeItems.push('<strong>Drug-dependent status:</strong> '+esc(S.drugDep||'Not assessed'));
   safeItems.push('<strong>SUD differential:</strong> '+esc(S.sudDiff||'Not rated'));
-  safeItems.push('<strong>UDS:</strong> '+esc(S.uds||'Not done')+(f('udsDetail')?' ('+esc(f('udsDetail'))+')':''));
+  safeItems.push('<strong>UDS:</strong> '+esc(_udsLine()));
   safeItems.push('<strong>ECG:</strong> '+esc(S.ecg||'Not done')+(f('ecgDetail')?' ('+esc(f('ecgDetail'))+')':''));
   if(f('bpReading')) safeItems.push('<strong>BP:</strong> '+esc(f('bpReading')));
   if(f('hrReading')) safeItems.push('<strong>HR:</strong> '+esc(f('hrReading')));
@@ -6018,7 +6104,7 @@ function buildLetterReport(){
   if(f('bpReading'))invItems.push('BP: '+_appendUnit(f('bpReading'),'mmHg'));
   if(f('hrReading'))invItems.push('HR: '+_appendUnit(f('hrReading'),'bpm'));
   if(S.ecg)invItems.push('ECG: '+S.ecg+(f('ecgDetail')?' ('+f('ecgDetail')+')':''));
-  if(S.uds)invItems.push('UDS: '+S.uds+(f('udsDetail')?' ('+f('udsDetail')+')':''));
+  if(S.uds)invItems.push('UDS: '+_udsLine());
   if(f('otherInvest'))invItems.push('Other: '+f('otherInvest'));
   if(invItems.length){
     h+='<h3>Investigations</h3>';
