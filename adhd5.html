@@ -397,15 +397,19 @@ select.inp{appearance:none}
 #out-report .mgmt-sub{font:700 11pt Arial,sans-serif;color:#1e40af;margin:12px 0 4px;letter-spacing:0;text-transform:none;border:none}
 #out-report.letter-mode .mgmt-sub{font-family:Arial,sans-serif;font-size:10.5pt;color:#1e40af;font-weight:700;margin:12px 0 4px}
 .ms-card{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;margin-top:6px;display:flex;flex-direction:column;gap:6px}
-.ms-card.off{background:#f1f5f9;border-color:#cbd5e1;opacity:.6}
 .ms-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ms-include{padding:4px 10px;border-radius:6px;border:1.5px solid var(--green);background:var(--green-bg);color:#166534;font:700 11px var(--sans);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .ms-include:not(.on){border-color:#cbd5e1;background:#fff;color:#94a3b8}
 .ms-concern{font:600 12px var(--sans);color:#9a3412;flex:1}
-.ms-card.off .ms-concern{color:#475569;text-decoration:line-through}
 .ms-plan{font:12.5px/1.5 var(--sans);padding:8px 11px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;white-space:normal;word-break:normal;overflow-wrap:break-word}
 .ms-plan strong{color:#1e3a5f}
-.ms-card.off .ms-plan{display:none}
+.ms-tabs{display:flex;gap:4px;margin-top:2px}
+.ms-tab{padding:4px 10px;font:600 11px var(--sans);background:transparent;border:1px solid #cbd5e1;border-radius:6px 6px 0 0;color:var(--muted);cursor:pointer;border-bottom:none;-webkit-tap-highlight-color:transparent}
+.ms-tab:hover{color:var(--text)}
+.ms-tab.active{background:#fff;color:#1e3a5f;border-color:#cbd5e1;font-weight:700}
+.ms-pane.hidden{display:none}
+.ms-letter{font:12.5px/1.5 var(--sans);padding:8px 11px;border:1px solid #cbd5e1;border-top-left-radius:0;border-radius:0 6px 6px 6px;background:#fff;color:#0f172a;width:100%;box-sizing:border-box;resize:vertical;min-height:60px;font-family:var(--sans)}
+.ms-letter:focus{outline:none;border-color:var(--primary)}
 .ps-tile{background:#fff;border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .ps-tile-label{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#475569;margin:0}
 .ps-tile .rbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
@@ -1664,25 +1668,35 @@ const DIFFS=[
 ];
 const CARDIAC=[
   {id:'c_exertional',label:'Exertional chest pain / unexplained shortness of breath / exercise intolerance',flag:true,
-    note:'Possible structural heart disease or ischaemia. Defer stimulants and obtain medical or cardiology assessment first.'},
+    note:'Possible structural heart disease or ischaemia. Defer stimulants and obtain medical or cardiology assessment first.',
+    letter:'Given the exertional chest pain or unexplained shortness of breath, stimulants will be deferred until a medical or cardiology assessment has clarified whether structural heart disease or ischaemia is contributing.'},
   {id:'c_palpitations_syncope',label:'Palpitations / syncope or fainting',flag:true,
-    note:'Possible arrhythmia or conduction disorder. Obtain history, exam and ECG, and usually defer stimulants until clarified.'},
+    note:'Possible arrhythmia or conduction disorder. Obtain history, exam and ECG, and usually defer stimulants until clarified.',
+    letter:'In the context of palpitations or syncope, an ECG and clinical review are warranted before commencing stimulants, given the possibility of an underlying arrhythmia or conduction disorder.'},
   {id:'c_dizzy',label:'Dizziness on standing',flag:false,
-    note:'Check orthostatic vitals and hydration first. Use extra caution with clonidine or guanfacine as they can worsen hypotension.'},
+    note:'Check orthostatic vitals and hydration first. Use extra caution with clonidine or guanfacine as they can worsen hypotension.',
+    letter:'Reported dizziness on standing warrants checking lying and standing blood pressure and hydration before initiating treatment, with particular caution around alpha-2 agonists which can worsen orthostatic symptoms.'},
   {id:'c_fam_death_syncope',label:'Family: sudden cardiac death under 40 / unexplained syncope or seizures',flag:true,
-    note:'Suggests possible inherited arrhythmia. Get ECG and have a low threshold for cardiology review before stimulants.'},
+    note:'Suggests possible inherited arrhythmia. Get ECG and have a low threshold for cardiology review before stimulants.',
+    letter:'A family history of sudden cardiac death under 40 raises the possibility of an inherited arrhythmia syndrome. An ECG is recommended and we have a low threshold for cardiology review before stimulant initiation.'},
   {id:'c_fam_structural',label:'Family: cardiomyopathy / long QT / channelopathy',flag:true,
-    note:'Suggests inherited structural or electrical disease. Seek cardiology input before stimulant treatment.'},
+    note:'Suggests inherited structural or electrical disease. Seek cardiology input before stimulant treatment.',
+    letter:'Given the family history of cardiomyopathy, long QT or channelopathy, cardiology input is recommended before stimulant treatment to exclude inherited disease.'},
   {id:'c_fam_cad',label:'Family: early-onset coronary artery disease (M <55, F <65)',flag:true,
-    note:'Increases vascular risk relevance in adults. Optimise risk factors and monitor blood pressure carefully when using stimulants.'},
+    note:'Increases vascular risk relevance in adults. Optimise risk factors and monitor blood pressure carefully when using stimulants.',
+    letter:'A family history of early-onset coronary artery disease is relevant to vascular risk in adulthood. Cardiovascular risk factors should be optimised and blood pressure monitored carefully through any stimulant titration.'},
   {id:'c_congenital_structural',label:'Known congenital or structural heart disease',flag:true,
-    note:'Liaise with the treating cardiologist before prescribing stimulants. If used, start low and monitor BP, pulse and symptoms closely.'},
+    note:'Liaise with the treating cardiologist before prescribing stimulants. If used, start low and monitor BP, pulse and symptoms closely.',
+    letter:'Given known congenital or structural heart disease, prescribing decisions will be made in liaison with the treating cardiologist. Any stimulant trial would start low with close monitoring of blood pressure, pulse and symptoms.'},
   {id:'c_arrhythmia',label:'Known arrhythmia / tachyarrhythmia / long QT syndrome',flag:true,
-    note:'Higher risk with sympathomimetic drugs. Use stimulants only with cardiology oversight and consider non-stimulants where appropriate.'},
+    note:'Higher risk with sympathomimetic drugs. Use stimulants only with cardiology oversight and consider non-stimulants where appropriate.',
+    letter:'A known arrhythmia or QT abnormality raises the risk profile for sympathomimetic medications. Stimulants will only be considered with cardiology oversight, and non-stimulant options will be weighed first.'},
   {id:'c_htn',label:'Hypertension',flag:true,
-    note:'Control blood pressure before starting stimulants and monitor regularly during treatment.'},
+    note:'Control blood pressure before starting stimulants and monitor regularly during treatment.',
+    letter:'It is important that blood pressure is well controlled prior to starting stimulants and monitored regularly during treatment.'},
   {id:'c_maoi',label:'Current MAOI use — ABSOLUTE CONTRAINDICATION',flag:true,
-    note:'Do not prescribe stimulants or atomoxetine until an appropriate washout period is completed. This is an absolute contraindication.'},
+    note:'Do not prescribe stimulants or atomoxetine until an appropriate washout period is completed. This is an absolute contraindication.',
+    letter:'Current MAOI use is an absolute contraindication to both stimulants and atomoxetine. An appropriate washout period must be completed before any ADHD pharmacotherapy is considered.'},
 ];
 const FAM_PSYCH=[
   {id:'fam_adhd',label:'ADHD'},
@@ -1703,47 +1717,68 @@ const FAM_PSYCH=[
 ];
 const MEDICAL=[
   {id:'epilepsy',flag:true,label:'Epilepsy or seizure disorder',
-    note:'Stimulants may lower seizure threshold. Check recent control and neurology input, start low and monitor.'},
+    note:'Stimulants may lower seizure threshold. Check recent control and neurology input, start low and monitor.',
+    letter:'Given the history of epilepsy, recent seizure control and neurology input will guide the prescribing plan. Stimulants can lower seizure threshold, so any trial would start at the lowest effective dose with close monitoring.'},
   {id:'glaucoma',flag:true,label:'Glaucoma',
-    note:'Avoid stimulants and atomoxetine in narrow-angle glaucoma. Consider non-stimulant alternatives.'},
+    note:'Avoid stimulants and atomoxetine in narrow-angle glaucoma. Consider non-stimulant alternatives.',
+    letter:'In the context of narrow-angle glaucoma, both stimulants and atomoxetine are best avoided; non-stimulant alternatives will be considered.'},
   {id:'thyroid',flag:false,label:'Thyroid disorder',
-    note:'Treat or stabilise hyperthyroidism before starting stimulants due to additive sympathomimetic effects.'},
+    note:'Treat or stabilise hyperthyroidism before starting stimulants due to additive sympathomimetic effects.',
+    letter:'Thyroid status will be reviewed and stabilised before commencing stimulants given the additive sympathomimetic effect with hyperthyroidism.'},
   {id:'raynauds',flag:false,label:"Raynaud's phenomenon",
-    note:'Stimulants can worsen vasospasm. Monitor digits and consider dose reduction or switch if symptomatic.'},
+    note:'Stimulants can worsen vasospasm. Monitor digits and consider dose reduction or switch if symptomatic.',
+    letter:"Stimulants can worsen Raynaud's vasospasm. We will monitor for digital symptoms during titration and adjust dose or switch agent if needed."},
   {id:'tic',flag:false,label:'Tic disorder',
-    note:'Stimulants can exacerbate tics in some patients. Consider atomoxetine or alpha-2 agonists, or cautious stimulant trial with close monitoring.'},
+    note:'Stimulants can exacerbate tics in some patients. Consider atomoxetine or alpha-2 agonists, or cautious stimulant trial with close monitoring.',
+    letter:'Occasionally stimulants can worsen tics. Whichever treatment we choose, close monitoring of any worsening of symptoms is warranted; if our treatment worsens tics there are alternatives including atomoxetine or alpha-2 agonists.'},
   {id:'liver',flag:false,label:'Hepatic impairment',
-    note:'Atomoxetine exposure increases significantly in moderate-severe hepatic impairment. Use lower doses and monitor LFTs.'},
+    note:'Atomoxetine exposure increases significantly in moderate-severe hepatic impairment. Use lower doses and monitor LFTs.',
+    letter:'In the context of hepatic impairment, atomoxetine exposure can increase substantially. We will use lower doses where atomoxetine is considered and monitor liver function.'},
   {id:'renal',flag:false,label:'Renal impairment',
-    note:'Clonidine and guanfacine may accumulate in renal impairment. Titrate slowly and monitor for hypotension and sedation.'},
+    note:'Clonidine and guanfacine may accumulate in renal impairment. Titrate slowly and monitor for hypotension and sedation.',
+    letter:'Renal impairment may slow clearance of clonidine and guanfacine. Titration will be slower with monitoring of blood pressure and sedation.'},
   {id:'pregnancy',flag:true,label:'Pregnancy',
-    note:'Use non-pharmacological strategies where possible. If prescribing in pregnancy, use the lowest effective dose and agents with the best safety data, with obstetric input.'},
+    note:'Use non-pharmacological strategies where possible. If prescribing in pregnancy, use the lowest effective dose and agents with the best safety data, with obstetric input.',
+    letter:'Treatment in pregnancy will prioritise non-pharmacological strategies where possible. If pharmacotherapy is needed, this will be at the lowest effective dose, in coordination with the obstetric team, and using agents with the best available safety data.'},
   {id:'breastfeeding',flag:true,label:'Breastfeeding',
-    note:'Stimulants pass into breast milk in small amounts. Methylphenidate has the lowest excretion. Discuss risks/benefits with the patient and monitor the infant for irritability or feeding changes.'},
+    note:'Stimulants pass into breast milk in small amounts. Methylphenidate has the lowest excretion. Discuss risks/benefits with the patient and monitor the infant for irritability or feeding changes.',
+    letter:'In the context of breastfeeding, methylphenidate is generally preferred given it has the lowest excretion into breast milk of the available stimulants. Risks and benefits will be discussed with the patient and the infant monitored for irritability or feeding changes during titration.'},
   {id:'cvd',flag:true,label:'Coronary artery disease',
-    note:'Stimulants increase HR and BP. Optimise vascular risk factors, consider cardiology input, start low and monitor closely.'},
+    note:'Stimulants increase HR and BP. Optimise vascular risk factors, consider cardiology input, start low and monitor closely.',
+    letter:'Given the history of coronary artery disease, vascular risk factors will be optimised and cardiology input sought before stimulants are considered. Any trial would start low with close haemodynamic monitoring.'},
   {id:'obesity',flag:false,label:'Obesity with metabolic syndrome',
-    note:'Stimulants may reduce appetite and weight. Monitor weight, blood pressure and metabolic parameters during treatment.'},
+    note:'Stimulants may reduce appetite and weight. Monitor weight, blood pressure and metabolic parameters during treatment.',
+    letter:'Stimulants may modestly reduce appetite and weight, which can be incidentally helpful in the context of obesity. We will monitor weight, blood pressure and metabolic parameters through treatment.'},
   {id:'low_bmi',flag:false,label:'Low BMI',
-    note:'Appetite suppression can be problematic. Prefer non-stimulants or very cautious stimulant use with close weight monitoring.'},
+    note:'Appetite suppression can be problematic. Prefer non-stimulants or very cautious stimulant use with close weight monitoring.',
+    letter:'Given the low BMI, appetite suppression from stimulants may be problematic. Non-stimulant agents will be preferred, or any stimulant trial used cautiously with close weight monitoring.'},
   {id:'eating_disorder',flag:true,label:'Current or recent eating disorder',
-    note:'Stimulants may worsen dietary restriction. Avoid or minimise stimulants and prioritise nutritional rehabilitation.'},
+    note:'Stimulants may worsen dietary restriction. Avoid or minimise stimulants and prioritise nutritional rehabilitation.',
+    letter:'In the context of a current or recent eating disorder, stimulants will be avoided or minimised, with nutritional rehabilitation and eating-disorder treatment prioritised first.'},
   {id:'osa',flag:false,label:'Obstructive sleep apnoea',
-    note:'Optimise sleep and OSA treatment first. Time doses to minimise insomnia. Consider alpha-2 agonists for nocturnal hyperarousal.'},
+    note:'Optimise sleep and OSA treatment first. Time doses to minimise insomnia. Consider alpha-2 agonists for nocturnal hyperarousal.',
+    letter:'Sleep apnoea will be addressed and any treatment optimised before initiating stimulants, since untreated OSA both mimics and amplifies ADHD symptoms. Dosing will be timed to minimise insomnia.'},
   {id:'bph',flag:false,label:'Benign prostatic hyperplasia',
-    note:'Atomoxetine can worsen urinary retention. Monitor lower urinary tract symptoms or avoid in severe cases.'},
+    note:'Atomoxetine can worsen urinary retention. Monitor lower urinary tract symptoms or avoid in severe cases.',
+    letter:'Atomoxetine can worsen urinary retention; in the context of significant prostatic hyperplasia we will monitor lower urinary tract symptoms or avoid this agent.'},
   {id:'end_stage_renal',flag:true,label:'End-stage renal disease',
-    note:'Use clonidine and guanfacine very cautiously. Coordinate with nephrology and monitor haemodynamics carefully.'},
+    note:'Use clonidine and guanfacine very cautiously. Coordinate with nephrology and monitor haemodynamics carefully.',
+    letter:'In end-stage renal disease, alpha-2 agonists will be used very cautiously and in coordination with nephrology, with close haemodynamic monitoring.'},
   {id:'falls_risk',flag:false,label:'Chronic dizziness or high falls risk',
-    note:'Alpha-2 agonists can increase orthostatic symptoms and falls risk. Minimise dose and monitor standing blood pressure.'},
+    note:'Alpha-2 agonists can increase orthostatic symptoms and falls risk. Minimise dose and monitor standing blood pressure.',
+    letter:'Given the elevated falls risk, alpha-2 agonists will be used at minimal effective dose with regular standing blood-pressure checks.'},
   {id:'chronic_pain_sedating',flag:false,label:'Chronic pain on sedating medications',
-    note:'Clonidine and guanfacine add to sedation and hypotension. Adjust other sedatives and monitor carefully.'},
+    note:'Clonidine and guanfacine add to sedation and hypotension. Adjust other sedatives and monitor carefully.',
+    letter:'Given current sedating analgesia, alpha-2 agonists will be added cautiously with adjustments to existing sedatives and close monitoring.'},
   {id:'labile_bp',flag:true,label:'Endocrine or autonomic disorders with labile BP (e.g. Addison disease, autonomic neuropathy)',
-    note:"Both stimulants (raise BP) and alpha-2 agonists (lower BP, with rebound on cessation) can destabilise blood pressure. Titrate very cautiously with frequent postural checks."},
+    note:"Both stimulants (raise BP) and alpha-2 agonists (lower BP, with rebound on cessation) can destabilise blood pressure. Titrate very cautiously with frequent postural checks.",
+    letter:'Given the labile blood pressure, both stimulants and alpha-2 agonists can destabilise circulation. We will titrate cautiously with frequent postural blood-pressure checks.'},
   {id:'migraine',flag:false,label:'Migraine or chronic headache',
-    note:'Stimulants can both trigger migraine (vasoconstriction, increased BP) and, in some patients, reduce attack frequency by improving sleep and stress regulation. If propranolol or topiramate is being used for prophylaxis, watch for additive blood-pressure effects with stimulants and additive cognitive blunting with topiramate. Start low, titrate slowly, monitor headache frequency.'},
+    note:'Stimulants can both trigger migraine (vasoconstriction, increased BP) and, in some patients, reduce attack frequency by improving sleep and stress regulation. If propranolol or topiramate is being used for prophylaxis, watch for additive blood-pressure effects with stimulants and additive cognitive blunting with topiramate. Start low, titrate slowly, monitor headache frequency.',
+    letter:'Stimulants can have variable effects on migraine — sometimes triggering attacks via vasoconstriction and raised blood pressure, and sometimes reducing frequency through better sleep and stress regulation. If propranolol or topiramate is being used for prophylaxis, we will be alert to additive effects on blood pressure and cognition. Headache frequency will be monitored through titration.'},
   {id:'postural_dizziness',flag:true,label:'Dizziness on standing / postural hypotension',
-    note:'Suggests autonomic instability. Check standing / lying BP and HR before initiating; correct hydration and any contributing medications. Alpha-2 agonists (clonidine, guanfacine) will worsen this; stimulants raise standing BP slightly but can mask underlying autonomic dysfunction. Refer for autonomic / cardiology workup if marked or progressive.'},
+    note:'Suggests autonomic instability. Check standing / lying BP and HR before initiating; correct hydration and any contributing medications. Alpha-2 agonists (clonidine, guanfacine) will worsen this; stimulants raise standing BP slightly but can mask underlying autonomic dysfunction. Refer for autonomic / cardiology workup if marked or progressive.',
+    letter:'Reported dizziness on standing suggests possible autonomic instability. Lying and standing blood pressure and heart rate will be checked before initiating treatment, with hydration and contributing medications addressed. Alpha-2 agonists in particular can worsen orthostatic symptoms; if findings are marked or progressive, autonomic or cardiology workup will be considered.'},
 ];
 const SUBS=['Alcohol','Cannabis','Methamphetamine','Cocaine/stimulants','MDMA','Opioids','Benzodiazepines','Tobacco/nicotine','Caffeine (excess)','Other'];
 const MSE=[
@@ -2212,27 +2247,36 @@ function getPastDifferentials(){
 // ─── Medical safety concerns (for letter + FU panel UI) ───────────────────
 function getMedSafetyConcerns(){
   var out=[];
-  function add(key,concern,plan){
+  function add(key,concern,plan,letterText){
     var ov=(S.safetyOverrides&&S.safetyOverrides[key])||{};
-    out.push({key:key,concern:concern,defaultPlan:plan,plan:ov.plan!=null?ov.plan:plan,include:ov.include!==false});
+    out.push({
+      key:key,
+      concern:concern,
+      defaultPlan:plan,
+      plan:ov.plan!=null?ov.plan:plan,
+      defaultLetterText:letterText||plan,
+      letterText:ov.letterText!=null?ov.letterText:(letterText||plan),
+      include:ov.include!==false
+    });
   }
   var sysBP=parseInt(f('bpSystolic')||'',10),diaBP=parseInt(f('bpDiastolic')||'',10);
   if((sysBP&&sysBP>=140)||(diaBP&&diaBP>=90))
-    add('bp_high','Elevated blood pressure ('+(sysBP||'?')+'/'+(diaBP||'?')+' mmHg)','Optimise BP before / during stimulant treatment; recheck and consider antihypertensive review if persistent.');
+    add('bp_high','Elevated blood pressure ('+(sysBP||'?')+'/'+(diaBP||'?')+' mmHg)','Optimise BP before / during stimulant treatment; recheck and consider antihypertensive review if persistent.','It is important that blood pressure is well controlled prior to starting stimulants and monitored regularly during treatment.');
   var hrV=parseInt(f('hrReading')||'',10);
   if(hrV&&hrV>=100)
-    add('hr_high','Resting tachycardia ('+hrV+' bpm)','Recheck on a separate occasion; investigate underlying causes (anxiety, thyroid, anaemia, substance use) before / during stimulant titration.');
+    add('hr_high','Resting tachycardia ('+hrV+' bpm)','Recheck on a separate occasion; investigate underlying causes (anxiety, thyroid, anaemia, substance use) before / during stimulant titration.','A resting tachycardia of '+hrV+' bpm warrants rechecking on a separate occasion and considering underlying causes (anxiety, thyroid, anaemia or substance use) before and during any stimulant titration.');
   var w=parseFloat(f('ptWeight')||''),hh=parseFloat(f('ptHeight')||'');
   if(w&&hh&&hh>0){var bmi=w/((hh/100)*(hh/100));
-    if(bmi<18.5)add('bmi_low','Underweight (BMI '+bmi.toFixed(1)+')','Stimulant-related appetite suppression may worsen this; monitor weight closely or consider a non-stimulant agent.');
+    if(bmi<18.5)add('bmi_low','Underweight (BMI '+bmi.toFixed(1)+')','Stimulant-related appetite suppression may worsen this; monitor weight closely or consider a non-stimulant agent.','Given the low BMI, stimulant-related appetite suppression may be problematic. Weight will be monitored closely through any stimulant trial, or a non-stimulant agent will be considered.');
   }
   if(/concern/i.test(S.safeScript||'')&&!/no concerns?/i.test(S.safeScript||''))
-    add('safescript_concern','SafeScript / RTPM concern flagged'+(f('ssDetail')?' — '+f('ssDetail'):''),'Document rationale for prescribing; coordinate with prior prescribers; consider non-stimulant or supervised dispensing.');
+    add('safescript_concern','SafeScript / RTPM concern flagged'+(f('ssDetail')?' — '+f('ssDetail'):''),'Document rationale for prescribing; coordinate with prior prescribers; consider non-stimulant or supervised dispensing.','A SafeScript / RTPM concern was flagged. The rationale for prescribing has been documented, with coordination as needed with prior prescribers; non-stimulant or supervised-dispensing options will be considered if risk remains.');
   if(S.uds==='Positive'){
     var udsAny=S.udsPos&&Object.keys(S.udsPos).filter(function(k){return S.udsPos[k];}).length>0;
     if(!udsAny){
-      // Generic alert when no specific drug ticked
-      add('uds_positive','Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),'Clarify which substances were detected; cross-check SafeScript / RTPM and prescribed medications; address any unprescribed use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing as indicated.');
+      add('uds_positive','Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),
+        'Clarify which substances were detected; cross-check SafeScript / RTPM and prescribed medications; address any unprescribed use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing as indicated.',
+        'A urine drug screen returned positive. The detected substances will be clarified and cross-referenced with SafeScript / RTPM and the current medication list before prescribing decisions are finalised.');
     } else {
       var UDS_PLAN={
         Amphetamines:'Distinguish between currently-prescribed stimulant medication (legitimate detection) and non-prescribed / illicit use. Cross-check SafeScript / RTPM, the current medication regimen, and self-report. If unprescribed, address the substance use, treat any underlying SUD, and reconsider stimulant prescribing given the dependence and diversion risk.',
@@ -2241,53 +2285,63 @@ function getMedSafetyConcerns(){
         Cocaine:'Active cocaine use is generally considered a contraindication to stimulant initiation given the combined cardiovascular risk, abuse potential, and dependence. Address the SUD with active treatment and referral, defer stimulant pharmacotherapy until sustained abstinence is demonstrated, and consider non-stimulant ADHD options if pharmacotherapy is clinically indicated in the interim.',
         Opiates:'Cross-check SafeScript / RTPM and prescribed analgesia (chronic pain) or opioid agonist therapy (e.g. methadone, buprenorphine). If prescribed, document and proceed cautiously — be alert to combined sedative load if benzodiazepines are also detected. If unprescribed or illicit, address the substance use and defer stimulants until risk is clarified; opioid use disorder warrants integrated addiction care alongside any ADHD treatment plan.'
       };
+      var UDS_LETTER={
+        Amphetamines:'The urine drug screen returned positive for amphetamines. We will distinguish prescribed stimulant medication from non-prescribed or illicit use, cross-checking SafeScript / RTPM and the current regimen before finalising prescribing.',
+        Benzodiazepines:'The urine drug screen returned positive for benzodiazepines. SafeScript / RTPM has been or will be cross-checked; if prescribed, the indication is documented and any co-prescribing with a stimulant weighed carefully (sedation vs activation, dependence and overdose risk). If unprescribed, this will be addressed before stimulants are initiated.',
+        Cannabis:'The urine drug screen returned positive for cannabis. Stimulants are generally not recommended in the context of active cannabis use given the increased risk of psychosis and cardiovascular strain. We will counsel toward abstinence with a repeat screen in approximately four weeks, or alternatively offer a non-stimulant agent which is safer in this context.',
+        Cocaine:'The urine drug screen returned positive for cocaine. Active cocaine use is generally a contraindication to stimulant initiation given combined cardiovascular and dependence risk. Stimulant pharmacotherapy will be deferred pending sustained abstinence; non-stimulant ADHD options may be considered in the interim.',
+        Opiates:'The urine drug screen returned positive for opiates. SafeScript / RTPM and any prescribed analgesia or opioid agonist therapy will be cross-checked. If unprescribed, stimulants will be deferred while the substance use is addressed.'
+      };
       UDS_POS_DRUGS.forEach(function(d){
         var key=d.replace(/[^a-zA-Z0-9]/g,'_');
         if(S.udsPos[key]){
-          add('uds_'+key,'UDS positive — '+d,UDS_PLAN[d]||'Clarify source and prescribing implications.');
+          add('uds_'+key,'UDS positive — '+d,UDS_PLAN[d]||'Clarify source and prescribing implications.',UDS_LETTER[d]||('The urine drug screen returned positive for '+d.toLowerCase()+'. Source and prescribing implications will be clarified before treatment decisions are finalised.'));
         }
       });
     }
   }
   if(S.sudDiff==='Current')
-    add('sud_current','Current substance use disorder','Active treatment / referral for SUD; integrate prescribing with addiction-aware approach; consider non-stimulant or supervised dispensing.');
+    add('sud_current','Current substance use disorder',
+      'Active treatment / referral for SUD; integrate prescribing with addiction-aware approach; consider non-stimulant or supervised dispensing.',
+      'In the context of a current substance use disorder, prescribing will be integrated with addiction-aware management and referral, with non-stimulant or supervised-dispensing options considered.');
   if(typeof mseVals==='function'){
     var siVals=mseVals('suicide');
     if(siVals.some(function(v){return /active/i.test(v);}))
-      add('si_active','Active suicidal ideation reported on MSE','Safety plan developed in session; means restriction discussed; emergency contacts identified. To re-review at next appointment.');
+      add('si_active','Active suicidal ideation reported on MSE',
+        'Safety plan developed in session; means restriction discussed; emergency contacts identified. To re-review at next appointment.',
+        'Active suicidal ideation was identified at this assessment. A safety plan was developed in session, means restriction discussed, and emergency contacts identified, with planned re-review at the next appointment.');
   }
-  // Age 65+
   var age=parseInt(f('ptAge')||'',10);
   if(age&&age>=65)
-    add('age_65','Age 65 or over','Increased sensitivity to sympathomimetic side effects; start at the lowest effective dose, monitor BP / HR / cognition closely, and review medication interactions and renal/hepatic function.');
-  // Cardiac flagged risk factors (each as its own concern, carrying the
-  // CARDIAC[].note as the default plan)
+    add('age_65','Age 65 or over',
+      'Increased sensitivity to sympathomimetic side effects; start at the lowest effective dose, monitor BP / HR / cognition closely, and review medication interactions and renal/hepatic function.',
+      'Given age 65 or over, sensitivity to sympathomimetic side effects is increased. Treatment will start at the lowest effective dose with close monitoring of blood pressure, heart rate and cognition, and a review of medication interactions and renal / hepatic function.');
   if(typeof CARDIAC!=='undefined'&&S.cardiac){
     CARDIAC.forEach(function(c){
       if(!c.flag||!S.cardiac[c.id])return;
-      add('cardiac_'+c.id,_letterCleanLabel(c.label),c.note||'Consider further work-up before initiating stimulant therapy.');
+      add('cardiac_'+c.id,_letterCleanLabel(c.label),c.note||'Consider further work-up before initiating stimulant therapy.',c.letter||c.note||'');
     });
   }
-  // Medical conditions — every ticked item gets its own card with the
-  // prescribing implications written in the MEDICAL[].note field. (Was
-  // previously limited to flag:true items only.)
   if(typeof MEDICAL!=='undefined'&&S.medical){
     MEDICAL.forEach(function(m){
       if(!S.medical[m.id])return;
-      add('medical_'+m.id,_letterCleanLabel(m.label),m.note||'Consider implications for prescribing and adjust the plan accordingly.');
+      add('medical_'+m.id,_letterCleanLabel(m.label),m.note||'Consider implications for prescribing and adjust the plan accordingly.',m.letter||m.note||'');
     });
   }
-  // SafeScript / RTPM not checked — mandatory before stimulant prescribing
   if(!S.safeScript||S.safeScript==='Not checked'){
-    add('safescript_unchecked','SafeScript / RTPM not yet checked','Real-time prescription monitoring is mandatory before prescribing any stimulant in every Australian state and territory. Patients can surprise you — past benzodiazepine, opioid, or stimulant scripts often surface here that were not volunteered. Check before initiating, and re-check at every script renewal.');
+    add('safescript_unchecked','SafeScript / RTPM not yet checked',
+      'Real-time prescription monitoring is mandatory before prescribing any stimulant in every Australian state and territory. Patients can surprise you — past benzodiazepine, opioid, or stimulant scripts often surface here that were not volunteered. Check before initiating, and re-check at every script renewal.',
+      'Real-time prescription monitoring (SafeScript / RTPM) will be checked before any stimulant is initiated, and at each script renewal, in line with state requirements.');
   }
-  // ECG abnormal
   if(S.ecg==='Abnormal'){
-    add('ecg_abnormal','ECG abnormal'+(f('ecgDetail')?' — '+f('ecgDetail'):''),'Review the abnormality before initiating stimulants. Discuss with the GP and consider cardiology referral if there are conduction abnormalities, structural concerns, prolonged QT, or any features that increase the risk of stimulant-induced arrhythmia. Hold stimulants until cleared if uncertain.');
+    add('ecg_abnormal','ECG abnormal'+(f('ecgDetail')?' — '+f('ecgDetail'):''),
+      'Review the abnormality before initiating stimulants. Discuss with the GP and consider cardiology referral if there are conduction abnormalities, structural concerns, prolonged QT, or any features that increase the risk of stimulant-induced arrhythmia. Hold stimulants until cleared if uncertain.',
+      'The ECG was abnormal'+(f('ecgDetail')?' ('+f('ecgDetail')+')':'')+'. Stimulants will be deferred until the abnormality is reviewed and, if needed, cardiology has cleared the patient for sympathomimetic therapy.');
   }
-  // Drug-dependent
   if(S.drugDep==='Yes'){
-    add('drugdep_yes','Assessed as a drug-dependent person','State authorities require a Schedule 8 permit / authority for any controlled drug to a drug-dependent person. Cross-check SafeScript / RTPM, document the rationale, and apply for the relevant state authority before issuing a stimulant script. Consider non-stimulant or supervised dispensing where appropriate.');
+    add('drugdep_yes','Assessed as a drug-dependent person',
+      'State authorities require a Schedule 8 permit / authority for any controlled drug to a drug-dependent person. Cross-check SafeScript / RTPM, document the rationale, and apply for the relevant state authority before issuing a stimulant script. Consider non-stimulant or supervised dispensing where appropriate.',
+      'The patient meets criteria as a drug-dependent person. State authority / Schedule 8 permit requirements will be followed before any stimulant script is issued, and supervised dispensing or non-stimulant alternatives will be considered where appropriate.');
   }
   // Substances marked Current — one card per substance
   if(typeof SUBS!=='undefined'&&S.substances){
@@ -2303,11 +2357,23 @@ function getMedSafetyConcerns(){
       'Caffeine (excess)':'Excess caffeine compounds stimulant cardiovascular and sleep effects. Counsel to reduce intake before initiating, and revisit at each review — patients often underestimate their caffeine load.',
       Other:'Document the substance, frequency, and route; assess dependence risk and cardiovascular implications; tailor prescribing accordingly.'
     };
+    var SUB_LETTER={
+      Alcohol:'Active alcohol use will be addressed and prescribing tailored accordingly, with non-stimulant alternatives or supervised dispensing considered if needed.',
+      Cannabis:'Current cannabis use raises the risk of psychosis and cardiovascular strain when combined with stimulants. We will counsel toward abstinence with a repeat urine drug screen in approximately four weeks, or alternatively offer a non-stimulant agent which is safer in this context.',
+      Methamphetamine:'Active methamphetamine use is a contraindication to stimulant initiation. Treatment will focus on the substance use first, with stimulant pharmacotherapy deferred until sustained abstinence and non-stimulant ADHD options considered in the interim if needed.',
+      'Cocaine/stimulants':'Active cocaine or stimulant misuse is a contraindication to prescribing further stimulants. Stimulant pharmacotherapy will be deferred while the substance use is addressed; non-stimulant ADHD options may be considered in the interim.',
+      MDMA:'Recent MDMA use raises serotonergic, cardiovascular and psychiatric risk in combination with stimulants. Stimulants will be deferred until use is no longer current, with non-stimulant alternatives considered.',
+      Opioids:'Current opioid use complicates the combined sedative and cardiovascular risk profile. Prescribed analgesia or opioid agonist therapy will be cross-referenced on SafeScript / RTPM. If unprescribed, stimulants will be deferred and integrated addiction care engaged.',
+      Benzodiazepines:'Current benzodiazepine use will be cross-referenced on SafeScript / RTPM. If prescribed, the risk-benefit of co-prescribing with a stimulant (sedation vs activation, dependence and overdose risk) will be considered. If unprescribed, stimulants will be deferred while the substance use is addressed.',
+      'Tobacco/nicotine':'Current smoking adds cardiovascular load to stimulant therapy. Cessation supports will be discussed and cardiovascular monitoring tailored accordingly.',
+      'Caffeine (excess)':'Excess caffeine intake compounds the cardiovascular and sleep effects of stimulants. Reducing intake will be discussed before and during titration.',
+      Other:'The substance, frequency and route will be documented and prescribing tailored to the dependence and cardiovascular risk profile.'
+    };
     SUBS.forEach(function(s){
       var key='sub_'+s.replace(/\W/g,'_');
       if(S.substances[key]==='Current'){
         var detail=(S.subDetail&&S.subDetail[key])||'';
-        add('subcur_'+key,'Current '+s.toLowerCase()+' use'+(detail?' ('+detail+')':''),SUB_PLAN[s]||'Document use, assess dependence and cardiovascular risk, and tailor prescribing accordingly.');
+        add('subcur_'+key,'Current '+s.toLowerCase()+' use'+(detail?' ('+detail+')':''),SUB_PLAN[s]||'Document use, assess dependence and cardiovascular risk, and tailor prescribing accordingly.',SUB_LETTER[s]||('Current '+s.toLowerCase()+' use will be documented and prescribing tailored to the dependence and cardiovascular risk profile.'));
       }
     });
   }
@@ -2336,9 +2402,30 @@ function getMedSafetyConcerns(){
       substance_induced:'Symptoms attributed to substance use require sustained abstinence and reassessment before an ADHD diagnosis is confirmed or stimulants are prescribed.',
       medical:'A medical or neurological cause is suspected as the primary explanation. Investigate and exclude before treating as ADHD; defer stimulants until the medical picture is clarified.'
     };
+    var DIFF_LETTER={
+      depression:'Depressive symptoms are often secondary to the demoralisation and chaos of ADHD and frequently improve with effective ADHD treatment. In a current depressive episode, however, stimulants can worsen mood, and treatment will be sequenced with antidepressant or psychological therapy as needed. Atomoxetine has SNRI-like activity that can be useful when both pictures are present.',
+      anxiety:'Anxiety is often secondary to ADHD-driven overwhelm and frequently improves with effective ADHD treatment. Stimulants can sometimes worsen anxiety symptoms — we will start at a low dose, titrate slowly, and consider non-stimulant agents (such as atomoxetine or guanfacine) or an SSRI for co-treatment if anxiety persists or worsens.',
+      bipolar:'In the context of bipolar disorder, mood stabilisation will precede any stimulant trial given the risk of mood elevation or rapid cycling. Any stimulant initiation would be slow, alongside an established mood stabiliser, with a clear early-warning plan for hypomania.',
+      ptsd:'In active PTSD, trauma-focused therapy is the priority and stimulants can worsen hyperarousal and sleep. If used, stimulants will be initiated cautiously with monitoring for triggered re-experiencing; alpha-2 agonists may help with autonomic hyperarousal.',
+      autism:'ADHD and autism frequently co-occur. Stimulants will treat ADHD symptoms but not core autistic features, and sensory or rigidity issues may make side effects less tolerable; titration will be slower with realistic expectations discussed.',
+      neurodevel_other:'Co-occurring neurodevelopmental difficulties will be coordinated with relevant supports (speech, OT, psychology) and the ADHD treatment plan tailored to complement rather than override existing strategies.',
+      tic_tourette:'Occasionally stimulants can worsen tics. Whichever treatment we choose, close monitoring of any worsening of symptoms is warranted; if our treatment worsens tics there are alternatives including atomoxetine or alpha-2 agonists.',
+      schizophrenia:'In a current psychotic illness, stimulants are a relative contraindication. Psychosis will be stabilised first; any subsequent stimulant trial would only proceed under specialist psychiatric oversight with cautious titration.',
+      ocd:'In active OCD, stimulants can worsen obsessive thinking and compulsive checking. OCD will be treated first with SSRI / CBT-ERP; atomoxetine may be a safer option if pharmacotherapy for ADHD is also needed.',
+      personality:'Borderline / emotional dysregulation features can improve with ADHD treatment, but stimulants carry abuse and diversion risk in this group. Prescribing will be paired with stable psychotherapy (such as DBT) and risk reviewed frequently; non-stimulants will be favoured where reasonable.',
+      anorexia:'In the context of anorexia nervosa, stimulants suppress appetite and would worsen restriction. Treatment of the eating disorder takes priority, with stimulants deferred until weight is restored; non-appetite-suppressing options will be preferred if pharmacotherapy is needed in the interim.',
+      bulimia:'In bulimia nervosa, stimulants can sometimes reduce binge frequency but may also worsen restrictive elements. Treatment will be coordinated with eating-disorder services with close monitoring of weight and eating patterns.',
+      bed:'Lisdexamfetamine has FDA approval for moderate-severe binge eating disorder. Where BED and ADHD co-occur, lisdexamfetamine is a reasonable dual-target choice with appropriate eating-pattern monitoring.',
+      sleep:'Untreated sleep disorders can mimic and amplify ADHD symptoms. The sleep diagnosis will be optimised first; if stimulants are still needed, dosing will be timed to minimise further sleep disruption.',
+      neurodegen:'A neurodegenerative process changes the differential and the prescribing calculus. The underlying diagnosis will be confirmed with the relevant specialist before stimulant initiation.',
+      tbi:'In the context of past traumatic brain injury, neurological stability and seizure risk will be confirmed before stimulant initiation, with neurology input as needed.',
+      suicidality:'Active suicidality requires an active safety plan with means restriction, agreed contacts, and clear escalation pathways. Whether stimulant initiation is appropriate at this time will be reviewed in line with the safety plan.',
+      substance_induced:'Where the symptom picture may be substance-induced, sustained abstinence and reassessment will precede any ADHD diagnosis or stimulant initiation.',
+      medical:'Where a medical or neurological cause is suspected as the primary explanation, this will be investigated and excluded before treating as ADHD; stimulants will be deferred until the medical picture is clarified.'
+    };
     DIFFS.forEach(function(d){
       if(S.differentials[d.id]==='Current'){
-        add('diff_'+d.id,_letterCleanLabel(d.label)+' — current',DIFF_PLAN[d.id]||'Coordinate ADHD treatment with management of this comorbidity. Tailor agent choice and titration accordingly.');
+        add('diff_'+d.id,_letterCleanLabel(d.label)+' — current',DIFF_PLAN[d.id]||'Coordinate ADHD treatment with management of this comorbidity. Tailor agent choice and titration accordingly.',DIFF_LETTER[d.id]||('In the context of '+_smartLower(_letterCleanLabel(d.label))+', ADHD treatment will be coordinated with management of this comorbidity and the agent and titration tailored accordingly.'));
       }
     });
   }
@@ -2346,16 +2433,21 @@ function getMedSafetyConcerns(){
   if(typeof mseVals==='function'){
     var harmV=mseVals('harm_others');
     if(harmV.length&&!harmV.every(function(v){return /Nil/i.test(v);})){
-      add('mse_harm','Risk to others flagged on MSE','Document the specific risk, target if any, intent and means. Consider duty-of-warn / public-protection obligations, escalation to the relevant authorities if required, and a clear safety plan. Defer or restrict prescribing until risk is reduced.');
+      add('mse_harm','Risk to others flagged on MSE',
+        'Document the specific risk, target if any, intent and means. Consider duty-of-warn / public-protection obligations, escalation to the relevant authorities if required, and a clear safety plan. Defer or restrict prescribing until risk is reduced.',
+        'Risk to others was identified at this assessment. The specific risk and any duty-of-warn obligations have been considered, with a safety plan in place; prescribing decisions will be aligned with that plan.');
     }
   }
-  // MBS billing flags — important to surface so the wrong item isn't billed
   var mbs=f('mbsItem'),prev=S.prevPsych||'';
   if((mbs==='291'||mbs==='92435')&&prev==='Yes'){
-    add('mbs_repeat_29x','MBS '+mbs+' but a 291/92435 has been billed in the past 12 months','Item 291/92435 cannot be claimed twice within a 13-month window. Switch to a review item (296/92437) or document the rationale before billing.');
+    add('mbs_repeat_29x','MBS '+mbs+' but a 291/92435 has been billed in the past 12 months',
+      'Item 291/92435 cannot be claimed twice within a 13-month window. Switch to a review item (296/92437) or document the rationale before billing.',
+      'MBS item '+mbs+' has been selected; a 291/92435 has already been billed in the past 12 months. The billing item will be reviewed before claiming.');
   }
   if((mbs==='293'||mbs==='92436')&&prev==='No'){
-    add('mbs_review_no_prior','MBS '+mbs+' (review) without a prior 291/92435','The review items 293/92436 require a 291/92435 plan to have been billed in the past 12 months. Consider 296/92437 if no prior plan applies.');
+    add('mbs_review_no_prior','MBS '+mbs+' (review) without a prior 291/92435',
+      'The review items 293/92436 require a 291/92435 plan to have been billed in the past 12 months. Consider 296/92437 if no prior plan applies.',
+      'MBS review item '+mbs+' requires a prior 291/92435 to have been billed in the past 12 months. The billing item will be reviewed before claiming.');
   }
   return out;
 }
@@ -2826,27 +2918,67 @@ function fuQuickInit(){
 }
 function renderSafetyConcerns(){
   var alertEl=$('medsafety-panel');
-  // Legacy fu-safety-concerns container — clear it; cards live in the Alerts
-  // tab now (#medsafety-panel) so they aren't repeated inside the FU plan.
   var fuEl=$('fu-safety-concerns');if(fuEl)fuEl.innerHTML='';
   var concerns=getMedSafetyConcerns();
-  function cards(){
-    return concerns.map(function(c){
-      var off=!c.include;
-      return '<div class="ms-card'+(off?' off':'')+'">'
-        +'<div class="ms-head">'
-          +'<button class="ms-include'+(off?'':' on')+'" onclick="setSafetyOverride(\''+c.key+'\',\'include\','+off+')">'+(off?'Excluded':'Included')+'</button>'
-          +'<span class="ms-concern">'+esc(c.concern)+'</span>'
-        +'</div>'
-        +'<div class="ms-plan"><strong>Plan:</strong> '+esc(c.plan)+'</div>'
-      +'</div>';
-    }).join('');
-  }
-  if(alertEl){
-    alertEl.innerHTML=concerns.length
-      ?'<div class="fl" style="margin-top:12px;padding:0 4px">Medical safety concerns</div>'+cards()
-      :'';
-  }
+  if(!alertEl)return;
+  if(!alertEl._tabState)alertEl._tabState={};
+  var tabState=alertEl._tabState;
+  alertEl.innerHTML=concerns.length
+    ?'<div class="fl" style="margin-top:12px;padding:0 4px">Medical safety concerns</div>'+
+      concerns.map(function(c){
+        var off=!c.include;
+        var tab=tabState[c.key]||'letter';
+        return '<div class="ms-card'+(off?' off':'')+'" data-mskey="'+c.key+'">'
+          +'<div class="ms-head">'
+            +'<button class="ms-include'+(off?'':' on')+'" data-mstoggle="'+c.key+'">'+(off?'Excluded':'Included')+'</button>'
+            +'<span class="ms-concern">'+esc(c.concern)+'</span>'
+          +'</div>'
+          +'<div class="ms-tabs">'
+            +'<button class="ms-tab'+(tab==='letter'?' active':'')+'" data-msview="letter|'+c.key+'">Letter</button>'
+            +'<button class="ms-tab'+(tab==='rec'?' active':'')+'" data-msview="rec|'+c.key+'">Recommendation</button>'
+          +'</div>'
+          +'<div class="ms-pane'+(tab==='letter'?'':' hidden')+'" data-mspane="letter|'+c.key+'">'
+            +'<textarea class="ms-letter" data-mslettertext="'+c.key+'" rows="3">'+esc(c.letterText)+'</textarea>'
+          +'</div>'
+          +'<div class="ms-pane'+(tab==='rec'?'':' hidden')+'" data-mspane="rec|'+c.key+'">'
+            +'<div class="ms-plan"><strong>Recommendation:</strong> '+esc(c.plan)+'</div>'
+          +'</div>'
+        +'</div>';
+      }).join('')
+    :'';
+  // Delegated click handler for include + tab toggle
+  if(alertEl._h)alertEl.removeEventListener('click',alertEl._h);
+  alertEl._h=function(e){
+    var t=e.target.closest('[data-mstoggle]');
+    if(t){
+      var k=t.getAttribute('data-mstoggle');
+      var cur=getMedSafetyConcerns().filter(function(c){return c.key===k;})[0];
+      setSafetyOverride(k,'include',cur?!cur.include:true);
+      return;
+    }
+    var v=e.target.closest('[data-msview]');
+    if(v){
+      var parts=v.getAttribute('data-msview').split('|');
+      tabState[parts[1]]=parts[0];
+      renderSafetyConcerns();
+      return;
+    }
+  };
+  alertEl.addEventListener('click',alertEl._h);
+  // Save edits to the letter textarea
+  if(alertEl._i)alertEl.removeEventListener('input',alertEl._i);
+  alertEl._i=function(e){
+    var t=e.target.closest('[data-mslettertext]');
+    if(!t)return;
+    var k=t.getAttribute('data-mslettertext');
+    // Save the edit without forcing a re-render (would otherwise lose focus
+    // mid-keystroke). The textarea value is already correct in the DOM.
+    if(!S.safetyOverrides)S.safetyOverrides={};
+    if(!S.safetyOverrides[k])S.safetyOverrides[k]={};
+    S.safetyOverrides[k].letterText=t.value;
+    if(typeof save==='function')save();
+  };
+  alertEl.addEventListener('input',alertEl._i);
 }
 
 function fuRemoveAppt(i) {
@@ -6314,10 +6446,14 @@ function buildLetterReport(){
       h+='<p>'+prCap+' '+has+' been asked to arrange / provide the following '+esc(pTime.toLowerCase())+': '+esc(_lowerPreserveAcronyms(fuProvideList.join(', ')))+'.</p>';
     }
 
-    // 2. Medical safety (only if any concerns are flagged AND user hasn't excluded them)
+    // 2. Medical safety (only if any concerns are flagged AND user hasn't excluded them).
+    // The letter version of each concern is what gets emitted; clinician
+    // can override per-concern via the Letter pane in the Alerts area.
     if(includedMedSafety.length){
       h+='<div class="mgmt-sub">Medical safety</div>';
-      h+='<ul>'+includedMedSafety.map(function(c){return '<li><strong>'+esc(c.concern)+':</strong> '+esc(c.plan||c.defaultPlan)+'</li>';}).join('')+'</ul>';
+      h+=includedMedSafety.map(function(c){
+        return '<p>'+esc(c.letterText||c.plan||c.defaultPlan)+'</p>';
+      }).join('');
     }
 
     // 3. Pharmacological
