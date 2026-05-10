@@ -272,7 +272,8 @@ select.inp{appearance:none}
 .factor-tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .dev-block{margin-bottom:6px}
 .dev-block .dev-qrow{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;display:flex;align-items:center;gap:8px;cursor:pointer}
-.dev-block .dev-qrow:hover{border-color:var(--primary);background:#f8fafc}
+.dev-block .dev-qrow:hover{border-color:#94a3b8;background:#f8fafc}
+.dev-block .dev-qrow.on{border-color:var(--green);background:var(--green-bg)}
 .dev-caret{margin-left:auto;background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 6px;border-radius:4px}
 .dev-caret:hover{background:#f1f5f9;color:var(--text)}
 .dev-opts{padding:6px 8px 4px 36px;display:grid;grid-template-columns:1fr;gap:3px;background:#fafbff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;margin-top:-3px}
@@ -4058,7 +4059,7 @@ function renderDev(){
     var qBtn=d.qs&&d.qs.length?'<button class="qbtn dev-qbtn" data-qid2="'+d.id+'">?</button>':'';
     var optBadge=d.options&&checkedOptCount?'<span class="dev-opt-badge">'+checkedOptCount+'</span>':'';
     html+='<div class="dev-block">'+
-      '<div class="crow dev-qrow" data-devid2="'+d.id+'">'+
+      '<div class="crow dev-qrow'+(on?' on':'')+'" data-devid2="'+d.id+'">'+
         '<div class="cbox dev-cbox'+(on?' yes':'')+'" data-cboxfor="'+d.id+'"></div>'+
         '<div class="clabel">'+esc(d.label)+optBadge+'</div>'+
         qBtn+caret+
@@ -4073,16 +4074,18 @@ function renderDev(){
     // ? button → open questions drawer
     var q=e.target.closest('.dev-qbtn');
     if(q){e.stopPropagation();openDrawer(e,q.getAttribute('data-qid2'),'dev');return;}
-    // Caret → toggle dropdown only
-    var c=e.target.closest('.dev-caret');
-    if(c){
-      var id=c.getAttribute('data-caret');
-      devEl._openIds[id]=!devEl._openIds[id];
-      renderDev();return;
+    // Cbox click → toggle parent only, no expand
+    var cbox=e.target.closest('.dev-cbox');
+    if(cbox){
+      e.stopPropagation();
+      var id=cbox.getAttribute('data-cboxfor');
+      S.dev[id]=!S.dev[id];
+      renderDev();save();refresh();return;
     }
     // Sub-option click → toggle option + auto-tick parent
     var opt=e.target.closest('.dev-opt-row');
     if(opt){
+      e.stopPropagation();
       var key=opt.getAttribute('data-optkey');
       var parentId=key.replace(/_\d+$/,'');
       S.devOpts[key]=!S.devOpts[key];
@@ -4095,20 +4098,12 @@ function renderDev(){
       if(anyOn)S.dev[parentId]=true;
       renderDev();save();refresh();return;
     }
-    // Cbox click → toggle parent only (no expand)
-    var cbox=e.target.closest('.dev-cbox');
-    if(cbox){
-      var id=cbox.getAttribute('data-cboxfor');
-      S.dev[id]=!S.dev[id];
-      renderDev();save();refresh();return;
-    }
-    // Anywhere else on the row label → also toggle the parent (matches existing
-    // crow click affordance) but do NOT expand.
+    // Anywhere else on the row → toggle dropdown
     var row=e.target.closest('.dev-qrow');
     if(row){
       var id2=row.getAttribute('data-devid2');
-      S.dev[id2]=!S.dev[id2];
-      renderDev();save();refresh();return;
+      if(id2){devEl._openIds[id2]=!devEl._openIds[id2];renderDev();}
+      return;
     }
   };
   devEl.addEventListener('click',devEl._h);
