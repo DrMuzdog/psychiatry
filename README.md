@@ -6,7 +6,7 @@ All tools run entirely in your browser — no data is sent anywhere, nothing is 
 
 ---
 
-## ADHD Assessment Generators
+## ADHD Assessment
 
 ### [Ben's Amazing ADHD Assessment Generator](adhd5.html)
 This has everything you need — suitable for both initial assessments and follow-up reviews:
@@ -20,16 +20,6 @@ This has everything you need — suitable for both initial assessments and follo
 - Generates a nice ADHD report and script text for eScripts
 
 Perfect for beginners and experienced psychiatrists alike.
-
-### [ADHD Telehealth Reference Guide](adhd-telehealth-guide.html)
-A reference guide for conducting ADHD assessments and reviews via telehealth.
-
-### [Old ADHD Assessment Generator](adhd3.html)
-The first one I made. Subtle differences and not as good — kept here for reference.
-
----
-
-## ASD Assessment
 
 ### [ASD Assessment v2](asd.html)
 A structured assessment tool for autism spectrum disorder.
@@ -51,3 +41,14 @@ A different psychoeducation delivery style.
 - [YBOCS](ybocs_scale.html) — Yale-Brown Obsessive Compulsive Scale
 - [Depression Rating Scales](depression-scales.html)
 - [DIVA and ASRS in full](diva_asrs.html)
+
+---
+
+<sub>
+
+#### Other
+
+- [ADHD Telehealth Reference Guide](adhd-telehealth-guide.html)
+- [Old ADHD Assessment Generator](adhd3.html)
+
+</sub>
