@@ -1253,7 +1253,11 @@ select.inp{appearance:none}
           <button class="rb" onclick="setV('uds','Not done',this,'ap')">Not provided</button>
           <button class="rb" onclick="setV('uds','N/A',this,'ap')">N/A</button>
         </div>
-        <input class="inp" id="udsDetail" placeholder="UDS detail — substances detected, date, lab..." style="margin-top:8px" oninput="save();refresh()">
+        <div id="uds-pos-panel" style="display:none;margin-top:8px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#475569;margin-bottom:4px">Substances detected (tap any that apply)</div>
+          <div id="uds-pos-chips" class="ar-chips"></div>
+        </div>
+        <input class="inp" id="udsDetail" placeholder="UDS detail — date, lab, additional notes..." style="margin-top:8px" oninput="save();refresh()">
       </div>
       <div class="inv-row">
         <label class="fl">Other investigations</label>
@@ -1551,6 +1555,7 @@ const RISK_FACTORS=['Family hx of ADHD','Family hx of autism / NDD','Family hx o
 const PERPETUATING_FACTORS=['Untreated or under-treated ADHD symptoms','Poor sleep / disrupted circadian rhythm','Iron deficiency, low vitamin D, or other nutritional issue','Untreated comorbid mental illness (anxiety, depression, SUD)','Stimulant or other substance misuse','Cannabis use','Excessive caffeine','Insufficient workplace or educational supports','Maladaptive coping (procrastination, avoidance, all-or-nothing effort)','Learned helplessness / negative self-concept','Internalised shame / low self-esteem','Lack of structure (no routines, planning systems, or external scaffolding)','Chronic stress or relational conflict','Caregiver burden','Financial or housing instability','Low physical activity','Excessive screen / social media use','Lack of psychoeducation about ADHD','Carer or partner accommodating dysfunction'];
 const PROTECTIVE_FACTORS=['Established treatment / engaged with care','Strong family or social supports','Supportive partner','Stable housing and finances','Effective routines and structure','Regular exercise','Good sleep hygiene','Healthy diet','Workplace or educational accommodations in place','Engaged with psychology / coaching','Insight and motivation for change','Positive therapeutic alliance','Above-average intellectual ability','Strong interests or sense of purpose','Spiritual or community engagement','Absence of substance use'];
 const ASSESS_REASONS=['Self-recognised symptoms','GP recommended','Psychologist recommended','Partner / spouse recommended','Child(ren) recently diagnosed','Family member recently diagnosed','Workplace or academic difficulties'];
+const UDS_POS_DRUGS=['Amphetamines','Benzodiazepines','Cannabis','Cocaine','Opiates'];
 const ASSESS_REASON_NARR={
   'Self-recognised symptoms':'recognising symptoms in {refl}',
   'GP recommended':'a recommendation from {poss} GP',
@@ -2155,7 +2160,7 @@ const TIT_SCEN={
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 const SETTINGS_LIST=['Home','Work','School','TAFE','University','Romantic / partner relationships','Family relationships','Friendships / social','Driving','Recreational / hobbies','Sport / physical activity','Spiritual / religious','Self-care / health management','Online / digital'];
-const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0,tier:0,devOpts:{}};
+const S={difficulties:{},dev:{},dsm:{},dsmManual:{},differentials:{},cardiac:{},medical:{},mse:{},malingering:{},substances:{},screening:{},dx:'',subtype:'',dxManual:false,subtypeManual:false,safeScript:'',drugDep:'',sudDiff:'',uds:'',ecg:'',peChips:{},fam:{},prevPsych:'',otherPresent:'',reviewType:'Initial',sideFx:{},medResponse:'',adherence:'',coverage:'',sideFxRating:'',fuDecision:'',safetyOverrides:{},noPastPsych:false,noMedHistory:false,noCardiacRisk:false,noFamPsych:false,noSubHistory:false,diffDetail:{},subDetail:{},famDetail:{},userTouchedProvide:{},invNotProvided:{},predispose:{},perpetuate:{},protective:{},assessReason:{},settings:{},qol:0,tier:0,devOpts:{},udsPos:{}};
 const SIDE_FX=[{id:'appetite',label:'Reduced appetite'},{id:'insomnia',label:'Insomnia / sleep disturbance'},{id:'headache',label:'Headache'},{id:'dryMouth',label:'Dry mouth'},{id:'hrBp',label:'Elevated HR / BP'},{id:'anxiety',label:'Anxiety / jitteriness'},{id:'mood',label:'Mood changes / irritability'},{id:'gi',label:'GI upset / nausea'},{id:'rebound',label:'Rebound / afternoon crash'},{id:'weight',label:'Weight loss'},{id:'tics',label:'Tics'},{id:'libido',label:'Sexual / libido changes'},{id:'none',label:'Nil reported'}];
 var titMeds=[];
 var titCurTab='rich';
@@ -2218,8 +2223,27 @@ function getMedSafetyConcerns(){
   }
   if(/concern/i.test(S.safeScript||'')&&!/no concerns?/i.test(S.safeScript||''))
     add('safescript_concern','SafeScript / RTPM concern flagged'+(f('ssDetail')?' — '+f('ssDetail'):''),'Document rationale for prescribing; coordinate with prior prescribers; consider non-stimulant or supervised dispensing.');
-  if(S.uds==='Positive')
-    add('uds_positive','Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),'Address ongoing substance use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing.');
+  if(S.uds==='Positive'){
+    var udsAny=S.udsPos&&Object.keys(S.udsPos).filter(function(k){return S.udsPos[k];}).length>0;
+    if(!udsAny){
+      // Generic alert when no specific drug ticked
+      add('uds_positive','Positive urine drug screen'+(f('udsDetail')?' ('+f('udsDetail')+')':''),'Clarify which substances were detected; cross-check SafeScript / RTPM and prescribed medications; address any unprescribed use; reassess prescribing risk; consider non-stimulant alternatives or supervised dispensing as indicated.');
+    } else {
+      var UDS_PLAN={
+        Amphetamines:'Distinguish between currently-prescribed stimulant medication (legitimate detection) and non-prescribed / illicit use. Cross-check SafeScript / RTPM, the current medication regimen, and self-report. If unprescribed, address the substance use, treat any underlying SUD, and reconsider stimulant prescribing given the dependence and diversion risk.',
+        Benzodiazepines:'Cross-check SafeScript / RTPM for any prescribed benzodiazepines. If prescribed, document the indication and consider whether co-prescribing with a stimulant will simply pull in opposing directions (sedation vs activation) and blunt benefit; weigh dependence and overdose risk, especially if opioids are also present. If unprescribed or in the context of substance use, address the SUD and defer or limit stimulant prescribing until the picture is clearer.',
+        Cannabis:'First clarify whether this reflects illicit use or prescribed medicinal cannabis. Stimulant medications are not recommended in the context of active cannabis use given the increased risk of psychosis, paranoia and cardiovascular strain. Recommended approach: counsel toward abstinence and repeat UDS in 4 weeks before initiating a stimulant, or alternatively offer a non-stimulant agent (atomoxetine or guanfacine) which is safer in this context.',
+        Cocaine:'Active cocaine use is generally considered a contraindication to stimulant initiation given the combined cardiovascular risk, abuse potential, and dependence. Address the SUD with active treatment and referral, defer stimulant pharmacotherapy until sustained abstinence is demonstrated, and consider non-stimulant ADHD options if pharmacotherapy is clinically indicated in the interim.',
+        Opiates:'Cross-check SafeScript / RTPM and prescribed analgesia (chronic pain) or opioid agonist therapy (e.g. methadone, buprenorphine). If prescribed, document and proceed cautiously — be alert to combined sedative load if benzodiazepines are also detected. If unprescribed or illicit, address the substance use and defer stimulants until risk is clarified; opioid use disorder warrants integrated addiction care alongside any ADHD treatment plan.'
+      };
+      UDS_POS_DRUGS.forEach(function(d){
+        var key=d.replace(/[^a-zA-Z0-9]/g,'_');
+        if(S.udsPos[key]){
+          add('uds_'+key,'UDS positive — '+d,UDS_PLAN[d]||'Clarify source and prescribing implications.');
+        }
+      });
+    }
+  }
   if(S.sudDiff==='Current')
     add('sud_current','Current substance use disorder','Active treatment / referral for SUD; integrate prescribing with addiction-aware approach; consider non-stimulant or supervised dispensing.');
   if(typeof mseVals==='function'){
@@ -3885,6 +3909,24 @@ function renderAssessReasonChips(){
 function toggleAssessReason(key,btn){
   S.assessReason[key]=!S.assessReason[key];
   if(btn)btn.classList.toggle('on',!!S.assessReason[key]);
+  save();refresh();
+}
+function renderUdsPos(){
+  var panel=$('uds-pos-panel');if(!panel)return;
+  if(S.uds!=='Positive'){panel.style.display='none';return;}
+  panel.style.display='';
+  if(!S.udsPos)S.udsPos={};
+  var chips=$('uds-pos-chips');if(!chips)return;
+  chips.innerHTML=UDS_POS_DRUGS.map(function(d){
+    var key=d.replace(/[^a-zA-Z0-9]/g,'_');
+    var on=!!S.udsPos[key];
+    return '<button type="button" class="ar-chip'+(on?' on':'')+'" onclick="toggleUdsPos(\''+key+'\',this)">'+d+'</button>';
+  }).join('');
+}
+function toggleUdsPos(key,btn){
+  if(!S.udsPos)S.udsPos={};
+  S.udsPos[key]=!S.udsPos[key];
+  if(btn)btn.classList.toggle('on',!!S.udsPos[key]);
   save();refresh();
 }
 function renderScreening(){
@@ -7510,6 +7552,7 @@ function refresh(){
     if(docSections[sec])b.classList.add('on'); else b.classList.remove('on');
   });
   autoDSM();
+  if(typeof renderUdsPos==='function')renderUdsPos();
   if(typeof syncInvNPButtons==='function')syncInvNPButtons();
   fuAutoFromSafety();
   if(typeof maybeRefreshFormulation==='function')maybeRefreshFormulation();
@@ -7568,6 +7611,7 @@ function init(){
   renderFactorChecks('perpetuate-checks',PERPETUATING_FACTORS,'perpetuate');
   renderFactorChecks('protective-checks',PROTECTIVE_FACTORS,'protective');
   renderAssessReasonChips();
+  renderUdsPos();
   autoDSM();renderMSE();renderCardiac();renderMedical();renderSubs();renderMal();renderPE();renderFam();renderPrevPsych();
   renderTitMeds();
   calcBMI();
