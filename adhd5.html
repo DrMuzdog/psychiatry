@@ -1571,7 +1571,7 @@ const DEV=[
       'Forgetful, lost belongings frequently',
       'Talkative or disruptive in class',
       'Compensated through high IQ — symptoms hidden by capability',
-      'Quiet inattentive / "good girl" presentation (often missed)',
+      'Quiet inattentive / "good child" presentation (often missed)',
       'School reports themed around "potential" and inconsistency'
     ]},
   {id:'adolescent',label:'Adolescent pattern',
@@ -1584,7 +1584,9 @@ const DEV=[
       'Underperformed despite measured intelligence',
       'Anxiety / perfectionism developed as compensation',
       'Symptoms masked by structured / high-support schooling',
-      'Difficulties only emerged at uni / first job (loss of structure)'
+      'Difficulties only emerged at uni / first job (loss of structure)',
+      'Body-focused repetitive behaviour (skin picking, hair pulling, nail biting)',
+      'Addictive behaviours (gaming, gambling, pornography, scrolling)'
     ]},
   {id:'adult',label:'Adult pattern',
     qs:['How do these traits show up now in work, study, home admin, finances, or relationships?','What happens for you with tasks that are boring, repetitive, delayed-reward, or paperwork-heavy?','Do you struggle more with starting, organising, prioritising, switching, following through, or tracking time?','Do you function much better only when there is urgency, novelty, pressure, or strong personal interest?','What failures of everyday executive function keep recurring despite insight and effort?'],
@@ -5467,13 +5469,21 @@ function buildFullReport(){
   if(screenItems.length){ h+=sec('Screening and Collateral'); h+=list(screenItems); }
 
   // 3. Developmental / symptom history
-  var devYes=DEV.filter(function(d){return S.dev[d.id]&&d.type!=='label';});
-  if(devYes.length||f('devNotes')){
+  var devParents=DEV.filter(function(d){return d.type!=='sym'&&d.type!=='label';});
+  var devYesParents=devParents.filter(function(d){
+    if(S.dev[d.id])return true;
+    if(d.options&&S.devOpts){return d.options.some(function(_,i){return S.devOpts[d.id+'_'+i];});}
+    return false;
+  });
+  var inattSx=DEV.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0&&S.dev[d.id];});
+  var hiSx=DEV.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0&&S.dev[d.id];});
+  if(devYesParents.length||inattSx.length||hiSx.length||f('devNotes')){
     h+=sec('Developmental and Symptom History');
-    var devNorm=devYes.filter(function(d){return d.type!=='sym';});
-    var inattSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0;});
-    var hiSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0;});
-    if(devNorm.length) h+=list(devNorm.map(function(d){return esc(d.label);}));
+    devYesParents.forEach(function(d){
+      h+=p('<strong>'+esc(d.label)+':</strong>');
+      var opts=(d.options||[]).filter(function(_,i){return S.devOpts&&S.devOpts[d.id+'_'+i];});
+      if(opts.length)h+=list(opts.map(esc));
+    });
     if(inattSx.length){ h+=p('<strong>Core inattention symptoms ('+inattSx.length+'/9):</strong>'); h+=list(inattSx.map(function(d){return esc(d.label);})); }
     if(hiSx.length){ h+=p('<strong>Core hyperactivity / impulsivity symptoms ('+hiSx.length+'/9):</strong>'); h+=list(hiSx.map(function(d){return esc(d.label);})); }
     if(f('devNotes')) h+=p(nl(f('devNotes')));
@@ -5792,28 +5802,38 @@ function buildLetterReport(){
     if(f('screenNotes'))h+=_letterParas(f('screenNotes'));
   }
 
-  // Developmental and symptom history — prose form. Reports the symptom
-  // counts and any developmental milestones endorsed; if any developmental
-  // checkpoints aren't endorsed, append an "However…" sentence.
-  var devYes=(typeof DEV!=='undefined')?DEV.filter(function(d){return S.dev&&S.dev[d.id]&&d.type!=='label';}):[];
-  var devAll=(typeof DEV!=='undefined')?DEV.filter(function(d){return d.type==='dev';}):[];
-  var devMissing=devAll.filter(function(d){return !S.dev||!S.dev[d.id];});
-  var devNorm=devYes.filter(function(d){return d.type!=='sym';});
-  var inattSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0;});
-  var hiSx=devYes.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0;});
-  if(devYes.length||f('devNotes')){
+  // Developmental and symptom history — prose form. Weaves selected
+  // sub-options under each pattern heading (childhood / adolescent / adult /
+  // real-world). No commentary on what wasn't selected.
+  var devParentsP=(typeof DEV!=='undefined')?DEV.filter(function(d){return d.type!=='sym'&&d.type!=='label';}):[];
+  var devActiveP=devParentsP.filter(function(d){
+    if(S.dev&&S.dev[d.id])return true;
+    if(d.options&&S.devOpts){return d.options.some(function(_,i){return S.devOpts[d.id+'_'+i];});}
+    return false;
+  });
+  var inattSx=DEV.filter(function(d){return d.id&&d.id.indexOf('sym_inatt')===0&&S.dev&&S.dev[d.id];});
+  var hiSx=DEV.filter(function(d){return d.id&&d.id.indexOf('sym_hi')===0&&S.dev&&S.dev[d.id];});
+  if(devActiveP.length||inattSx.length||hiSx.length||f('devNotes')){
     h+='<h3>Developmental and symptom history</h3>';
     if(inattSx.length||hiSx.length){
       h+='<p>'+prCap+' endorsed <strong>'+inattSx.length+'/9</strong> core inattention symptoms and <strong>'+hiSx.length+'/9</strong> core hyperactivity / impulsivity symptoms in adulthood.</p>';
     }
-    if(devNorm.length){
-      var devLabels=devNorm.map(function(d){return _smartLower(_letterCleanLabel(d.label));});
-      h+='<p>Supporting developmental features included '+esc(_joinList(devLabels))+'.</p>';
-    }
-    if(devAll.length&&devMissing.length){
-      var missLabels=devMissing.map(function(d){return _smartLower(_letterCleanLabel(d.label));});
-      h+='<p>However, there was insufficient evidence for '+esc(_joinList(missLabels))+'.</p>';
-    }
+    var DEV_LEAD={
+      childhood:{withOpts:'In childhood, ',bare:'In childhood, a developmental pattern consistent with ADHD was endorsed.'},
+      adolescent:{withOpts:'In adolescence, ',bare:'In adolescence, a developmental pattern consistent with ADHD was endorsed.'},
+      adult:{withOpts:'As an adult, ',bare:'As an adult, a developmental pattern consistent with ADHD was endorsed.'},
+      realworld:{withOpts:'Real-world manifestations described included ',bare:'Real-world manifestations consistent with ADHD were described.'}
+    };
+    devActiveP.forEach(function(d){
+      var opts=(d.options||[]).filter(function(_,i){return S.devOpts&&S.devOpts[d.id+'_'+i];});
+      var lead=DEV_LEAD[d.id]||{withOpts:d.label+': ',bare:d.label+'.'};
+      if(opts.length){
+        var phrases=opts.map(function(o){return _smartLower(o);});
+        h+='<p>'+esc(lead.withOpts)+esc(_joinList(phrases))+'.</p>';
+      } else {
+        h+='<p>'+esc(lead.bare)+'</p>';
+      }
+    });
     if(f('devNotes'))h+=_letterParas(f('devNotes'));
   }
 
