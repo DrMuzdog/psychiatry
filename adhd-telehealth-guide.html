@@ -146,6 +146,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .safety-item.flag{background:#fff5f5;border-color:#fca5a5}
 .safety-item.abs{background:#fee2e2;border-color:#f87171}
 .si-label{flex:1;font-size:12px;font-weight:500;line-height:1.4;padding-top:1px}
+.si-row{padding:8px 10px;border-radius:6px;cursor:pointer;border:1px solid #e5e7eb;background:#f8fafc;margin-bottom:4px;transition:background .1s}
+.si-row:hover,.si-row.open{background:#eff6ff;border-color:#93c5fd}
+.si-main{display:flex;align-items:center;gap:6px}
+.si-label{flex:1;font-size:12.5px;color:#1e293b;font-weight:500;line-height:1.4}
+.si-caret{font-size:10px;opacity:.5;flex-shrink:0;transition:transform .15s}
+.si-row.open .si-caret{transform:rotate(180deg)}
+.si-detail{display:none;font-size:12px;color:#374151;line-height:1.55;margin-top:6px;padding:7px 9px;background:#fff;border-radius:5px;border:1px solid #e2e8f0}
+.si-row.open .si-detail{display:block}
+.si-abs{background:#fef2f2;border-color:#fca5a5}
+.si-abs .si-label{color:#991b1b}
 /* Titration */
 .tit-pg-section{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin:18px 0 8px;padding-top:4px;border-top:1px solid #e5e7eb}
 .tit-pg-card{background:#f0f6ff;border:1px solid #bfdbfe;border-radius:8px;margin-bottom:12px;overflow:hidden}
@@ -218,6 +228,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 
 <div class="tabs" id="main-tabs">
   <button class="tab active" onclick="showTab('assessment',this)">Assessment</button>
+  <button class="tab" onclick="showTab('medical',this)">Medical Safety</button>
   <button class="tab" onclick="showTab('medications',this)">Medications</button>
   <button class="tab" onclick="showTab('titration',this)">Titration</button>
   <button class="tab" onclick="showTab('prescribing',this)">Prescribing</button>
@@ -815,175 +826,207 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 
 <div class="nav-btns">
   <span></span>
-  <button class="nav-btn nav-next" onclick="navToTab('medications')">Medications →</button>
+  <button class="nav-btn nav-next" onclick="navToTab('medical')">Medical Safety →</button>
 </div>
 
 </div><!-- end assessment panel -->
 
 
 <!-- ══════════════════════════════════════════════════════════════
+     MEDICAL SAFETY TAB
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-medical">
+
+<!-- Investigations -->
+<div class="card">
+  <div class="ch teal" onclick="toggleCard(this)">Investigations Before Prescribing</div>
+  <div class="cb">
+    <div class="callout callout-blue" style="margin-bottom:10px">Routine investigations are not mandated for all patients by Australian guidelines. Clinical judgement applies — use the table below to guide what's indicated for each patient.</div>
+    <table class="ref-tbl">
+      <thead><tr><th>Investigation</th><th>When</th><th>What you're looking for</th></tr></thead>
+      <tbody>
+        <tr><td><strong>BP &amp; HR (seated)</strong></td><td>All patients — baseline and at each titration step</td><td>Hypertension (≥140/90) or resting tachycardia (&gt;100 bpm) — address before or alongside treatment</td></tr>
+        <tr><td><strong>Weight / BMI</strong></td><td>All patients — baseline</td><td>Low BMI or active eating disorder — appetite suppression risk; monitor during titration</td></tr>
+        <tr><td><strong>ECG</strong></td><td>Personal or family history of cardiac disease, arrhythmia, syncope, palpitations, or congenital heart disease</td><td>QTc prolongation, conduction abnormality, LVH, pre-excitation — defer stimulants pending cardiology input if found</td></tr>
+        <tr><td><strong>UDS (urine drug screen)</strong></td><td>Any history of substance use disorder or diversion concern; baseline before S8 prescribing where indicated</td><td>Active stimulant, cannabis, opioid, or benzo use — informs medication choice and monitoring plan</td></tr>
+        <tr><td><strong>TSH</strong></td><td>Fatigue, weight change, mood instability, or clinical suspicion of thyroid disorder</td><td>Hyperthyroidism mimics or worsens ADHD and has additive sympathomimetic effects with stimulants</td></tr>
+        <tr><td><strong>FBE</strong></td><td>Fatigue, clinical anaemia, or baseline for atomoxetine</td><td>Iron deficiency anaemia can cause inattention and fatigue independently of ADHD</td></tr>
+        <tr><td><strong>LFTs</strong></td><td>Before atomoxetine in patients with hepatic risk or unexplained jaundice</td><td>Atomoxetine is hepatically metabolised; rare hepatotoxicity — monitor if LFTs abnormal</td></tr>
+        <tr><td><strong>Fasting lipids / glucose</strong></td><td>Metabolic risk factors, obesity, family history — not mandatory but useful baseline</td><td>Stimulants have modest effects on cardiovascular risk parameters in long-term use</td></tr>
+        <tr><td><strong>RTPM / SafeScript</strong></td><td>All patients before Schedule 8 prescribing</td><td>Current S8 prescriptions, concurrent prescribers, patterns suggesting misuse or diversion</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Cardiac Screening -->
+<div class="card">
+  <div class="ch navy" onclick="toggleCard(this)">Cardiac Screening — Tap any item for clinical note</div>
+  <div class="cb">
+    <div class="callout callout-red" style="margin-bottom:10px"><strong>Absolute contraindication</strong> Current MAOI use — do not prescribe stimulants or atomoxetine until full washout (14 days for most MAOIs).</div>
+
+    <div class="si-row si-abs" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Current MAOI use — absolute contraindication</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Do not prescribe stimulants or atomoxetine until an appropriate washout period is completed (typically 14 days for phenelzine/tranylcypromine; 24 hours for moclobemide). Risk of hypertensive crisis and serotonin syndrome.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Exertional chest pain / unexplained SOB / exercise intolerance</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Possible structural heart disease or ischaemia. Defer stimulants and obtain medical or cardiology assessment first. ECG is a reasonable starting point but doesn't exclude ischaemia.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Palpitations or syncope</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Possible arrhythmia or conduction disorder. Obtain an ECG. If unexplained or recurrent, defer stimulants pending cardiology review. Post-exertional syncope is higher concern than vasovagal.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Dizziness on standing / orthostatic symptoms</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Check orthostatic BP (standing vs seated). Use extra caution with clonidine or guanfacine — they lower BP and can worsen postural hypotension. Stimulants tend to raise BP so are less likely to worsen this.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Family history: sudden cardiac death &lt;40 / unexplained syncope</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Suggests possible inherited arrhythmia (long QT, Brugada, HCM). Obtain ECG and have a low threshold for cardiology review before prescribing stimulants.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Family history: cardiomyopathy / long QT / channelopathy</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Suggests inherited structural or electrical disease. Seek cardiology input before stimulant treatment. ECG is a minimum; echo may be warranted.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Family history: early-onset coronary artery disease (M &lt;55, F &lt;65)</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Increases background cardiovascular risk. Optimise modifiable risk factors (lipids, BP, smoking) and monitor blood pressure during stimulant treatment. Not a contraindication.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Known congenital or structural heart disease</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Liaise with the treating cardiologist before prescribing stimulants. Risk depends on the specific lesion and haemodynamic status. If used, start low and monitor BP, pulse and symptoms closely.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Known arrhythmia / tachyarrhythmia / long QT syndrome</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Higher risk with sympathomimetic drugs. Use stimulants only with cardiology oversight and consider non-stimulants where clinically appropriate. QTc prolongation (&gt;500 ms) is a relative contraindication.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Hypertension</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants raise BP by an average of 2–4 mmHg. Optimise blood pressure control before starting. Monitor at each titration step and at follow-up. Uncontrolled hypertension (&gt;160/100) — defer prescribing.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Medical Conditions -->
+<div class="card">
+  <div class="ch slate" onclick="toggleCard(this)">Medical Conditions — Prescribing Implications — Tap to expand</div>
+  <div class="cb">
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Epilepsy or seizure disorder</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants may lower seizure threshold at higher doses, though the evidence is modest. If seizures are well-controlled on medication, cautious stimulant use is generally acceptable — check recent control and neurology input, start low and monitor.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Narrow-angle glaucoma</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Avoid stimulants and atomoxetine in narrow-angle glaucoma — both can raise intraocular pressure. Open-angle glaucoma is not a contraindication. Check with the treating ophthalmologist if unsure.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Thyroid disorder</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Hyperthyroidism has additive sympathomimetic effects with stimulants (tachycardia, hypertension, anxiety). Treat or stabilise before starting stimulants. Hypothyroidism on stable thyroxine is not a contraindication.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Tic disorder / Tourette syndrome</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants can exacerbate tics in some patients, though evidence is mixed — many tolerate them well. Consider atomoxetine or alpha-2 agonists (guanfacine, clonidine) as first-line. If stimulants used, monitor tic frequency and severity.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Hepatic impairment</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Atomoxetine exposure increases significantly in moderate–severe hepatic impairment (Child-Pugh B/C). Halve the dose in moderate impairment; avoid in severe. Monitor LFTs. Stimulants are less affected by hepatic function.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Renal impairment</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Clonidine and guanfacine may accumulate in renal impairment (both are renally cleared). Titrate slowly and monitor for excessive hypotension and sedation. Stimulants are not significantly renally eliminated.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Pregnancy</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Use non-pharmacological strategies where possible. All ADHD medications cross the placenta with limited safety data. Methylphenidate has the largest dataset. If prescribing, use the lowest effective dose, involve obstetrics, and document a clear risk-benefit discussion.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Breastfeeding</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">All stimulants pass into breast milk in small amounts. Methylphenidate has the lowest relative infant dose data. Consider timing of doses to minimise peak milk concentration (feed before dose or delay). Monitor infant for irritability or poor feeding.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Cardiovascular disease (CAD, heart failure)</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants increase heart rate and blood pressure. Optimise cardiac status and risk factors first, involve the treating cardiologist, and start at the lowest dose with close monitoring. Non-stimulants may be preferable in unstable cardiac disease.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Active or recent eating disorder</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants suppress appetite and can worsen restrictive eating. Avoid until nutritional rehabilitation is underway and the eating disorder is stable. If used, monitor weight closely. Lisdexamfetamine is TGA-approved for BED but must be prescribed carefully in this context.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Low BMI / underweight</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Appetite suppression can be problematic. Consider timing doses with meals, using lower doses, or preferring non-stimulants. Monitor weight at each visit during titration.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Obstructive sleep apnoea</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Optimise OSA treatment first (CPAP compliance) — untreated OSA significantly worsens inattention and fatigue. Time stimulant doses to minimise insomnia. Alpha-2 agonists (clonidine, guanfacine) are useful for nocturnal hyperarousal as add-on.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Raynaud's phenomenon</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants can worsen peripheral vasospasm. Monitor digits in cold weather and consider dose reduction or switch to non-stimulants if symptomatic. Clonidine is vasodilatory and may be a useful adjunct.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Benign prostatic hyperplasia</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Atomoxetine (and to a lesser degree stimulants) can worsen urinary retention via noradrenergic effects. Monitor lower urinary tract symptoms, or avoid atomoxetine in moderate–severe BPH.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Obesity with metabolic syndrome</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Stimulants may help with weight and metabolic parameters as a secondary benefit. Monitor BP and metabolic indices during treatment. Lisdexamfetamine has the most evidence in this context.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">Labile blood pressure / autonomic disorder (Addison's, autonomic neuropathy)</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Both stimulants (raise BP) and alpha-2 agonists (lower BP with rebound on cessation) can destabilise BP. Titrate very cautiously with frequent postural BP checks and liaison with the treating physician.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">End-stage renal disease on dialysis</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Use clonidine and guanfacine very cautiously. Coordinate with nephrology. Stimulants are generally safer in renal failure but BP and fluid status need close monitoring.</div>
+    </div>
+
+    <div class="si-row" onclick="toggleSI(this)">
+      <div class="si-main"><span class="si-label">High falls risk / chronic dizziness (particularly older adults)</span><span class="si-caret">▾</span></div>
+      <div class="si-detail">Alpha-2 agonists can worsen orthostatic hypotension and increase falls risk. Stimulants at low doses are generally tolerable in older adults but BP and pulse should be monitored at each visit.</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="nav-btns">
+  <button class="nav-btn nav-prev" onclick="navToTab('assessment')">← Assessment</button>
+  <button class="nav-btn nav-next" onclick="navToTab('medications')">Medications →</button>
+</div>
+
+</div><!-- end medical panel -->
+
+<!-- ══════════════════════════════════════════════════════════════
      MEDICATIONS TAB
 ══════════════════════════════════════════════════════════════ -->
 <div class="panel" id="panel-medications">
-
-<div class="section-header" style="background:linear-gradient(90deg,#7f1d1d,#991b1b)"><span class="sh-num" style="background:#dc2626">!</span>Safety Screen — Run Before Prescribing</div>
-
-<div class="card">
-  <div class="ch red" onclick="toggleCard(this)">Cardiac Safety — 10 Items to Screen (tap ? for clinical note)</div>
-  <div class="cb">
-    <div class="callout callout-red" style="margin-bottom:8px"><strong>Absolute contraindication</strong> Current MAOI use. Do not prescribe stimulants or atomoxetine until full washout.</div>
-    <div class="safety-grid">
-      <div class="safety-item flag">
-        <span class="si-label">Exertional chest pain / unexplained SOB / exercise intolerance</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Possible structural heart disease or ischaemia. <strong>Defer stimulants</strong> and obtain medical or cardiology assessment first.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Palpitations / syncope or fainting</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Possible arrhythmia or conduction disorder. Obtain history, exam and ECG, and usually defer stimulants until clarified.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Dizziness on standing</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Check orthostatic vitals and hydration first. Use extra caution with clonidine or guanfacine as they can worsen hypotension.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Family history: sudden cardiac death &lt;40 / unexplained syncope or seizures</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Suggests possible inherited arrhythmia. Get ECG and have a low threshold for cardiology review before stimulants.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Family history: cardiomyopathy / long QT / channelopathy</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Suggests inherited structural or electrical disease. Seek cardiology input before stimulant treatment.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Family history: early-onset coronary artery disease (M &lt;55, F &lt;65)</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Increases vascular risk relevance in adults. Optimise risk factors and monitor blood pressure carefully when using stimulants.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Known congenital or structural heart disease</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Liaise with the treating cardiologist before prescribing stimulants. If used, start low and monitor BP, pulse and symptoms closely.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Known arrhythmia / tachyarrhythmia / long QT syndrome</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Higher risk with sympathomimetic drugs. Use stimulants only with cardiology oversight and consider non-stimulants where appropriate.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Hypertension</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Control blood pressure before starting stimulants and monitor regularly during treatment.</div>
-      </div>
-      <div class="safety-item abs">
-        <span class="si-label"><strong>Current MAOI use — ABSOLUTE CONTRAINDICATION</strong></span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Do not prescribe stimulants or atomoxetine until an appropriate washout period is completed. This is an absolute contraindication.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="ch amber" onclick="toggleCard(this)">Medical Safety — 18 Items (tap ? for prescribing note)</div>
-  <div class="cb">
-    <div class="safety-grid">
-      <div class="safety-item flag">
-        <span class="si-label">Epilepsy or seizure disorder</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants may lower seizure threshold. Check recent control and neurology input, start low and monitor.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Glaucoma</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Avoid stimulants and atomoxetine in narrow-angle glaucoma. Consider non-stimulant alternatives.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Thyroid disorder</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Treat or stabilise hyperthyroidism before starting stimulants due to additive sympathomimetic effects.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Raynaud's phenomenon</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants can worsen vasospasm. Monitor digits and consider dose reduction or switch if symptomatic.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Tic disorder</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants can exacerbate tics in some patients. Consider atomoxetine or alpha-2 agonists, or cautious stimulant trial with close monitoring.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Hepatic impairment</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Atomoxetine exposure increases significantly in moderate-severe hepatic impairment. Use lower doses and monitor LFTs.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Renal impairment</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Clonidine and guanfacine may accumulate in renal impairment. Titrate slowly and monitor for hypotension and sedation.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Pregnancy</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Use non-pharmacological strategies where possible. If prescribing in pregnancy, use the lowest effective dose and agents with the best safety data, with obstetric input.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Breastfeeding</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants pass into breast milk in small amounts. Methylphenidate has the lowest excretion. Discuss risks/benefits with the patient and monitor infant for irritability or feeding changes.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Coronary artery disease</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants increase HR and BP. Optimise vascular risk factors, consider cardiology input, start low and monitor closely.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Obesity with metabolic syndrome</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants may reduce appetite and weight. Monitor weight, blood pressure and metabolic parameters during treatment.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Low BMI</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Appetite suppression can be problematic. Prefer non-stimulants or very cautious stimulant use with close weight monitoring.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Current or recent eating disorder</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Stimulants may worsen dietary restriction. Avoid or minimise stimulants and prioritise nutritional rehabilitation.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Obstructive sleep apnoea</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Optimise sleep and OSA treatment first. Time doses to minimise insomnia. Consider alpha-2 agonists for nocturnal hyperarousal.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Benign prostatic hyperplasia</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Atomoxetine can worsen urinary retention. Monitor lower urinary tract symptoms or avoid in severe cases.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">End-stage renal disease</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Use clonidine and guanfacine very cautiously. Coordinate with nephrology and monitor haemodynamics carefully.</div>
-      </div>
-      <div class="safety-item">
-        <span class="si-label">Chronic dizziness or high falls risk</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Alpha-2 agonists can increase orthostatic symptoms and falls risk. Minimise dose and monitor standing blood pressure.</div>
-      </div>
-      <div class="safety-item flag">
-        <span class="si-label">Endocrine/autonomic disorder with labile BP (e.g. Addison disease, autonomic neuropathy)</span>
-        <button class="q-btn" onclick="toggleQ(this)">?</button>
-        <div class="q-box">Both stimulants (raise BP) and alpha-2 agonists (lower BP, with rebound on cessation) can destabilise blood pressure. Titrate very cautiously with frequent postural checks.</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="section-header"><span class="sh-num">1</span>Medication Selection Algorithm</div>
 
@@ -999,9 +1042,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
       <tbody>
         <tr><td>Adults — standard first-line</td><td>Lisdexamfetamine (Vyvanse), Methylphenidate LA/ER, or Dexamphetamine IR</td><td>All have strong efficacy. LDX and long-acting MPH preferred for once-daily dosing; Dex IR is a valid first-line choice for flexible coverage or cost reasons</td></tr>
         <tr><td>Children ≥6 — standard first-line</td><td>Methylphenidate IR/LA or Concerta</td><td>TGA indication; most paediatric safety data</td></tr>
+        <tr><td>Prefer Dex IR over Vyvanse / long-acting</td><td>Dexamphetamine IR BD–TDS</td><td>Indicated when: cost is a barrier (Dex IR significantly cheaper); flexible or PRN coverage needed; patient wants to find optimal dose before committing to long-acting; short duration preferred (eating disorder, sleep-sensitive, afternoon clinics); dose-finding in complex comorbidity</td></tr>
         <tr><td>Active substance use disorder</td><td>Lisdexamfetamine (lower diversion risk) or Atomoxetine</td><td>Prodrug reduces misuse potential</td></tr>
         <tr><td>Comorbid tics / Tourette</td><td>Atomoxetine or Guanfacine XR</td><td>Tic-neutral or anti-tic properties</td></tr>
-        <tr><td>Comorbid anxiety (significant)</td><td>Atomoxetine first; cautious stimulant trial if suboptimal</td><td>Atomoxetine has anxiolytic properties</td></tr>
+        <tr><td>Comorbid anxiety</td><td>Stimulants first-line. Consider atomoxetine only in severe comorbid GAD where anxiety clearly exceeds ADHD-driven presentation.</td><td>ADHD-related anxiety is usually internalised hyperactivity — it resolves with ADHD treatment. True GAD comorbidity is the exception, not the rule.</td></tr>
         <tr><td>Comorbid binge eating disorder</td><td>Lisdexamfetamine (Vyvanse)</td><td>TGA approved for BED (private script — NOT PBS listed for BED). PBS only for ADHD.</td></tr>
         <tr><td>Sleep is a major problem</td><td>Guanfacine XR nocte as add-on; consider clonidine</td><td>Sedating properties; avoid afternoon stimulants</td></tr>
         <tr><td>Stimulants contraindicated / failed</td><td>Atomoxetine → then Guanfacine XR</td><td>Non-stimulant pathway</td></tr>
@@ -1024,7 +1068,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
         <div class="med-col"><label>Available strengths</label><p>20 mg, 30 mg, 40 mg, 50 mg, 60 mg, 70 mg capsules</p></div>
         <div class="med-col"><label>Duration of effect</label><p>12–14 hours. Take in the morning.</p></div>
         <div class="med-col"><label>Starting dose</label><p>20–30 mg mane</p></div>
-        <div class="med-col"><label>Titration</label><p>Increase by 20 mg every 2 weeks as tolerated</p></div>
+        <div class="med-col"><label>Titration</label><p>Increase by 10–20 mg every 1–2 weeks as tolerated</p></div>
         <div class="med-col"><label>Target / usual range</label><p>30–70 mg/day. Most adults: 40–70 mg.</p></div>
         <div class="med-col"><label>Maximum</label><p>70 mg/day (state-independent ceiling)</p></div>
         <div class="med-col"><label>PBS authority</label><p>Required for ADHD (adults + children ≥6) via PRODA. BED = TGA approved but <strong>NOT PBS listed</strong> — private script required.</p></div>
@@ -1228,7 +1272,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <div class="nav-btns">
-  <button class="nav-btn nav-prev" onclick="navToTab('assessment')">← Assessment</button>
+  <button class="nav-btn nav-prev" onclick="navToTab('medical')">← Medical Safety</button>
   <button class="nav-btn nav-next" onclick="navToTab('titration')">Titration →</button>
 </div>
 </div><!-- end medications panel -->
@@ -2968,6 +3012,7 @@ function navToTab(id){
   showTab(id,btn);
   window.scrollTo({top:0,behavior:'smooth'});
 }
+function toggleSI(row){row.classList.toggle('open')}
 function toggleQ(btn){
   var box=btn.nextElementSibling;
   if(!box)return;
