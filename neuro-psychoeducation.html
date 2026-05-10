@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Neurodevelopmental Psychoeducation — Dr Benjamin Murrie</title>
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--border:#e2e6ed;--text:#1a1d23;--muted:#6b7280;--adhd:#1a56db;--adhd-bg:#e8f0fe;--adhd-dark:#1e3a5f;--asd:#0d9488;--asd-bg:#ccfbf1;--asd-dark:#134e4a;--navy:#0f172a;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.topbar{background:var(--navy);padding:10px 14px;border-bottom:3px solid var(--adhd);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topbar-title{font-size:13px;font-weight:800;color:#93c5fd;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.ti{background:#1e293b;border:1px solid #334155;color:#f1f5f9;padding:5px 9px;border-radius:7px;font:inherit;font-size:13px;min-width:0}
+.ti::placeholder{color:#64748b}
+.ti:focus{outline:1px solid var(--adhd);background:#243349}
+.content{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
+.section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:7px;margin-top:16px}
+.disorder-row{display:flex;gap:7px;flex-wrap:wrap}
+.dis-btn{padding:9px 22px;border-radius:999px;border:2px solid var(--border);background:#fff;font:700 13px var(--sans);cursor:pointer;transition:all .12s;color:#475569}
+.dis-btn:hover{border-color:#94a3b8;background:#f8fafc}
+.dis-btn.active-adhd{background:var(--adhd-dark);border-color:var(--adhd-dark);color:#fff}
+.dis-btn.active-asd{background:var(--asd-dark);border-color:var(--asd-dark);color:#fff}
+.dis-btn.active-both{background:linear-gradient(90deg,var(--adhd-dark) 0%,var(--asd-dark) 100%);border-color:var(--adhd-dark);color:#fff}
+.condition-block{margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.condition-header{padding:10px 14px;font:700 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px}
+.condition-header.adhd-h{background:var(--adhd-dark)}
+.condition-header.asd-h{background:var(--asd-dark)}
+.cond-sel-btns{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+.cond-sel-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font:600 11px var(--sans);padding:3px 10px;border-radius:5px;cursor:pointer;transition:background .1s}
+.cond-sel-btn:hover{background:rgba(255,255,255,.3)}
+.topic-list{background:#fff}
+.pe-group-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:10px 14px 5px;background:#f8fafc;border-top:1px solid #f0f2f5}
+.pe-section{border-top:1px solid #f4f5f8}
+.pe-section:first-child{border-top:none}
+.pe-header{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pe-header:hover{background:#f9fafb}
+.pe-tick-btn{font-size:1rem;color:var(--muted);flex-shrink:0;min-width:20px;text-align:center;line-height:1;padding:2px;border-radius:4px;transition:color .1s}
+.pe-title{font-weight:600;font-size:13px;color:var(--text);flex:1;line-height:1.35}
+.pe-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .15s;margin-left:auto}
+.pe-section.pe-open .pe-arrow{transform:rotate(90deg)}
+.pe-body{display:none;padding:8px 14px 14px 43px;font-size:12.5px;line-height:1.65;color:#374151;border-top:1px solid #f4f5f8}
+.pe-section.pe-open .pe-body{display:block}
+.pe-body p{margin:0 0 7px}
+.pe-body p:last-child{margin:0}
+.pe-body ul{margin:4px 0 8px 16px}
+.pe-body li{margin-bottom:4px}
+.pe-body table{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 10px}
+.pe-body th{background:#f1f5f9;padding:5px 8px;text-align:left;border:1px solid var(--border);font-size:11px}
+.pe-body td{padding:4px 8px;border:1px solid var(--border);vertical-align:top}
+.pe-body a{color:var(--asd)}
+.pe-section.adhd-done{background:#eff6ff}
+.pe-section.adhd-done .pe-tick-btn{color:var(--adhd)}
+.pe-section.asd-done{background:#f0fdf4}
+.pe-section.asd-done .pe-tick-btn{color:var(--asd)}
+.pe-section.pe-optional{opacity:.88}
+
+.export-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.export-row .ex-label{font:700 12px var(--sans);color:var(--muted);flex-shrink:0;white-space:nowrap}
+.abtn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);font:600 12px var(--sans);cursor:pointer;transition:background .1s,border-color .1s}
+.abtn:hover{background:#f3f4f6;border-color:#94a3b8}
+.abtn.copied{background:#dcfce7;border-color:#86efac;color:#166534}
+
+.preview-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.preview-head{background:#f8fafc;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.preview-head-title{font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.preview-body{padding:22px 26px;font-family:Arial,sans-serif;font-size:10pt;line-height:1.55;color:#111;min-height:100px}
+.preview-body .empty-msg{color:var(--muted);font-style:italic;text-align:center;padding:36px 20px;font-size:11pt}
+
+/* Handout preview internal styles */
+.ho-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e5e7eb}
+.ho-pt{font-size:17pt;font-weight:800;color:#0f172a;margin-bottom:2px}
+.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:12px}
+.ho-notice{font-size:9.5pt;background:#f0f9ff;border-left:3px solid #0e7490;padding:9px 12px;line-height:1.5;color:#0c4a6e;margin-bottom:0}
+.ho-condition-title{font-size:15pt;font-weight:800;padding:8px 12px;border-radius:6px;margin:20px 0 10px;color:#fff}
+.ho-condition-title.adhd-t{background:var(--adhd-dark)}
+.ho-condition-title.asd-t{background:var(--asd-dark)}
+.ho-group-label{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px;padding-bottom:3px;border-bottom-width:2px;border-bottom-style:solid}
+.ho-group-label.adhd-g{color:#0e7490;border-bottom-color:#0e7490}
+.ho-group-label.asd-g{color:#0d9488;border-bottom-color:#0d9488}
+.ho-group-label.adhd-g-general{color:var(--adhd-dark);border-bottom-color:var(--adhd-dark)}
+.ho-group-label.adhd-g-nonpharm{color:#7c3aed;border-bottom-color:#7c3aed}
+.ho-group-label.adhd-g-products{color:#065f46;border-bottom-color:#065f46}
+.ho-topic{margin-bottom:7px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:7px;background:#fafbff}
+.ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
+.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
+.ho-topic-body p{margin:0 0 6px}
+.ho-topic-body p:last-child{margin:0}
+.ho-topic-body ul{margin:3px 0 7px 16px}
+.ho-topic-body li{margin-bottom:3px}
+.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:5px 0 8px}
+.ho-topic-body th{background:#f1f5f9;padding:4px 7px;text-align:left;border:1px solid #d1d5db;font-size:9pt}
+.ho-topic-body td{padding:3px 7px;border:1px solid #d1d5db;vertical-align:top}
+.ho-topic-body a{color:#0d9488}
+.ho-footer{margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:8.5pt;color:#9ca3af;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">Neurodevelopmental Psychoeducation</span>
+  <input class="ti" id="ptName" placeholder="Patient name..." style="flex:1;min-width:130px;max-width:210px" oninput="refresh()">
+  <input class="ti" id="ptDate" type="date" style="flex:0 0 128px" oninput="refresh()">
+  <input class="ti" id="drName" placeholder="Clinician name..." style="flex:1;min-width:130px;max-width:200px" oninput="refresh()">
+</div>
+
+<div class="content">
+
+  <div class="section-label" style="margin-top:12px">Select condition</div>
+  <div class="disorder-row">
+    <button class="dis-btn" id="dis-adhd" onclick="setDisorder('adhd')">ADHD</button>
+    <button class="dis-btn" id="dis-asd" onclick="setDisorder('asd')">ASD</button>
+    <button class="dis-btn" id="dis-both" onclick="setDisorder('both')">ADHD + ASD (mega handout)</button>
+  </div>
+
+  <div id="block-adhd" class="condition-block" style="display:none;margin-top:14px">
+    <div class="condition-header adhd-h">
+      ADHD — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll('adhd')">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll('adhd')">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="adhd-topic-list"></div>
+  </div>
+
+  <div id="block-asd" class="condition-block" style="display:none">
+    <div class="condition-header asd-h">
+      ASD — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll('asd')">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll('asd')">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="asd-topic-list"></div>
+  </div>
+
+  <div class="export-row">
+    <span class="ex-label">Export</span>
+    <button class="abtn" id="btn-docx" onclick="dlDocx()">Download .docx</button>
+    <button class="abtn" id="btn-plain" onclick="copyPlain(this)">Copy plain text</button>
+    <button class="abtn" id="btn-fmt" onclick="copyFormatted(this)">Copy formatted</button>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="preview-head">
+      <span class="preview-head-title">Handout Preview</span>
+      <button class="abtn" onclick="refresh()" style="padding:4px 11px;font-size:11px">Refresh</button>
+    </div>
+    <div class="preview-body" id="preview">
+      <div class="empty-msg">Select a condition and tick topics above to generate the handout.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var ADHD_PE_GROUPS=[
+  {label:null,optional:false,items:[
+    {id:'what_adhd_is',title:'Explaining ADHD',body:'<p><strong>Key message:</strong> ADHD is not a deficit of attention — it is a regulation problem. The brain runs on interest, urgency, and novelty rather than importance alone. When something genuinely captures your interest, you can hyperfocus brilliantly. When something feels dull or unrewarding, starting it can feel genuinely impossible — not because of laziness, but because the brain\'s motivational circuitry works differently.</p><p><strong>Neurobiology:</strong> The prefrontal cortex — the region managing planning, organising, task initiation, working memory, and emotional regulation — is underactive and less connected to the rest of the brain in ADHD. This reduces dopamine and noradrenaline signalling, which are the neurotransmitters responsible for focus, motivation, and impulse control. Medication restores these neurotransmitters in the prefrontal cortex.</p><p><strong>What this looks like daily:</strong> Starting tasks feels insurmountable. Losing the thread mid-task. Forgetting why you walked into a room. Emotions that hit fast and hard. Acting before thinking. Constant inner restlessness. Time feeling abstract until a deadline is imminent.</p><p><strong>Key facts:</strong> Affects 5–10% of adults. One of the most heritable conditions in medicine. ADHD medications are among the most effective treatments in all of psychiatry. When medication works well, people often describe it as finally having access to the version of themselves they always knew was there.</p>'},
+    {id:'how_adhd_manifests',title:'How ADHD manifests',body:'<p><strong>Core symptoms:</strong> Inattention, executive dysfunction (organising, starting, time management, working memory), impulsivity, and hyperactivity — often internalised in adults as a constant inner restlessness rather than visible movement.</p><p><strong>Often missed features — the most disabling aspects are frequently not on the official list:</strong></p><ul><li><strong>Emotional dysregulation:</strong> Emotions arrive faster and more intensely because the prefrontal "braking system" is less effective. Frustration, excitement, rejection, and disappointment hit harder. This is neurological, not a personality trait.</li><li><strong>Rejection Sensitive Dysphoria (RSD):</strong> Intense emotional pain triggered by perceived rejection, criticism, or failure — even when mild or imagined. Can dominate relationships and cause avoidance of challenge. Extremely common, rarely discussed.</li><li><strong>Time blindness:</strong> The internal sense of time is impaired. Time exists in two states: "now" and "not now." Deadlines days away feel unreal, producing chronic lateness and last-minute rushes.</li><li><strong>Working memory deficits:</strong> The mental notepad used to hold information while doing something else is impaired — causing thought loss mid-sentence, forgetting what you walked into a room for, re-reading the same paragraph repeatedly.</li><li><strong>Hyperfocus:</strong> The same dysregulation causing inattention can flip to tunnel-vision absorption where hours pass unnoticed. Same system, different direction.</li><li><strong>Sleep problems, appetite dysregulation, low frustration tolerance, chronic underachievement despite high ability.</strong></li></ul><p><strong>Adult presentation:</strong> Many people — especially those who are intellectually capable — compensated through school via intelligence or anxiety-driven perfectionism, then found that when demands exceeded coping strategies, everything unravelled.</p>'},
+    {id:'how_treatable',title:'How treatable ADHD is',body:'<p><strong>Response rates:</strong> 70–80% in children, 60–75% in adults. If one stimulant class does not work, switching to the other class helps many non-responders.</p><p><strong>The evidence base:</strong></p><ul><li>21% reduction in all-cause mortality with ADHD medication</li><li>25% reduction in unnatural-cause deaths (accidents, suicide)</li><li>~13% reduction in substance use disorder risk per year on stimulants</li><li>72% of measured long-term outcomes improved — academic, work, social, driving</li><li>Lower motor vehicle crash rates while on medication</li><li>Reduced criminal offending during treatment periods</li><li>Better employment outcomes and improved relationship stability</li></ul><p><strong>Key message:</strong> The risks of not treating ADHD are substantially greater than the risks of properly managed treatment.</p>'},
+    {id:'what_to_expect',title:'What to expect from treatment',body:'<p><strong>When medication is working well, most people describe:</strong></p><ul><li>Calm clarity — genuinely quiet in your own head</li><li>Boring-but-important tasks becoming manageable</li><li>More pause between feeling and reacting</li><li>Anxiety often improves (much ADHD anxiety is downstream from chronic underperformance)</li><li>Low mood lifts when you are no longer falling short of your own capabilities</li></ul><p><strong>What it should NOT feel like:</strong> Robotic, flat, zombie-like, or like a different person. If it feels that way, the dose is probably too high — that is a signal to adjust, not tolerate.</p><p><strong>Starting out:</strong> We start at a low dose and increase gradually. Stimulants work the same day at therapeutic dose. Appetite suppression is common especially at lunch. The first few doses may feel unremarkable as the body acclimatises.</p><p><strong>Missing a dose:</strong> Take it when you remember, unless it is late afternoon — then skip it. Never double up the next day.</p><p><strong>If it stops working as well:</strong> Sleep, stress, hormones, appetite, and routine all affect medication response. Sometimes dose or timing needs review — contact your psychiatrist rather than adjusting independently.</p>'},
+    {id:'faqs',title:'Commonly asked questions',body:'<p><strong>Will it change my personality?</strong> No — at therapeutic doses you feel more like yourself. Flat or robotic = dose too high.</p><p><strong>Will I need it forever?</strong> ADHD is typically lifelong. Most prefer continuing because symptoms return when stopped. Long-term stimulant use is safe.</p><p><strong>Are stimulants addictive?</strong> Used correctly for ADHD, they actually lower addiction risk. Careful prescribing is why robust diagnosis matters.</p><p><strong>Can I drive?</strong> Yes. No restrictions in Australia. Evidence shows lower crash rates on medication.</p><p><strong>Coffee on stimulants?</strong> Moderate is fine (1–2 cups morning). Excess worsens anxiety and insomnia.</p><p><strong>What if it does not work?</strong> Try the other stimulant class. If stimulants not tolerated, non-stimulant options are effective.</p><p><strong>Cannabis?</strong> Avoid — worsens ADHD symptoms, reduces treatment benefit, increases psychosis risk in vulnerable individuals.</p><p><strong>How will I know when it is working?</strong> Everyday tasks feel easier to start and finish. Your mind feels quieter, less overwhelmed. Often the change is subtle at first.</p><p><strong>I have never taken medication before!</strong> Very common. We start low, increase gradually, review how you respond. You are not locked in.</p><p><strong>What if it is not ADHD?</strong> Diagnosis is based on a proper assessment, not just a feeling. Doubting yourself does not mean you are wrong.</p><p><strong>Why was I not diagnosed as a kid?</strong> Many adults were missed — especially if they were bright, quiet, anxious, or coping reasonably well.</p><p><strong>Do I have autism too?</strong> ADHD and autism overlap in 50–70% of cases. If you have long-standing social differences, sensory sensitivities, or a strong need for routine, it is worth discussing.</p><p><strong>Can I travel with stimulant medications?</strong> Usually yes. Keep them in original packaging with a prescription or doctor letter. Check rules for each country.</p><p><strong>Can I let someone else try my medication?</strong> No. Never share prescription medication. Sharing controlled substances is illegal.</p><p><strong>The meds are not working as well anymore — why?</strong> Sleep, stress, hormones, appetite, and routine all affect medication response. Sometimes dose or timing needs review.</p><p><strong>How do I not lean into the diagnosis as an excuse?</strong> Use it as a tool, not an identity. It should help you understand yourself and make better choices, not limit you.</p>'}
+  ]},
+  {label:'Medication Information',optional:false,items:[
+    {id:'stimulant_differences',title:'Medication Options',body:'<p><strong>First-line — Stimulants</strong> (block reuptake of dopamine and noradrenaline; amphetamines also trigger release):</p><table><thead><tr><th>Medication</th><th>Duration</th><th>Key practical notes</th></tr></thead><tbody><tr><td><strong>Dex IR</strong></td><td>4–6 hrs</td><td>Amphetamine. Flexible, 2–3x/day. Good for tailoring coverage. Rebound possible.</td></tr><tr><td><strong>Vyvanse</strong></td><td>10–12 hrs</td><td>Amphetamine (prodrug). Smoothest once-daily. Can open capsule in water. Low abuse potential.</td></tr><tr><td><strong>Ritalin IR</strong></td><td>3–4 hrs</td><td>Methylphenidate. Milder than dex. 2–3x/day. Rebound common.</td></tr><tr><td><strong>Ritalin LA</strong></td><td>~8 hrs</td><td>Methylphenidate. Once daily. 50/50 two-pulse delivery. Some add small afternoon IR top-up.</td></tr><tr><td><strong>Concerta</strong></td><td>10–12 hrs</td><td>Methylphenidate. Once daily. Ascending OROS delivery. Must swallow whole — never crush. PBS: Dx before age 18.</td></tr></tbody></table><p><strong>All stimulants:</strong> Avoid acidic drinks (juice, soft drink) at dosing time — reduces absorption. Take with food to reduce nausea.</p><p><strong>Second-line — Non-stimulants</strong> (no abuse potential; slower onset):</p><table><thead><tr><th>Medication</th><th>Onset</th><th>Key practical notes</th></tr></thead><tbody><tr><td><strong>Atomoxetine (Strattera)</strong></td><td>4–12 wks</td><td>SNRI. Good for anxiety, tics, substance use history. PBS streamlined.</td></tr><tr><td><strong>Guanfacine XR (Intuniv)</strong></td><td>4–8 wks</td><td>Alpha-2A agonist. Helpful for emotional dysregulation and impulsivity. Taper on cessation.</td></tr><tr><td><strong>Clonidine (Catapres)</strong></td><td>Gradual</td><td>Alpha-2 agonist. Useful for sleep, hyperarousal, tics. Private script. Taper on cessation.</td></tr></tbody></table>'},
+    {id:'side_effects',title:'Key side effects and monitoring',body:'<p><strong>Common stimulant side effects:</strong> Reduced appetite (especially lunch), dry mouth, insomnia if taken late, increased heart rate, headache (usually resolves 2–3 weeks), irritability, jaw clenching, rebound as medication wears off.</p><p><strong>Less common:</strong> Elevated blood pressure, emotional blunting at higher doses (reduce dose — do not tolerate), anxiety worsening in some.</p><p><strong>Monitoring:</strong> BP and heart rate at each review. GP for routine monitoring between psychiatric appointments.</p><p><strong>Red flags — contact doctor if:</strong> Elevated mood + reduced sleep + rapid speech (possible mania), chest pain or palpitations, severe anxiety, marked personality change.</p><p><strong>Atomoxetine-specific:</strong> Nausea initially — take with food. Rare: liver injury (jaundice, dark urine → stop and seek help urgently).</p><p><strong>Key interactions:</strong> MAOIs absolute contraindication. Pseudoephedrine — discuss before combining. Alcohol — stimulants mask sedating effects, risk of drinking more than intended.</p>'},
+    {id:'med_dex',title:'Dexamphetamine IR (immediate release)',body:'<p><strong>How it works:</strong> Stimulant — increases dopamine and noradrenaline by blocking recycling AND triggering extra release. Slightly stronger effect than methylphenidate, with slightly higher side effect risk.</p><p><strong>Practical details:</strong> Short-acting tablet. Effects begin 30–45 min, last 4–6 hrs. Usually 2–3x/day. Avoid acidic drinks at same time; take after food to reduce nausea.</p><p><strong>What to expect:</strong> Improved task initiation and sustained effort, quieter internal restlessness, better impulse control. Appetite suppression common at lunchtime. Rebound (mood/focus drop as it wears off) can occur.</p><p><strong>Common side effects:</strong> Reduced appetite, dry mouth, insomnia if taken too late, increased heart rate, headache (settles 2–3 weeks), irritability/anxiety in some, jaw clenching, rebound.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Pseudoephedrine decongestants — discuss with doctor. Acidic drinks reduce absorption.</p>'},
+    {id:'med_vyvanse',title:'Vyvanse (lisdexamfetamine)',body:'<p><strong>How it works:</strong> Dexamphetamine in prodrug form — released gradually after swallowing for a smoother, longer effect. Very low abuse potential by design (must be metabolised to become active).</p><p><strong>Practical details:</strong> Capsule — swallow whole or open and dissolve in water. Effects start within 1–2 hrs, last 10–12 hrs (longest-acting stimulant in Australia). Once daily in the morning. Avoid acidic drinks.</p><p><strong>What to expect:</strong> Smooth, consistent effect with fewer peaks and troughs than IR. Useful for sustained evening coverage or when rebound from dex IR is difficult. Appetite suppression common.</p><p><strong>Common side effects:</strong> Reduced appetite (often improves after first weeks), dry mouth, insomnia if taken too late, headache, irritability as it wears off in the evening, increased heart rate.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_ritalin_ir',title:'Ritalin IR / Artige (methylphenidate IR)',body:'<p><strong>How it works:</strong> Blocks dopamine and noradrenaline transporters (reuptake inhibition only — does NOT trigger release). Slightly milder effect than dexamphetamine.</p><p><strong>Practical details:</strong> Short-acting tablet. Effects begin 30–45 min, last 3–4 hrs. Usually 2–3x/day. Avoid acidic drinks, vitamin C, citric acid at dosing time — reduces absorption. Take after food to reduce nausea.</p><p><strong>Common side effects:</strong> Reduced appetite at lunchtime, headache (settles 2–3 weeks), insomnia if afternoon dose too late, increased heart rate, jitteriness or anxiety in some, stomach discomfort.</p><p><strong>Less common:</strong> Elevated blood pressure, rebound (mood drop as it wears off — discuss if significant), mania in bipolar disorder.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_ritalin_la',title:'Ritalin LA (methylphenidate long-acting)',body:'<p><strong>How it works:</strong> Same mechanism as Ritalin IR but delivers 50% immediately then 50% over the next 4–8 hours via two-pulse SODAS system. Smooth onset, longer coverage.</p><p><strong>Practical details:</strong> Capsule — swallow whole. Approximately 8 hrs from one morning dose. Avoid acidic drinks. Some add a small Ritalin IR afternoon dose for extended coverage.</p><p><strong>Common side effects:</strong> Reduced appetite (less pronounced than IR), insomnia if taken too late, headache, increased heart rate, jitteriness or anxiety in some.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_concerta',title:'Concerta (methylphenidate ER)',body:'<p><strong>How it works:</strong> OROS osmotic pump: 22% delivered immediately, 78% released gradually over 10–12 hrs. Creates a slowly ascending blood level. Same reuptake inhibition mechanism as Ritalin.</p><p><strong>Practical details:</strong> Tablet — <strong>must swallow whole</strong> (do not crush or chew). Empty shell may appear in stool (normal). 10–12 hrs from one morning dose. Avoid acidic drinks.</p><p><strong>What to expect:</strong> Gradual ascending delivery rather than an early peak. Extended duration suits people needing afternoon/evening coverage.</p><p><strong>Common side effects:</strong> Reduced appetite, insomnia (take in morning), headache, increased heart rate, dry mouth.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_strattera',title:'Strattera (atomoxetine)',body:'<p><strong>How it works:</strong> NOT a stimulant. Selective noradrenaline reuptake inhibitor (SNRI). Blocks the noradrenaline transporter — which in the prefrontal cortex also indirectly increases dopamine. No abuse potential; not a controlled substance.</p><p><strong>Practical details:</strong> Takes <strong>4–12 weeks</strong> for full effect. Once or twice daily, titrated slowly. 24-hr coverage at therapeutic dose. Good option for anxiety, tic disorders, substance use history, or as add-on to stimulants.</p><p><strong>Common side effects:</strong> Nausea/stomach discomfort (take with food — helps significantly), dry mouth, constipation, dizziness, mood changes during titration, urinary hesitancy, reduced appetite (milder than stimulants).</p><p><strong>Rare but important:</strong> Liver injury — if jaundice (yellow skin/eyes), dark urine, or persistent abdominal pain, stop and seek urgent help immediately.</p><p><strong>Interactions:</strong> Fluoxetine, paroxetine, bupropion dramatically increase atomoxetine levels — avoid combination. Salbutamol (Ventolin) may increase cardiovascular effects.</p>'},
+    {id:'med_intuniv',title:'Intuniv (guanfacine XR)',body:'<p><strong>How it works:</strong> Non-stimulant. Acts on alpha-2A adrenergic receptors in the prefrontal cortex, strengthening neural connections that control attention and impulse regulation. No abuse potential.</p><p><strong>Practical details:</strong> Once daily, same time each day. Therapeutic effect develops over 4–8 weeks. Avoid high-fat meals at dose time. <strong>Do not stop suddenly</strong> — can cause rebound hypertension and tachycardia. Always taper under medical guidance.</p><p><strong>What to expect:</strong> Particularly helpful for emotional dysregulation, impulsivity, and hyperactivity. Often combined with stimulants. Initial sedation usually settles.</p><p><strong>Common side effects:</strong> Drowsiness/sedation (especially first weeks — evening dosing helps), decreased blood pressure (dizziness on standing), decreased heart rate, headache, dry mouth, constipation.</p><p><strong>Interactions:</strong> Other blood pressure medications — effects add. Avoid high-fat meals at dose time.</p>'},
+    {id:'med_clonidine',title:'Catapres (clonidine)',body:'<p><strong>How it works:</strong> Non-stimulant. Acts on alpha-2 adrenergic receptors in the brain and peripheral nervous system. Helps regulate arousal, reduce impulsivity, and improve sleep onset. No abuse potential.</p><p><strong>Practical details:</strong> Titrated slowly as specified. <strong>Do not stop suddenly</strong> — can cause rebound elevated blood pressure and heart rate. Always taper gradually. Alcohol significantly increases sedation — avoid or strictly limit.</p><p><strong>What to expect:</strong> Useful for hyperarousal, impulsivity, and sleep difficulties. Sedation common initially. Low BP and dizziness (especially on standing) usually diminish after weeks at a stable dose.</p><p><strong>Common side effects:</strong> Sedation (can be significant when starting), dizziness on standing, decreased blood pressure, decreased heart rate, dry mouth, constipation, headache, low mood or fatigue in some.</p><p><strong>Interactions:</strong> Alcohol significantly increases sedation — avoid/limit. Other blood pressure medications — effects add. Inform all doctors you are taking it.</p>'},
+  ]},
+  {label:'Non-pharmacological Strategies',optional:true,items:[
+    {id:'non_pharm',title:'Non-pharmacological approaches and techniques',body:'<p><strong>Psychological therapies:</strong></p><ul><li><strong>CBT for ADHD</strong> (strong evidence): Targets procrastination, disorganisation, time management, avoidance, and negative self-beliefs. Skills-based and practical. ~60–70% show meaningful functional gains.</li><li><strong>ACT — Acceptance and Commitment Therapy</strong> (moderate–strong): Teaches psychological flexibility. Key techniques: defusion ("I notice I am having the thought that I am useless" rather than "I am useless"), values clarification, committed action. Particularly helpful for those exhausted by trying to control their mind.</li><li><strong>DBT skills training</strong> (moderate–strong): Especially for emotional dysregulation and rejection sensitivity. Four modules — mindfulness, distress tolerance, emotion regulation, interpersonal effectiveness — map directly onto ADHD\'s most impairing features.</li><li><strong>ADHD coaching</strong> (moderate): Practical and present-focused. Goal attainment, accountability, routine-building. Best for functionally stable people needing structured accountability. Look for ICF-accredited coaches with ADHD training.</li><li><strong>Occupational therapy</strong> (emerging): Hands-on solutions — workspace organisation, routine scaffolding, sensory strategies, assistive technology. May be fundable through NDIS.</li></ul><p><strong>Practical strategies:</strong></p><ul><li><strong>Body doubling:</strong> Working in the presence of another person — physically or via video — without necessarily collaborating. Many people with ADHD initiate and sustain tasks dramatically better when someone is simply present. Focusmate (focusmate.com) provides free online sessions.</li><li><strong>Brain dump + priority matrix:</strong> Get everything out of your head onto a list — everything, regardless of size or urgency. Then sort by importance and urgency. Do this weekly or when mental load feels unmanageable. Externalising the task list is itself calming.</li><li><strong>Time blocking with visual timers:</strong> Allocate specific tasks to specific time slots. The Time Timer (visual countdown as shrinking red disc) makes time passage concrete. Pomodoro technique: 25 minutes on, 5-minute break.</li><li><strong>If-then planning:</strong> "If it is 9am and I sit at my desk, then I will open the document I need to work on first." More specific = more effective. Write it down.</li><li><strong>Reward pairing:</strong> Listen to a favourite podcast only while doing routine tasks. Use a specific playlist only for focused work. Set a small, concrete reward for completing a defined block.</li><li><strong>Exercise:</strong> A single session of aerobic exercise produces immediate, measurable improvement in attention, working memory, and impulse control for 1–4 hours — comparable to a low-dose stimulant. Regular exercise improves baseline executive function. Aim for 20+ minutes aerobic, earlier in the day.</li><li><strong>Decision fatigue:</strong> Automate recurring decisions — weekly meal structure, default answers to common requests. Batch similar decisions. Do cognitively demanding work during your medication peak, not in the evening.</li></ul>'},
+    {id:'phone_use',title:'Reducing phone and social media use',body:'<p>Smartphones are engineered to capture attention. For ADHD brains, the goal is not willpower — it is <strong>friction</strong>. Make undesirable habits physically harder.</p><ul><li><strong>Hidden folders:</strong> Move Instagram/TikTok into a folder within a folder on the last page. Extra taps break the automatic reflex.</li><li><strong>Grayscale mode:</strong> Settings → Accessibility → Colour Filters → Greyscale. Makes the phone boring. Works.</li><li><strong>Screen Time limits:</strong> Set daily limits per app. Have someone else set the passcode if you override impulsively.</li><li><strong>Brick:</strong> Physical NFC card (<a href="http://brickself.com" target="_blank">brickself.com</a>) that locks apps for a set period.</li><li><strong>Notification audit:</strong> Turn off all non-essential notifications. Every interruption costs 10–20 minutes of reorientation.</li><li><strong>Charge outside bedroom:</strong> Eliminates late-night scrolling and morning phone-grab before medication kicks in.</li></ul>'},
+    {id:'emotional_reg',title:'Emotional regulation strategies',body:'<p>Emotional dysregulation in ADHD is neurological — the same prefrontal circuits managing attention also regulate emotional responses. Emotions arrive faster, feel more intense, and take longer to settle. This is not a character flaw; it is the same mechanism as the attention problems.</p><p><strong>In the moment — when already activated:</strong></p><ul><li><strong>TIPP (DBT):</strong> Temperature (submerge face in cold water 15–30 seconds, or cold water on wrists — activates the mammalian dive reflex, rapidly lowers heart rate and emotional intensity); Intense exercise (60 seconds of jumping jacks burns physiological activation); Paced breathing (exhale longer than inhale: 4 in, 7 out — activates the parasympathetic system); Progressive muscle relaxation.</li><li><strong>STOP skill (DBT):</strong> Stop. Take a step back physically if possible. Observe what you are feeling without acting on it. Proceed mindfully — even 30 seconds changes outcomes.</li><li><strong>90-second rule:</strong> The physiological component of an emotional response lasts approximately 90 seconds if you do not feed it with rumination. Ride the wave without acting and it naturally subsides.</li></ul><p><strong>Longer-term regulation:</strong></p><ul><li><strong>PLEASE skills (DBT):</strong> Emotional regulation is dramatically worse when your physical baseline is poor. Treat physical illness. Eat regularly. Avoid mood-altering substances. Sleep adequately. Exercise daily. These are prerequisites, not optional extras.</li><li><strong>Opposite Action (DBT):</strong> When the emotion is prompting an action that makes things worse, do the opposite. Shame says withdraw — opposite is to reach out. Anger says attack — opposite is to approach gently.</li><li><strong>Defusion (ACT):</strong> Create distance from intense thoughts. Instead of "I am worthless," try "I notice I am having the thought that I am worthless." This small shift activates the prefrontal cortex.</li><li><strong>Emotion naming:</strong> Accurately labelling the feeling — not just "bad" but "I feel rejected and ashamed" — activates the prefrontal cortex and reduces amygdala reactivity.</li><li><strong>Map RSD triggers in advance:</strong> Identify situations that reliably activate rejection sensitivity. Knowing the trigger in advance lets you apply skills before you are flooded.</li></ul>'},
+    {id:'study_tips',title:'Study tips',body:'<p>Standard study advice is written for neurotypical brains. ADHD requires techniques that work with the interest-driven attention system.</p><ul><li><strong>Active recall, not re-reading:</strong> Read a section, close it, write everything you remember, then check. Flashcards with spaced repetition (Anki app) are ideal.</li><li><strong>Remove the phone:</strong> Get a smartwatch and put your phone in another room. Non-negotiable.</li><li><strong>Feynman Technique:</strong> Explain the concept aloud as if teaching someone. Where you get stuck is the exact gap. Fill it, then explain again.</li><li><strong>Body doubling for study:</strong> Library, cafe, or Focusmate (virtual body doubling service).</li><li><strong>Study during medication peak:</strong> Schedule demanding work 60–90 minutes after taking stimulant. Do not save it for when medication has worn off.</li><li><strong>Interest bridging:</strong> Find the angle that connects the material to something you care about. ADHD brains learn through interest.</li></ul>'},
+    {id:'binge_eating',title:'Binge eating and appetite',body:'<p>Binge eating is significantly more common in ADHD. The ADHD brain seeks dopamine; highly palatable food provides a reliable, immediate hit. Impulsivity reduces the pause between urge and action. Skipping meals (especially when stimulants suppress lunch appetite) drives hunger that accelerates loss of control later.</p><ul><li><strong>Eat regularly:</strong> Small, scheduled lunch — even if not hungry — prevents significant hunger driving evening overconsumption.</li><li><strong>Reduce friction for healthy eating:</strong> Keep easy, adequate food accessible; make high-stimulation binge foods harder to reach.</li><li><strong>Identify the emotional trigger:</strong> Binge urges often follow boredom, procrastination, frustration, or overwhelm — not just hunger.</li><li><strong>Address the dopamine need directly:</strong> Movement, music, or a brief engaging task can reduce the urge without eating.</li><li><strong>If significantly impacting life:</strong> Raise with your psychiatrist. Medication adjustments and/or psychological support (CBT-E or DBT) have good evidence.</li></ul>'},
+    {id:'insomnia',title:'Sleep and ADHD',body:'<p><strong>Why ADHD and sleep do not mix:</strong> The ADHD brain struggles to disengage at bedtime — thoughts keep firing when you want to wind down. Delayed sleep phase (being a natural night owl) is more common in ADHD. Stimulant timing can also affect sleep onset.</p><p><strong>What actually helps:</strong></p><ul><li><strong>Bright light therapy:</strong> Morning bright light (10,000 lux light box or Re-Timer glasses worn for 30–60 minutes on waking) is one of the higher-yield sleep interventions in ADHD. It resets the circadian rhythm and makes falling asleep at night easier.</li><li><strong>Consistent wake time</strong> — including weekends — anchors the circadian rhythm more effectively than a consistent bedtime.</li><li><strong>Review stimulant timing</strong> with your psychiatrist if sleep onset is problematic.</li><li><strong>Sleep hygiene basics:</strong> Cool, dark room; no screens 1 hour before bed; white noise if helpful.</li><li><strong>Melatonin or clonidine</strong> can assist with sleep onset — discuss with your psychiatrist.</li><li>If sleep problems persist despite these measures, ask your GP about a formal sleep assessment.</li></ul>'},
+    {id:'disclosing',title:'Disclosing your diagnosis',body:'<p>You are never obligated to disclose your diagnosis. It is a personal decision with real trade-offs.</p><p><strong>Before disclosing, consider:</strong></p><ul><li>Stigma remains real. Not everyone understands ADHD or believes in it. Some will see it as an excuse.</li><li>Disclosure does not guarantee protection or accommodation.</li><li>Some contexts are safer than others (close relationships vs workplace vs casual acquaintances).</li></ul><p><strong>When disclosure may help:</strong></p><ul><li>Requesting specific, practical accommodations that would meaningfully help your performance.</li><li>Partners and close family — understanding often significantly reduces relationship friction.</li><li>Trusted colleagues who can provide informal support or accountability.</li></ul><p><strong>If people are sceptical:</strong> You do not need to convince them. A simple response: "I have had a thorough assessment and I am comfortable with the diagnosis." You do not owe anyone a debate.</p>'},
+    {id:'workplace',title:'Workplace adjustments',body:'<p><strong>Disclosure:</strong> Not legally required. Disclose on a need-to-know basis only. Stigma remains real — proceed thoughtfully.</p><p><strong>Useful adjustments:</strong> Quiet or people-filled workspace (choose what works), noise-cancelling headphones, standing desk, regular brief check-ins with manager, written task lists and clear deadlines.</p><p><strong>Self-employed:</strong> Batch admin into one weekly block, automate invoicing, fixed daily start routine, external accountability via coach or colleague.</p>'},
+    {id:'bfrbs',title:'Body-focused repetitive behaviours (BFRBs)',body:'<p><strong>What they are:</strong> Skin picking, hair pulling (trichotillomania), nail biting, cheek chewing. Significantly more common with ADHD.</p><p><strong>Why they occur:</strong> Stimulation-seeking, impulsivity, emotional regulation via habit loop, often automatic/unconscious.</p><p><strong>What helps:</strong> Habit Reversal Training (most evidence-based), barrier strategies (pimple patches, gloves while driving), fidget substitutes, awareness training. ADHD treatment itself often reduces frequency.</p>'},
+    {id:'communication',title:'Communication and ADHD',body:'<p><strong>How ADHD affects communication:</strong> Impulsive interrupting, losing the conversational thread, emotional reactivity in conflict, inconsistency between intention and follow-through.</p><p><strong>For the person with ADHD:</strong> Write things down immediately, ask for written summaries, time important conversations for when medication is active.</p><p><strong>For partners/family:</strong> Short direct requests, written reminders, do not take forgetfulness personally, repair conflict quickly, assume positive intent.</p>'},
+    {id:'pregnancy',title:'Pregnancy and breastfeeding',body:'<p><strong>Stimulants in pregnancy:</strong> Small increased risk of preterm birth and low birth weight. Usual approach: discuss stopping or reducing, especially first trimester, unless risks of untreated ADHD are significant.</p><p><strong>Non-stimulants:</strong> Atomoxetine, guanfacine, clonidine — generally stopped in pregnancy due to limited safety data.</p><p><strong>Breastfeeding:</strong> Small amounts pass into breast milk. Ritalin has lowest excretion and is generally preferred. Monitor infant for reduced feeding or irritability.</p><p><strong>Key message:</strong> Individual decision with psychiatrist and obstetrician. Plan early. Non-pharmacological strategies become particularly important during this period.</p>'},
+  ]},
+  {label:'Products and Resources',optional:true,items:[
+    {id:'retimer',title:'Re-timer 3 (light therapy glasses)',body:'<p>Light therapy glasses worn for 30–60 minutes each morning. Help regulate circadian rhythm, improve mood, and advance sleep timing — particularly useful for the delayed sleep phase common in ADHD.</p><p><strong>How to use:</strong> Wear on waking, continue normal morning activities (eating, reading). Consistency matters more than duration.</p><p><strong>Where to get:</strong> <a href="https://www.retimer.com.au/retimer-3/" target="_blank">retimer.com.au/retimer-3</a> — use code <strong>BMURRIE</strong> for 20% off the Re-timer 3.</p>'},
+    {id:'manta',title:'Manta Sleep Masks',body:'<p>High-quality blackout sleep masks — particularly the <strong>Manta Sleep SOUND</strong>, which combines a comfortable blackout eye mask with the ability to listen to calming music or white noise. Excellent for the ADHD brain that struggles to disengage at bedtime.</p><p><strong>Where to get:</strong> <a href="https://mantasleep.com.au/" target="_blank">mantasleep.com.au</a> — use code <strong>SLEEPBETTER_15</strong> for 15% off non-promotional items.</p>'},
+    {id:'loop',title:'Loop Earplugs',body:'<p>High-quality reusable earplugs useful for both sleep and reducing daytime distractions. Different models offer different levels of noise reduction — some designed to reduce volume without distorting sound (good for work/social settings), others for fuller noise blocking.</p><p><strong>Where to get:</strong> <a href="https://au.loopearplugs.com" target="_blank">au.loopearplugs.com</a> — discounts frequently available on the site.</p>'},
+    {id:'books',title:'Recommended books',body:'<p><strong>ADHD 2.0</strong> — Edward Hallowell and John Ratey. Highly readable, compassionate, and evidence-based. Good starting point for newly diagnosed adults.</p><p><strong>Driven to Distraction</strong> — Hallowell and Ratey. The original classic. Excellent for understanding the lived experience.</p><p><strong>Smart but Stuck</strong> — Thomas Brown. Particularly good for high-achieving adults with ADHD who cannot understand why they keep underperforming.</p><p><strong>The ADHD Advantage</strong> — Dale Archer. Useful reframe for strengths-based thinking.</p><p><strong>Scattered Minds</strong> — Gabor Mate. More psychodynamic lens; good for understanding early developmental patterns.</p>'},
+    {id:'other_resources',title:'Other useful resources and products',body:'<p><strong>Lovevery</strong> — High quality developmental play kits for young children. Great for parents with ADHD. <a href="https://lovevery.com.au/" target="_blank">lovevery.com.au</a></p><p><strong>Kaiko Fidgets</strong> — Good quality fidget toys and harm reduction tools. Useful for managing restlessness and focus. <a href="https://kaikofidgets.com/" target="_blank">kaikofidgets.com</a></p><p><strong>Melodic Forest</strong> — Fun, easy-to-play musical instruments (kalimba, tongue drums). The kalimba is an excellent phone replacement — soothing and stimulating. <a href="https://www.melodicforest.com.au/" target="_blank">melodicforest.com.au</a></p><p><strong>Neptune Blanket</strong> — Weighted blankets, acupressure mats. Weighted blankets can help with sleep onset and sensory regulation. <a href="https://neptuneblanket.com.au/" target="_blank">neptuneblanket.com.au</a></p><p><strong>Focusmate</strong> — Free body doubling service. Schedule 50-minute virtual co-working sessions with strangers. Remarkably effective for task initiation. <a href="https://www.focusmate.com/" target="_blank">focusmate.com</a></p>'},
+  ]},
+]
+
+var ASD_PE_GROUPS=[
+  {label:null,optional:false,items:[
+    {id:'asd_what_is',title:'What autism is',body:'<p><strong>Key message:</strong> Autism is neurodevelopmental — your brain develops differently from an early age. It is not an illness, not a character flaw, and not something that happened to you. It is a different neurological profile that shapes how you process the world.</p><p><strong>What changes with a diagnosis:</strong> Clarity and self-understanding. Tools to reduce friction. Permission to adapt your environment — not permission to avoid challenges. An explanation for a lifelong pattern, not an excuse.</p><p><strong>Key facts:</strong> Autism affects approximately 1–2% of the population. It is highly heritable. It is present from birth, though diagnosis often comes later — especially in women, high-maskers, and those with high intellectual ability. Most adults diagnosed later are Level 1 — independent, but often fatigued and socially stressed.</p>'},
+    {id:'asd_levels',title:'ASD levels — what they mean in practice',body:'<table><thead><tr><th>Level</th><th>Functional description</th><th>Adult examples</th></tr></thead><tbody><tr><td><strong>Level 1</strong><br><em>("Asperger\'s")</em></td><td>Minimal support needed</td><td>Works and lives independently; subtle social differences; social situations drain energy; masking fatigue common</td></tr><tr><td><strong>Level 2</strong></td><td>Substantial support needed</td><td>Needs structured guidance at work; frequent sensory breaks; support with household tasks; routine disruption causes significant distress</td></tr><tr><td><strong>Level 3</strong></td><td>Very substantial support needed</td><td>Nonverbal or minimal speech; high distress if routines disrupted; daily life requires carers or intensive support</td></tr></tbody></table><p><strong>Key point:</strong> Most adults diagnosed later are Level 1 — independent, but often running at a significant energy deficit due to masking and sensory demands.</p><p><strong>Levels are not fixed forever.</strong> Support needs can shift with life demands, burnout, ageing, or changes in environment.</p>'},
+    {id:'asd_treatment',title:'How treatment works — the big picture',body:'<p><strong>Autism does not need fixing.</strong> Treatment is about self-understanding, skill-building, and practical strategies to function effectively and sustainably.</p><p><strong>Core principles:</strong></p><ul><li><strong>Know yourself:</strong> Attention, energy, social processing, sensory sensitivity — your specific profile matters more than any general description.</li><li><strong>Build skills:</strong> Social communication, executive function, emotional regulation — these can be learned and strengthened.</li><li><strong>Adapt the environment:</strong> Practical, realistic modifications to reduce demand and overload.</li><li><strong>Recovery and pacing:</strong> Scheduled downtime, sensory breaks, adequate sleep. These are medical requirements, not luxuries.</li><li><strong>Address co-occurring conditions:</strong> Anxiety, depression, ADHD, sleep disorders — these often drive more day-to-day impairment than autism itself.</li><li><strong>Psychotherapy:</strong> Focused on self-understanding, coping, and practical skills — not on changing your personality or making you neurotypical.</li></ul>'},
+    {id:'asd_masking',title:'Masking and camouflaging',body:'<p><strong>What it is:</strong> Consciously or unconsciously suppressing autistic traits to appear neurotypical. This includes scripted conversation, forced eye contact, mimicking others\' body language, and suppressing stimming.</p><p><strong>The cost:</strong> Masking is metabolically expensive. Sustained masking is associated with exhaustion, anxiety, depression, identity confusion, and autistic burnout. Many people are only diagnosed late because their masking was effective enough to hide their difficulties.</p><p><strong>Unmasking:</strong> Dropping the performance gradually, with support. Can feel liberating but relationships and workplaces may shift as people encounter the real you. Balance authenticity with real-world demands — this is not all-or-nothing.</p><p><strong>Strategy:</strong> Identify the settings where masking is genuinely necessary versus where it is habitual. Reduce it where you safely can. Build in recovery time after high-masking environments.</p>'},
+    {id:'asd_burnout',title:'Autistic burnout',body:'<p><strong>What it is:</strong> A state of chronic exhaustion, reduced function, and withdrawal following prolonged overload, masking, or demand beyond capacity. Often misdiagnosed as depression.</p><p><strong>How it differs from depression:</strong></p><ul><li><em>Burnout:</em> Driven by accumulated overload; temporary drop in skills and function; improvement follows demand reduction and recovery.</li><li><em>Depression:</em> Lowered baseline mood and energy; involves anhedonia (loss of pleasure), negative thinking, hopelessness; requires different treatment.</li></ul><p><strong>Common triggers:</strong> Life transitions (starting university, new job, relationship changes), sustained masking, loss of routine, sensory overload over time, insufficient recovery between demands.</p><p><strong>Recovery strategy:</strong> Reduce demands, restore routine, increase sensory-safe time, protect sleep, reduce social performance requirements. Do not push through with social activation — that makes it worse. Time is the primary healer.</p>'},
+    {id:'asd_interoception',title:'Interoception',body:'<p><strong>What it is:</strong> The brain\'s ability to sense internal signals — hunger, thirst, fatigue, pain, anxiety, bladder fullness, temperature. In autism, these signals are often delayed, muted, or difficult to interpret accurately.</p><p><strong>What this looks like:</strong> Not noticing hunger until severely hungry; not realising how tired you are until collapse; missing early anxiety signals until a meltdown; poor pain sensitivity or oversensitivity; difficulty identifying what emotion you are feeling (alexithymia).</p><p><strong>Strategies:</strong></p><ul><li>Use <strong>external monitoring</strong> — alarms for meals, hydration reminders, scheduled toilet breaks, sleep timers.</li><li>Build a <strong>body check routine</strong> — several times a day, stop and systematically check: Am I hungry? Thirsty? Tired? Needing movement?</li><li>Use <strong>visual emotion wheels</strong> to identify feelings when they are difficult to name.</li><li>Track energy levels throughout the day to identify your personal patterns.</li></ul>'},
+    {id:'asd_sensory',title:'Sensory processing and the sensory diet',body:'<p><strong>Why it matters:</strong> The autistic nervous system escalates arousal faster and recovers slower. Sensory input regulates the nervous system\'s arousal level — both too much and too little can cause distress.</p><p><strong>Hyper-reactivity</strong> (oversensitive): Loud sounds intolerable, light touch uncomfortable, certain food textures or smells overwhelming, fluorescent lighting distressing.</p><p><strong>Hypo-reactivity</strong> (undersensitive): Seeking intense sensory input, not noticing pain or cold, enjoying very loud music, needing movement to focus.</p><p><strong>Sensory diet strategies:</strong></p><ul><li><strong>Proprioceptive input:</strong> Weighted blankets, compression clothing, heavy work (lifting, pushing, carrying), joint compression exercises.</li><li><strong>Vestibular input:</strong> Walking, swimming, cycling, rocking, indoor steppers — rhythmic movement is regulating.</li><li><strong>Auditory:</strong> Noise-cancelling headphones or earplugs (Loop earplugs — Switch 2 or Dream), background music at steady tempo, white noise.</li><li><strong>Visual:</strong> Reduce fluorescent lighting, use lamps or natural light, sunglasses outdoors.</li><li><strong>Sleep:</strong> Manta Sleep Sound mask; Re-Timer 3 light therapy for circadian rhythm and mood.</li></ul><p><strong>Stimming:</strong> Repetitive movements (rocking, hand movements, fidgeting) are self-regulatory — not something to suppress unless they are causing harm. Suppressing stimming increases internal stress. Safe stimming should be permitted wherever possible.</p>'},
+    {id:'asd_exec',title:'Executive function',body:'<p><strong>What it is:</strong> Planning, initiating, organising, prioritising, switching, tracking time, holding information in mind. Difficulties in these areas are common in autism (and especially when ADHD is also present).</p><p><strong>Why "just do it" doesn\'t work:</strong> Tasks are often driven by interest, routine, and urgent deadlines. Without motivation or clear structure, initiation fails — not because of laziness, but because of genuine executive dysfunction.</p><p><strong>Strategies:</strong></p><ul><li><strong>Stepwise task design:</strong> Break tasks into the smallest possible steps and write them out. Reduce the activation cost of starting.</li><li><strong>Hyperfocus windows:</strong> Schedule demanding work for times when you are naturally most focused. Protect these windows.</li><li><strong>Pair tasks with engagement:</strong> Background music, preferred environment, a warm drink — pair aversive tasks with something pleasant.</li><li><strong>Body doubling:</strong> Work alongside someone else — in person, via video call, or using services like Focusmate (free virtual body doubling).</li><li><strong>Visual timers:</strong> Time Timer and similar tools make the passing of time visible and reduce time blindness.</li><li><strong>Written systems:</strong> External checklists, calendars, and whiteboards reduce reliance on working memory.</li></ul>'},
+    {id:'asd_social',title:'Relationships and social communication',body:'<p><strong>The core challenge:</strong> Misalignment between autistic and non-autistic communication styles — not an inability to connect, but a different way of connecting that can be misread by both sides.</p><p><strong>What this can look like:</strong> Difficulty with small talk, appearing blunt or uninterested, missing implied meanings or sarcasm, difficulty navigating group dynamics, more comfortable 1:1, friendships that feel one-sided, workplace politics that seem illogical.</p><p><strong>Strategies:</strong></p><ul><li><strong>Explicitly state your communication preferences</strong> to people you trust — "I communicate better in writing," "I need time to process before responding," "I may seem blunt — I don\'t mean to be."</li><li><strong>Explain overload and shutdown behaviours</strong> to close contacts before they happen, not during.</li><li><strong>Be selective with masking energy</strong> — identify where it is genuinely necessary and where it is habitual.</li><li><strong>Quality over quantity:</strong> Deep 1:1 connections are more sustainable than large social networks for most autistic people.</li><li><strong>Romantic relationships:</strong> Look for partners who are curious about your experience, communicate directly, and respect your need for routine and recovery time.</li></ul>'},
+    {id:'asd_therapy',title:'Psychotherapy — what works',body:'<p><strong>Key message:</strong> Not all therapies are equal, and not all therapists understand autism. The goal is self-understanding, coping skills, and practical strategies — not changing who you are.</p><p><strong>Approaches with evidence:</strong></p><ul><li><strong>Modified CBT for autism:</strong> Adapted to be concrete, structured, and directly skills-focused. Useful for anxiety, depression, and coping strategies.</li><li><strong>ACT (Acceptance and Commitment Therapy):</strong> Particularly well-suited to autism — focuses on values, flexibility, and reducing experiential avoidance rather than challenging thoughts.</li><li><strong>DBT skills:</strong> Emotion regulation, distress tolerance, mindfulness. Useful for emotional dysregulation and interpersonal difficulties.</li><li><strong>ADHD coaching / autism coaching:</strong> Practical, accountability-focused. Complements therapy.</li><li><strong>OT (Occupational Therapy):</strong> Sensory processing, daily living skills, environmental modifications, executive function supports.</li></ul><p><strong>What to avoid:</strong> Therapists who focus on making you seem neurotypical; ABA-based approaches in adults (designed for children); therapy that pathologises stimming, special interests, or direct communication style without good reason.</p><p><strong>Book suggestions:</strong> <em>NeuroTribes</em> (history and perspective); <em>Uniquely Human</em> (understanding autistic behaviour); <em>The Independent Woman\'s Handbook for Super Safe Living on the Autistic Spectrum</em> (practical strategies).</p>'},
+    {id:'asd_faqs',title:'Commonly asked questions',body:'<p><strong>Does the diagnosis change who I am?</strong> No. It explains who you already are. People often describe relief — "it makes sense now" — rather than feeling defined or limited by it.</p><p><strong>Will I always need support?</strong> Autism is lifelong, but support needs change. Many people function well with the right strategies, environment, and understanding. Others need ongoing structured support. It depends on your profile and your life.</p><p><strong>Why wasn\'t I diagnosed as a child?</strong> Many adults were missed — especially women, high-maskers, and those who were academically capable. Understanding of autism has changed enormously, and late diagnosis is very common.</p><p><strong>Does everyone on social media have ASD now?</strong> Awareness has genuinely increased. But increased identification does not mean over-diagnosis — it means people who were previously missed are now being found. A thorough clinical assessment is still meaningful.</p><p><strong>Do I have ADHD too?</strong> ADHD and autism overlap in 50–70% of cases. If you have significant inattention, impulsivity, or time-blindness, it is worth specifically assessing for ADHD.</p><p><strong>My family doesn\'t believe in the diagnosis.</strong> You don\'t need to convince them. "I\'ve had a thorough clinical assessment and I\'m comfortable with the diagnosis." You don\'t owe anyone a debate.</p><p><strong>What if I\'m still not sure?</strong> That is completely normal. A diagnostic assessment is the beginning of self-understanding, not a final verdict. Continue with what is useful.</p>'},
+    {id:'asd_cautions',title:'Things to be cautious about',body:'<ul><li><strong>Excessive social media and online autism communities:</strong> While peer connection is valuable, online communities can amplify anxiety, create catastrophic identity narratives, or provide advice that doesn\'t fit your individual profile. Use selectively.</li><li><strong>Substance use:</strong> Cannabis is particularly problematic — it worsens anxiety, disrupts sleep, and impairs the cognitive clarity that good management depends on. Alcohol, while common socially, can worsen sensory sensitivity the next day and disrupt sleep architecture.</li><li><strong>Uncritical acceptance of online advice:</strong> Not everyone offering advice online has your context, your level, or your specific profile. Apply clinical judgement.</li><li><strong>ABA or compliance-based approaches:</strong> These are not recommended for autistic adults. They focus on suppressing autistic behaviours rather than building coping skills and self-understanding.</li><li><strong>Pushing through burnout:</strong> Rest is not weakness. Sustained overload without recovery leads to longer and deeper burnout. Pacing is a clinical skill.</li></ul>'}
+  ]},
+  {label:'Products and Resources',optional:true,items:[
+    {id:'asd_sensory_tools',title:'Sensory tools',body:'<p><strong>Loop Earplugs</strong> — High-quality reusable earplugs. The Switch 2 or Dream models reduce volume without distorting sound — good for work, social, and transit environments. <a href="https://au.loopearplugs.com" target="_blank">au.loopearplugs.com</a></p><p><strong>Neptune Blanket</strong> — Weighted blankets for sleep onset and sensory regulation. Usually 35–36% off. <a href="https://neptuneblanket.com.au" target="_blank">neptuneblanket.com.au</a></p><p><strong>Compression clothing</strong> — Thompson tees for day-to-day use; compression base layers for sensory seeking. Provides proprioceptive input and reduces tactile sensitivity.</p><p><strong>Kaiko Fidgets</strong> — Quality fidget tools useful for managing restlessness, focus, and as substitutes for body-focused repetitive behaviours. <a href="https://kaikofidgets.com" target="_blank">kaikofidgets.com</a></p>'},
+    {id:'asd_sleep_tools',title:'Sleep tools',body:'<p><strong>Manta Sleep SOUND mask</strong> — Blackout eye mask with built-in audio. Useful for the autistic brain that struggles to disengage at bedtime. Use code <strong>SLEEPBETTER_15</strong> for 15% off at <a href="https://mantasleep.com.au" target="_blank">mantasleep.com.au</a></p><p><strong>Re-Timer 3</strong> — Light therapy glasses worn for 30–60 minutes each morning. Regulates circadian rhythm, improves mood, and advances delayed sleep phase (common in autism). Use code <strong>BMURRIE</strong> for 20% off at <a href="https://www.retimer.com.au/retimer-3/" target="_blank">retimer.com.au/retimer-3</a></p><p><strong>Music for regulation:</strong> Brain.fm (focus/sleep playlists), trance music at steady tempo (e.g. Anjunadeep), or metronome-based sound for rhythmic regulation during sleep or work.</p>'},
+    {id:'asd_focus_tools',title:'Focus and executive function tools',body:'<p><strong>Time Timer</strong> — Visual timer that makes the passage of time visible. Reduces time blindness. Available in multiple sizes at <a href="https://timetimer.com" target="_blank">timetimer.com</a></p><p><strong>Focusmate</strong> — Free virtual body doubling service. Schedule 50-minute co-working sessions with a partner. Remarkably effective for task initiation. <a href="https://focusmate.com" target="_blank">focusmate.com</a></p><p><strong>Melodic Forest</strong> — Kalimba and tongue drums. The kalimba is an excellent phone replacement — stimulating enough to satisfy the urge to pick something up, and genuinely calming. <a href="https://www.melodicforest.com.au" target="_blank">melodicforest.com.au</a></p>'},
+    {id:'asd_books',title:'Recommended books',body:'<p><strong>NeuroTribes</strong> — Steve Silberman. The definitive history of autism. Essential for understanding the cultural and scientific context of the diagnosis.</p><p><strong>Uniquely Human</strong> — Barry Prizant. Reframes autistic behaviour as meaningful communication rather than deficits. Compassionate and evidence-informed.</p><p><strong>The Independent Woman\'s Handbook for Super Safe Living on the Autistic Spectrum</strong> — Robyn Steward. Practical, real-world strategies for autistic women navigating adult life safely.</p><p><strong>I Think I Might Be Autistic</strong> — Cynthia Kim. A practical guide for late-diagnosed adults working out what the diagnosis means for their life.</p><p><strong>The Autistic Brain</strong> — Temple Grandin. Personal account combined with neuroscience — useful for understanding sensory and cognitive differences.</p>'}
+  ]},
+  {label:'Additional Topics',optional:true,items:[
+    {id:'asd_workplace',title:'Workplace accommodations and disclosure',body:'<p><strong>Disclosure:</strong> Not legally required. Consider whether the specific accommodation you need requires disclosure. Stigma remains real — proceed thoughtfully and selectively.</p><p><strong>Useful adjustments:</strong> Written instructions and meeting agendas in advance, permission to use headphones, flexible start times, reduced open-plan exposure, clear and explicit feedback, predictable routines, working from home where possible.</p><p><strong>Under the Disability Discrimination Act (Australia):</strong> Employers are required to make reasonable adjustments. You do not need a diagnosis to request adjustments, but having one strengthens your position if needed.</p><p><strong>If self-employed:</strong> Batch admin into one weekly block, automate invoicing, fixed daily start routine, external accountability via coach or colleague.</p>'},
+    {id:'asd_ndis',title:'NDIS access',body:'<p><strong>Eligibility:</strong> ASD is a listed condition under the NDIS. You need evidence that your disability causes substantial functional impairment and the impairment is likely permanent.</p><p><strong>What the NDIS can fund:</strong> Support coordination, occupational therapy, speech pathology, psychology, social skills groups, daily life supports, assistive technology, community access, and more.</p><p><strong>Evidence needed:</strong> Diagnostic report (including severity levels), functional assessment from OT or psychologist, supporting letters from treating clinicians. The diagnostic level matters — Level 1 applications often require detailed functional evidence.</p><p><strong>Process:</strong> Apply via the NDIS Access Request Form. If declined, you can request an internal review. Supports are available through the NDIA, LAC (Local Area Coordinator), and community partners.</p>'},
+    {id:'asd_sleep',title:'Sleep difficulties',body:'<p><strong>Why sleep and autism intersect:</strong> Delayed sleep phase is more common in autism; sensory sensitivity makes sleep environment critical; difficulty disengaging the mind at bedtime; co-occurring anxiety and ADHD worsen sleep further; irregular melatonin secretion documented in autism research.</p><p><strong>What helps:</strong></p><ul><li>Consistent wake time (including weekends) — the single most powerful sleep intervention.</li><li>Morning bright light therapy (Re-Timer 3 — 30–60 mins on waking) to advance sleep timing.</li><li>Sensory-safe sleep environment: blackout (Manta Sleep mask), comfortable temperature, white noise or music if helpful.</li><li>Wind-down routine that starts 60–90 minutes before bed. Predictable and repeatable.</li><li>Avoid screens in the 60 minutes before sleep.</li><li>Melatonin (low dose, short-acting) can help with sleep onset — discuss with your psychiatrist.</li><li>Clonidine is sometimes used off-label for sleep in autism — discuss if insomnia is significantly impairing.</li></ul>'},
+    {id:'asd_emreg',title:'Emotional regulation',body:'<p><strong>Why emotions can be intense:</strong> Many autistic people experience emotions with greater intensity and have fewer automatic regulatory resources. Interoception difficulties mean early signals are missed. Masking suppresses emotional expression, which increases internal pressure. Alexithymia (difficulty identifying emotions) is common — making it hard to name and respond to feelings early.</p><p><strong>In the moment (when already activated):</strong></p><ul><li><strong>Cold water:</strong> Submerge face in cold water for 15–30 seconds. Activates the mammalian dive reflex and rapidly reduces emotional arousal.</li><li><strong>Intense exercise:</strong> 60 seconds of jumping jacks or similar — burns physiological activation quickly.</li><li><strong>Paced breathing:</strong> Exhale longer than inhale (4 in, 6–7 out). Activates parasympathetic response.</li><li><strong>Remove the trigger environment:</strong> If possible, physically leave. Escalation does not always respond to talking.</li></ul><p><strong>Longer-term regulation:</strong></p><ul><li><strong>Predictable routines:</strong> Reduce the number of unexpected demands that deplete regulatory capacity.</li><li><strong>Emotion naming:</strong> Accurately labelling feelings activates the prefrontal cortex and reduces amygdala reactivity.</li><li><strong>Scheduled decompression:</strong> Build in daily quiet time after high-demand periods — not as a reward, but as a physiological requirement.</li><li><strong>Opposite Action (DBT):</strong> When the emotion is urging an action that makes things worse, do the opposite — gently and compassionately.</li></ul>'}
+  ]}
+]
+
+var disorder = 'adhd';
+var adhdSel = {};
+var asdSel  = {};
+
+function $(id){return document.getElementById(id);}
+function f(id){var el=$(id);return el?el.value.trim():'';}
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Disorder selector ──
+function setDisorder(d){
+  disorder=d;
+  document.querySelectorAll('.dis-btn').forEach(function(b){b.className='dis-btn';});
+  $('dis-adhd').classList.toggle('active-adhd',d==='adhd'||d==='both');
+  $('dis-asd').classList.toggle('active-asd',d==='asd');
+  $('dis-both').classList.toggle('active-both',d==='both');
+  $('block-adhd').style.display=(d==='adhd'||d==='both')?'':'none';
+  $('block-asd').style.display=(d==='asd'||d==='both')?'':'none';
+  refresh();
+}
+
+// ── Render topic lists ──
+function renderTopics(){
+  renderTopicList('adhd-topic-list', ADHD_PE_GROUPS, adhdSel, 'adhd');
+  renderTopicList('asd-topic-list',  ASD_PE_GROUPS,  asdSel,  'asd');
+}
+
+function renderTopicList(containerId, groups, sel, condKey){
+  var el=$(containerId); if(!el) return;
+  var html='';
+  groups.forEach(function(g){
+    if(g.label) html+='<div class="pe-group-label">'+(g.optional?'<span style="font-size:9px;opacity:.6;font-weight:600;margin-right:4px">OPTIONAL</span>':'')+esc(g.label)+'</div>';
+    g.items.forEach(function(item){
+      var done=!!sel[item.id];
+      html+='<div class="pe-section'+(done?' '+(condKey+'-done'):'')+(g.optional?' pe-optional':'')+'" data-id="'+item.id+'" data-cond="'+condKey+'">';
+      html+='<div class="pe-header">';
+      html+='<span class="pe-tick-btn">'+(done?'&#9745;':'&#9744;')+'</span>';
+      html+='<span class="pe-title">'+esc(item.title)+'</span>';
+      html+='<span class="pe-arrow">&#9658;</span>';
+      html+='</div>';
+      html+='<div class="pe-body">'+item.body+'</div>';
+      html+='</div>';
+    });
+  });
+  el.innerHTML=html;
+  el.addEventListener('click',function(e){
+    var sec=e.target.closest('[data-id]'); if(!sec) return;
+    var id=sec.getAttribute('data-id'), cond=sec.getAttribute('data-cond');
+    var isTick=e.target.classList.contains('pe-tick-btn');
+    if(isTick){
+      e.stopPropagation();
+      var selObj=cond==='adhd'?adhdSel:asdSel;
+      selObj[id]=!selObj[id];
+      sec.classList.toggle(cond+'-done',!!selObj[id]);
+      sec.querySelector('.pe-tick-btn').innerHTML=selObj[id]?'&#9745;':'&#9744;';
+      refresh();
+    } else {
+      var hdr=e.target.closest('.pe-header'); if(hdr) sec.classList.toggle('pe-open');
+    }
+  });
+}
+
+function selectAll(cond){
+  var groups=cond==='adhd'?ADHD_PE_GROUPS:ASD_PE_GROUPS;
+  var sel=cond==='adhd'?adhdSel:asdSel;
+  groups.forEach(function(g){g.items.forEach(function(item){sel[item.id]=true;});});
+  renderTopics(); refresh();
+}
+function clearAll(cond){
+  var cond2=cond==='adhd'?adhdSel:asdSel;
+  Object.keys(cond2).forEach(function(k){cond2[k]=false;});
+  renderTopics(); refresh();
+}
+
+// ── Build handout HTML ──
+function buildHandout(){
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  var showADHD=(disorder==='adhd'||disorder==='both');
+  var showASD =(disorder==='asd' ||disorder==='both');
+
+  var adhdItems=getSelectedItems(ADHD_PE_GROUPS,adhdSel);
+  var asdItems =getSelectedItems(ASD_PE_GROUPS, asdSel);
+
+  var hasContent=(showADHD&&adhdItems.length)||(showASD&&asdItems.length);
+  if(!hasContent) return null;
+
+  var h='';
+  // Header
+  h+='<div class="ho-header">';
+  h+='<div class="ho-pt">Neurodevelopmental Psychoeducation Handout</div>';
+  h+='<div class="ho-meta">Patient: <strong>'+esc(name)+'</strong>';
+  if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
+  h+=' &nbsp;|&nbsp; Clinician: <strong>'+esc(dr)+'</strong></div>';
+  h+='<div class="ho-notice">The following information was discussed or provided as educational material during your appointment. It is a reference guide only — all treatment decisions should be made in consultation with your treating clinician.</div>';
+  h+='</div>';
+
+  // ADHD section
+  if(showADHD && adhdItems.length){
+    h+='<div class="ho-condition-title adhd-t">Attention Deficit Hyperactivity Disorder (ADHD)</div>';
+    h+=buildConditionContent(adhdItems, ADHD_PE_GROUPS, 'adhd');
+  }
+
+  // ASD section
+  if(showASD && asdItems.length){
+    h+='<div class="ho-condition-title asd-t">Autism Spectrum Disorder (ASD)</div>';
+    h+=buildConditionContent(asdItems, ASD_PE_GROUPS, 'asd');
+  }
+
+  // Footer
+  h+='<div class="ho-footer">This handout was prepared specifically for '+esc(name)+(ds?' following a psychiatric assessment on '+esc(ds):'')+'. It is not a substitute for clinical advice.</div>';
+  return h;
+}
+
+function getSelectedItems(groups, sel){
+  var result=[];
+  groups.forEach(function(g){
+    g.items.forEach(function(item){
+      if(sel[item.id]) result.push({group:g.label, item:item});
+    });
+  });
+  return result;
+}
+
+var ADHD_GROUP_COLORS={
+  'null':'adhd-g-general',
+  'Medication Information':'adhd-g',
+  'Non-pharmacological Strategies':'adhd-g-nonpharm',
+  'Products and Resources':'adhd-g-products'
+};
+
+function buildConditionContent(selectedItems, groups, condKey){
+  // Group items by their group label (preserving order from groups)
+  var groupMap={}, groupOrder=[];
+  groups.forEach(function(g){
+    var gKey=g.label||'null';
+    g.items.forEach(function(item){
+      var found=selectedItems.find(function(s){return s.item.id===item.id;});
+      if(found){
+        if(!groupMap[gKey]){groupMap[gKey]=[];groupOrder.push({key:gKey,label:g.label});}
+        groupMap[gKey].push(item);
+      }
+    });
+  });
+
+  var h='';
+  groupOrder.forEach(function(gInfo){
+    var gKey=gInfo.key, gLabel=gInfo.label;
+    if(gLabel){
+      var cls=condKey==='adhd'?(ADHD_GROUP_COLORS[gLabel]||'adhd-g'):'asd-g';
+      h+='<div class="ho-group-label '+cls+'">'+esc(gLabel)+'</div>';
+    }
+    groupMap[gKey].forEach(function(item){
+      h+='<div class="ho-topic">';
+      h+='<div class="ho-topic-title">'+esc(item.title)+'</div>';
+      h+='<div class="ho-topic-body">'+item.body+'</div>';
+      h+='</div>';
+    });
+  });
+  return h;
+}
+
+// ── Refresh preview ──
+function refresh(){
+  var html=buildHandout();
+  var pv=$('preview');
+  if(!html){pv.innerHTML='<div class="empty-msg">Select a condition and tick topics above to generate the handout.</div>';return;}
+  pv.innerHTML=html;
+}
+
+// ── Export functions ──
+function buildDocxHtml(){
+  var html=buildHandout();
+  if(!html) return null;
+  return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+    '<head><meta charset="UTF-8"><style>'+
+    '@page{margin:2cm 2.5cm;}'+
+    'body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#111;}'+
+    'h1,h2,h3{margin:0 0 6pt;}'+
+    '.ho-header{margin-bottom:14pt;padding-bottom:10pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-pt{font-size:17pt;font-weight:bold;color:#0f172a;margin-bottom:3pt;}'+
+    '.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:10pt;}'+
+    '.ho-notice{font-size:9.5pt;background:#f0f9ff;border-left:3pt solid #0e7490;padding:8pt 10pt;color:#0c4a6e;}'+
+    '.ho-condition-title{font-size:14pt;font-weight:bold;padding:7pt 10pt;border-radius:5pt;margin:18pt 0 9pt;color:#fff;}'+
+    '.ho-condition-title.adhd-t{background:#1e3a5f;}'+
+    '.ho-condition-title.asd-t{background:#134e4a;}'+
+    '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:11pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
+    '.ho-group-label.adhd-g-general{color:#1e3a5f;}'+
+    '.ho-group-label.adhd-g{color:#0e7490;}'+
+    '.ho-group-label.adhd-g-nonpharm{color:#7c3aed;}'+
+    '.ho-group-label.adhd-g-products{color:#065f46;}'+
+    '.ho-group-label.asd-g{color:#0d9488;}'+
+    '.ho-topic{margin-bottom:7pt;padding:8pt 11pt;border:1pt solid #e5e7eb;border-radius:5pt;background:#fafbff;}'+
+    '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
+    '.ho-topic-body p{margin:0 0 5pt;}'+
+    '.ho-topic-body ul{margin:3pt 0 6pt 14pt;}'+
+    '.ho-topic-body li{margin-bottom:3pt;}'+
+    '.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9pt;margin:5pt 0 8pt;}'+
+    '.ho-topic-body th{background:#f1f5f9;padding:4pt 6pt;text-align:left;border:1pt solid #d1d5db;font-size:8.5pt;}'+
+    '.ho-topic-body td{padding:3pt 6pt;border:1pt solid #d1d5db;vertical-align:top;}'+
+    '.ho-footer{margin-top:20pt;padding-top:10pt;border-top:1pt solid #e5e7eb;font-size:8pt;color:#9ca3af;font-style:italic;}'+
+    '</style></head><body>'+html+'</body></html>';
+}
+
+function dlDocx(){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected — please tick some topics first.');return;}
+  var name=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
+  var blob=new Blob(['﻿'+docx],{type:'application/msword;charset=utf-8'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='Psychoeducation_Handout_'+name+'.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  flash($('btn-docx'),'Downloaded!');
+}
+
+function copyPlain(btn){
+  var pv=$('preview');
+  if(!buildHandout()){alert('No topics selected — please tick some topics first.');return;}
+  navigator.clipboard.writeText(pv.innerText||pv.textContent).then(function(){flash(btn,'Copied!');}).catch(function(){});
+}
+
+function copyFormatted(btn){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected — please tick some topics first.');return;}
+  if(window.ClipboardItem){
+    var blob=new Blob([docx],{type:'text/html'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':blob})]).then(function(){flash(btn,'Copied!');}).catch(function(){
+      var pv=$('preview');
+      navigator.clipboard.writeText(pv.innerText||pv.textContent).then(function(){flash(btn,'Copied (plain)!');});
+    });
+  } else {
+    var pv=$('preview');
+    navigator.clipboard.writeText(pv.innerText||pv.textContent).then(function(){flash(btn,'Copied!');});
+  }
+}
+
+function flash(btn,msg){
+  if(!btn)return;
+  var orig=btn.textContent;
+  btn.textContent=msg;btn.classList.add('copied');
+  setTimeout(function(){btn.textContent=orig;btn.classList.remove('copied');},2000);
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded',function(){
+  // Set today's date
+  var td=new Date().toISOString().slice(0,10);
+  var dtEl=$('ptDate'); if(dtEl&&!dtEl.value) dtEl.value=td;
+  setDisorder('adhd');
+  renderTopics();
+  refresh();
+});
+</script>
+</body>
+</html>
