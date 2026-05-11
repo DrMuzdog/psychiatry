@@ -450,9 +450,27 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
   display:flex; align-items:center; gap:8px;
 }
 .bd-controls{display:flex; flex-wrap:wrap; gap:5px; align-items:center}
-.bd-when{align-items:center}
+.bd-when{align-items:center; gap:10px}
 .bd-inline{flex-wrap:wrap; gap:6px}
+.bd-inline-pills{display:flex; flex-wrap:wrap; gap:5px}
 .bd-multi .pill{}
+.num-strip{
+  display:flex; flex-wrap:wrap; gap:4px;
+  padding:4px; background:var(--slate-bg); border-radius:8px;
+}
+.pill-num{
+  width:34px; height:32px; padding:0;
+  font:600 13px/1 "Inter",sans-serif;
+  border:1px solid transparent; background:transparent; color:var(--slate);
+  border-radius:5px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .12s;
+}
+.pill-num:hover{background:#fff; color:var(--ink)}
+.pill-num.on{
+  background:var(--primary); border-color:var(--primary); color:#fff;
+  box-shadow:0 1px 2px rgba(15,23,42,.12);
+}
 .bd-num{
   width:64px; padding:6px 9px;
   font:500 14px "Inter",sans-serif;
@@ -545,6 +563,7 @@ footer{
     <a href="#sec-pe">Psychoeducation</a>
     <a href="#sec-tit">Titration</a>
     <a href="#sec-fu">Follow-up</a>
+    <a href="#sec-trtplan">Treatment plan</a>
     <a href="#sec-hoc">Handover letter</a>
   </nav>
 </header>
@@ -727,10 +746,22 @@ footer{
       <div class="bd-row">
         <label class="bd-label">In</label>
         <div class="bd-controls bd-when">
-          <input type="number" id="fu-num" min="1" max="24" value="6" class="bd-num" oninput="fuRender()">
-          <button type="button" class="pill" data-fu="unit" data-val="days"   onclick="fuPick(this)">days</button>
-          <button type="button" class="pill on" data-fu="unit" data-val="weeks"  onclick="fuPick(this)">weeks</button>
-          <button type="button" class="pill" data-fu="unit" data-val="months" onclick="fuPick(this)">months</button>
+          <div class="num-strip" id="fu-num-strip"></div>
+          <div class="bd-controls bd-inline-pills">
+            <button type="button" class="pill" data-fu="unit" data-val="days"   onclick="fuPick(this)">days</button>
+            <button type="button" class="pill on" data-fu="unit" data-val="weeks"  onclick="fuPick(this)">weeks</button>
+            <button type="button" class="pill" data-fu="unit" data-val="months" onclick="fuPick(this)">months</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-row">
+        <label class="bd-label">Appointment duration</label>
+        <div class="bd-controls">
+          <button type="button" class="pill" data-fu="dur" data-val="15" onclick="fuPick(this)">15 min</button>
+          <button type="button" class="pill on" data-fu="dur" data-val="30" onclick="fuPick(this)">30 min</button>
+          <button type="button" class="pill" data-fu="dur" data-val="45" onclick="fuPick(this)">45 min</button>
+          <button type="button" class="pill" data-fu="dur" data-val="60" onclick="fuPick(this)">60 min</button>
         </div>
       </div>
 
@@ -740,7 +771,6 @@ footer{
           <button type="button" class="pill" data-fu="req" data-val="BP and HR readings (home, pharmacy or GP)" onclick="fuToggle(this)">BP &amp; HR</button>
           <button type="button" class="pill" data-fu="req" data-val="Weight check" onclick="fuToggle(this)">Weight</button>
           <button type="button" class="pill" data-fu="req" data-val="ECG via GP" onclick="fuToggle(this)">ECG</button>
-          <button type="button" class="pill" data-fu="req" data-val="Bloods (TFT, FBE, EUC, LFT, ferritin, B12)" onclick="fuToggle(this)">Bloods</button>
           <button type="button" class="pill" data-fu="req" data-val="Urine drug screen" onclick="fuToggle(this)">UDS</button>
           <button type="button" class="pill" data-fu="req" data-val="Old school reports / NAPLAN / parent-teacher feedback" onclick="fuToggle(this)">School reports</button>
           <button type="button" class="pill" data-fu="req" data-val="Adult informant report (partner / parent)" onclick="fuToggle(this)">Adult informant</button>
@@ -749,6 +779,30 @@ footer{
           <button type="button" class="pill" data-fu="req" data-val="Mood / symptom diary" onclick="fuToggle(this)">Mood diary</button>
           <button type="button" class="pill" data-fu="req" data-val="Written list of any questions or concerns" onclick="fuToggle(this)">Written questions</button>
           <button type="button" class="pill" data-fu="req" data-val="Previous psychology / paediatric / psychiatric letters" onclick="fuToggle(this)">Prior letters</button>
+        </div>
+      </div>
+
+      <div class="bd-row">
+        <label class="bd-label">Bloods to order</label>
+        <div class="bd-controls bd-multi">
+          <button type="button" class="pill" data-fu="blood" data-val="FBC" onclick="fuToggleBlood(this)">FBC</button>
+          <button type="button" class="pill" data-fu="blood" data-val="EUC" onclick="fuToggleBlood(this)">EUC</button>
+          <button type="button" class="pill" data-fu="blood" data-val="LFT" onclick="fuToggleBlood(this)">LFT</button>
+          <button type="button" class="pill" data-fu="blood" data-val="TFT" onclick="fuToggleBlood(this)">TFT</button>
+          <button type="button" class="pill" data-fu="blood" data-val="CMP" onclick="fuToggleBlood(this)">CMP</button>
+          <button type="button" class="pill" data-fu="blood" data-val="CRP" onclick="fuToggleBlood(this)">CRP</button>
+          <button type="button" class="pill" data-fu="blood" data-val="Iron studies" onclick="fuToggleBlood(this)">Iron studies</button>
+          <button type="button" class="pill" data-fu="blood" data-val="Ferritin" onclick="fuToggleBlood(this)">Ferritin</button>
+          <button type="button" class="pill" data-fu="blood" data-val="B12" onclick="fuToggleBlood(this)">B12</button>
+          <button type="button" class="pill" data-fu="blood" data-val="Folate" onclick="fuToggleBlood(this)">Folate</button>
+          <button type="button" class="pill" data-fu="blood" data-val="Vitamin D" onclick="fuToggleBlood(this)">Vit D</button>
+          <button type="button" class="pill" data-fu="blood" data-val="HbA1c" onclick="fuToggleBlood(this)">HbA1c</button>
+          <button type="button" class="pill" data-fu="blood" data-val="Fasting lipids" onclick="fuToggleBlood(this)">Lipids</button>
+          <button type="button" class="pill" data-fu="blood" data-val="Prolactin" onclick="fuToggleBlood(this)">Prolactin</button>
+        </div>
+        <div class="bd-controls" style="margin-top:6px">
+          <button type="button" class="pill" data-fu="path" data-val="Pathology form has been sent" onclick="fuPickPath(this)">Pathology form sent</button>
+          <button type="button" class="pill" data-fu="path" data-val="Patient to see GP for pathology form" onclick="fuPickPath(this)">See GP for pathology form</button>
         </div>
       </div>
 
@@ -764,9 +818,18 @@ footer{
     </div>
     <button class="copybtn" onclick="copyFU(this)">Copy follow-up plan</button>
     <button class="clearbtn" onclick="fuClear()">Clear</button>
+  </div>
+</section>
 
-    <div class="bd-divider">Pre-built templates (click to copy)</div>
-    <div class="fu-grid" id="fu-grid"></div>
+<section class="card green" id="sec-trtplan">
+  <div class="ch"><span class="num">·</span>Treatment plan — non-pharmacological &amp; GP management</div>
+  <div class="body">
+    <p class="lead">Standard non-pharm recommendations for the patient and a structured GP management plan. Copy ready.</p>
+    <div class="script-box">
+      <span class="label">Treatment plan — copy ready</span>
+      <pre id="trt-out"></pre>
+    </div>
+    <button class="copybtn" onclick="copyTrt(this)">Copy treatment plan</button>
   </div>
 </section>
 
@@ -1926,138 +1989,6 @@ function getProtocols(key){
 }
 
 // =================== FOLLOW-UP TEMPLATES ===================
-const FU_TEMPLATES = [
-  {nm:'1–2 week safety check (titration)', text:`PLAN — 1–2 WEEK SAFETY CHECK
-
-Call or telehealth review in 1–2 weeks to confirm tolerability.
-Patient to monitor: any chest pain, palpitations, severe anxiety, mood change.
-Continue current dose until reviewed.
-Email or call if any concerns before next appointment.`},
-  {nm:'4-week titration review', text:`PLAN — 4-WEEK TITRATION REVIEW
-
-Telehealth or in-person review at 4 weeks.
-Patient to bring: BP and HR readings (GP / pharmacy / home cuff).
-Monitor: response, side effects, sleep, appetite, mood, function.
-Continue current dose until reviewed. May increase if tolerating well but inadequate response.`},
-  {nm:'6-week titration review + GP letter', text:`PLAN — 6-WEEK REVIEW + GP LETTER
-
-Review at ~6 weeks once on ongoing dose for 2+ weeks.
-Send GP letter summarising diagnosis, medication plan, monitoring requirements.
-Patient to bring BP, HR readings. Weight check.
-If stable: progress to longer-interval reviews.`},
-  {nm:'3-month stable review', text:`PLAN — 3-MONTH STABLE REVIEW
-
-Review in 3 months for stable medication regime.
-GP to monitor BP, HR, weight in between.
-Patient to flag: side effect change, mood change, sleep change, response change.
-Annual scripts via psychiatrist; interim refills via GP shared-care arrangement.`},
-  {nm:'6-month stable review', text:`PLAN — 6-MONTH STABLE REVIEW
-
-Six-monthly psychiatric review for stable regime.
-Continued GP monitoring for BP, HR, weight.
-Discuss any new medications, life changes, pregnancy plans.
-Repeat ECG if any new cardiac symptoms.`},
-  {nm:'GP shared-care handover', text:`PLAN — GP SHARED-CARE HANDOVER
-
-Once medication regime stable for 3+ months:
-GP to provide interim repeat scripts under shared-care arrangement.
-Psychiatrist reviews 6–12 monthly.
-GP responsible for BP, HR, weight monitoring; flag any concerns.
-Patient retains direct line to psychiatrist for any clinical change.`},
-  {nm:'Suboptimal response — switch / augment', text:`PLAN — SUBOPTIMAL RESPONSE
-
-Consider:
-• Switch within stimulant class (LA ↔ Concerta) — different release profile
-• Switch across classes (methylphenidate ↔ amphetamine)
-• Add afternoon IR top-up if duration insufficient
-• Add non-stimulant (guanfacine, atomoxetine) if partial response or affect/impulsivity
-• Address sleep, substance use, comorbid mood / anxiety
-• Confirm adherence and timing
-
-Review in 4 weeks after change.`},
-  {nm:'Side-effect management plan', text:`SIDE-EFFECT MANAGEMENT PLAN
-
-REDUCED APPETITE / WEIGHT LOSS
-• Substantial breakfast before dosing.
-• High-calorie evening meal once medication has worn off.
-• Protein-rich snacks throughout the day; smoothies / shakes if needed.
-• Weekend / holiday medication-free days for adolescents with poor growth.
-• Weigh monthly during titration. If BMI dropping or <18.5: reduce dose or switch agent.
-
-INSOMNIA / DELAYED SLEEP
-• Short-acting stimulant: move last dose ≥6–8 hrs before bedtime.
-• Long-acting: shift to earliest practical morning time.
-• Cut caffeine ≥10 hrs before bed.
-• Optimise sleep hygiene; fixed wake time 7 days/week.
-• Morning bright light (Re-Timer 3, 30–60 min within 1 hr of waking).
-• Melatonin 2–4mg as chronobiotic — 3–4 hrs before desired bedtime (not at bedtime).
-• Clonidine 50–200mcg nocte if hyperarousal / agitation.
-• Consider CBT-I (psychologist or This Way Up).
-
-HEADACHE
-• Usually transient — give it 2–3 weeks.
-• Ensure hydration, regular meals.
-• Check BP — if elevated, reduce dose.
-• Consider bruxism (jaw clenching) as contributor — relaxation, mouthguard, dose review.
-
-DRY MOUTH / NAUSEA
-• Take with food.
-• Adequate hydration; sugar-free gum.
-• Usually settles with time.
-
-REBOUND IRRITABILITY / MOOD LABILITY / EVENING CRASH
-• Reduce inter-dose gap (eg add midday dose) or switch to longer-acting.
-• Small IR top-up at the time rebound starts.
-• Reduce overall dose if persistent.
-• Refer back to psychiatrist if not resolving.
-
-INCREASED ANXIETY / JITTERINESS
-• Often signals dose too high — reduce.
-• If anxiety pre-dated treatment: treat the anxiety disorder separately.
-• Consider switching to the other stimulant class, or to a non-stimulant.
-
-ELEVATED BP / HR
-• Recheck on separate occasion.
-• If sustained BP ≥140/90 or HR persistently >100 — reduce dose.
-• ECG if symptoms (palpitations, chest pain, syncope).
-• Cardiology if persistent or new abnormality.
-• Clonidine 50–200mcg nocte can help BP, sleep and hyperarousal together.
-
-EMOTIONAL BLUNTING / "ZOMBIE" / PERSONALITY CHANGE
-• Dose too high — REDUCE. Do not tolerate this.
-• Patient should feel more like themselves, not less.
-
-PSYCHOSIS OR MANIA — PSYCHIATRIC EMERGENCY
-• Cease stimulant immediately.
-• Send to ED, or manage in community with antipsychotic + urgent community mental health review.
-• More common when combined with cannabis. Re-take substance use history.
-
-TICS — NEW OR WORSENED
-• Reduce dose or switch to non-stimulant (atomoxetine, alpha-2 agonist).
-• Tics often pre-exist; clarify whether truly new vs unmasked.
-
-REVIEW IN 2–4 WEEKS after any adjustment.`},
-  {nm:'Patient action items — between visits', text:`PATIENT TO ARRANGE BEFORE NEXT REVIEW
-
-• BP and HR readings (pharmacy / GP / home cuff) — bring records
-• Weight check
-• Note side effects, response, sleep, mood
-• Sleep diary if relevant
-• Order any pending bloods (TFT, FBE, EUC, LFT, ferritin, B12)
-• Email if any concerns prior to appointment`},
-  {nm:'Defer stimulant — needs workup', text:`PLAN — DEFER STIMULANT INITIATION
-
-Stimulant deferred pending:
-• ECG — recommend GP order; bring result
-• Cardiology review if cardiac concern
-• Repeat BP readings — 7-day home log
-• Bloods — TFT, FBE, EUC, LFT, ferritin, B12
-• Clarify substance / mood / anxiety / sleep concern
-• Collateral — old school reports / parent / partner
-
-Review once outstanding items completed.
-In the interim — non-pharmacological strategies (psychoeducation, CBT-ADHD, sleep hygiene, coaching).`},
-];
 
 // =================== HELPERS ===================
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -2366,22 +2297,26 @@ function flashCopy(btn, original){
 }
 
 // =================== FOLLOW-UP RENDER ===================
-function renderFU(){
-  const wrap = document.getElementById('fu-grid');
-  wrap.innerHTML = FU_TEMPLATES.map((t,i)=>`
-    <div class="fu-card">
-      <div class="nm">${escHtml(t.nm)}</div>
-      <pre class="body-txt" id="fu-text-${i}">${escHtml(t.text)}</pre>
-      <button class="copybtn" onclick="copyFUTpl(${i},this)">Copy</button>
-    </div>`).join('');
-}
-function copyFUTpl(i, btn){
-  const text = document.getElementById('fu-text-'+i).textContent;
-  navigator.clipboard.writeText(text).then(()=>flashCopy(btn,'Copy'));
-}
-
 // =================== FOLLOW-UP PLAN BUILDER ===================
-const fuState = {who:'Psychiatrist', unit:'weeks', req:new Set()};
+const fuState = {
+  who:'Psychiatrist', num:6, unit:'weeks', dur:'30',
+  req:new Set(), blood:new Set(), path:null
+};
+function renderFUNumStrip(){
+  const wrap = document.getElementById('fu-num-strip');
+  if(!wrap) return;
+  let html = '';
+  for(let i=1; i<=12; i++){
+    html += `<button class="pill-num${i===fuState.num?' on':''}" data-val="${i}" onclick="fuPickNum(this)">${i}</button>`;
+  }
+  wrap.innerHTML = html;
+}
+function fuPickNum(btn){
+  fuState.num = parseInt(btn.dataset.val,10);
+  document.querySelectorAll('#fu-num-strip .pill-num').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  fuRender();
+}
 function fuPick(btn){
   const grp = btn.dataset.fu;
   fuState[grp] = btn.dataset.val;
@@ -2395,11 +2330,32 @@ function fuToggle(btn){
   else {fuState.req.add(v); btn.classList.add('on');}
   fuRender();
 }
+function fuToggleBlood(btn){
+  const v = btn.dataset.val;
+  if(fuState.blood.has(v)){fuState.blood.delete(v); btn.classList.remove('on');}
+  else {fuState.blood.add(v); btn.classList.add('on');}
+  fuRender();
+}
+function fuPickPath(btn){
+  const v = btn.dataset.val;
+  if(fuState.path === v){
+    fuState.path = null;
+    btn.classList.remove('on');
+  } else {
+    fuState.path = v;
+    document.querySelectorAll('.pill[data-fu="path"]').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+  }
+  fuRender();
+}
 function fuClear(){
   fuState.req.clear();
-  document.querySelectorAll('.pill[data-fu="req"]').forEach(b=>b.classList.remove('on'));
+  fuState.blood.clear();
+  fuState.path = null;
+  fuState.num = 6;
+  document.querySelectorAll('.pill[data-fu="req"], .pill[data-fu="blood"], .pill[data-fu="path"]').forEach(b=>b.classList.remove('on'));
   const n = document.getElementById('fu-notes'); if(n) n.value = '';
-  const num = document.getElementById('fu-num'); if(num) num.value = 6;
+  renderFUNumStrip();
   fuRender();
 }
 function toggleFUHelp(){
@@ -2407,29 +2363,157 @@ function toggleFUHelp(){
   h.style.display = (h.style.display==='none' || !h.style.display) ? 'block' : 'none';
 }
 function fuRender(){
-  const num = document.getElementById('fu-num').value || '?';
-  const notes = (document.getElementById('fu-notes').value||'').trim();
+  const notes = (document.getElementById('fu-notes')?.value||'').trim();
   const lines = [];
   lines.push('FOLLOW-UP PLAN');
   lines.push('');
   lines.push('Review with: '+fuState.who);
-  lines.push('When: in '+num+' '+fuState.unit);
+  lines.push('When: in '+fuState.num+' '+fuState.unit);
+  if(fuState.dur) lines.push('Appointment duration: '+fuState.dur+' minutes');
   if(fuState.req.size){
     lines.push('');
     lines.push('Patient to arrange before the next review:');
     [...fuState.req].forEach(r=>lines.push('  • '+r));
+  }
+  if(fuState.blood.size){
+    lines.push('');
+    lines.push('Bloods to order: '+[...fuState.blood].join(', ')+'.');
+    if(fuState.path) lines.push('  '+fuState.path+'.');
+  } else if(fuState.path){
+    lines.push('');
+    lines.push(fuState.path+'.');
   }
   if(notes){
     lines.push('');
     lines.push('Notes / instructions:');
     notes.split(/\n+/).forEach(l=>{if(l.trim()) lines.push('  '+l.trim());});
   }
-  document.getElementById('fu-out').textContent = lines.join('\n');
+  const out = document.getElementById('fu-out');
+  if(out) out.textContent = lines.join('\n');
 }
 function copyFU(btn){
   const t = document.getElementById('fu-out').textContent;
   if(!t.trim()) return;
   navigator.clipboard.writeText(t).then(()=>flashCopy(btn,'Copy follow-up plan'));
+}
+
+// =================== TREATMENT PLAN (non-pharm + GP MP) ===================
+function renderTrt(){
+  const text = `TREATMENT PLAN — NON-PHARMACOLOGICAL & GP MANAGEMENT
+
+=============================================
+PATIENT — NON-PHARMACOLOGICAL RECOMMENDATIONS
+=============================================
+
+SLEEP
+• Fixed wake time 7 days/week (anchors circadian rhythm).
+• Morning bright light therapy on waking — 30–60 min (e.g. Re-Timer 3 glasses, retimer.com.au).
+• Caffeine cut-off ≥10 hours before bed; no heavy meals or alcohol within 3 hours of bed; screens off 1 hour before.
+• Sleep environment: cool, dark, quiet. Manta Sleep mask + Loop earplugs if needed.
+• Melatonin 0.5–4mg as a chronobiotic — 3–4 hours before desired bedtime (not at bedtime).
+• Clonidine 50–200mcg nocte for hyperarousal / agitation if persistent.
+
+EXERCISE
+• 20+ minutes of aerobic exercise, earlier in the day. Acute bout = 1–4 hours of improved attention.
+• Regular movement breaks throughout the day.
+• Strength training 2–3x/week.
+
+DIET
+• Eat breakfast before dosing — pre-empts stimulant appetite suppression.
+• Protein-rich snacks; high-calorie evening meal once medication has worn off.
+• Regular meals, even if not hungry — particularly lunch.
+• Reduce ultra-processed foods and excess sugar; address binge patterns if present.
+
+PHONE / DIGITAL HYGIENE
+• Hide social apps inside folders within folders on the last page.
+• Grayscale mode (Settings → Accessibility → Color Filters → Greyscale).
+• Screen Time limits — have someone else set the override passcode.
+• Notifications off for all non-essential apps.
+• Charge phone outside the bedroom.
+
+PRODUCTIVITY / EXECUTIVE STRATEGIES
+• Body doubling: work alongside another person, in person or via Focusmate (free, focusmate.com).
+• Brain dump + priority matrix weekly — externalise the task list, then sort by importance and urgency.
+• Time blocking with visual timers (Time Timer; Pomodoro 25 min on, 5 off).
+• If-then planning: "If it is 9am and I sit at my desk, then I open document X."
+• Schedule demanding work for the medication peak (60–90 min after dosing).
+
+EMOTIONAL REGULATION
+• TIPP in the moment: Temperature (cold water on face), Intense exercise 60 sec, Paced breathing 4-in 7-out, PMR.
+• STOP: Stop — step back — observe — proceed mindfully.
+• 90-second rule: physiological surge lasts ~90 seconds if not fed by rumination.
+• Defusion (ACT): "I notice I'm having the thought that I'm worthless" rather than "I'm worthless."
+
+SUBSTANCE & STIMULANT-INTERACTION ADVICE
+• Cannabis — strongly recommend cessation; worsens ADHD symptoms and reduces treatment benefit.
+• Alcohol — moderate at most; stimulants mask sedating effects.
+• Caffeine — moderate is fine; excess worsens anxiety and insomnia.
+
+PSYCHOLOGICAL THERAPIES (evidence-based for ADHD)
+• CBT for ADHD — procrastination, organisation, time management, avoidance, negative self-beliefs.
+• ACT — psychological flexibility; values, committed action, defusion.
+• DBT skills — particularly for emotional dysregulation and rejection-sensitive dysphoria.
+• ADHD coaching — practical, present-focused accountability (ICF-accredited coach with ADHD training).
+• Occupational therapy — workspace organisation, sensory strategies; may be NDIS-fundable.
+
+USEFUL RESOURCES
+• Books: ADHD 2.0 (Hallowell & Ratey), Driven to Distraction, Smart but Stuck (Brown), Scattered Minds (Mate).
+• Apps / services: Focusmate (free body doubling), Anki (spaced repetition), Brick (NFC app-locker).
+• Products: Re-Timer 3 glasses, Loop earplugs, Manta Sleep masks, Time Timer.
+
+=============================================
+GP MANAGEMENT PLAN
+=============================================
+
+1. MENTAL HEALTH TREATMENT PLAN (MHTP) — Item 2715
+   • Refer to an ADHD-aware psychologist for CBT-ADHD, ACT, or DBT-skills training.
+   • Initial 10 Better Access sessions; extend by recommendation under continuing care.
+   • For emotional dysregulation / RSD — prioritise DBT skills modules.
+
+2. ALLIED HEALTH REFERRALS (as clinically indicated)
+   • ADHD coach — ICF-accredited with ADHD training.
+   • Occupational therapy — workspace, sensory and routine strategies; NDIS-fundable where eligible.
+   • Dietitian — if appetite or weight concerns.
+   • Sleep psychologist or CBT-I program (This Way Up) if persistent insomnia.
+
+3. ROUTINE MONITORING (every GP review during stimulant treatment)
+   • Therapeutic response, adherence, side effects, mental state, substance use risk, cardiovascular status.
+   • Resting BP and pulse at every review.
+   • Weight: monthly during titration; 6-monthly once stable.
+   • Ask about sleep, appetite, mood, rebound, headache, anxiety.
+
+4. PATHOLOGY (annual, or sooner if clinically indicated)
+   • FBC, EUC, LFT, TFT, ferritin, iron studies, B12, folate, Vitamin D.
+   • HbA1c and fasting lipids if metabolic risk.
+   • Pre-atomoxetine: baseline LFT (rare hepatotoxicity).
+
+5. ECG
+   • As clinically indicated: cardiac history, exertional symptoms, syncope, palpitations, significant family history of arrhythmia or sudden death, age >40 with cardiovascular risk factors.
+   • Repeat if new cardiac symptoms.
+
+6. RTPM / SAFESCRIPT
+   • Mandatory check before every controlled-substance prescription in most jurisdictions.
+
+7. WHEN TO CONTACT / REFER BACK TO PSYCHIATRY
+   • Inadequate treatment response or need for dose escalation beyond current regimen.
+   • New psychiatric symptoms.
+   • Significant or persistent side effects.
+   • Cardiovascular concerns (persistent BP ≥140/90, HR persistently >100).
+   • Suspected psychosis or mania — cease stimulant, arrange ED or urgent community mental health review (especially if combined with cannabis).
+   • Pregnancy planning, pregnancy, breastfeeding.
+
+8. PATIENT EDUCATION RESOURCES TO PROVIDE
+   • Written titration plan and side-effect management guide.
+   • Sleep hygiene + chronobiotic melatonin instructions.
+   • Reading list and useful apps / products (above).
+`;
+  const out = document.getElementById('trt-out');
+  if(out) out.textContent = text;
+}
+function copyTrt(btn){
+  const t = document.getElementById('trt-out').textContent;
+  if(!t.trim()) return;
+  navigator.clipboard.writeText(t).then(()=>flashCopy(btn,'Copy treatment plan'));
 }
 
 // =================== HANDOVER LETTER ===================
@@ -2598,10 +2682,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   Object.keys(SECTIONS).forEach(renderSection);
   renderMSE();
   renderPE();
-  fuRender();
-  hocRender();
   renderTit();
-  renderFU();
+  renderFUNumStrip();
+  fuRender();
+  renderTrt();
+  hocRender();
 });
 </script>
 </body>
