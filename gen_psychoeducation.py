@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate psychoeducation.html — unified tool merging ADHD, ASD, OCD, Insomnia."""
+"""Generate psychoeducation.html — unified tool merging ADHD, ASD, OCD, Insomnia, PTSD."""
 import re, os
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -35,11 +35,13 @@ def read(path):
 neuro = read(os.path.join(BASE, 'neuro-psychoeducation.html'))
 ocd   = read(os.path.join(BASE, 'ocd-psychoeducation.html'))
 ins   = read(os.path.join(BASE, 'insomnia-psychoeducation.html'))
+ptsd  = read(os.path.join(BASE, 'ptsd-psychoeducation.html'))
 
 ADHD_JS     = extract_js_var(neuro, 'ADHD_PE_GROUPS')
 ASD_JS      = extract_js_var(neuro, 'ASD_PE_GROUPS')
 OCD_JS      = extract_js_var(ocd,   'OCD_PE_GROUPS')
 INSOMNIA_JS = extract_js_var(ins,   'INSOMNIA_PE_GROUPS')
+PTSD_JS     = extract_js_var(ptsd,  'PTSD_PE_GROUPS')
 
 # Insomnia gets amber colour scheme (distinct from ASD teal)
 # so we patch the ins-done class references in INSOMNIA_JS to keep them as-is
@@ -58,6 +60,7 @@ html = r"""<!DOCTYPE html>
   --asd:#0d9488;--asd-bg:#ccfbf1;--asd-dark:#134e4a;
   --ocd:#7c3aed;--ocd-bg:#ede9fe;--ocd-dark:#4c1d95;--ocd-mid:#6d28d9;
   --ins:#b45309;--ins-bg:#fef3c7;--ins-dark:#78350f;--ins-mid:#92400e;
+  --ptsd:#be123c;--ptsd-bg:#ffe4e6;--ptsd-dark:#881337;--ptsd-mid:#9f1239;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -76,12 +79,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .dis-btn.active-asd{background:var(--asd-dark);border-color:var(--asd-dark);color:#fff}
 .dis-btn.active-ocd{background:var(--ocd-dark);border-color:var(--ocd-dark);color:#fff}
 .dis-btn.active-ins{background:var(--ins-dark);border-color:var(--ins-dark);color:#fff}
+.dis-btn.active-ptsd{background:var(--ptsd-dark);border-color:var(--ptsd-dark);color:#fff}
 .condition-block{margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
 .condition-header{padding:10px 14px;font:700 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px}
 .condition-header.adhd-h{background:var(--adhd-dark)}
 .condition-header.asd-h{background:var(--asd-dark)}
 .condition-header.ocd-h{background:var(--ocd-dark)}
 .condition-header.ins-h{background:var(--ins-dark)}
+.condition-header.ptsd-h{background:var(--ptsd-dark)}
 .cond-sel-btns{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
 .cond-sel-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font:600 11px var(--sans);padding:3px 10px;border-radius:5px;cursor:pointer;transition:background .1s}
 .cond-sel-btn:hover{background:rgba(255,255,255,.3)}
@@ -113,6 +118,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .pe-section.ocd-done .pe-tick-btn{color:var(--ocd)}
 .pe-section.ins-done{background:#fffbeb}
 .pe-section.ins-done .pe-tick-btn{color:var(--ins)}
+.pe-section.ptsd-done{background:#fff1f2}
+.pe-section.ptsd-done .pe-tick-btn{color:var(--ptsd)}
 .pe-section.pe-optional{opacity:.88}
 .export-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .export-row .ex-label{font:700 12px var(--sans);color:var(--muted);flex-shrink:0;white-space:nowrap}
@@ -134,6 +141,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ho-condition-title.asd-t{background:var(--asd-dark)}
 .ho-condition-title.ocd-t{background:var(--ocd-dark)}
 .ho-condition-title.ins-t{background:var(--ins-dark)}
+.ho-condition-title.ptsd-t{background:var(--ptsd-dark)}
 .ho-group-label{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px;padding-bottom:3px;border-bottom-width:2px;border-bottom-style:solid}
 /* ADHD group label colours */
 .ho-group-label.adhd-g-general{color:var(--adhd-dark);border-bottom-color:var(--adhd-dark)}
@@ -152,6 +160,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ho-group-label.ins-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
 .ho-group-label.ins-g-strategies{color:#0e7490;border-bottom-color:#0e7490}
 .ho-group-label.ins-g-resources{color:#065f46;border-bottom-color:#065f46}
+/* PTSD group label colours */
+.ho-group-label.ptsd-g-core{color:var(--ptsd-dark);border-bottom-color:var(--ptsd-dark)}
+.ho-group-label.ptsd-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
+.ho-group-label.ptsd-g-strategies{color:#0e7490;border-bottom-color:#0e7490}
+.ho-group-label.ptsd-g-resources{color:#065f46;border-bottom-color:#065f46}
 .ho-topic{margin-bottom:7px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:7px;background:#fafbff}
 .ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
 .ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
@@ -177,12 +190,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 
 <div class="content">
 
-  <div class="section-label" style="margin-top:12px">Select condition(s) — tap to toggle on/off</div>
+  <div class="section-label" style="margin-top:12px">Select condition — tap to switch</div>
   <div class="disorder-row">
     <button class="dis-btn" id="dis-adhd" onclick="toggleCondition('adhd')">ADHD</button>
     <button class="dis-btn" id="dis-asd" onclick="toggleCondition('asd')">ASD</button>
     <button class="dis-btn" id="dis-ocd" onclick="toggleCondition('ocd')">OCD</button>
     <button class="dis-btn" id="dis-ins" onclick="toggleCondition('ins')">Insomnia</button>
+    <button class="dis-btn" id="dis-ptsd" onclick="toggleCondition('ptsd')">PTSD</button>
   </div>
 
   <div id="block-adhd" class="condition-block" style="display:none;margin-top:14px">
@@ -229,6 +243,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
     <div class="topic-list" id="ins-topic-list"></div>
   </div>
 
+  <div id="block-ptsd" class="condition-block" style="display:none">
+    <div class="condition-header ptsd-h">
+      PTSD — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll('ptsd')">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll('ptsd')">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="ptsd-topic-list"></div>
+  </div>
+
   <div class="export-row">
     <span class="ex-label">Export</span>
     <button class="abtn" id="btn-docx" onclick="dlDocx()">Download .docx</button>
@@ -249,29 +274,33 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <script>
-""" + ADHD_JS + "\n\n" + ASD_JS + "\n\n" + OCD_JS + "\n\n" + INSOMNIA_JS + r"""
+""" + ADHD_JS + "\n\n" + ASD_JS + "\n\n" + OCD_JS + "\n\n" + INSOMNIA_JS + "\n\n" + PTSD_JS + r"""
 
-var showADHD=false, showASD=false, showOCD=false, showIns=false;
-var adhdSel={}, asdSel={}, ocdSel={}, insSel={};
+var adhdSel={}, asdSel={}, ocdSel={}, insSel={}, ptsdSel={};
 
 var CONDITIONS={
-  adhd:{groups:ADHD_PE_GROUPS,sel:adhdSel,done:'adhd-done',listId:'adhd-topic-list',blockId:'block-adhd',btnId:'dis-adhd',cls:'active-adhd'},
-  asd: {groups:ASD_PE_GROUPS, sel:asdSel, done:'asd-done', listId:'asd-topic-list', blockId:'block-asd', btnId:'dis-asd', cls:'active-asd'},
-  ocd: {groups:OCD_PE_GROUPS, sel:ocdSel, done:'ocd-done', listId:'ocd-topic-list', blockId:'block-ocd', btnId:'dis-ocd', cls:'active-ocd'},
-  ins: {groups:INSOMNIA_PE_GROUPS,sel:insSel,done:'ins-done',listId:'ins-topic-list',blockId:'block-ins',btnId:'dis-ins',cls:'active-ins'}
+  adhd:{groups:ADHD_PE_GROUPS, sel:adhdSel, done:'adhd-done', listId:'adhd-topic-list', blockId:'block-adhd', btnId:'dis-adhd', cls:'active-adhd'},
+  asd: {groups:ASD_PE_GROUPS,  sel:asdSel,  done:'asd-done',  listId:'asd-topic-list',  blockId:'block-asd',  btnId:'dis-asd',  cls:'active-asd'},
+  ocd: {groups:OCD_PE_GROUPS,  sel:ocdSel,  done:'ocd-done',  listId:'ocd-topic-list',  blockId:'block-ocd',  btnId:'dis-ocd',  cls:'active-ocd'},
+  ins: {groups:INSOMNIA_PE_GROUPS,sel:insSel,done:'ins-done', listId:'ins-topic-list',  blockId:'block-ins',  btnId:'dis-ins',  cls:'active-ins'},
+  ptsd:{groups:PTSD_PE_GROUPS, sel:ptsdSel, done:'ptsd-done', listId:'ptsd-topic-list', blockId:'block-ptsd', btnId:'dis-ptsd', cls:'active-ptsd'}
 };
 
-var SHOW={adhd:false,asd:false,ocd:false,ins:false};
+var SHOW={adhd:false,asd:false,ocd:false,ins:false,ptsd:false};
+var activeCond=null;
 
 function $(id){return document.getElementById(id);}
 function f(id){var el=$(id);return el?el.value.trim():'';}
 function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function toggleCondition(cond){
-  SHOW[cond]=!SHOW[cond];
-  var c=CONDITIONS[cond];
-  $(c.btnId).className='dis-btn'+(SHOW[cond]?' '+c.cls:'');
-  $(c.blockId).style.display=SHOW[cond]?'':'none';
+  Object.keys(CONDITIONS).forEach(function(k){
+    SHOW[k]=(k===cond);
+    var ck=CONDITIONS[k];
+    $(ck.btnId).className='dis-btn'+(SHOW[k]?' '+ck.cls:'');
+    $(ck.blockId).style.display=SHOW[k]?'':'none';
+  });
+  activeCond=cond;
   refresh();
 }
 
@@ -332,12 +361,14 @@ var ADHD_GROUP_COLORS={'null':'adhd-g-general','Medication Information':'adhd-g-
 var ASD_GROUP_COLORS={'null':'asd-g','Products and Resources':'asd-g','Additional Topics':'asd-g'};
 var OCD_GROUP_COLORS={'null':'ocd-g-core','Treatment':'ocd-g-treatment','Strategies and Self-Help':'ocd-g-strategies','Products and Resources':'ocd-g-resources'};
 var INS_GROUP_COLORS={'null':'ins-g-core','Treatment':'ins-g-treatment','Practical Strategies':'ins-g-strategies','Products and Resources':'ins-g-resources'};
+var PTSD_GROUP_COLORS={'null':'ptsd-g-core','Treatment':'ptsd-g-treatment','Strategies':'ptsd-g-strategies','Products and Resources':'ptsd-g-resources'};
 
 var CONDITION_META={
   adhd:{titleCls:'adhd-t',label:'Attention Deficit Hyperactivity Disorder (ADHD)',groupColors:ADHD_GROUP_COLORS,defaultGroupCls:'adhd-g-general'},
   asd: {titleCls:'asd-t', label:'Autism Spectrum Disorder (ASD)', groupColors:ASD_GROUP_COLORS, defaultGroupCls:'asd-g'},
   ocd: {titleCls:'ocd-t', label:'Obsessive-Compulsive Disorder (OCD)', groupColors:OCD_GROUP_COLORS, defaultGroupCls:'ocd-g-core'},
-  ins: {titleCls:'ins-t', label:'Insomnia', groupColors:INS_GROUP_COLORS, defaultGroupCls:'ins-g-core'}
+  ins: {titleCls:'ins-t', label:'Insomnia', groupColors:INS_GROUP_COLORS, defaultGroupCls:'ins-g-core'},
+  ptsd:{titleCls:'ptsd-t',label:'Post-Traumatic Stress Disorder (PTSD)', groupColors:PTSD_GROUP_COLORS,defaultGroupCls:'ptsd-g-core'}
 };
 
 function buildHandout(){
@@ -346,7 +377,7 @@ function buildHandout(){
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
 
   var hasAny=false;
-  ['adhd','asd','ocd','ins'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond];
     c.groups.forEach(function(g){g.items.forEach(function(item){if(c.sel[item.id])hasAny=true;});});
@@ -362,7 +393,7 @@ function buildHandout(){
   h+='<div class="ho-notice">The following information was discussed or provided as educational material during your appointment. It is a reference guide only — all treatment decisions should be made in consultation with your treating clinician.</div>';
   h+='</div>';
 
-  ['adhd','asd','ocd','ins'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond];
     var meta=CONDITION_META[cond];
@@ -436,11 +467,13 @@ function buildDocxHtml(){
     '.ho-condition-title.asd-t{background:#134e4a;}'+
     '.ho-condition-title.ocd-t{background:#4c1d95;}'+
     '.ho-condition-title.ins-t{background:#78350f;}'+
+    '.ho-condition-title.ptsd-t{background:#881337;}'+
     '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:11pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
     '.ho-group-label.adhd-g-general{color:#1e3a5f;}.ho-group-label.adhd-g-med{color:#0e7490;}.ho-group-label.adhd-g-nonpharm{color:#7c3aed;}.ho-group-label.adhd-g-products{color:#065f46;}'+
     '.ho-group-label.asd-g{color:#134e4a;}'+
     '.ho-group-label.ocd-g-core{color:#4c1d95;}.ho-group-label.ocd-g-treatment{color:#1e3a5f;}.ho-group-label.ocd-g-strategies{color:#0e7490;}.ho-group-label.ocd-g-resources{color:#065f46;}'+
     '.ho-group-label.ins-g-core{color:#78350f;}.ho-group-label.ins-g-treatment{color:#1e3a5f;}.ho-group-label.ins-g-strategies{color:#0e7490;}.ho-group-label.ins-g-resources{color:#065f46;}'+
+    '.ho-group-label.ptsd-g-core{color:#881337;}.ho-group-label.ptsd-g-treatment{color:#1e3a5f;}.ho-group-label.ptsd-g-strategies{color:#0e7490;}.ho-group-label.ptsd-g-resources{color:#065f46;}'+
     '.ho-topic{margin-bottom:7pt;padding:8pt 11pt;border:1pt solid #e5e7eb;background:#fafbff;}'+
     '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
     '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
