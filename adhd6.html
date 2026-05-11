@@ -342,6 +342,16 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
 .tit-actions{
   display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 4px;
 }
+.proto-intro{
+  margin:4px 0 12px; padding:11px 13px;
+  background:var(--primary-bg); border-left:3px solid var(--primary);
+  border-radius:0 5px 5px 0; font-size:13.5px; line-height:1.55;
+  color:var(--ink-soft);
+}
+.conv-foot{
+  font-size:12px; color:var(--muted); font-style:italic;
+  margin:4px 2px 0;
+}
 
 .script-box, .auth-box{
   margin-top:14px; padding:12px 14px;
@@ -1480,18 +1490,40 @@ const TIT_MEDS={
       {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (10mg)'},{t:'midday',l:'1 tab (10mg)'}]},
       {label:'Days 10-16',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'1 tab (10mg)'}]},
       {label:'Ongoing',ongoing:true,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'2 tabs (20mg)'}]}]},
-  ritalinLA:{name:'Methylphenidate LA (Ritalin LA)',brand:'Methylphenidate modified-release capsules (10, 20, 30, 40, 60mg)',auth:'Stimulant authority script. Add CA2023 (NSW). Once daily. Capsule can be sprinkled onto soft food.',
-    unit:'mg',form:'cap',strengths:[10,20,30,40,60],
-    steps:[{label:'Week 1',ongoing:false,note:'Morning. Can sprinkle onto soft food.',doses:[{t:'morning',l:'1 cap (10mg)'}]},
-      {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (20mg)'}]},
-      {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (30mg)'}]},
-      {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 cap (40mg)'}]}]},
-  concerta:{name:'Methylphenidate OROS (Concerta)',brand:'Methylphenidate OROS 18, 27, 36, 54mg',auth:'PBS authority via PRODA. ADHD diagnosis must have been made before age 18. Add CA2023 (NSW). Swallow whole — do NOT crush.',
-    unit:'mg',form:'tab',strengths:[18,27,36,54],
-    steps:[{label:'Week 1',ongoing:false,note:'Swallow whole — must NOT be crushed.',doses:[{t:'morning',l:'1 tab (18mg)'}]},
-      {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (27mg)'}]},
-      {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (36mg)'}]},
-      {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 tab (54mg)'}]}]},
+  mphLA:{name:'Methylphenidate long-acting (Ritalin LA / Concerta)',brand:'Ritalin LA 10, 20, 30, 40, 60mg caps · Concerta 18, 27, 36, 54mg tabs',auth:'Stimulant authority script. Add CA2023 (NSW). Concerta: PBS authority requires ADHD diagnosis made before age 18 — must be swallowed whole. Ritalin LA: can be sprinkled onto soft food.',
+    unit:'mg',form:'',strengths:[],
+    steps:[],
+    protocols:[
+      {key:'conversion',label:'IR → long-acting conversion (preferred)',conversion:true,
+       intro:'Preferred approach: start with short-acting Ritalin IR to establish an effective daily dose, then convert to a long-acting agent. Direct titration with Ritalin LA or Concerta is also reasonable, though not formally TGA-approved as first-line in adult ADHD.',
+       auth:'Once IR daily dose is established, convert using the table. * = nearest available dose — reassess at follow-up. Concerta: must be swallowed whole. Ritalin LA: can be sprinkled on soft food.',
+       conversionTable:[
+         {ir:'10 mg/day', la:'10 mg once daily',      concerta:'18 mg once daily'},
+         {ir:'20 mg/day', la:'20 mg once daily',      concerta:'18 mg once daily *'},
+         {ir:'30 mg/day', la:'30 mg once daily',      concerta:'27 mg once daily'},
+         {ir:'40 mg/day', la:'40 mg once daily',      concerta:'36 mg once daily'},
+         {ir:'50 mg/day', la:'40 mg once daily *',    concerta:'54 mg once daily *'},
+         {ir:'60 mg/day', la:'60 mg once daily',      concerta:'54 mg once daily'},
+         {ir:'80 mg/day', la:'60 mg once daily *',    concerta:'54 mg once daily *'}
+       ]
+      },
+      {key:'la_direct',label:'Ritalin LA — direct titration',
+       auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Once daily morning. Capsule can be opened and sprinkled onto soft food (do not crush beads).',
+       steps:[
+         {label:'Week 1',ongoing:false,note:'Morning. Can sprinkle onto soft food.',doses:[{t:'morning',l:'1 cap (10mg)'}]},
+         {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (20mg)'}]},
+         {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (30mg)'}]},
+         {label:'Ongoing',ongoing:true,note:'Maximum 60mg. Some patients add a small Ritalin IR afternoon top-up for extended coverage.',doses:[{t:'morning',l:'1 cap (40mg)'}]}
+       ]},
+      {key:'concerta_direct',label:'Concerta — direct titration',
+       auth:'PBS authority via PRODA. ADHD diagnosis must have been made before age 18. Add CA2023 (NSW). Must be swallowed whole — do NOT crush.',
+       steps:[
+         {label:'Week 1',ongoing:false,note:'Swallow whole — must NOT be crushed.',doses:[{t:'morning',l:'1 tab (18mg)'}]},
+         {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (27mg)'}]},
+         {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (36mg)'}]},
+         {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 tab (54mg)'}]}
+       ]}
+    ]},
   vyvanse:{name:'Lisdexamfetamine (Vyvanse)',brand:'Lisdexamfetamine 20, 30, 40, 50, 60, 70mg capsules',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
     unit:'mg',form:'cap',strengths:[20,30,40,50,60,70],
     steps:[],
@@ -1892,32 +1924,57 @@ function renderTit(){
     ? `<div class="proto-tabs">${protos.map(p=>`<button class="proto-tab ${p.key===titProto?'on':''}" onclick="selectTitProto('${p.key}')">${escHtml(p.label)}</button>`).join('')}</div>`
     : '';
 
-  const colCount = times.length + 1; // phase + time cols
-  const tableRows = proto.steps.map(step=>{
-    const cells = times.map(t=>{
-      const d = dosesAtTime(step,t);
-      return `<td class="dose">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
-    }).join('');
-    const doseRow = `<tr class="${step.ongoing?'ongoing':''}">
-        <td class="phase">${escHtml(step.label)}${step.ongoing?'<div class="ongoing-tag">ongoing</div>':''}</td>
-        ${cells}
-      </tr>`;
-    const noteRow = step.note
-      ? `<tr class="note-row ${step.ongoing?'ongoing':''}"><td colspan="${colCount}" class="note">${escHtml(step.note)}</td></tr>`
-      : '';
-    return doseRow + noteRow;
-  }).join('');
+  const isConversion = proto.conversion;
+  const intro = proto.intro ? `<div class="proto-intro">${escHtml(proto.intro)}</div>` : '';
 
-  const tableHtml = `<div class="tit-table-wrap"><table class="tit-table">
-    <thead><tr>
-      <th>Phase</th>
-      ${times.map(t=>`<th>${TIME_LABEL[t]}</th>`).join('')}
-    </tr></thead>
-    <tbody>${tableRows}</tbody>
-  </table></div>`;
+  let mainHtml = '';
+  let copyTableBtn = `<button class="copybtn" onclick="copyTitTable(this)">Copy table</button>`;
+  let scriptText = '';
+
+  if(isConversion){
+    const rows = (proto.conversionTable||[]).map(r=>`<tr>
+      <td class="phase">${escHtml(r.ir)}</td>
+      <td class="dose">${escHtml(r.la)}</td>
+      <td class="dose">${escHtml(r.concerta)}</td>
+    </tr>`).join('');
+    mainHtml = `<div class="tit-table-wrap"><table class="tit-table">
+      <thead><tr>
+        <th>Daily IR dose</th>
+        <th>Ritalin LA</th>
+        <th>Concerta</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <div class="conv-foot">* = nearest available dose — reassess at follow-up.</div>`;
+    scriptText = ''; // no single ongoing dose for the conversion table
+  } else {
+    const colCount = times.length + 1;
+    const tableRows = proto.steps.map(step=>{
+      const cells = times.map(t=>{
+        const d = dosesAtTime(step,t);
+        return `<td class="dose">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
+      }).join('');
+      const doseRow = `<tr class="${step.ongoing?'ongoing':''}">
+          <td class="phase">${escHtml(step.label)}${step.ongoing?'<div class="ongoing-tag">ongoing</div>':''}</td>
+          ${cells}
+        </tr>`;
+      const noteRow = step.note
+        ? `<tr class="note-row ${step.ongoing?'ongoing':''}"><td colspan="${colCount}" class="note">${escHtml(step.note)}</td></tr>`
+        : '';
+      return doseRow + noteRow;
+    }).join('');
+
+    mainHtml = `<div class="tit-table-wrap"><table class="tit-table">
+      <thead><tr>
+        <th>Phase</th>
+        ${times.map(t=>`<th>${TIME_LABEL[t]}</th>`).join('')}
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table></div>`;
+    scriptText = buildScriptText(med, proto);
+  }
 
   const auth = proto.auth || med.auth || '';
-  const scriptText = buildScriptText(med, proto);
 
   document.getElementById('tit-display').innerHTML = `
     <div class="tit-card">
@@ -1926,10 +1983,11 @@ function renderTit(){
         <div class="br">${escHtml(med.brand)}</div>
       </div>
       ${protoTabs}
-      ${tableHtml}
+      ${intro}
+      ${mainHtml}
       <div class="tit-actions">
-        <button class="copybtn" onclick="copyTitTable(this)">Copy table</button>
-        <button class="copybtn" onclick="copyTitScript(this)">Copy script text</button>
+        ${copyTableBtn}
+        ${scriptText?`<button class="copybtn" onclick="copyTitScript(this)">Copy script text</button>`:''}
         ${auth?`<button class="copybtn" onclick="copyTitAuth(this)">Copy authority text</button>`:''}
       </div>
       ${scriptText?`<div class="script-box"><span class="label">Script text — ongoing dose</span><pre id="tit-script-text">${escHtml(scriptText)}</pre></div>`:''}
@@ -1955,16 +2013,26 @@ function copyTitTable(btn){
   const med = TIT_MEDS[titMed];
   const protos = getProtocols(titMed);
   const proto = protos.find(p=>p.key===titProto) || protos[0];
-  const times = aggregateDoses(proto.steps);
   const lines = [];
   lines.push(med.name+' — '+proto.label);
   lines.push(med.brand);
   lines.push('');
-  proto.steps.forEach(step=>{
-    const parts = times.map(t=>{const d=dosesAtTime(step,t); return d?TIME_LABEL[t]+': '+d:null;}).filter(Boolean);
-    lines.push(step.label+(step.ongoing?' (ongoing)':'')+' — '+parts.join('; '));
-    if(step.note) lines.push('  Note: '+step.note);
-  });
+  if(proto.conversion){
+    if(proto.intro){lines.push(proto.intro); lines.push('');}
+    lines.push('Daily IR dose      Ritalin LA              Concerta');
+    (proto.conversionTable||[]).forEach(r=>{
+      lines.push(r.ir.padEnd(18)+' '+r.la.padEnd(23)+' '+r.concerta);
+    });
+    lines.push('');
+    lines.push('* = nearest available dose — reassess at follow-up.');
+  } else {
+    const times = aggregateDoses(proto.steps);
+    proto.steps.forEach(step=>{
+      const parts = times.map(t=>{const d=dosesAtTime(step,t); return d?TIME_LABEL[t]+': '+d:null;}).filter(Boolean);
+      lines.push(step.label+(step.ongoing?' (ongoing)':'')+' — '+parts.join('; '));
+      if(step.note) lines.push('  Note: '+step.note);
+    });
+  }
   navigator.clipboard.writeText(lines.join('\n')).then(()=>flashCopy(btn,'Copy table'));
 }
 
