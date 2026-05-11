@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>OCD Psychoeducation Handout Generator — Dr Benjamin Murrie</title>
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--border:#e2e6ed;--text:#1a1d23;--muted:#6b7280;--ocd:#7c3aed;--ocd-bg:#ede9fe;--ocd-dark:#4c1d95;--ocd-mid:#6d28d9;--navy:#0f172a;--green:#16a34a;--green-bg:#dcfce7;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.topbar{background:var(--navy);padding:10px 14px;border-bottom:3px solid var(--ocd);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topbar-title{font-size:13px;font-weight:800;color:#c4b5fd;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.ti{background:#1e293b;border:1px solid #334155;color:#f1f5f9;padding:5px 9px;border-radius:7px;font:inherit;font-size:13px;min-width:0}
+.ti::placeholder{color:#64748b}
+.ti:focus{outline:1px solid var(--ocd);background:#243349}
+.content{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
+.section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:7px;margin-top:16px}
+.condition-block{margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.condition-header{padding:10px 14px;font:700 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px;background:var(--ocd-dark)}
+.cond-sel-btns{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+.cond-sel-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font:600 11px var(--sans);padding:3px 10px;border-radius:5px;cursor:pointer;transition:background .1s}
+.cond-sel-btn:hover{background:rgba(255,255,255,.3)}
+.topic-list{background:#fff}
+.pe-group-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:10px 14px 5px;background:#f8fafc;border-top:1px solid #f0f2f5}
+.pe-section{border-top:1px solid #f4f5f8}
+.pe-section:first-child{border-top:none}
+.pe-header{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pe-header:hover{background:#f9fafb}
+.pe-tick-btn{font-size:1rem;color:var(--muted);flex-shrink:0;min-width:20px;text-align:center;line-height:1;padding:2px;border-radius:4px;transition:color .1s}
+.pe-title{font-weight:600;font-size:13px;color:var(--text);flex:1;line-height:1.35}
+.pe-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .15s;margin-left:auto}
+.pe-section.pe-open .pe-arrow{transform:rotate(90deg)}
+.pe-body{display:none;padding:8px 14px 14px 43px;font-size:12.5px;line-height:1.65;color:#374151;border-top:1px solid #f4f5f8}
+.pe-section.pe-open .pe-body{display:block}
+.pe-body p{margin:0 0 7px}
+.pe-body p:last-child{margin:0}
+.pe-body ul{margin:4px 0 8px 16px}
+.pe-body li{margin-bottom:4px}
+.pe-body table{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 10px}
+.pe-body th{background:#f1f5f9;padding:5px 8px;text-align:left;border:1px solid var(--border);font-size:11px}
+.pe-body td{padding:4px 8px;border:1px solid var(--border);vertical-align:top}
+.pe-body a{color:var(--ocd-mid)}
+.pe-section.ocd-done{background:#f5f3ff}
+.pe-section.ocd-done .pe-tick-btn{color:var(--ocd)}
+.pe-section.pe-optional{opacity:.88}
+.export-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.export-row .ex-label{font:700 12px var(--sans);color:var(--muted);flex-shrink:0;white-space:nowrap}
+.abtn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);font:600 12px var(--sans);cursor:pointer;transition:background .1s,border-color .1s}
+.abtn:hover{background:#f3f4f6;border-color:#94a3b8}
+.abtn.copied{background:#dcfce7;border-color:#86efac;color:#166534}
+.preview-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.preview-head{background:#f8fafc;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.preview-head-title{font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.preview-body{padding:22px 26px;font-family:Arial,sans-serif;font-size:10pt;line-height:1.55;color:#111;min-height:100px}
+.preview-body .empty-msg{color:var(--muted);font-style:italic;text-align:center;padding:36px 20px;font-size:11pt}
+.ho-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e5e7eb}
+.ho-pt{font-size:17pt;font-weight:800;color:#0f172a;margin-bottom:2px}
+.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:12px}
+.ho-notice{font-size:9.5pt;background:#faf5ff;border-left:3px solid #7c3aed;padding:9px 12px;line-height:1.5;color:#4c1d95}
+.ho-group-label{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px;padding-bottom:3px;border-bottom:2px solid currentColor}
+.ho-group-label.ocd-g-core{color:#4c1d95;border-bottom-color:#4c1d95}
+.ho-group-label.ocd-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
+.ho-group-label.ocd-g-strategies{color:#0e7490;border-bottom-color:#0e7490}
+.ho-group-label.ocd-g-resources{color:#065f46;border-bottom-color:#065f46}
+.ho-topic{margin-bottom:7px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:7px;background:#fafbff}
+.ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
+.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
+.ho-topic-body p{margin:0 0 6px}
+.ho-topic-body p:last-child{margin:0}
+.ho-topic-body ul{margin:3px 0 7px 16px}
+.ho-topic-body li{margin-bottom:3px}
+.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:5px 0 8px}
+.ho-topic-body th{background:#f5f3ff;padding:4px 7px;text-align:left;border:1px solid #d1d5db;font-size:9pt}
+.ho-topic-body td{padding:3pt 7pt;border:1px solid #d1d5db;vertical-align:top}
+.ho-topic-body a{color:#7c3aed}
+.ho-footer{margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:8.5pt;color:#9ca3af;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">OCD Psychoeducation</span>
+  <input class="ti" id="ptName" placeholder="Patient name..." style="flex:1;min-width:130px;max-width:210px" oninput="refresh()">
+  <input class="ti" id="ptDate" type="date" style="flex:0 0 128px" oninput="refresh()">
+  <input class="ti" id="drName" placeholder="Clinician name..." style="flex:1;min-width:130px;max-width:200px" oninput="refresh()">
+</div>
+
+<div class="content">
+
+  <div class="condition-block" style="margin-top:12px">
+    <div class="condition-header">
+      OCD — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll()">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll()">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="ocd-topic-list"></div>
+  </div>
+
+  <div class="export-row">
+    <span class="ex-label">Export</span>
+    <button class="abtn" id="btn-docx" onclick="dlDocx()">Download .docx</button>
+    <button class="abtn" id="btn-plain" onclick="copyPlain(this)">Copy plain text</button>
+    <button class="abtn" id="btn-fmt" onclick="copyFormatted(this)">Copy formatted</button>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="preview-head">
+      <span class="preview-head-title">Handout Preview</span>
+      <button class="abtn" onclick="refresh()" style="padding:4px 11px;font-size:11px">Refresh</button>
+    </div>
+    <div class="preview-body" id="preview">
+      <div class="empty-msg">Tick topics above to generate the handout.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var sel = {};
+
+function $(id){return document.getElementById(id);}
+function f(id){var el=$(id);return el?el.value.trim():'';}
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+var OCD_PE_GROUPS=[
+  {label:null,optional:false,items:[
+    {id:'what_ocd_is',title:'What OCD is',body:'<p><strong>Key message:</strong> OCD is not a personality trait, a preference for neatness, or a word people use casually ("I\'m so OCD about this"). It is a specific neurobiological disorder characterised by two distinct features that work together in a loop.</p><p><strong>The two core features:</strong></p><ul><li><strong>Obsessions:</strong> Unwanted, intrusive thoughts, images, impulses, or urges that are distressing and difficult to dismiss. The person experiences them as threatening, wrong, or dangerous.</li><li><strong>Compulsions:</strong> Repetitive behaviours or mental acts performed in response to an obsession — to neutralise the anxiety, prevent a feared outcome, or achieve a sense of completeness. Compulsions provide short-term relief but strengthen the OCD cycle long-term.</li></ul><p><strong>What makes OCD distinct:</strong> The person usually recognises that the obsessions are excessive or unreasonable — they are ego-dystonic (they feel foreign and unwanted, not in keeping with who you are). This is what makes OCD so distressing: you know the thought does not make sense, and yet it persists.</p><p><strong>Prevalence:</strong> OCD affects approximately 1–2% of the population. It occurs equally across genders, though content and presentation vary. It is frequently underdiagnosed — the average delay from onset to treatment is 14–17 years.</p><p><strong>Neurobiology:</strong> OCD involves hyperactivity in the cortico-striato-thalamo-cortical (CSTC) circuit — a loop between the prefrontal cortex, striatum, and thalamus. This circuit normally filters out irrelevant thoughts. In OCD, the filter malfunctions: intrusive thoughts cannot be dismissed, generating a persistent distress signal that compulsions temporarily silence. Both ERP and SSRIs normalise this circuitry.</p>'},
+    {id:'ocd_cycle',title:'The OCD cycle — why it perpetuates',body:'<p><strong>The loop:</strong></p><p style="background:#faf5ff;border-left:3px solid #7c3aed;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12pt">Intrusive thought / obsession → Anxiety / distress → Compulsion / avoidance → Temporary relief → Brain learns: "That thought was dangerous — compulsion was necessary" → Loop strengthens</p><p><strong>Why it gets worse, not better:</strong> Every time you perform a compulsion, you signal to your brain that the obsessive thought was genuinely dangerous and that the compulsion saved you. This reinforces the pathway. The relief is real — but it is short-term and comes at the cost of teaching the brain to treat the thought as a threat.</p><p><strong>The maintenance cycle in detail:</strong></p><ul><li>The obsession triggers anxiety. Anxiety is uncomfortable, so the brain seeks relief.</li><li>The compulsion provides relief — negative reinforcement (the compulsion is repeated because it removes discomfort).</li><li>Because the compulsion prevented the feared outcome, the brain never learns that the feared outcome would not have occurred anyway.</li><li>Anxiety tolerance drops over time — the brain becomes progressively less able to sit with uncertainty.</li></ul><p><strong>How ERP breaks the cycle:</strong> By resisting the compulsion after triggering the obsession, the feared outcome does not occur — and, crucially, the anxiety naturally reduces on its own without compulsion. The brain learns that the thought is not dangerous and that anxiety can be tolerated. This is called inhibitory learning.</p><p><strong>Avoidance is a compulsion.</strong> Avoiding situations that trigger obsessions feels like a solution — it is not. Avoidance prevents the learning that would break the cycle and expands the scope of OCD over time.</p>'},
+    {id:'ocd_subtypes',title:'Common OCD subtypes',body:'<p>OCD takes many forms. The underlying mechanism is the same — obsession, anxiety, compulsion — but the content varies widely. Knowing your subtype is clinically useful because it guides both the exposure hierarchy and the specific compulsions to target.</p><table><thead><tr><th>Subtype</th><th>Common obsessions</th><th>Common compulsions</th></tr></thead><tbody><tr><td><strong>Contamination</strong></td><td>Germs, illness, bodily fluids, chemicals contaminating self or others</td><td>Handwashing, cleaning, avoiding "dirty" objects, reassurance</td></tr><tr><td><strong>Harm OCD</strong></td><td>Fear of hurting others accidentally or deliberately (driving, sharp objects, fire)</td><td>Checking, avoidance of objects, confessing, seeking reassurance</td></tr><tr><td><strong>Checking</strong></td><td>Fear of forgetting something catastrophic (gas, locks, appliances)</td><td>Repeated checking, counting, mental review</td></tr><tr><td><strong>Symmetry / "just right"</strong></td><td>Things feel wrong, incomplete, or asymmetrical; need for evenness</td><td>Arranging, ordering, repeating actions until they feel right</td></tr><tr><td><strong>Pure O / intrusive thoughts</strong></td><td>Unwanted sexual, violent, blasphemous, or taboo thoughts</td><td>Mental neutralising, prayer, avoidance, reassurance, suppression</td></tr><tr><td><strong>ROCD (Relationship OCD)</strong></td><td>Doubt about partner\'s suitability, whether you love them, whether they love you</td><td>Reassurance seeking, mental checking, comparing, confessing</td></tr><tr><td><strong>Health / illness OCD</strong></td><td>Fear of having a serious undetected illness</td><td>Googling, checking body, seeking repeated medical reassurance</td></tr><tr><td><strong>Scrupulosity</strong></td><td>Religious or moral wrongdoing; fear of being sinful or evil</td><td>Prayer, confession, mental reviewing, reassurance</td></tr></tbody></table><p><strong>Key point:</strong> "Pure O" is a misnomer — the compulsions are mostly mental (rumination, mental neutralising, reviewing, suppression) rather than visible. They are still compulsions and must be targeted in treatment.</p>'},
+    {id:'intrusive_thoughts',title:'Intrusive thoughts — what they really mean',body:'<p><strong>The fundamental fact:</strong> Intrusive thoughts — unwanted, distressing thoughts about harm, contamination, taboo acts, or catastrophe — are a normal part of human cognition. Research consistently shows that 80–94% of people without OCD report having them. The content is often disturbing: thoughts of harm, sexual intrusions, blasphemy.</p><p><strong>The OCD difference:</strong> People without OCD have the same thought, notice it is odd, dismiss it, and move on. People with OCD get "stuck" — the brain flags the thought as meaningful and dangerous, generating a distress response that demands resolution.</p><p><strong>What intrusive thoughts do NOT mean:</strong></p><ul><li>They do not mean you want to act on them.</li><li>They do not mean you will act on them.</li><li>They do not reveal your true character, values, or desires — quite the opposite: they are distressing precisely because they violate your values.</li><li>They do not mean you are dangerous, evil, perverted, or immoral.</li></ul><p><strong>Thought-action fusion (a key cognitive distortion in OCD):</strong> The belief that having a thought is morally equivalent to performing the action, or that having a thought makes it more likely to happen. Examples: "Thinking about hurting someone is as bad as doing it." "Having the thought that I left the gas on means it probably is on." Both forms increase the salience of intrusive thoughts and maintain OCD.</p><p><strong>The paradox of suppression:</strong> Trying to suppress or eliminate intrusive thoughts makes them more frequent. Thought suppression is itself a mental compulsion. The effective approach is to allow the thought to be present without treating it as significant or requiring resolution.</p>'},
+    {id:'why_compulsions_worsen',title:'Why compulsions make OCD worse',body:'<p><strong>The core problem:</strong> Compulsions work — in the short term. They reduce anxiety quickly and reliably. This is exactly why they become entrenched and why OCD worsens over time despite compulsive effort.</p><p><strong>Five reasons compulsions maintain and worsen OCD:</strong></p><ul><li><strong>Negative reinforcement:</strong> The compulsion removes discomfort, which teaches the brain to perform it again next time. The association between obsession and compulsion strengthens.</li><li><strong>They confirm the threat:</strong> Performing a compulsion signals to the brain that the obsessive thought was dangerous and the compulsion was necessary. The brain\'s threat detection system is validated, making future responses more intense.</li><li><strong>They prevent habituation:</strong> If you tolerate the anxiety without compulsing, it peaks and then naturally reduces. Compulsing prevents this learning — you never discover that anxiety reduces on its own.</li><li><strong>They expand:</strong> Over time, compulsions usually need to be performed more thoroughly, more times, or in new situations to achieve the same relief. OCD escalates.</li><li><strong>Avoidance contracts your life:</strong> Avoiding OCD triggers reduces your world rather than your OCD.</li></ul><p><strong>Mental compulsions are compulsions:</strong> Reviewing, mentally neutralising, suppressing, praying, "undoing" — all of these maintain OCD just as physical compulsions do. They are harder to identify and target, but the principle is identical.</p><p><strong>The only effective long-term intervention:</strong> Break the compulsion-relief cycle. ERP does this by deliberately triggering the obsession and practising sitting with the anxiety without compulsing — until the brain learns a new association.</p>'},
+    {id:'reassurance_accommodation',title:'Reassurance seeking and family accommodation',body:'<p><strong>Reassurance seeking is a compulsion.</strong> Asking others "Are you sure I locked it?", "I didn\'t say anything offensive, did I?", "I\'m not a bad person, right?" feels necessary and urgent. Like all compulsions, reassurance provides brief relief and worsens OCD over time by confirming the brain\'s threat signal and preventing tolerance of uncertainty.</p><p><strong>Why reassurance never satisfies:</strong> OCD\'s core problem is intolerance of uncertainty. Reassurance provides certainty — briefly. Then doubt returns. Then more reassurance is needed, often escalating in frequency and specificity. The target shifts. The relief window shortens.</p><p><strong>What to tell people who ask for reassurance:</strong> If someone asks you for OCD-driven reassurance, the most helpful response is a compassionate non-answer: <em>"I know you\'re anxious right now. I care about you, and I\'m not going to reassure you, because it won\'t actually help."</em> This should be agreed on in advance, not during an OCD episode.</p><p><strong>Family accommodation:</strong> Participating in rituals, providing reassurance, modifying household routines to avoid OCD triggers, doing tasks for the person to prevent their distress — all of these reduce immediate distress but maintain and worsen OCD. Research consistently shows high family accommodation is associated with worse OCD outcomes.</p><p><strong>Helpful vs unhelpful responses from others:</strong></p><ul><li><em>Unhelpful:</em> Repeated reassurance, participating in rituals, helping avoid triggers, criticising or expressing frustration</li><li><em>Helpful:</em> Compassionate limit-setting, supporting engagement with treatment, encouraging approach rather than avoidance, not accommodating compulsions while remaining emotionally supportive</li></ul>'},
+    {id:'ocd_faqs',title:'Commonly asked questions',body:'<p><strong>Does having OCD mean I\'m "crazy"?</strong> No. OCD is a recognised anxiety-related disorder with well-understood neurobiology and highly effective treatments. Having OCD says nothing about your intelligence, character, or sanity.</p><p><strong>Does having the thought mean I want to do it?</strong> No. The research on this is unambiguous. Intrusive thoughts about harm, taboo acts, or contamination are common in the general population. People with OCD find these thoughts deeply distressing precisely because they conflict with their values.</p><p><strong>Will OCD go away on its own?</strong> Rarely. Without treatment, OCD tends to be chronic. With treatment — particularly ERP — the majority of people achieve substantial symptom reduction. "Recovery" in OCD typically means the thoughts remain manageable and compulsions are no longer driven by them.</p><p><strong>If I avoid my triggers, won\'t I be fine?</strong> Avoidance provides short-term relief and long-term worsening. OCD expands to fill available space. Avoiding one trigger typically leads to the development of others.</p><p><strong>My OCD thoughts are so specific and shameful — does that mean something?</strong> No. The more distressing and ego-dystonic (against your values) the thought, the more likely it is to be OCD rather than genuine intent. OCD specifically targets what you care most about.</p><p><strong>Is OCD genetic?</strong> Partly. First-degree relatives of people with OCD have a 2–3 times higher risk. However, environmental factors, stress, and life events also contribute significantly.</p><p><strong>Can children have OCD?</strong> Yes. OCD commonly begins in childhood or adolescence. The average onset is between 10–20 years, though it can occur at any age. Childhood OCD is often presented differently — more rituals, fewer articulated obsessions.</p><p><strong>Will I need to be on medication forever?</strong> Not necessarily. Many people use medication during treatment and taper once ERP skills are established. Others continue long-term. This is an individual decision made with your prescriber.</p><p><strong>Is OCD related to ADHD or autism?</strong> They can co-occur. ADHD and OCD overlap in rates of around 20–30%. Autism and OCD require careful differential diagnosis — repetitive behaviours in autism are usually ego-syntonic (not distressing), while OCD compulsions are driven by anxiety relief. Co-occurring ADHD can complicate ERP engagement and is worth treating separately.</p>'}
+  ]},
+  {label:'Treatment',optional:false,items:[
+    {id:'erp',title:'ERP — Exposure and Response Prevention',body:'<p><strong>ERP is the gold standard psychological treatment for OCD.</strong> Multiple meta-analyses consistently show response rates of 60–85%. Nothing else comes close for OCD specifically.</p><p><strong>The core principle:</strong> Deliberately expose yourself to a feared stimulus (the obsession or its trigger) and resist performing the compulsion — until the anxiety reduces on its own. This directly targets the cycle and rewires the brain\'s threat response.</p><p><strong>How it works (inhibitory learning model):</strong> ERP doesn\'t erase the old fear memory — it builds a new, competing memory: "This stimulus is not dangerous, and I can tolerate the uncertainty." With repetition, the new learning becomes dominant.</p><p><strong>What a course of ERP looks like:</strong></p><ul><li>Build an exposure hierarchy — a ranked list of feared situations from mildly distressing to most distressing (using a SUDS scale 0–100).</li><li>Begin with moderate-level exposures (around 40–60 SUDS) — not the easiest, not the hardest.</li><li>During exposure: allow the anxiety to be present, resist all compulsions (including mental ones), stay with the discomfort until it reduces naturally.</li><li>Repeat until the item no longer provokes significant anxiety, then progress up the hierarchy.</li><li>A full course is typically 12–20 sessions with a skilled OCD therapist.</li></ul><p><strong>What "response prevention" means:</strong> Not performing the compulsion at all — not a modified or shorter version. For mental compulsions, this means not mentally reviewing, neutralising, or suppressing. Replacing one compulsion with another does not count.</p><p><strong>Expected discomfort:</strong> ERP works by allowing anxiety to be present. It will be uncomfortable. This discomfort is temporary and is the mechanism of change — not a sign that something is wrong. The anxiety will reduce without compulsions. Every time it does, the brain learns something important.</p><p><strong>Finding a therapist:</strong> Not all therapists are skilled in ERP. Look for a psychologist with specific OCD experience. The International OCD Foundation (iocdf.org) has a therapist directory. NOCD (nocdcare.com) provides specialist ERP therapy remotely.</p>'},
+    {id:'medication',title:'Medication for OCD',body:'<p><strong>First-line: SSRIs (Selective Serotonin Reuptake Inhibitors)</strong></p><p>SSRIs are the evidence-based medication choice for OCD. They reduce the frequency and intensity of obsessions and lower the anxiety baseline, making ERP engagement more achievable.</p><table><thead><tr><th>Medication</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Sertraline</strong></td><td>Good tolerability, strong evidence for OCD. Common first choice.</td></tr><tr><td><strong>Fluoxetine</strong></td><td>Long half-life — fewer withdrawal effects. Suitable for those likely to miss doses.</td></tr><tr><td><strong>Fluvoxamine</strong></td><td>Licensed specifically for OCD. Multiple drug interactions — review carefully.</td></tr><tr><td><strong>Escitalopram</strong></td><td>Well-tolerated, used widely in OCD though not licensed for it specifically.</td></tr><tr><td><strong>Paroxetine</strong></td><td>Effective but discontinuation syndrome common — taper carefully.</td></tr><tr><td><strong>Clomipramine</strong></td><td>Tricyclic antidepressant. Highest evidence base for OCD of any medication. Reserved for SSRI non-response due to side effect profile (anticholinergic, cardiac).</td></tr></tbody></table><p><strong>Key differences from depression treatment:</strong></p><ul><li>OCD typically requires <strong>higher doses</strong> than depression — e.g. sertraline up to 200mg/day</li><li><strong>Slower onset:</strong> Full effect may take 8–16 weeks. Response at 6 weeks does not mean the medication has failed.</li><li>Typical outcome: <strong>30–40% reduction in symptoms</strong>. Medication alone rarely produces full remission — combined with ERP, outcomes are substantially better.</li></ul><p><strong>Second-line — augmentation:</strong> If SSRI response is partial, augmentation with a low-dose antipsychotic (risperidone, aripiprazole) or clomipramine can improve response. D-cycloserine can enhance ERP learning when used on exposure session days.</p><p><strong>Starting SSRI treatment — what to expect:</strong> Early side effects (nausea, initial anxiety spike, insomnia) usually settle within 2–3 weeks. Take with food. Do not stop abruptly — taper under guidance.</p>'},
+    {id:'act_for_ocd',title:'ACT for OCD — Acceptance and Commitment Therapy',body:'<p><strong>ACT as an approach:</strong> Rather than changing the content of obsessive thoughts, ACT targets your relationship with those thoughts. The goal is psychological flexibility — the ability to have a distressing thought and still act in accordance with your values.</p><p><strong>Key ACT processes applied to OCD:</strong></p><ul><li><strong>Defusion:</strong> Creating distance from thoughts rather than treating them as literal truths or commands. Instead of "I might hurt someone," try: "I notice I\'m having the thought that I might hurt someone." The thought is seen as a mental event, not a fact. This reduces its power without requiring suppression.</li><li><strong>Acceptance:</strong> Allowing anxiety, doubt, and uncertainty to be present without trying to eliminate or reduce them. Paradoxically, accepting anxiety tends to reduce it more than fighting it.</li><li><strong>Values clarification:</strong> Identifying what genuinely matters — relationships, contribution, creativity, health — and acting on those values even in the presence of anxiety. OCD shrinks life; values work expands it.</li><li><strong>Committed action:</strong> Taking concrete steps toward valued goals while carrying the discomfort of OCD with you, rather than waiting until OCD is resolved to live your life.</li><li><strong>Present-moment awareness:</strong> Defusing from rumination about past compulsions or catastrophising about future scenarios, and re-engaging with the present.</li></ul><p><strong>ACT vs traditional CBT for OCD:</strong> Both involve approach rather than avoidance. ACT does not require you to challenge or dispute whether thoughts are true — it sidesteps the struggle entirely. Useful for people who find cognitive restructuring ineffective or who have become skilled debaters with their OCD.</p>'},
+    {id:'treatment_expectations',title:'What to expect from treatment',body:'<p><strong>ERP is hard before it is helpful.</strong> The early stages require approaching things that feel genuinely threatening. Discomfort is the mechanism — not a sign that treatment is failing. Most people feel worse before they feel better in the first few sessions.</p><p><strong>What improvement looks like:</strong></p><ul><li>Obsessive thoughts become less frequent and less "sticky" — they no longer command the same attention.</li><li>Anxiety peaks lower and reduces faster during exposures.</li><li>The urge to compulse reduces over time.</li><li>The range of situations you can engage with expands.</li><li>OCD becomes a manageable background presence rather than a dominant force.</li></ul><p><strong>Important expectations to set:</strong></p><ul><li>Full remission (no OCD at all) is uncommon — meaningful symptom reduction is the realistic goal for most.</li><li>Recovery is not linear. Relapses are normal and do not mean treatment has failed — they are opportunities to practise what was learned.</li><li>Major life stressors (exams, illness, relationship changes, sleep deprivation) typically worsen OCD temporarily. This is predictable and manageable.</li><li>The skills learned in ERP are permanent. Even when OCD worsens, those who have completed ERP recover faster than those who haven\'t.</li></ul><p><strong>Measuring progress:</strong> The Y-BOCS (Yale-Brown Obsessive Compulsive Scale) is the standard measure. A reduction of 35% or more is considered treatment response. Anything positive is meaningful — even 20% reduction in a severe presentation can substantially improve quality of life.</p><p><strong>Combined treatment is best:</strong> ERP plus SSRI outperforms either alone. Medication lowers the anxiety baseline, making exposure work more achievable. Therapy builds permanent skills that medication alone cannot provide.</p>'}
+  ]},
+  {label:'Strategies and Self-Help',optional:true,items:[
+    {id:'erp_hierarchy',title:'Building an exposure hierarchy',body:'<p><strong>The exposure hierarchy is the map for treatment.</strong> It is a personalised, ranked list of feared situations — from the mildly distressing to the most avoided — that guides the order of exposures in therapy and self-directed practice.</p><p><strong>Step 1 — List your triggers:</strong> Write down every situation, object, thought, image, or action that provokes an obsession or leads to a compulsion. Include things you currently avoid entirely.</p><p><strong>Step 2 — Rate each item:</strong> Use the SUDS scale (Subjective Units of Distress Scale) from 0 (no distress) to 100 (maximum distress). Rate based on how you would feel if you triggered the situation AND did not compulse.</p><p><strong>Step 3 — Order the list.</strong> Arrange from lowest to highest SUDS.</p><p><strong>Step 4 — Start in the middle, not at the bottom:</strong> Beginning with items rated around 40–60 builds momentum faster than starting with trivially easy items. Work your way up systematically.</p><p><strong>Example hierarchy — contamination OCD:</strong></p><ul><li>20 — Touching a doorknob in own home without washing (20 SUDS)</li><li>35 — Touching a public ATM keypad without washing (35)</li><li>50 — Touching a public toilet door handle without washing (50)</li><li>65 — Using a public toilet and not washing until one hour later (65)</li><li>80 — Touching contaminated object and then touching food before eating (80)</li></ul><p><strong>The goal:</strong> Remain in contact with the trigger — without compulsing — until the anxiety naturally reduces by at least 50%. This reduction is the brain learning. Repeat each step until SUDS drops significantly before progressing.</p>'},
+    {id:'daily_management',title:'Managing OCD day to day',body:'<p><strong>Label the thought, not yourself:</strong> When an obsession arrives, practise saying (internally or aloud): "This is OCD. This is a false alarm." Not to argue with it or reassure yourself — simply to create a small distance. You are not your OCD.</p><p><strong>Delay the compulsion:</strong> If completely resisting feels impossible, start with delay. "I will wait 15 minutes before checking." This is not the goal of ERP, but it disrupts the automatic compulsion-relief pathway and builds tolerance.</p><p><strong>Do not avoid triggers:</strong> Every time you avoid something OCD-related, OCD grows. Approach triggers whenever it is safe to do so, even if you cannot fully resist compulsing yet.</p><p><strong>Time-limit rituals:</strong> If stopping a compulsion entirely is not yet achievable, set a fixed limit — not to make the compulsion more comfortable, but to create structure while working toward full response prevention.</p><p><strong>Sleep and physical baseline:</strong> OCD is consistently worse with sleep deprivation, high stress, and low physical activity. These are not luxuries — they are prerequisites for OCD management.</p><p><strong>Diary of progress:</strong> Note each time you resist a compulsion, delay a ritual, or approach a trigger. Progress in OCD is incremental and easy to discount — a record makes it visible.</p><p><strong>Scheduled worry time:</strong> For OCD that manifests partly as rumination, a brief scheduled "OCD window" (10–15 minutes/day) in which you deliberately engage with the thoughts — and then return to normal activity — can reduce the intrusion of obsessions outside that window. This is not suitable for all OCD presentations; discuss with your therapist.</p>'},
+    {id:'family_guide',title:'Helping family and partners understand OCD',body:'<p><strong>What OCD is not:</strong> Not attention-seeking, not a choice, not weakness, not "something they could stop if they really wanted to." OCD is a neurobiological disorder with a strong evidence base for treatment.</p><p><strong>The hardest thing for loved ones:</strong> Watching someone you care about suffer and knowing that helping them compulse or reassure them feels kind but makes things worse. This is genuinely difficult. The research is clear: accommodation worsens OCD outcomes.</p><p><strong>How to respond to reassurance requests:</strong> Agree on a script in advance, when the person is calm — not during an OCD episode. Something like: <em>"I know you\'re struggling and I care about you. We agreed I wouldn\'t reassure you — it doesn\'t actually help, even though it feels like it would."</em></p><p><strong>What is and isn\'t helpful:</strong></p><ul><li><strong>Helpful:</strong> Emotional support and warmth, encouragement to engage with treatment, celebrating small wins (resisting a compulsion), offering to attend therapy sessions</li><li><strong>Unhelpful:</strong> Providing reassurance, participating in rituals, modifying household routines to accommodate OCD, expressions of frustration or disbelief</li></ul><p><strong>Family therapy:</strong> When family accommodation is significant, family-based CBT (or at minimum, a session with the treating psychologist) substantially improves outcomes. IOCDF (iocdf.org) has resources for families.</p><p><strong>Taking care of yourself:</strong> Living with someone with OCD can be exhausting and distressing. Carers benefit from their own support — GP review, peer support groups (Beyond Blue, IOCDF carers support), or their own therapy.</p>'}
+  ]},
+  {label:'Products and Resources',optional:true,items:[
+    {id:'ocd_books',title:'Recommended books',body:'<p><strong>Freedom from Obsessive-Compulsive Disorder</strong> — Jonathan Abramowitz. The most comprehensive, practical, evidence-based self-help book for OCD adults. Written by one of the leading OCD researchers. Covers ERP thoroughly with worked examples.</p><p><strong>Brain Lock</strong> — Jeffrey Schwartz. Classic four-step self-directed approach (Relabel, Reattribute, Refocus, Revalue). Accessible, with strong neurobiological grounding. Not pure ERP, but useful for understanding the OCD brain.</p><p><strong>Overcoming Unwanted Intrusive Thoughts</strong> — Sally Winston &amp; Martin Seif. Essential for Pure O / intrusive thought presentations. Explains why suppression and reassurance-seeking maintain intrusive thoughts and what to do instead.</p><p><strong>The OCD Workbook</strong> — Bruce Hyman &amp; Cherry Pedrick. Step-by-step structured workbook format. Good for those who prefer guided self-help exercises alongside therapy.</p><p><strong>The Mindfulness Workbook for OCD</strong> — Jon Hershfield &amp; Tom Corboy. Integrates ACT and mindfulness principles with ERP. Useful for those who find pure behavioural approaches insufficient or want to address the relationship with thoughts more explicitly.</p><p><strong>Everyday Mindfulness for OCD</strong> — Jon Hershfield &amp; Shala Nicely. Shorter, practical, readable. Good follow-up to more comprehensive texts.</p>'},
+    {id:'ocd_apps_resources',title:'Apps and online resources',body:'<p><strong>NOCD</strong> — Specialist OCD therapy platform. Provides access to therapists trained specifically in ERP. Telehealth delivery. Rigorous clinical framework. <a href="https://www.nocdcare.com" target="_blank">nocdcare.com</a></p><p><strong>OCD Australia</strong> — Australian OCD-specific organisation. Information, resources, support groups, and clinician directory. <a href="https://www.ocdaustralia.com.au" target="_blank">ocdaustralia.com.au</a></p><p><strong>International OCD Foundation (IOCDF)</strong> — Global resource. Excellent therapist directory (search for ERP-trained clinicians), education materials, conference community. <a href="https://iocdf.org" target="_blank">iocdf.org</a></p><p><strong>nOCD App</strong> — Free app for tracking exposures, logging compulsions, and working through a structured ERP hierarchy. Clinician-developed. Useful adjunct to therapy. <a href="https://www.treatmyocd.com" target="_blank">treatmyocd.com</a></p><p><strong>Finch</strong> — Self-care and CBT-informed app. Not OCD-specific but useful for daily mood tracking, values-based goals, and building wellbeing habits that support OCD treatment. Available on iOS and Android.</p><p><strong>Beyond Blue (1300 22 4636)</strong> — Australian mental health helpline. Not OCD-specific but available for crisis support and referral guidance.</p>'}
+  ]}
+]
+
+function $(id){return document.getElementById(id);}
+function f(id){var el=$(id);return el?el.value.trim():'';}
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderTopics(){
+  var el=$('ocd-topic-list'); if(!el) return;
+  var html='';
+  OCD_PE_GROUPS.forEach(function(g){
+    if(g.label) html+='<div class="pe-group-label">'+(g.optional?'<span style="font-size:9px;opacity:.6;font-weight:600;margin-right:4px">OPTIONAL</span>':'')+esc(g.label)+'</div>';
+    g.items.forEach(function(item){
+      var done=!!sel[item.id];
+      html+='<div class="pe-section'+(done?' ocd-done':'')+(g.optional?' pe-optional':'')+'" data-id="'+item.id+'">';
+      html+='<div class="pe-header">';
+      html+='<span class="pe-tick-btn">'+(done?'&#9745;':'&#9744;')+'</span>';
+      html+='<span class="pe-title">'+esc(item.title)+'</span>';
+      html+='<span class="pe-arrow">&#9658;</span>';
+      html+='</div>';
+      html+='<div class="pe-body">'+item.body+'</div>';
+      html+='</div>';
+    });
+  });
+  el.innerHTML=html;
+  el.addEventListener('click',function(e){
+    var sec=e.target.closest('[data-id]'); if(!sec) return;
+    var id=sec.getAttribute('data-id');
+    var isTick=e.target.classList.contains('pe-tick-btn');
+    if(isTick){
+      e.stopPropagation();
+      sel[id]=!sel[id];
+      sec.classList.toggle('ocd-done',!!sel[id]);
+      sec.querySelector('.pe-tick-btn').innerHTML=sel[id]?'&#9745;':'&#9744;';
+      refresh();
+    } else {
+      var hdr=e.target.closest('.pe-header'); if(hdr) sec.classList.toggle('pe-open');
+    }
+  });
+}
+
+function selectAll(){
+  OCD_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){sel[item.id]=true;});});
+  renderTopics(); refresh();
+}
+function clearAll(){
+  Object.keys(sel).forEach(function(k){sel[k]=false;});
+  renderTopics(); refresh();
+}
+
+var GROUP_COLOR_CLASS={'null':'ocd-g-core','Treatment':'ocd-g-treatment','Strategies and Self-Help':'ocd-g-strategies','Products and Resources':'ocd-g-resources'};
+
+function buildHandout(){
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  var hasAny=false;
+  OCD_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){if(sel[item.id])hasAny=true;});});
+  if(!hasAny) return null;
+
+  var h='';
+  h+='<div class="ho-header">';
+  h+='<div class="ho-pt">OCD — Psychoeducation Handout</div>';
+  h+='<div class="ho-meta">Patient: <strong>'+esc(name)+'</strong>';
+  if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
+  h+=' &nbsp;|&nbsp; Clinician: <strong>'+esc(dr)+'</strong></div>';
+  h+='<div class="ho-notice">The following information was discussed or provided as educational material during your appointment. It is a reference guide only — all treatment decisions should be made in consultation with your treating clinician.</div>';
+  h+='</div>';
+
+  OCD_PE_GROUPS.forEach(function(g){
+    var gItems=g.items.filter(function(item){return sel[item.id];});
+    if(!gItems.length) return;
+    var gKey=g.label||'null';
+    var cls=GROUP_COLOR_CLASS[gKey]||'ocd-g-core';
+    if(g.label) h+='<div class="ho-group-label '+cls+'">'+esc(g.label)+'</div>';
+    gItems.forEach(function(item){
+      h+='<div class="ho-topic">';
+      h+='<div class="ho-topic-title">'+esc(item.title)+'</div>';
+      h+='<div class="ho-topic-body">'+item.body+'</div>';
+      h+='</div>';
+    });
+  });
+
+  h+='<div class="ho-footer">This handout was prepared specifically for '+esc(name)+(ds?' following a psychiatric appointment on '+esc(ds):'')+'. It is not a substitute for clinical advice.</div>';
+  return h;
+}
+
+function refresh(){
+  var html=buildHandout();
+  var pv=$('preview');
+  if(!html){pv.innerHTML='<div class="empty-msg">Tick topics above to generate the handout.</div>';return;}
+  pv.innerHTML=html;
+}
+
+function buildDocxHtml(){
+  var html=buildHandout(); if(!html) return null;
+  return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+    '<head><meta charset="UTF-8"><style>'+
+    '@page{margin:2cm 2.5cm;}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#111;}'+
+    '.ho-header{margin-bottom:14pt;padding-bottom:10pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-pt{font-size:17pt;font-weight:bold;color:#0f172a;margin-bottom:3pt;}'+
+    '.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:10pt;}'+
+    '.ho-notice{font-size:9.5pt;background:#faf5ff;border-left:3pt solid #7c3aed;padding:8pt 10pt;color:#4c1d95;}'+
+    '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:12pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
+    '.ho-group-label.ocd-g-core{color:#4c1d95;}'+
+    '.ho-group-label.ocd-g-treatment{color:#1e3a5f;}'+
+    '.ho-group-label.ocd-g-strategies{color:#0e7490;}'+
+    '.ho-group-label.ocd-g-resources{color:#065f46;}'+
+    '.ho-topic{margin-bottom:7pt;padding:8pt 11pt;border:1pt solid #e5e7eb;border-radius:5pt;background:#fafbff;}'+
+    '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
+    '.ho-topic-body p{margin:0 0 5pt;}.ho-topic-body ul{margin:3pt 0 6pt 14pt;}.ho-topic-body li{margin-bottom:3pt;}'+
+    '.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9pt;margin:5pt 0 8pt;}'+
+    '.ho-topic-body th{background:#f5f3ff;padding:4pt 6pt;text-align:left;border:1pt solid #d1d5db;font-size:8.5pt;}'+
+    '.ho-topic-body td{padding:3pt 6pt;border:1pt solid #d1d5db;vertical-align:top;}'+
+    '.ho-footer{margin-top:20pt;padding-top:10pt;border-top:1pt solid #e5e7eb;font-size:8pt;color:#9ca3af;font-style:italic;}'+
+    '</style></head><body>'+html+'</body></html>';
+}
+
+function dlDocx(){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected.');return;}
+  var name=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
+  var blob=new Blob(['﻿'+docx],{type:'application/msword;charset=utf-8'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='OCD_Handout_'+name+'.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  flash($('btn-docx'),'Downloaded!');
+}
+function copyPlain(btn){
+  var pv=$('preview');
+  if(!buildHandout()){alert('No topics selected.');return;}
+  navigator.clipboard.writeText(pv.innerText||pv.textContent).then(function(){flash(btn,'Copied!');}).catch(function(){});
+}
+function copyFormatted(btn){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected.');return;}
+  if(window.ClipboardItem){
+    var blob=new Blob([docx],{type:'text/html'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':blob})]).then(function(){flash(btn,'Copied!');}).catch(function(){
+      navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied (plain)!');});
+    });
+  } else {
+    navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied!');});
+  }
+}
+function flash(btn,msg){
+  if(!btn)return;
+  var orig=btn.textContent;btn.textContent=msg;btn.classList.add('copied');
+  setTimeout(function(){btn.textContent=orig;btn.classList.remove('copied');},2000);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var td=new Date().toISOString().slice(0,10);
+  var dtEl=$('ptDate'); if(dtEl&&!dtEl.value) dtEl.value=td;
+  renderTopics();
+  refresh();
+});
+</script>
+</body>
+</html>

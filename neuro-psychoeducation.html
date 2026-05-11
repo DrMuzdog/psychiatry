@@ -105,11 +105,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 
 <div class="content">
 
-  <div class="section-label" style="margin-top:12px">Select condition</div>
+  <div class="section-label" style="margin-top:12px">Select condition(s) — tap to toggle on/off</div>
   <div class="disorder-row">
-    <button class="dis-btn" id="dis-adhd" onclick="setDisorder('adhd')">ADHD</button>
-    <button class="dis-btn" id="dis-asd" onclick="setDisorder('asd')">ASD</button>
-    <button class="dis-btn" id="dis-both" onclick="setDisorder('both')">ADHD + ASD (mega handout)</button>
+    <button class="dis-btn" id="dis-adhd" onclick="toggleCondition('adhd')">ADHD</button>
+    <button class="dis-btn" id="dis-asd" onclick="toggleCondition('asd')">ASD</button>
   </div>
 
   <div id="block-adhd" class="condition-block" style="display:none;margin-top:14px">
@@ -225,7 +224,8 @@ var ASD_PE_GROUPS=[
   ]}
 ]
 
-var disorder = 'adhd';
+var showADHD = true;
+var showASD  = false;
 var adhdSel = {};
 var asdSel  = {};
 
@@ -233,15 +233,14 @@ function $(id){return document.getElementById(id);}
 function f(id){var el=$(id);return el?el.value.trim():'';}
 function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// ── Disorder selector ──
-function setDisorder(d){
-  disorder=d;
-  document.querySelectorAll('.dis-btn').forEach(function(b){b.className='dis-btn';});
-  $('dis-adhd').classList.toggle('active-adhd',d==='adhd'||d==='both');
-  $('dis-asd').classList.toggle('active-asd',d==='asd');
-  $('dis-both').classList.toggle('active-both',d==='both');
-  $('block-adhd').style.display=(d==='adhd'||d==='both')?'':'none';
-  $('block-asd').style.display=(d==='asd'||d==='both')?'':'none';
+// ── Condition selector ──
+function toggleCondition(cond){
+  if(cond==='adhd') showADHD=!showADHD;
+  if(cond==='asd')  showASD=!showASD;
+  $('dis-adhd').className='dis-btn'+(showADHD?' active-adhd':'');
+  $('dis-asd').className='dis-btn'+(showASD?' active-asd':'');
+  $('block-adhd').style.display=showADHD?'':'none';
+  $('block-asd').style.display=showASD?'':'none';
   refresh();
 }
 
@@ -303,9 +302,6 @@ function buildHandout(){
   var name=f('ptName')||'Patient';
   var dr=f('drName')||'Your clinician';
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
-
-  var showADHD=(disorder==='adhd'||disorder==='both');
-  var showASD =(disorder==='asd' ||disorder==='both');
 
   var adhdItems=getSelectedItems(ADHD_PE_GROUPS,adhdSel);
   var asdItems =getSelectedItems(ASD_PE_GROUPS, asdSel);
@@ -474,7 +470,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // Set today's date
   var td=new Date().toISOString().slice(0,10);
   var dtEl=$('ptDate'); if(dtEl&&!dtEl.value) dtEl.value=td;
-  setDisorder('adhd');
+  toggleCondition('adhd'); // start with ADHD on
   renderTopics();
   refresh();
 });
