@@ -852,7 +852,7 @@ footer{
 <section class="card teal" id="sec-hoc">
   <div class="ch"><span class="num">·</span>Handover-of-care letter (to GP)</div>
   <div class="body">
-    <p class="lead">For when the patient is stable and ready for GP shared-care. Fill in the form — letter updates live. The script comes from whichever titration protocol is currently selected above.</p>
+    <p class="lead">For when the patient is stable and ready for GP shared-care. Fill in the form — letter updates live.</p>
 
     <div class="builder">
       <div class="bd-row">
@@ -884,6 +884,33 @@ footer{
           <input type="text" id="hoc-quals" class="bd-text" placeholder="FRANZCP / qualifications" oninput="hocRender()">
         </div>
       </div>
+
+      <div class="bd-row">
+        <label class="bd-label">Script — medication</label>
+        <div class="bd-controls bd-inline">
+          <input type="text" id="hoc-medname" class="bd-text" placeholder="Generic name (Brand)" oninput="hocRender()">
+          <input type="text" id="hoc-medstrength" class="bd-text" placeholder="Strength (e.g. 30mg cap)" oninput="hocRender()">
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Script — quantity &amp; repeats</label>
+        <div class="bd-controls bd-inline">
+          <input type="text" id="hoc-medqty" class="bd-text" placeholder="Quantity (e.g. 30 caps)" oninput="hocRender()">
+          <input type="text" id="hoc-medrepeats" class="bd-text" placeholder="Repeats (e.g. 5)" oninput="hocRender()">
+          <input type="text" id="hoc-medauth" class="bd-text" placeholder="Authorisation no. (optional)" oninput="hocRender()">
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Indication</label>
+        <div class="bd-controls bd-inline">
+          <input type="text" id="hoc-medindication" class="bd-text" placeholder="e.g. ADHD" oninput="hocRender()" style="flex:1 1 100%">
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Instructions / Sig</label>
+        <textarea id="hoc-medsig" class="bd-textarea" rows="2" placeholder="e.g. Take 1 capsule each morning on waking. Avoid acidic drinks at dosing time." oninput="hocRender()"></textarea>
+      </div>
+
       <div class="bd-row">
         <label class="bd-label">Include in letter</label>
         <div class="bd-controls bd-multi">
@@ -2248,8 +2275,8 @@ function renderTit(){
     </div>`;
 }
 
-function selectTitMed(k){titMed=k; titProto=null; renderTit(); if(typeof hocRender==='function') hocRender(); if(typeof renderTrt==='function') renderTrt();}
-function selectTitProto(k){titProto=k; renderTit(); if(typeof hocRender==='function') hocRender(); if(typeof renderTrt==='function') renderTrt();}
+function selectTitMed(k){titMed=k; titProto=null; renderTit(); if(typeof renderTrt==='function') renderTrt();}
+function selectTitProto(k){titProto=k; renderTit(); if(typeof renderTrt==='function') renderTrt();}
 
 // Derive a "Week N+" / "Day N+" prefix from the previous step,
 // so the ongoing phase reads "Week 4+ — 50mg" instead of "Ongoing — 50mg".
@@ -2712,7 +2739,9 @@ function hocToggle(btn){
   hocRender();
 }
 function hocClear(){
-  ['hoc-first','hoc-last','hoc-gp','hoc-gppractice','hoc-clin','hoc-quals','hoc-notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  ['hoc-first','hoc-last','hoc-gp','hoc-gppractice','hoc-clin','hoc-quals',
+   'hoc-medname','hoc-medstrength','hoc-medqty','hoc-medrepeats','hoc-medauth','hoc-medindication','hoc-medsig',
+   'hoc-notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
   hocRender();
 }
 function hocPronouns(g){
@@ -2725,28 +2754,27 @@ function _todayLong(){
   return d.toLocaleDateString('en-AU',{day:'numeric', month:'long', year:'numeric'});
 }
 function _capFirst(s){return s ? s.charAt(0).toUpperCase()+s.slice(1) : s;}
-function hocCurrentTitration(){
-  if(typeof titMed==='undefined' || !TIT_MEDS[titMed]) return null;
-  const med = TIT_MEDS[titMed];
-  const protos = getProtocols(titMed);
-  const proto = protos.find(p=>p.key===titProto) || protos[0];
-  if(proto.conversion) return {med, proto, directions:'(see methylphenidate IR → long-acting conversion table)'};
-  return {med, proto, directions: buildScriptText(med, proto)};
-}
+function _v(id){const el = document.getElementById(id); return el ? (el.value||'').trim() : '';}
 function hocRender(){
-  const first = (document.getElementById('hoc-first').value||'').trim();
-  const last  = (document.getElementById('hoc-last').value||'').trim();
-  const gpRaw = (document.getElementById('hoc-gp').value||'').trim();
-  const gpPrac= (document.getElementById('hoc-gppractice').value||'').trim();
-  const clin  = (document.getElementById('hoc-clin').value||'').trim();
-  const quals = (document.getElementById('hoc-quals').value||'').trim();
-  const notes = (document.getElementById('hoc-notes').value||'').trim();
+  const first = _v('hoc-first');
+  const last  = _v('hoc-last');
+  const gpRaw = _v('hoc-gp');
+  const gpPrac= _v('hoc-gppractice');
+  const clin  = _v('hoc-clin');
+  const quals = _v('hoc-quals');
+  const notes = _v('hoc-notes');
+
+  const medName       = _v('hoc-medname');
+  const medStrength   = _v('hoc-medstrength');
+  const medQty        = _v('hoc-medqty');
+  const medRepeats    = _v('hoc-medrepeats');
+  const medAuth       = _v('hoc-medauth');
+  const medIndication = _v('hoc-medindication');
+  const medSig        = _v('hoc-medsig');
 
   const fullName = (first+' '+last).trim() || '[Patient name]';
-  const firstName = first || '[First name]';
   const p = hocPronouns(hocState.g);
   const gp = gpRaw ? (/^dr/i.test(gpRaw) ? gpRaw : 'Dr '+gpRaw) : '[GP name]';
-  const tit = hocCurrentTitration();
 
   const lines = [];
   lines.push(_todayLong());
@@ -2762,15 +2790,17 @@ function hocRender(){
   lines.push(fullName+' meets DSM-5-TR criteria for Attention Deficit Hyperactivity Disorder (ADHD). The diagnosis was established following comprehensive psychiatric assessment including pre-screening, thorough clinical interview, review of collateral history, assessment of substance use, and a medical screen.');
   lines.push('');
   lines.push('CURRENT MEDICATION REGIMEN');
-  if(tit){
-    lines.push(tit.med.name+' — '+tit.proto.label);
-    lines.push(tit.med.brand);
-    lines.push('');
-    // Strip the header lines that buildScriptText itself adds, since we already showed them
-    const dir = (tit.directions||'').replace(/^[^\n]*\n[^\n]*\n+/, '');
-    lines.push(dir || tit.directions);
-  } else {
-    lines.push('[Select a titration protocol in the Titration section above]');
+  const medFirstLine = [medName, medStrength].filter(Boolean).join(' — ');
+  lines.push(medFirstLine || '[Medication — name and strength]');
+  const qtyLine = [];
+  if(medQty) qtyLine.push('Quantity: '+medQty);
+  if(medRepeats) qtyLine.push('Repeats: '+medRepeats);
+  if(qtyLine.length) lines.push(qtyLine.join('   '));
+  if(medAuth) lines.push('Authorisation: '+medAuth);
+  if(medIndication) lines.push('Indication: '+medIndication);
+  if(medSig){
+    lines.push('Sig:');
+    medSig.split(/\n+/).forEach(l=>{if(l.trim()) lines.push('  '+l.trim());});
   }
   lines.push('');
   lines.push(_capFirst(p.sub)+' has been carefully titrated to this regimen, has demonstrated good therapeutic response, and tolerates the medication well with no significant adverse effects at present.');
