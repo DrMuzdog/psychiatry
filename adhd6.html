@@ -2018,7 +2018,7 @@ function renderTit(){
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table></div>`;
-    scriptText = buildScriptText(med, proto, titMed);
+    scriptText = buildScriptText(med, proto);
   }
 
   const auth = proto.auth || med.auth || '';
@@ -2034,10 +2034,10 @@ function renderTit(){
       ${mainHtml}
       <div class="tit-actions">
         ${copyTableBtn}
-        ${scriptText?`<button class="copybtn" onclick="copyTitScript(this)">Copy script text</button>`:''}
+        ${scriptText?`<button class="copybtn" onclick="copyTitScript(this)">Copy directions</button>`:''}
         ${auth?`<button class="copybtn" onclick="copyTitAuth(this)">Copy authority text</button>`:''}
       </div>
-      ${scriptText?`<div class="script-box"><span class="label">Script text — ongoing dose</span><pre id="tit-script-text">${escHtml(scriptText)}</pre></div>`:''}
+      ${scriptText?`<div class="script-box"><span class="label">Titration directions</span><pre id="tit-script-text">${escHtml(scriptText)}</pre></div>`:''}
       ${auth?`<div class="auth-box"><span class="label">Authority / prescribing notes</span><span id="tit-auth-text">${escHtml(auth)}</span></div>`:''}
     </div>`;
 }
@@ -2045,129 +2045,26 @@ function renderTit(){
 function selectTitMed(k){titMed=k; titProto=null; renderTit();}
 function selectTitProto(k){titProto=k; renderTit();}
 
-// Script defaults per medication
-const SCRIPT_DEFAULTS = {
-  dex:        {genericName:'Dexamphetamine sulfate',         mitte:100, repeats:0, interval:20},
-  ritalinIR:  {genericName:'Methylphenidate hydrochloride',  mitte:100, repeats:0, interval:20},
-  mphLA:      {genericName:'Methylphenidate',                 mitte:30,  repeats:0, interval:20, brandByStrength:{10:'Ritalin LA',20:'Ritalin LA',30:'Ritalin LA',40:'Ritalin LA',60:'Ritalin LA',18:'Concerta',27:'Concerta',36:'Concerta',54:'Concerta'}},
-  vyvanse:    {genericName:'Lisdexamfetamine',                mitte:30,  repeats:0, interval:20},
-  strattera:  {genericName:'Atomoxetine',                     mitte:30,  repeats:5, interval:0,  pbs:'PBS streamlined 7876 (initiation) / 7890 (continuation)'},
-  intuniv:    {genericName:'Guanfacine XR',                   mitte:30,  repeats:5, interval:0},
-  catnanight: {genericName:'Clonidine',                       mitte:100, repeats:5, interval:0},
-  catnaday:   {genericName:'Clonidine',                       mitte:100, repeats:5, interval:0},
-};
-
-// Parse a dose label like "1 cap (30mg)", "½ tab (2.5mg)", "2 caps (40mg)"
-// or composite "1 cap (30mg) + 2 caps (20mg) = 70mg".
-// strengths[] from the med tells us whether (Xmg) is per-unit (Vyvanse: caps come in fixed
-// strengths) or total (Dex IR: single tablet strength, labels show total dose).
-function parseDoseLabel(l, strengths){
-  const stripped = l.replace(/\s*=\s*\d+(?:\.\d+)?(?:mg|mcg)\s*$/, '');
-  const parts = stripped.split(/\s*\+\s*/);
-  const qMap = {'¼':0.25,'½':0.5,'¾':0.75,'1½':1.5,'2½':2.5,'3½':3.5,'4½':4.5};
-  const out = [];
-  parts.forEach(p=>{
-    const m = p.trim().match(/^(¼|½|¾|1½|2½|3½|4½|\d+(?:\.\d+)?)\s*(tabs?|caps?)\s*\((\d+(?:\.\d+)?)(mg|mcg)\)/);
-    if(m){
-      const q = (qMap[m[1]] !== undefined) ? qMap[m[1]] : parseFloat(m[1]);
-      const form = m[2].startsWith('cap') ? 'capsule' : 'tablet';
-      const total = parseFloat(m[3]);
-      // Decide whether (Xmg) is per-unit or total
-      let strength;
-      const perUnit = total;
-      const asTotal = q ? Math.round((total/q)*1000)/1000 : null;
-      if(strengths && strengths.length){
-        if(strengths.indexOf(perUnit)>=0 && (q!==1 || !strengths.includes(asTotal))){
-          // label "X caps (Ymg)" where Ymg is a known strength and X>1 → per-unit
-          strength = perUnit;
-        } else if(asTotal!==null && strengths.indexOf(asTotal)>=0){
-          // label "X tabs (Ymg)" where Y/X matches a known strength → total
-          strength = asTotal;
-        } else {
-          // ambiguous — default to per-unit if total is a known strength, else total
-          strength = strengths.indexOf(perUnit)>=0 ? perUnit : asTotal;
-        }
-      } else {
-        strength = asTotal;
-      }
-      out.push({q, form, strength, unit:m[4], parsed:true});
-    } else {
-      out.push({raw:p.trim(), parsed:false});
-    }
-  });
-  return out;
-}
-
-// Build a paste-able Australian-style script for the ongoing dose
-function buildScriptText(med, proto, medKey){
-  const ongoing = proto.steps.find(s=>s.ongoing) || proto.steps[proto.steps.length-1];
-  if(!ongoing) return '';
-
-  const defs = SCRIPT_DEFAULTS[medKey] || {mitte:30, repeats:0, interval:20};
-  const genericBase = defs.genericName || med.name.split(' (')[0];
-  const brandPart = (med.name.match(/\(([^)]+)\)/) || [])[1] || '';
-
-  // Group by (strength, form), summing daily quantity per time
+// Build plain-English titration directions — every phase as a line.
+function buildScriptText(med, proto){
+  if(!proto.steps || !proto.steps.length) return '';
   const TIME_ORDER = ['morning','midday','afternoon','evening','night'];
-  const groups = {};
-  const rawNotes = [];
-  (ongoing.doses||[]).forEach(d=>{
-    const parsed = parseDoseLabel(d.l, med.strengths);
-    parsed.forEach(p=>{
-      if(!p.parsed){ rawNotes.push((d.t?TIME_LABEL[d.t]+': ':'')+p.raw); return; }
-      const k = `${p.strength}${p.unit}|${p.form}`;
-      if(!groups[k]) groups[k] = {strength:p.strength, unit:p.unit, form:p.form, times:{}};
-      groups[k].times[d.t] = (groups[k].times[d.t]||0) + p.q;
-    });
-  });
-
-  // For each strength → a script block
-  function fracWord(q){
-    if(q===0.25) return 'a quarter of a';
-    if(q===0.5)  return 'half a';
-    if(q===0.75) return 'three-quarters of a';
-    if(q===1)    return 'one';
-    if(q===1.5)  return 'one and a half';
-    if(q===2)    return 'two';
-    if(q===2.5)  return 'two and a half';
-    if(q===3)    return 'three';
-    if(q===3.5)  return 'three and a half';
-    if(q===4)    return 'four';
-    if(q===4.5)  return 'four and a half';
-    if(q===5)    return 'five';
-    return String(q);
-  }
-  function pluralForm(q,form){return (q===1||q===0.5||q===0.25||q===0.75) ? form : form+'s';}
   const TIME_PHRASE = {morning:'in the morning', midday:'at midday', afternoon:'in the afternoon', evening:'in the evening', night:'at night'};
-
-  const blocks = Object.values(groups).map(g=>{
-    const ordered = TIME_ORDER.filter(t=>g.times[t]);
-    const sigParts = ordered.map(t=>`${fracWord(g.times[t])} ${pluralForm(g.times[t], g.form)} ${TIME_PHRASE[t]}`);
-    const sig = ordered.length===1
-      ? `Take ${sigParts[0]}.`
-      : `Take ${sigParts.slice(0,-1).join(', ')} and ${sigParts[sigParts.length-1]}.`;
-    const totalDaily = ordered.reduce((a,t)=>a+g.times[t],0);
-    const monthly = Math.ceil(totalDaily*30);
-    const mitte = Math.max(defs.mitte, monthly);
-    const brandLabel = (defs.brandByStrength && defs.brandByStrength[g.strength]) || brandPart;
-    const lines = [
-      `${genericBase} ${g.strength}${g.unit} ${g.form}${brandLabel?'  ['+brandLabel+']':''}`,
-      `Mitte:    ${mitte} ${g.form}s`,
-      `Repeats:  ${defs.repeats}${defs.interval?`  (minimum supply interval ${defs.interval} days)`:''}`,
-      `Sig:      ${sig}`
-    ];
-    return lines.join('\n');
+  const lines = [];
+  lines.push(med.name+(proto.label?' — '+proto.label:''));
+  lines.push('');
+  proto.steps.forEach(step=>{
+    const ordered = TIME_ORDER.filter(t=>(step.doses||[]).some(d=>d.t===t));
+    const parts = ordered.map(t=>{
+      const ds = (step.doses||[]).filter(d=>d.t===t).map(d=>d.l).join(' + ');
+      return ds+' '+TIME_PHRASE[t];
+    });
+    const phaseLabel = step.label+((step.ongoing && !/ongoing/i.test(step.label))?' (ongoing)':'');
+    let line = phaseLabel+': '+parts.join(' + ')+'.';
+    if(step.note) line += '   '+step.note;
+    lines.push(line);
   });
-
-  const out = [];
-  if(blocks.length) out.push(blocks.join('\n\n'));
-  if(rawNotes.length){
-    out.push('Additional instructions:\n  '+rawNotes.join('\n  '));
-  }
-  if(ongoing.note){
-    out.push('Clinical note: '+ongoing.note);
-  }
-  return out.join('\n\n');
+  return lines.join('\n');
 }
 
 function copyTitTable(btn){
@@ -2200,7 +2097,7 @@ function copyTitTable(btn){
 function copyTitScript(btn){
   const t = document.getElementById('tit-script-text');
   if(!t) return;
-  navigator.clipboard.writeText(t.textContent).then(()=>flashCopy(btn,'Copy script text'));
+  navigator.clipboard.writeText(t.textContent).then(()=>flashCopy(btn,'Copy directions'));
 }
 
 function copyTitAuth(btn){
