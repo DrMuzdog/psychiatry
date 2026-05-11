@@ -4,84 +4,93 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ADHD Follow-Along Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f4ee;            /* warm cream */
+  --bg:#f8fafc;
   --surface:#ffffff;
-  --ink:#1a2434;           /* deep slate */
-  --muted:#6c6760;
-  --border:#e6e0d2;        /* warm beige border */
-  --border-soft:#efeadc;
-  --blue:#2c4a6b;          /* deep navy */
-  --blue-bg:#eef2f7;
-  --green:#3d6b48;         /* sage */
-  --green-bg:#eef3ec;
-  --amber:#8a6a1c;         /* warm amber */
-  --amber-bg:#faf3df;
-  --red:#8a2c2c;           /* clinical red */
-  --red-bg:#f7e7e3;
-  --purple:#574375;        /* muted plum */
-  --purple-bg:#f0ecf2;
-  --teal:#2a5e60;
-  --teal-bg:#e6efee;
-  --slate:#465264;
-  --slate-bg:#eeece5;
+  --ink:#0f172a;
+  --ink-soft:#1e293b;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --border-soft:#eef2f7;
+  --hover:#f1f5f9;
+
+  --primary:#2563eb;
+  --primary-dark:#1d4ed8;
+  --primary-bg:#eff6ff;
+
+  --indigo:#4f46e5; --indigo-bg:#eef2ff;
+  --green:#059669;  --green-bg:#ecfdf5;
+  --amber:#d97706;  --amber-bg:#fffbeb;
+  --red:#dc2626;    --red-bg:#fef2f2;
+  --violet:#7c3aed; --violet-bg:#f5f3ff;
+  --teal:#0d9488;   --teal-bg:#f0fdfa;
+  --slate:#475569;  --slate-bg:#f1f5f9;
+  --rose:#e11d48;   --rose-bg:#fff1f2;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  font:15px/1.55 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font:14.5px/1.55 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:920px; margin:0 auto; padding:0 22px 80px;}
+.wrap{max-width:960px; margin:0 auto; padding:0 22px 96px;}
 
-/* Non-sticky page header */
 header.top{
-  padding:28px 0 18px; margin-bottom:18px;
+  padding:32px 0 20px; margin-bottom:18px;
   border-bottom:1px solid var(--border);
 }
 header.top h1{
-  margin:0; font:600 24px/1.2 "Source Serif Pro","Georgia",ui-serif,serif;
-  letter-spacing:-.01em; color:var(--ink);
+  margin:0; font:700 24px/1.2 "Inter",sans-serif;
+  letter-spacing:-.02em; color:var(--ink);
 }
 header.top .sub{
-  font-size:13px; color:var(--muted); margin-top:4px;
-  font-style:italic;
+  font-size:13px; color:var(--muted); margin-top:5px;
+}
+header.top .sub kbd{
+  font:600 12px "Inter",sans-serif;
+  background:var(--primary-bg); color:var(--primary);
+  padding:1px 6px; border-radius:4px; border:1px solid #c7ddff;
 }
 nav.toc{
   display:flex; flex-wrap:wrap; gap:0; margin-top:14px;
-  font-size:12.5px; line-height:1.9;
+  font-size:12.5px;
 }
 nav.toc a{
-  text-decoration:none; color:var(--blue); font-weight:500;
-  padding:0 10px 0 0; margin-right:8px;
-  border-right:1px solid var(--border);
+  text-decoration:none; color:var(--primary); font-weight:500;
+  padding:3px 0; margin-right:14px;
+  border-bottom:1px solid transparent;
 }
-nav.toc a:last-child{border-right:none}
-nav.toc a:hover{color:var(--ink); text-decoration:underline}
+nav.toc a:hover{border-bottom-color:var(--primary); color:var(--primary-dark)}
 
-/* Cards: white surface, subtle border, color expressed only in a thin left bar */
+/* Cards */
 section.card{
   background:var(--surface);
   border:1px solid var(--border);
-  border-left:4px solid var(--slate);
-  border-radius:6px;
-  margin-bottom:16px;
+  border-left:3px solid var(--slate);
+  border-radius:8px;
+  margin-bottom:18px;
   overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,23,42,.04);
 }
-section.card.blue  {border-left-color:var(--blue)}
+section.card.indigo{border-left-color:var(--indigo)}
+section.card.primary{border-left-color:var(--primary)}
 section.card.green {border-left-color:var(--green)}
 section.card.amber {border-left-color:var(--amber)}
 section.card.red   {border-left-color:var(--red)}
-section.card.purple{border-left-color:var(--purple)}
+section.card.violet{border-left-color:var(--violet)}
 section.card.teal  {border-left-color:var(--teal)}
+section.card.rose  {border-left-color:var(--rose)}
 section.card.slate {border-left-color:var(--slate)}
 
 .ch{
   padding:14px 18px 4px; display:flex; align-items:baseline; gap:10px;
   color:var(--ink); background:transparent;
-  font:600 16.5px/1.3 "Source Serif Pro","Georgia",ui-serif,serif;
-  letter-spacing:0; text-transform:none;
+  font:600 16.5px/1.3 "Inter",sans-serif;
+  letter-spacing:-.01em;
 }
 .ch .num{
   font:700 11px/1 "Inter",sans-serif;
@@ -90,224 +99,255 @@ section.card.slate {border-left-color:var(--slate)}
   text-transform:uppercase; flex-shrink:0;
   position:relative; top:-1px;
 }
-section.card.blue   .ch .num{background:var(--blue-bg);   color:var(--blue)}
-section.card.green  .ch .num{background:var(--green-bg);  color:var(--green)}
-section.card.amber  .ch .num{background:var(--amber-bg);  color:var(--amber)}
-section.card.red    .ch .num{background:var(--red-bg);    color:var(--red)}
-section.card.purple .ch .num{background:var(--purple-bg); color:var(--purple)}
-section.card.teal   .ch .num{background:var(--teal-bg);   color:var(--teal)}
+section.card.indigo .ch .num{background:var(--indigo-bg); color:var(--indigo)}
+section.card.primary .ch .num{background:var(--primary-bg); color:var(--primary)}
+section.card.green  .ch .num{background:var(--green-bg);   color:var(--green)}
+section.card.amber  .ch .num{background:var(--amber-bg);   color:var(--amber)}
+section.card.red    .ch .num{background:var(--red-bg);     color:var(--red)}
+section.card.violet .ch .num{background:var(--violet-bg);  color:var(--violet)}
+section.card.teal   .ch .num{background:var(--teal-bg);    color:var(--teal)}
+section.card.rose   .ch .num{background:var(--rose-bg);    color:var(--rose)}
 
-.body{padding:6px 18px 16px}
+.body{padding:6px 18px 18px}
 .lead{
-  font-size:13px; color:var(--muted); margin:0 0 12px;
-  padding:0; background:transparent; border:none;
-  font-style:italic;
+  font-size:13.5px; color:var(--muted); margin:0 0 14px;
+  line-height:1.55;
 }
 
-ul.dots{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:1px}
-ul.dots > li{
-  display:flex; align-items:flex-start; gap:10px;
-  padding:6px 4px; border-radius:4px; transition:background .12s;
+/* Click-line dot points with CSS chevron */
+ul.dots{list-style:none; padding:0; margin:0}
+ul.dots > .row{
+  display:block; cursor:pointer; user-select:none;
   border-bottom:1px solid var(--border-soft);
 }
-ul.dots > li:last-of-type{border-bottom:none}
-ul.dots > li:hover{background:#faf8f1}
-ul.dots > li .dot{
-  flex-shrink:0; width:4px; height:4px; border-radius:50%;
-  background:var(--muted); margin-top:10px;
+ul.dots > .row:last-of-type{border-bottom:none}
+ul.dots > .row > .line{
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 4px; transition:background .12s;
 }
-ul.dots > li .txt{flex:1; font-size:14.5px; line-height:1.5; color:var(--ink)}
-ul.dots > li .txt strong{font-weight:600}
+ul.dots > .row:hover > .line{background:var(--hover)}
+ul.dots > .row.no-q{cursor:default}
+ul.dots > .row.no-q:hover > .line{background:transparent}
 
-.q{
-  flex-shrink:0; width:22px; height:22px; border-radius:50%;
-  border:1px solid var(--border); background:#fff; color:var(--muted);
-  font-weight:700; font-size:12px; cursor:pointer; padding:0;
-  display:flex; align-items:center; justify-content:center;
-  transition:all .15s;
+.chev{
+  flex-shrink:0; width:14px; height:14px; margin-top:5px;
+  display:inline-flex; align-items:center; justify-content:center;
 }
-.q:hover{border-color:var(--blue); color:var(--blue)}
-.q.open{background:var(--blue); border-color:var(--blue); color:#fff}
+.chev::before{
+  content:""; display:inline-block; width:6px; height:6px;
+  border-right:1.6px solid var(--muted);
+  border-bottom:1.6px solid var(--muted);
+  transform:rotate(-45deg); transition:transform .15s, border-color .15s;
+}
+.row.open .chev::before{
+  transform:rotate(45deg); border-color:var(--primary);
+}
+.row.no-q .chev::before{
+  border:none; width:4px; height:4px; border-radius:50%;
+  background:var(--muted); transform:none;
+}
+
+ul.dots > .row .txt{flex:1; font-size:14.5px; line-height:1.5; color:var(--ink)}
+ul.dots > .row .txt strong{font-weight:600}
+ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; margin-left:6px}
 
 .probes{
-  display:none; margin:4px 0 8px 22px; padding:10px 14px;
-  background:#faf8f1; border-left:2px solid var(--blue);
-  border-radius:0 4px 4px 0; font-size:13.5px; line-height:1.6;
-  color:var(--slate);
+  display:none; margin:0 0 12px 24px; padding:11px 14px;
+  background:var(--primary-bg); border-radius:6px;
+  font-size:13.5px; line-height:1.6;
+  color:var(--ink-soft); border:1px solid #d6e4fc;
 }
-.probes.open{display:block}
+.row.open + .probes{display:block}
 .probes ul{margin:0; padding-left:18px}
 .probes li{margin:3px 0}
-.probes .head{font-size:10.5px; font-weight:700; color:var(--blue);
-  text-transform:uppercase; letter-spacing:.06em; margin-bottom:5px}
-.probes em{color:var(--muted); font-style:italic}
-
-/* Two-column dots on wider screens */
-.twocol{display:grid; grid-template-columns:1fr; gap:14px}
-@media(min-width:720px){
-  .twocol{grid-template-columns:1fr 1fr}
+.probes .head{
+  font:600 10.5px/1 "Inter",sans-serif; color:var(--primary);
+  text-transform:uppercase; letter-spacing:.08em; margin-bottom:7px;
 }
+
+/* Two-column dot grids */
+.twocol{display:grid; grid-template-columns:1fr; gap:18px}
+@media(min-width:760px){.twocol{grid-template-columns:1fr 1fr}}
 .col-title{
-  font:600 12px/1 "Inter",sans-serif; color:var(--blue);
-  text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;
+  font:600 12px/1 "Inter",sans-serif; color:var(--primary);
+  text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;
 }
 
 /* MSE */
-.mse-section{
-  padding:9px 0; border-bottom:1px solid var(--border-soft);
-}
+.mse-section{padding:10px 0; border-bottom:1px solid var(--border-soft)}
 .mse-section:last-child{border-bottom:none}
-.mse-label{font-weight:600; font-size:13px; margin-bottom:6px; color:var(--slate)}
+.mse-label{font:600 13px/1 "Inter",sans-serif; margin-bottom:7px; color:var(--slate)}
 .mse-chips{display:flex; flex-wrap:wrap; gap:5px}
 .chip{
-  padding:4px 10px; font-size:12.5px; border-radius:4px;
+  padding:5px 11px; font:500 12.5px "Inter",sans-serif; border-radius:5px;
   border:1px solid var(--border); background:#fff; cursor:pointer;
-  color:var(--slate); font-weight:500; transition:all .12s; user-select:none;
+  color:var(--slate); transition:all .12s; user-select:none;
 }
-.chip:hover{border-color:var(--blue); color:var(--blue)}
-.chip.on{background:var(--blue); border-color:var(--blue); color:#fff}
+.chip:hover{border-color:var(--primary); color:var(--primary)}
+.chip.on{background:var(--primary); border-color:var(--primary); color:#fff}
 .chip.bad.on{background:var(--red); border-color:var(--red)}
 .chip.warn.on{background:var(--amber); border-color:var(--amber)}
 
 .output{
-  margin-top:14px; padding:13px 15px; background:#fdfcf7; color:var(--ink);
-  border:1px solid var(--border); border-radius:5px;
-  font:14px/1.65 "Source Serif Pro","Georgia",ui-serif,serif;
-  white-space:pre-wrap; min-height:60px;
+  margin-top:14px; padding:14px 16px; background:#fdfdfd; color:var(--ink);
+  border:1px solid var(--border); border-radius:6px;
+  font:14px/1.65 "Inter",sans-serif; white-space:pre-wrap; min-height:60px;
 }
 .output:empty::before{
-  content:"Select chips above — MSE prose will appear here.";
+  content:"Click chips above — MSE prose will appear here.";
   color:var(--muted); font-style:italic;
 }
 
 .copybtn{
   display:inline-flex; align-items:center; gap:5px;
-  padding:6px 13px; font-size:12.5px; font-weight:500;
-  background:var(--blue); color:#fff; border:none; border-radius:4px;
-  cursor:pointer; margin-top:10px; letter-spacing:.01em;
+  padding:7px 14px; font:500 13px "Inter",sans-serif;
+  background:var(--primary); color:#fff; border:none; border-radius:5px;
+  cursor:pointer; margin-top:10px;
 }
-.copybtn:hover{background:#1c3a5b}
+.copybtn:hover{background:var(--primary-dark)}
 .copybtn.ok{background:var(--green)}
 .copybtn:disabled{opacity:.5; cursor:default}
-
 .clearbtn{
   display:inline-flex; align-items:center; gap:5px;
-  padding:6px 13px; font-size:12.5px; font-weight:500;
+  padding:7px 14px; font:500 13px "Inter",sans-serif;
   background:#fff; color:var(--muted); border:1px solid var(--border);
-  border-radius:4px; cursor:pointer; margin-top:10px; margin-left:6px;
+  border-radius:5px; cursor:pointer; margin-top:10px; margin-left:6px;
 }
-.clearbtn:hover{background:var(--slate-bg); color:var(--ink)}
+.clearbtn:hover{background:var(--hover); color:var(--ink)}
 
-/* Psychoeducation — accordion of readable cards */
+/* Psychoeducation accordion */
+.pe-actions{display:flex; gap:6px; align-items:center; margin-bottom:14px; flex-wrap:wrap}
+.small-btn{
+  font:500 12px "Inter",sans-serif;
+  padding:5px 11px; border-radius:5px; border:1px solid var(--border);
+  background:#fff; color:var(--slate); cursor:pointer;
+}
+.small-btn:hover{background:var(--hover); color:var(--ink)}
+
 .pe-group{margin-top:18px}
 .pe-group:first-child{margin-top:0}
 .pe-group-label{
-  font:600 12px/1 "Inter",sans-serif; color:var(--purple);
+  font:600 11.5px/1 "Inter",sans-serif; color:var(--violet);
   text-transform:uppercase; letter-spacing:.08em;
-  padding-bottom:6px; margin-bottom:8px;
+  padding-bottom:7px; margin-bottom:8px;
   border-bottom:1px solid var(--border);
 }
-.pe-item{
-  border-bottom:1px solid var(--border-soft);
-}
+.pe-item{border-bottom:1px solid var(--border-soft)}
 .pe-item:last-child{border-bottom:none}
 .pe-item-head{
   display:flex; align-items:center; gap:10px;
-  padding:10px 2px; cursor:pointer; user-select:none;
-  font:600 14.5px/1.3 "Inter",sans-serif; color:var(--ink);
+  padding:11px 4px; cursor:pointer; user-select:none;
+  font:500 14.5px/1.3 "Inter",sans-serif; color:var(--ink);
   transition:color .12s;
 }
-.pe-item-head:hover{color:var(--purple)}
-.pe-item-head .caret{
-  width:18px; height:18px; display:inline-flex; align-items:center;
-  justify-content:center; color:var(--muted); font-size:11px;
-  transition:transform .15s; flex-shrink:0;
+.pe-item-head:hover{color:var(--violet)}
+.pe-item.open > .pe-item-head{color:var(--violet); font-weight:600}
+.pe-item.open > .pe-item-head .chev::before{
+  transform:rotate(45deg); border-color:var(--violet);
 }
-.pe-item.open > .pe-item-head .caret{transform:rotate(90deg); color:var(--purple)}
 .pe-item-body{
-  display:none; padding:6px 28px 16px 28px;
-  font:14.5px/1.65 "Source Serif Pro","Georgia",ui-serif,serif;
-  color:var(--ink);
+  display:none; padding:4px 28px 18px 28px;
+  font:14.5px/1.65 "Inter",sans-serif; color:var(--ink-soft);
 }
 .pe-item.open > .pe-item-body{display:block}
 .pe-item-body p, .pe-item-body ul{margin:8px 0}
 .pe-item-body ul{padding-left:22px}
 .pe-item-body li{margin:4px 0}
-.pe-item-body strong{font-weight:600}
-.pe-item-body table{border-collapse:collapse; width:100%; font-size:13px; margin:8px 0; font-family:"Inter",sans-serif}
-.pe-item-body th, .pe-item-body td{border:1px solid var(--border); padding:6px 9px; text-align:left}
+.pe-item-body strong{font-weight:600; color:var(--ink)}
+.pe-item-body table{
+  border-collapse:collapse; width:100%; font-size:13px; margin:10px 0;
+}
+.pe-item-body th, .pe-item-body td{
+  border:1px solid var(--border); padding:7px 10px; text-align:left;
+}
 .pe-item-body th{background:var(--slate-bg); font-weight:600; color:var(--slate)}
-.pe-item-body a{color:var(--purple); text-decoration:none; border-bottom:1px solid var(--purple-bg)}
-.pe-item-body a:hover{border-bottom-color:var(--purple)}
-.pe-copy-row{
-  margin-top:10px; padding-top:8px; border-top:1px solid var(--border-soft);
-}
-.pe-actions{display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap}
-.pe-actions .small-btn{
-  font:500 12px "Inter",sans-serif;
-  padding:5px 11px; border-radius:4px; border:1px solid var(--border);
-  background:#fff; color:var(--slate); cursor:pointer;
-}
-.pe-actions .small-btn:hover{background:var(--slate-bg); color:var(--ink)}
+.pe-item-body a{color:var(--violet); text-decoration:underline}
+.pe-copy-row{margin-top:12px; padding-top:10px; border-top:1px solid var(--border-soft)}
 
-/* Titration */
-.tit-grid{display:grid; grid-template-columns:1fr; gap:10px}
-.tit-card{
-  border:1px solid var(--border); border-radius:5px;
-  padding:14px 16px; background:#fdfcf7;
-}
-.tit-card-h{
-  display:flex; justify-content:space-between; align-items:flex-start;
-  margin-bottom:10px; gap:10px; flex-wrap:wrap;
-}
-.tit-card-h .nm{
-  font:600 15.5px/1.2 "Source Serif Pro","Georgia",ui-serif,serif;
-  color:var(--ink);
-}
-.tit-card-h .br{font-size:12px; color:var(--muted); font-weight:500; margin-top:2px}
-.tit-text{
-  font:13px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;
-  background:#fff; padding:12px 14px; border-radius:4px;
-  white-space:pre-wrap; color:var(--ink); margin:0;
-  border:1px solid var(--border-soft);
-}
-.tit-tabs{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px}
+/* Titration tables */
+.tit-tabs{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px}
 .tit-tab{
-  padding:5px 11px; font:500 12.5px "Inter",sans-serif;
+  padding:6px 12px; font:500 13px "Inter",sans-serif;
   border:1px solid var(--border); background:#fff; color:var(--slate);
-  border-radius:4px; cursor:pointer;
+  border-radius:5px; cursor:pointer;
 }
 .tit-tab:hover{border-color:var(--green); color:var(--green)}
 .tit-tab.on{background:var(--green); border-color:var(--green); color:#fff}
 
-/* Follow-up snippets */
+.tit-card{
+  border:1px solid var(--border); border-radius:8px;
+  padding:16px 18px; background:#fff;
+  margin-top:8px;
+}
+.tit-card-h{margin-bottom:12px}
+.tit-card-h .nm{font:600 16px/1.2 "Inter",sans-serif; color:var(--ink)}
+.tit-card-h .br{font-size:12.5px; color:var(--muted); font-weight:500; margin-top:3px}
+
+.proto-tabs{display:flex; flex-wrap:wrap; gap:4px; margin:10px 0}
+.proto-tab{
+  padding:5px 10px; font:500 12px "Inter",sans-serif;
+  border:1px solid var(--border); background:#fff; color:var(--slate);
+  border-radius:4px; cursor:pointer;
+}
+.proto-tab:hover{border-color:var(--primary); color:var(--primary)}
+.proto-tab.on{background:var(--primary); border-color:var(--primary); color:#fff}
+
+.tit-table{
+  width:100%; border-collapse:collapse; margin:10px 0;
+  font-size:13.5px; background:#fff;
+}
+.tit-table th, .tit-table td{
+  border:1px solid var(--border); padding:9px 11px; text-align:left;
+  vertical-align:top;
+}
+.tit-table th{
+  background:var(--slate-bg); font:600 11.5px/1.2 "Inter",sans-serif;
+  color:var(--slate); text-transform:uppercase; letter-spacing:.04em;
+}
+.tit-table .phase{font-weight:600; color:var(--ink); white-space:nowrap}
+.tit-table .ongoing td{background:var(--green-bg)}
+.tit-table .ongoing .phase{color:var(--green)}
+.tit-table .dose{font-variant-numeric:tabular-nums}
+.tit-table .none{color:var(--muted)}
+.tit-table .note{font-size:12.5px; color:var(--muted); font-style:italic}
+
+.auth-box{
+  margin-top:14px; padding:11px 14px;
+  background:var(--amber-bg); border:1px solid #fde0a3;
+  border-radius:6px; font-size:13px; color:#7a4f00; line-height:1.55;
+}
+.auth-box .label{
+  font:600 10.5px/1 "Inter",sans-serif; color:var(--amber);
+  text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px;
+  display:block;
+}
+
+/* Follow-up */
 .fu-grid{display:grid; grid-template-columns:1fr; gap:11px}
 @media(min-width:720px){.fu-grid{grid-template-columns:1fr 1fr}}
 .fu-card{
-  border:1px solid var(--border); border-radius:5px; padding:13px 15px;
-  background:#fdfcf7;
+  border:1px solid var(--border); border-radius:7px; padding:13px 15px;
+  background:#fff;
 }
-.fu-card .nm{
-  font:600 14px/1.3 "Source Serif Pro","Georgia",ui-serif,serif;
-  margin-bottom:7px; color:var(--ink);
-}
+.fu-card .nm{font:600 14px/1.3 "Inter",sans-serif; margin-bottom:8px; color:var(--ink)}
 .fu-card .body-txt{
-  font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
-  white-space:pre-wrap; color:var(--ink); margin:0; padding:10px 12px;
-  background:#fff; border-radius:4px; border:1px solid var(--border-soft);
+  font:13px/1.6 "Inter",sans-serif; white-space:pre-wrap;
+  color:var(--ink-soft); margin:0; padding:11px 13px;
+  background:var(--slate-bg); border-radius:5px;
 }
 
 footer{
   text-align:center; padding:40px 14px 0; color:var(--muted);
-  font-size:12px; line-height:1.5; font-style:italic;
+  font-size:12px; line-height:1.6;
 }
 
-/* Print */
 @media print{
   body{background:#fff}
-  header.top, nav.toc, .copybtn, .clearbtn, .q{display:none !important}
+  header.top, nav.toc, .copybtn, .clearbtn, .small-btn, .chev{display:none !important}
   .probes{display:block !important; page-break-inside:avoid}
   section.card{break-inside:avoid; box-shadow:none; border:1px solid #ccc}
+  .pe-item-body, .row.no-q .chev::before{display:block !important}
+  .pe-item .pe-item-body{display:block !important}
 }
 </style>
 </head>
@@ -316,18 +356,19 @@ footer{
 
 <header class="top">
   <h1>ADHD Follow-Along Guide</h1>
-  <div class="sub">A prompt sheet to use alongside AI transcription. Tap <strong style="color:var(--blue);font-style:normal">?</strong> on any line for example questions.</div>
+  <div class="sub">A prompt sheet to use alongside AI transcription. Click any line for example questions.</div>
   <nav class="toc">
     <a href="#sec-open">Opening</a>
+    <a href="#sec-pre">Pre-screening</a>
     <a href="#sec-a">A · Symptoms</a>
     <a href="#sec-b">B · Childhood</a>
     <a href="#sec-c">C · Settings</a>
     <a href="#sec-d">D · Impairment</a>
     <a href="#sec-e">E · Differentials</a>
-    <a href="#sec-sub">Substance use</a>
+    <a href="#sec-sub">Substance</a>
     <a href="#sec-card">Cardiac</a>
     <a href="#sec-med">Medical</a>
-    <a href="#sec-rx">Meds &amp; interactions</a>
+    <a href="#sec-rx">Meds</a>
     <a href="#sec-fam">Family</a>
     <a href="#sec-mse">MSE</a>
     <a href="#sec-inv">Investigations</a>
@@ -337,7 +378,6 @@ footer{
   </nav>
 </header>
 
-<!-- ============= OPENING ============= -->
 <section class="card slate" id="sec-open">
   <div class="ch"><span class="num">0</span>Opening</div>
   <div class="body">
@@ -346,9 +386,16 @@ footer{
   </div>
 </section>
 
-<!-- ============= CRITERION A ============= -->
-<section class="card blue" id="sec-a">
-  <div class="ch"><span class="num">A</span>Symptoms · ≥5 inattention or ≥5 hyperactive/impulsive in adulthood</div>
+<section class="card teal" id="sec-pre">
+  <div class="ch"><span class="num">Pre</span>Pre-screening &amp; collateral</div>
+  <div class="body">
+    <p class="lead">Validated tools, prior reports, and informant accounts. Cover before you start the formal DSM-5 review.</p>
+    <ul class="dots" data-section="prescreening"></ul>
+  </div>
+</section>
+
+<section class="card primary" id="sec-a">
+  <div class="ch"><span class="num">A</span>Symptoms · ≥5 inattention or ≥5 hyperactive/impulsive</div>
   <div class="body">
     <p class="lead">Ask broadly — examples, not yes/no. Look for the pattern, not the checklist.</p>
     <div class="twocol">
@@ -364,7 +411,6 @@ footer{
   </div>
 </section>
 
-<!-- ============= CRITERION B ============= -->
 <section class="card green" id="sec-b">
   <div class="ch"><span class="num">B</span>Several symptoms present before age 12</div>
   <div class="body">
@@ -373,7 +419,6 @@ footer{
   </div>
 </section>
 
-<!-- ============= CRITERION C ============= -->
 <section class="card amber" id="sec-c">
   <div class="ch"><span class="num">C</span>Symptoms in ≥2 settings</div>
   <div class="body">
@@ -382,7 +427,6 @@ footer{
   </div>
 </section>
 
-<!-- ============= CRITERION D ============= -->
 <section class="card red" id="sec-d">
   <div class="ch"><span class="num">D</span>Clear functional impairment</div>
   <div class="body">
@@ -391,8 +435,7 @@ footer{
   </div>
 </section>
 
-<!-- ============= CRITERION E ============= -->
-<section class="card purple" id="sec-e">
+<section class="card violet" id="sec-e">
   <div class="ch"><span class="num">E</span>Not better explained by another condition</div>
   <div class="body">
     <p class="lead">Screen each differential briefly. Comorbidity is the rule, not the exception.</p>
@@ -400,8 +443,7 @@ footer{
   </div>
 </section>
 
-<!-- ============= SUBSTANCE USE ============= -->
-<section class="card red" id="sec-sub">
+<section class="card rose" id="sec-sub">
   <div class="ch"><span class="num">·</span>Substance use</div>
   <div class="body">
     <p class="lead">Screen every drug class. Don't skip caffeine, nicotine, or prescribed sedatives. Current vs past matters for safety.</p>
@@ -409,7 +451,6 @@ footer{
   </div>
 </section>
 
-<!-- ============= CARDIAC ============= -->
 <section class="card red" id="sec-card">
   <div class="ch"><span class="num">·</span>Cardiac screen</div>
   <div class="body">
@@ -418,16 +459,14 @@ footer{
   </div>
 </section>
 
-<!-- ============= MEDICAL HX ============= -->
 <section class="card teal" id="sec-med">
   <div class="ch"><span class="num">·</span>Medical history</div>
   <div class="body">
-    <p class="lead">Broader medical context — what could complicate stimulant treatment, or what could be the real explanation?</p>
+    <p class="lead">Broader medical context — what could complicate stimulant treatment, or what could be the real explanation.</p>
     <ul class="dots" data-section="medical"></ul>
   </div>
 </section>
 
-<!-- ============= CURRENT MEDS & INTERACTIONS ============= -->
 <section class="card teal" id="sec-rx">
   <div class="ch"><span class="num">·</span>Current medications &amp; interactions</div>
   <div class="body">
@@ -436,8 +475,7 @@ footer{
   </div>
 </section>
 
-<!-- ============= FAMILY HX ============= -->
-<section class="card purple" id="sec-fam">
+<section class="card violet" id="sec-fam">
   <div class="ch"><span class="num">·</span>Family psychiatric history</div>
   <div class="body">
     <p class="lead">ADHD is highly heritable. Family history of bipolar or psychosis changes the risk–benefit calculus.</p>
@@ -445,7 +483,6 @@ footer{
   </div>
 </section>
 
-<!-- ============= MSE ============= -->
 <section class="card slate" id="sec-mse">
   <div class="ch"><span class="num">·</span>Mental state examination</div>
   <div class="body">
@@ -457,16 +494,15 @@ footer{
   </div>
 </section>
 
-<!-- ============= INVESTIGATIONS ============= -->
 <section class="card teal" id="sec-inv">
   <div class="ch"><span class="num">·</span>Investigations to consider</div>
   <div class="body">
+    <p class="lead">Objective tests — what to order, when, and why.</p>
     <ul class="dots" data-section="investigations"></ul>
   </div>
 </section>
 
-<!-- ============= PSYCHOEDUCATION ============= -->
-<section class="card purple" id="sec-pe">
+<section class="card violet" id="sec-pe">
   <div class="ch"><span class="num">·</span>Psychoeducation library</div>
   <div class="body">
     <p class="lead">Read or share any topic. Click a heading to expand — copy the text from inside.</p>
@@ -478,18 +514,16 @@ footer{
   </div>
 </section>
 
-<!-- ============= TITRATION ============= -->
 <section class="card green" id="sec-tit">
   <div class="ch"><span class="num">·</span>Example titration schedules</div>
   <div class="body">
-    <p class="lead">Pick a medication. Click a schedule to view. Copy as-is — no editing needed.</p>
+    <p class="lead">Pick a medication, then a protocol. Tables show exact doses by phase. Copy the schedule as text.</p>
     <div class="tit-tabs" id="tit-tabs"></div>
     <div id="tit-display"></div>
   </div>
 </section>
 
-<!-- ============= FOLLOW-UP ============= -->
-<section class="card blue" id="sec-fu">
+<section class="card primary" id="sec-fu">
   <div class="ch"><span class="num">·</span>Follow-up &amp; management suggestions</div>
   <div class="body">
     <p class="lead">Pick a follow-up template for the stage of care. Copy the snippet straight into your note.</p>
@@ -504,7 +538,7 @@ footer{
 </div>
 
 <script>
-// =================== DATA: SECTION PROBES ===================
+// =================== SECTION PROBES ===================
 const SECTIONS = {
 
 open: [
@@ -520,15 +554,55 @@ open: [
       "When did things start to really feel like a problem?",
       "What made you reach out now rather than six months ago?",
       "Has anyone else suggested ADHD to you, or did you come to that yourself?"]},
-  {t:"Previous assessments / treatment",
+  {t:"Previous assessments and treatment",
    q:["Have you been assessed before for anything mental health–related?",
       "Have you tried any medications — prescribed or borrowed?",
-      "Any previous therapy — what did and didn't help?",
-      "Any previous ADHD screening tools done (ASRS, DIVA, WURS)? Bring them in?"]},
-  {t:"Collateral available?",
-   q:["Old school reports, NAPLAN, parent-teacher feedback?",
-      "Could a parent / partner / sibling tell me what they've seen?",
-      "Any previous psychology / paediatric / GP letters?"]},
+      "Any previous therapy — what did and didn't help?"]},
+],
+
+prescreening: [
+  {t:"ASRS v1.1 — adult self-report screener",
+   q:["6-item Part A: ≥4 positive items = significant likelihood of adult ADHD.",
+      "Quick to administer. Useful screen, not diagnostic.",
+      "Did the patient bring it? Score? Self-completed or clinician-administered?"]},
+  {t:"DIVA-5 — structured diagnostic interview",
+   q:["Gold standard for adult ADHD diagnosis. Covers all 18 DSM-5 symptoms with examples.",
+      "Inattention symptoms endorsed (out of 9)? Hyperactivity/impulsivity (out of 9)?",
+      "Functional impairment domains?",
+      "Self-completed or clinician-administered?"]},
+  {t:"WURS-25 — childhood retrospective",
+   q:["Adult recall of childhood symptoms.",
+      "Score ≥36 strongly supports childhood-onset ADHD.",
+      "Particularly useful when no childhood collateral available."]},
+  {t:"BAARS-IV — childhood and adult, with informant version",
+   q:["Two-part scale: current adult symptoms + retrospective childhood.",
+      "Has an informant (partner / parent) version — strong collateral source."]},
+  {t:"Other screeners — Conners, CAARS, Vanderbilt",
+   q:["Conners CBRS / CAARS — adult ADHD rating scales.",
+      "Vanderbilt parent / teacher — for collateral on a child or for retrospective childhood report."]},
+  {t:"Old school reports / NAPLAN / report cards",
+   q:["Strongest evidence for Criterion B onset before age 12.",
+      "Look for: 'doesn't apply themselves', 'easily distracted', 'talks too much', 'disorganised', 'forgets equipment'.",
+      "Could the patient bring photos / scans of any old reports?"]},
+  {t:"Previous psychology, paediatric, GP letters",
+   q:["Has the patient had any previous formal assessment (psychology, paediatric, neuropsych)?",
+      "GP referral letter content — what did the GP observe?",
+      "Letters from previous psychiatrists, psychologists, OT?"]},
+  {t:"Adult informant — partner, parent, sibling",
+   q:["Could a partner / parent / sibling tell us what they have observed?",
+      "Are they here today, or contactable later with consent?",
+      "Have they completed any informant rating scales?"]},
+  {t:"Childhood informant — parent or older sibling",
+   q:["Can a parent or older sibling describe the patient's childhood?",
+      "Discipline patterns, school behaviour, peer relationships, homework battles?",
+      "DIVA has a childhood-informant module — has it been completed?"]},
+  {t:"Online ADHD self-tests / TikTok-driven self-screen",
+   q:["What did the patient read or take online before seeking assessment?",
+      "Useful context — but be alert for self-confirmation bias and rehearsed presentations."]},
+  {t:"Permission to contact GP, partner, parent",
+   q:["Confirm consent to contact GP for collateral.",
+      "Consent to contact partner / parent for additional information if needed.",
+      "Document in record."]},
 ],
 
 inattention: [
@@ -624,9 +698,6 @@ childhood: [
    q:["Did anxiety / perfectionism / fear of disappointing people drive your effort?",
       "Did you rely on intelligence to coast through until that stopped working?",
       "When did the wheels start coming off — high school, university, first job, becoming a parent?"]},
-  {t:"Other people's observations",
-   q:["Does your mum / dad / sibling remember you being a 'busy' or 'in-your-own-world' kid?",
-      "Anyone in the family say 'you reminded me of me at that age'?"]},
   {t:"Predisposing / early-life risk factors",
    q:["Premature, low birth weight, neonatal complications?",
       "Maternal smoking, alcohol or other substance use in pregnancy?",
@@ -837,9 +908,6 @@ cardiac: [
       "Long QT, Brugada, CPVT known?"]},
   {t:"Family — early CAD (<55 male, <65 female)",
    q:["Heart attack, stent, bypass in any first-degree relative — and at what age?"]},
-  {t:"Today's BP and HR",
-   q:["Baseline BP and HR documented. Repeat at every titration visit.",
-      "Patient to bring home or pharmacy readings between visits."]},
 ],
 
 medical: [
@@ -928,12 +996,6 @@ meds: [
   {t:"Antihypertensives — particularly alpha-2 agonists",
    q:["On clonidine, guanfacine, methyldopa? Existing alpha-2 agonist?",
       "Beta-blockers — discuss before stimulant initiation."]},
-  {t:"Substances of misuse — already covered above",
-   q:["Re-confirm alcohol, cannabis, illicit stimulants, opioids, benzodiazepines.",
-      "Today's caffeine intake — coffees, energy drinks, pre-workout."]},
-  {t:"SafeScript / RTPM review before prescribing",
-   q:["Mandatory check before any controlled-substance prescription.",
-      "Looking for: opioids, benzodiazepines, existing stimulants, doctor-shopping pattern."]},
 ],
 
 family: [
@@ -950,23 +1012,27 @@ family: [
    q:["Alcohol or other substance dependence in family?"]},
   {t:"Suicide / self-harm",
    q:["Any completed suicide or significant self-harm in family?"]},
-  {t:"Cardiac — sudden death, cardiomyopathy",
-   q:["Already covered in medical — but re-confirm for the assessment letter."]},
   {t:"Personality disorder",
    q:["Anyone diagnosed with personality disorder or treated for chronic relational difficulty?"]},
 ],
 
 investigations: [
-  {t:"BP and HR — baseline + every titration visit",
-   q:["Document today's BP and HR. Repeat at each titration visit and annually thereafter."]},
+  {t:"Blood pressure — baseline + every titration visit",
+   q:["Document today's BP. Repeat at every titration visit and annually thereafter.",
+      "Defer titration if uncontrolled hypertension (≥140/90)."]},
+  {t:"Heart rate — baseline + every titration visit",
+   q:["Resting HR — defer if persistent tachycardia >100 bpm.",
+      "Investigate underlying cause: anxiety, thyroid, anaemia, substance use."]},
   {t:"Weight, height, BMI — baseline + monitoring",
-   q:["Important especially in adolescents and underweight adults — stimulants suppress appetite."]},
+   q:["Important especially in adolescents and underweight adults — stimulants suppress appetite.",
+      "Defer or use non-stimulant if BMI <18.5."]},
   {t:"ECG — if any cardiac risk factor or red flag",
-   q:["Indications: personal cardiac history, family sudden death <40, hypertension, palpitations, structural disease, age > 40 with risk factors.",
+   q:["Indications: personal cardiac history, family sudden death <40, hypertension, palpitations, structural disease, age >40 with risk factors.",
       "Defer stimulant until ECG cleared / cardiology consulted."]},
   {t:"Bloods — TFT, FBE, EUC, LFT, B12, ferritin, vit D",
    q:["Especially if fatigue, low mood, sleep disturbance, dietary concerns.",
-      "Check ferritin: low iron worsens ADHD symptoms."]},
+      "Check ferritin: low iron worsens ADHD symptoms.",
+      "LFT before atomoxetine — rare but serious hepatotoxicity."]},
   {t:"Urine drug screen — if substance use concern",
    q:["Useful baseline if any concern re: stimulant misuse or undisclosed substance use.",
       "Discuss openly: 'I'd like a UDS for our records — anything I should know about beforehand?'"]},
@@ -976,24 +1042,20 @@ investigations: [
   {t:"Neuropsychological testing — selectively",
    q:["Indications: diagnostic uncertainty, query learning disorder, cognitive complaints disproportionate to history.",
       "Not required for diagnosis — DSM-5 is clinical."]},
-  {t:"Collateral — old school reports, parent / partner",
-   q:["Strongly supportive of Criterion B. Worth requesting if available."]},
-  {t:"Validated rating scales",
-   q:["ASRS v1.1 — adult self-report screener.",
-      "DIVA-5 — structured diagnostic interview.",
-      "WURS — childhood retrospective.",
-      "Useful as adjuncts, never sufficient alone."]},
+  {t:"Sleep study — if OSA suspected",
+   q:["Indications: snoring, witnessed apnoeas, daytime sleepiness, BMI elevated.",
+      "Treat OSA before assuming attention problem is ADHD."]},
 ],
 
-},
+};
 
 // =================== MSE DATA ===================
-MSE_DATA = [
+const MSE_DATA = [
   {id:'appearance', label:'Appearance', opts:[
-    {t:'Neat/appropriately dressed'},{t:'Casually dressed'},
+    {t:'Neat / appropriately dressed'},{t:'Casually dressed'},
     {t:'Well-groomed'},{t:'Dishevelled',bad:true}
   ]},
-  {id:'behaviour', label:'Behaviour / Rapport', opts:[
+  {id:'behaviour', label:'Behaviour / rapport', opts:[
     {t:'Cooperative and engaged'},{t:'Polite but reserved'},
     {t:'Anxious'},{t:'Guarded',warn:true},{t:'Disengaged',warn:true}
   ]},
@@ -1115,212 +1177,188 @@ const PE_GROUPS = [
   ]},
   {label:'Resources', items:[
     {id:'books', title:'Recommended books',
-     body:'<ul><li><strong>ADHD 2.0</strong> — Hallowell & Ratey. Readable, evidence-based, good starting point.</li><li><strong>Driven to Distraction</strong> — Hallowell & Ratey. The original classic.</li><li><strong>Smart but Stuck</strong> — Thomas Brown. For high-achieving adults underperforming.</li><li><strong>Scattered Minds</strong> — Gabor Mate. Psychodynamic lens; early developmental patterns.</li></ul>'},
+     body:'<ul><li><strong>ADHD 2.0</strong> — Hallowell &amp; Ratey. Readable, evidence-based, good starting point.</li><li><strong>Driven to Distraction</strong> — Hallowell &amp; Ratey. The original classic.</li><li><strong>Smart but Stuck</strong> — Thomas Brown. For high-achieving adults underperforming.</li><li><strong>Scattered Minds</strong> — Gabor Mate. Psychodynamic lens; early developmental patterns.</li></ul>'},
     {id:'tools', title:'Useful products and tools',
      body:'<ul><li><strong>Re-Timer glasses</strong> — light therapy for circadian / sleep phase. retimer.com.au</li><li><strong>Loop Earplugs</strong> — reduce noise without distortion. au.loopearplugs.com</li><li><strong>Manta Sleep masks</strong> — blackout / sound mask combo. mantasleep.com.au</li><li><strong>Focusmate</strong> — free virtual body doubling. focusmate.com</li><li><strong>Anki</strong> — spaced-repetition flashcards. ankiweb.net</li></ul>'},
   ]},
 ];
 
-// =================== TITRATION DATA ===================
-const TIT_PROTOCOLS = {
-  dex: {
-    name:'Dexamphetamine IR',
-    brand:'Dexamphetamine sulfate 5mg tabs',
-    auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Request 200 tabs if 5+ tabs/day.',
-    schedules:[
-      {key:'standard', label:'Standard adult',
-       text:`Dexamphetamine 5mg tablets — adult titration
-
-Days 1–2:  ½ tab (2.5mg) morning  +  ½ tab (2.5mg) midday
-Days 3–9:  1 tab (5mg) morning   +  1 tab (5mg) midday
-Days 10–16: 2 tabs (10mg) morning +  1 tab (5mg) midday  [if tolerated]
-Ongoing:    2 tabs (10mg) morning +  2 tabs (10mg) midday  [if needed]
-
-Maximum: ~30mg/day in divided doses.
-Take after food. Avoid acidic drinks (juice, soft drink) at dosing time — they reduce absorption.
-Last dose before 2pm if sleep affected.
-
-Review at 4 weeks: BP, HR, weight, side effects, response.`}
-    ]
-  },
-  ritalinIR: {
-    name:'Ritalin IR / Artige',
-    brand:'Methylphenidate 10mg tabs',
-    auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
-    schedules:[
-      {key:'standard', label:'Standard adult',
-       text:`Ritalin IR / Artige 10mg — adult titration
-
-Days 1–2:  ½ tab (5mg) morning  +  ½ tab (5mg) midday
-Days 3–9:  1 tab (10mg) morning +  1 tab (10mg) midday
-Days 10–16: 2 tabs (20mg) morning + 1 tab (10mg) midday  [if tolerated]
-Ongoing:    2 tabs (20mg) morning + 2 tabs (20mg) midday  [if needed]
-
-Maximum: ~60mg/day in divided doses.
-Take after food. Avoid acidic drinks, vitamin C, citric acid at dosing.
-
-Review at 4 weeks.`}
-    ]
-  },
-  ritalinLA: {
-    name:'Ritalin LA',
-    brand:'Methylphenidate ER capsules — 10, 20, 30, 40, 60mg',
-    auth:'Stimulant authority script. Add CA2023 (NSW). Once daily. Capsule can be sprinkled on soft food.',
-    schedules:[
-      {key:'standard', label:'Standard adult',
-       text:`Ritalin LA — adult titration (once daily, morning)
-
-Week 1:    10mg morning
-Weeks 2–3: 20mg morning
-Weeks 4–5: 30mg morning
-Ongoing:   40mg morning  [if needed]
-
-Maximum: 60mg/day.
-Capsule may be opened and sprinkled on soft food. Avoid acidic drinks.
-Some patients add a small Ritalin IR afternoon dose for evening coverage — discuss.
-
-Review at 4–6 weeks.`}
-    ]
-  },
-  concerta: {
-    name:'Concerta',
-    brand:'Methylphenidate OROS — 18, 27, 36, 54mg',
-    auth:'PBS authority via PRODA. ADHD diagnosis must have been made before age 18. Add CA2023 (NSW). Swallow whole — do NOT crush.',
-    schedules:[
-      {key:'standard', label:'Standard adult',
-       text:`Concerta — adult titration (once daily, morning)
-
-Week 1:    18mg morning
-Weeks 2–3: 27mg morning
-Weeks 4–5: 36mg morning
-Ongoing:   54mg morning  [maximum dose]
-
-Swallow tablet whole — must NOT be crushed or chewed.
-Empty shell may appear in stool — normal.
-Avoid acidic drinks.
-
-Review at 4–6 weeks.`}
-    ]
-  },
-  vyvanse: {
-    name:'Vyvanse',
-    brand:'Lisdexamfetamine — 20, 30, 40, 50, 60, 70mg capsules',
-    auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
-    schedules:[
-      {key:'standard', label:'Standard 30 → 50',
-       text:`Vyvanse — standard adult titration
-
-Days 1–21:  30mg morning on waking
-Ongoing:    50mg morning  [only if tolerating 30mg well but still symptomatic]
-
-Capsule may be opened and dissolved in water — drink immediately.
-Take on waking. Avoid acidic drinks.
-Follow up with psychiatrist to confirm ongoing dose.`},
-      {key:'flex_2030', label:'Flexible 20 + 30',
-       text:`Vyvanse — flexible 20mg + 30mg capsules
-
-Script: 20mg AND 30mg capsules together (1 repeat each).
-
-Week 1:           30mg on waking
-Weeks 2–3:        30mg + 20mg on waking (50mg)
-Week 4+ if needed: 30mg + 20mg + 20mg on waking (70mg)
-
-At follow-up, simplify to a single best-dose capsule.`},
-      {key:'water', label:'Water-titration method',
-       text:`Vyvanse — water method (fine titration)
-
-Dissolve one 70mg capsule in exactly 70mL water (1mg/mL).
-Draw up prescribed volume with syringe and drink immediately.
-Discard remainder.
-
-Week 1: 30mL = 30mg
-Week 2: 40mL = 40mg  [if tolerated]
-Week 3: 50mL = 50mg
-Week 4: 60mL = 60mg
-Ongoing: up to 70mg
-
-Switch to standard capsule once optimal dose found.`},
-      {key:'flex_304050', label:'Flexible 30 + 40 + 50',
-       text:`Vyvanse — flexible 30, 40, 50mg
-
-Three scripts: 30mg, 40mg, 50mg — no repeats. Review ~6 weeks.
-
-Weeks 1–2:           30mg morning
-Weeks 3–4 if needed: 40mg morning (return to 30mg if not tolerated)
-Ongoing if needed:   50mg morning (stay at lowest effective dose)`},
-      {key:'sensitive', label:'Sensitive / ASD / older patient',
-       text:`Vyvanse — slow titration for sensitive patients
-
-Week 1:  20mg morning
-Weeks 2–3: 30mg morning
-Weeks 4–5: 40mg morning  [if needed]
-Ongoing:   50mg morning  [if needed]
-
-Slower titration. Pause and review at any step if side effects.`}
-    ]
-  },
-  strattera: {
-    name:'Atomoxetine (Strattera)',
-    brand:'Atomoxetine 10, 18, 25, 40, 60, 80, 100mg',
-    auth:'Non-stimulant. PBS streamlined authority. Full effect takes 4–12 weeks.',
-    schedules:[
-      {key:'standard', label:'Standard adult',
-       text:`Atomoxetine — adult titration
-
-Adult target: 1.2 mg/kg/day (max 100mg).
-
-Week 1:    40mg daily (morning or split BD)
-Weeks 2–3: 60mg daily
-Weeks 4–6: 80mg daily  [if tolerated and inadequate response]
-Ongoing:   80–100mg daily
-
-Take with food (reduces nausea).
-Full effect 4–12 weeks — counsel patient on expected timeline.
-Liver injury warning — jaundice / dark urine → stop and seek urgent care.
-
-Review at 4 and 8 weeks.`}
-    ]
-  },
-  intuniv: {
-    name:'Guanfacine XR (Intuniv)',
-    brand:'Guanfacine XR 1, 2, 3, 4mg',
-    auth:'Non-stimulant. Private script.',
-    schedules:[
-      {key:'standard', label:'Standard adult',
-       text:`Guanfacine XR — adult titration
-
-Week 1:    1mg at night
-Weeks 2–3: 2mg at night
-Weeks 4–5: 3mg at night  [if needed]
-Ongoing:   3–4mg at night
-
-Target: typical 0.05–0.12 mg/kg/day (adult range usually 2–7mg).
-Do NOT stop suddenly — rebound hypertension. Taper if discontinuing.
-Avoid high-fat meals at dose time.
-
-Monitor BP, HR.`}
-    ]
-  },
-  clonidine: {
-    name:'Clonidine (Catapres)',
-    brand:'Clonidine 100mcg tabs',
-    auth:'Private script. Useful adjunct for sleep / hyperarousal / tics.',
-    schedules:[
-      {key:'sleep', label:'Sleep / hyperarousal adjunct',
-       text:`Clonidine — adjunct dosing
-
-Adults — for sleep onset, hyperarousal, tics:
-
-Night 1–3: ½ tab (50mcg) at night
-Night 4+:  1 tab (100mcg) at night
-Range:     50–200mcg nocte, titrating slowly
-
-Do NOT stop suddenly — rebound hypertension.
-Alcohol significantly increases sedation — avoid.
-Monitor BP and HR especially first 1–2 weeks.`}
-    ]
-  }
+// =================== TITRATION DATA — full original ===================
+const TIT_MEDS={
+  dex:{name:'Dexamphetamine IR',brand:'Dexamphetamine sulfate 5mg',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Request 200 tabs if 5+ tabs/day.',
+    unit:'mg',form:'tab',strengths:[5],
+    steps:[{label:'Days 1-2',ongoing:false,note:'Start low. Take on waking.',doses:[{t:'morning',l:'½ tab (2.5mg)'},{t:'midday',l:'½ tab (2.5mg)'}]},
+      {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (5mg)'},{t:'midday',l:'1 tab (5mg)'}]},
+      {label:'Days 10-16',ongoing:false,note:'Good tolerability required.',doses:[{t:'morning',l:'2 tabs (10mg)'},{t:'midday',l:'1 tab (5mg)'}]},
+      {label:'Ongoing',ongoing:true,note:'Continue until next review.',doses:[{t:'morning',l:'2 tabs (10mg)'},{t:'midday',l:'2 tabs (10mg)'}]}]},
+  ritalinIR:{name:'Ritalin IR / Artige',brand:'Methylphenidate hydrochloride 10mg',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
+    unit:'mg',form:'tab',strengths:[10],
+    steps:[{label:'Days 1-2',ongoing:false,note:'Start low.',doses:[{t:'morning',l:'½ tab (5mg)'},{t:'midday',l:'½ tab (5mg)'}]},
+      {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (10mg)'},{t:'midday',l:'1 tab (10mg)'}]},
+      {label:'Days 10-16',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'1 tab (10mg)'}]},
+      {label:'Ongoing',ongoing:true,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'2 tabs (20mg)'}]}]},
+  ritalinLA:{name:'Ritalin LA',brand:'Methylphenidate modified-release capsules (10, 20, 30, 40, 60mg)',auth:'Stimulant authority script. Add CA2023 (NSW). Once daily. Capsule can be sprinkled onto soft food.',
+    unit:'mg',form:'cap',strengths:[10,20,30,40,60],
+    steps:[{label:'Week 1',ongoing:false,note:'Morning. Can sprinkle onto soft food.',doses:[{t:'morning',l:'1 cap (10mg)'}]},
+      {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (20mg)'}]},
+      {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (30mg)'}]},
+      {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 cap (40mg)'}]}]},
+  concerta:{name:'Concerta',brand:'Methylphenidate OROS (18, 27, 36, 54mg)',auth:'PBS authority via PRODA. ADHD diagnosis must have been made before age 18. Add CA2023 (NSW). Swallow whole — do NOT crush.',
+    unit:'mg',form:'tab',strengths:[18,27,36,54],
+    steps:[{label:'Week 1',ongoing:false,note:'Swallow whole — must NOT be crushed.',doses:[{t:'morning',l:'1 tab (18mg)'}]},
+      {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (27mg)'}]},
+      {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (36mg)'}]},
+      {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 tab (54mg)'}]}]},
+  vyvanse:{name:'Vyvanse',brand:'Lisdexamfetamine (20, 30, 40, 50, 60, 70mg capsules)',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
+    unit:'mg',form:'cap',strengths:[20,30,40,50,60,70],
+    steps:[],
+    protocols:[
+      {key:'flex_2030',label:'Flexible 20+30 caps',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Prescribe 20mg AND 30mg capsules together. At follow-up, simplify to a single best-dose capsule.',
+        steps:[
+          {label:'Week 1',ongoing:false,note:'30mg on waking.',doses:[{t:'morning',l:'1 cap (30mg)'}]},
+          {label:'Weeks 2-3',ongoing:false,note:'30mg + 20mg on waking.',doses:[{t:'morning',l:'1 cap (30mg) + 1 cap (20mg)'}]},
+          {label:'Week 4+ if needed',ongoing:true,note:'30+20+20mg if still symptomatic. At follow-up, simplify to a single best-dose capsule.',doses:[{t:'morning',l:'1 cap (30mg) + 2 caps (20mg) = 70mg'}]}
+        ]},
+      {key:'simple_3050',label:'30 → 50mg',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Follow up with psychiatrist to determine ongoing dosing.',
+        steps:[
+          {label:'Days 1-21',ongoing:false,note:'Take 30mg each morning on waking.',doses:[{t:'morning',l:'1 cap (30mg)'}]},
+          {label:'Ongoing — 50mg',ongoing:true,note:'Increase to 50mg only if tolerating 30mg well but still symptomatic.',doses:[{t:'morning',l:'1 cap (50mg)'}]}
+        ]},
+      {key:'water',label:'Water method',
+        auth:'Dissolve one 70mg capsule in exactly 70mL water (1mg/mL). Draw up prescribed volume and drink immediately. Discard remainder. Switch to standard capsule once optimal dose found.',
+        steps:[
+          {label:'Week 1',ongoing:false,note:'Draw up 30mL = 30mg.',doses:[{t:'morning',l:'70mg cap → 30mL (30mg)'}]},
+          {label:'Week 2',ongoing:false,note:'40mL if well tolerated.',doses:[{t:'morning',l:'70mg cap → 40mL (40mg)'}]},
+          {label:'Week 3',ongoing:false,note:'50mL.',doses:[{t:'morning',l:'70mg cap → 50mL (50mg)'}]},
+          {label:'Week 4',ongoing:false,note:'60mL.',doses:[{t:'morning',l:'70mg cap → 60mL (60mg)'}]},
+          {label:'Ongoing — max 70mg',ongoing:true,note:'Stay at lowest effective dose.',doses:[{t:'morning',l:'1 cap (70mg)'}]}
+        ]},
+      {key:'guided_30',label:'30mg guided',
+        auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Review every 2-3 weeks; titrate up by 10-20mg per review based on response and tolerance.',
+        steps:[
+          {label:'Ongoing',ongoing:true,note:'Start 30mg. Review every 2-3 weeks and titrate up by 10-20mg per review based on response and tolerance.',doses:[{t:'morning',l:'1 cap (30mg)'}]}
+        ]},
+      {key:'flex_3040',label:'30 + 40 (flexible)',
+        auth:'Two scripts: 30mg AND 40mg, no repeats. Review at 4 weeks.',
+        steps:[
+          {label:'Weeks 1-2',ongoing:false,note:'If effective and tolerated, remain on 30mg.',doses:[{t:'morning',l:'1 cap (30mg)'}]},
+          {label:'Ongoing — 40mg if needed',ongoing:true,note:'Try 40mg only if 30mg not effective. If tolerated, remain. If not, return to 30mg. Review at 4 weeks.',doses:[{t:'morning',l:'1 cap (40mg)'}]}
+        ]},
+      {key:'flex_304050',label:'30 + 40 + 50 (flexible)',
+        auth:'Three scripts: 30mg, 40mg, 50mg — no repeats. Increase every 2 weeks. Review at ~6 weeks.',
+        steps:[
+          {label:'Weeks 1-2',ongoing:false,note:'If effective and tolerated, stay on 30mg.',doses:[{t:'morning',l:'1 cap (30mg)'}]},
+          {label:'Weeks 3-4',ongoing:false,note:'Try 40mg if 30mg not effective. If tolerated, stay. If not, return to 30mg.',doses:[{t:'morning',l:'1 cap (40mg)'}]},
+          {label:'Ongoing — 50mg if needed',ongoing:true,note:'Try 50mg only if 40mg tolerated but inadequate. Stay at lowest effective dose. Review at ~6 weeks.',doses:[{t:'morning',l:'1 cap (50mg)'}]}
+        ]},
+      {key:'sensitive',label:'Sensitive (ASD, OPMH)',
+        auth:'20mg cap with 1 repeat; 30mg cap with 0 repeats. Review at 6 weeks.',
+        steps:[
+          {label:'Weeks 1-4',ongoing:false,note:'Stay at 20mg if effective and tolerated.',doses:[{t:'morning',l:'1 cap (20mg)'}]},
+          {label:'Ongoing — 30mg if needed',ongoing:true,note:'Increase to 30mg only if 20mg minimal effect but tolerated. Review at 6 weeks.',doses:[{t:'morning',l:'1 cap (30mg)'}]}
+        ]}
+    ]},
+  strattera:{name:'Atomoxetine (Strattera)',brand:'Atomoxetine 10, 18, 25, 40, 60, 80mg',auth:'Streamlined PBS — 7876 (initiation), 7890 (continuation). NOT a controlled drug. Full effect 4–12 weeks.',
+    unit:'mg',form:'cap',strengths:[10,18,25,40,60,80],
+    steps:[],
+    protocols:[
+      {key:'standard_80',label:'Standard up to 80mg',
+       auth:'PBS streamlined. Take with food to reduce nausea.',
+       steps:[
+         {label:'Weeks 1-4',ongoing:false,note:'Take with food to reduce nausea.',doses:[{t:'morning',l:'1 cap (40mg)'}]},
+         {label:'Weeks 5-8',ongoing:false,note:'Increase if tolerating.',doses:[{t:'morning',l:'1 cap (60mg)'}]},
+         {label:'Weeks 9-12',ongoing:false,note:'Increase if tolerating.',doses:[{t:'morning',l:'1 cap (80mg)'}]},
+         {label:'Ongoing — max 80mg',ongoing:true,note:'Do not exceed without specialist review.',doses:[{t:'morning',l:'1 cap (80mg)'}]}
+       ]},
+      {key:'extend_100',label:'Extension up to 100mg (40+60)',
+       auth:'Use 40mg + 60mg combination for 100mg.',
+       steps:[
+         {label:'Weeks 1-4',ongoing:false,note:'Take with food.',doses:[{t:'morning',l:'1 cap (40mg)'}]},
+         {label:'Weeks 5-8',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (60mg)'}]},
+         {label:'Weeks 9-12',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (80mg)'}]},
+         {label:'Weeks 13-16',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (40mg) + 1 cap (60mg) = 100mg'}]},
+         {label:'Ongoing — 100mg',ongoing:true,note:'Continue at 100mg if tolerated and effective.',doses:[{t:'morning',l:'1 cap (40mg) + 1 cap (60mg) = 100mg'}]}
+       ]}
+    ]},
+  intuniv:{name:'Guanfacine XR (Intuniv)',brand:'Guanfacine XR 1, 2, 3, 4mg',auth:'Not a controlled drug. Do NOT stop abruptly — taper on cessation. Monitor BP regularly.',
+    unit:'mg',form:'tab',strengths:[1,2,3,4],
+    steps:[{label:'Weeks 1-2',ongoing:false,note:'Take nightly. Monitor BP.',doses:[{t:'evening',l:'1 tab (1mg)'}]},
+      {label:'Weeks 3-4',ongoing:false,note:'',doses:[{t:'evening',l:'1 tab (2mg)'}]},
+      {label:'Weeks 5-6',ongoing:false,note:'',doses:[{t:'evening',l:'1 tab (3mg)'}]},
+      {label:'Ongoing — max 4mg',ongoing:true,note:'Do NOT stop suddenly — taper.',doses:[{t:'evening',l:'1 tab (4mg)'}]}]},
+  catnanight:{name:'Clonidine (nocte)',brand:'Clonidine 100, 150mcg',auth:'Private script — not PBS listed for ADHD. Do NOT stop abruptly. Monitor BP.',
+    unit:'mcg',form:'tab',strengths:[100,150],
+    steps:[{label:'Day 1',ongoing:false,note:'Very low start. Drowsiness expected.',doses:[{t:'night',l:'½ tab (50mcg)'}]},
+      {label:'Week 1',ongoing:false,note:'Increase to 100mcg if tolerated.',doses:[{t:'night',l:'1 tab (100mcg)'}]},
+      {label:'Ongoing',ongoing:true,note:'Up to 200mcg if needed. Taper on cessation.',doses:[{t:'night',l:'2 tabs (200mcg)'}]}]},
+  catnaday:{name:'Clonidine (BD/TDS)',brand:'Clonidine 100, 150mcg',auth:'Private script. Increase gradually. Do NOT stop suddenly — taper.',
+    unit:'mcg',form:'tab',strengths:[100,150],
+    steps:[{label:'Week 1',ongoing:false,note:'Monitor for dizziness and low BP.',doses:[{t:'morning',l:'½ tab (50mcg)'},{t:'afternoon',l:'½ tab (50mcg)'}]},
+      {label:'Week 2',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (100mcg)'},{t:'afternoon',l:'1 tab (100mcg)'}]},
+      {label:'Ongoing',ongoing:true,note:'Add midday if needed.',doses:[{t:'morning',l:'1 tab (100mcg)'},{t:'midday',l:'1 tab (100mcg)'},{t:'afternoon',l:'1 tab (100mcg)'}]}]}
 };
+
+// Add IR-stimulant additional protocols (BD, TDS, slow, fast, afternoon add-on)
+function _bdSteps(s){return [
+  {label:'Days 1-2',ongoing:false,note:'Start low. Take on waking.',doses:[{t:'morning',l:'½ tab ('+(s/2)+'mg)'},{t:'midday',l:'½ tab ('+(s/2)+'mg)'}]},
+  {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab ('+s+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'}]},
+  {label:'Days 10-16',ongoing:false,note:'Good tolerability required.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'}]},
+  {label:'Ongoing',ongoing:true,note:'At follow-up, consider adding 1–2 tabs in the afternoon.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'}]}
+];}
+function _bdFastSteps(s){return [
+  {label:'Week 1',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab ('+s+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'}]},
+  {label:'Ongoing',ongoing:true,note:'At follow-up, consider adding afternoon dose.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'}]}
+];}
+function _bdSlowSteps(s){return [
+  {label:'Week 1',ongoing:false,note:'',doses:[{t:'morning',l:'½ tab ('+(s/2)+'mg)'},{t:'midday',l:'½ tab ('+(s/2)+'mg)'}]},
+  {label:'Week 2',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab ('+s+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'}]},
+  {label:'Week 3',ongoing:false,note:'',doses:[{t:'morning',l:'1½ tabs ('+(s*1.5)+'mg)'},{t:'midday',l:'1½ tabs ('+(s*1.5)+'mg)'}]},
+  {label:'Ongoing',ongoing:true,note:'At follow-up, consider afternoon add-on.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'}]}
+];}
+function _bdToTdsSteps(s){return [
+  {label:'Days 1-2',ongoing:false,note:'Start low.',doses:[{t:'morning',l:'½ tab ('+(s/2)+'mg)'},{t:'midday',l:'½ tab ('+(s/2)+'mg)'}]},
+  {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab ('+s+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'}]},
+  {label:'Days 10-16',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'}]},
+  {label:'Days 17-23',ongoing:false,note:'Add afternoon dose.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'},{t:'afternoon',l:'1 tab ('+s+'mg)'}]},
+  {label:'Ongoing',ongoing:true,note:'Increase afternoon dose if needed.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'},{t:'afternoon',l:'2 tabs ('+(s*2)+'mg)'}]}
+];}
+function _tdsSteps(s){return [
+  {label:'Week 1',ongoing:false,note:'',doses:[{t:'morning',l:'½ tab ('+(s/2)+'mg)'},{t:'midday',l:'½ tab ('+(s/2)+'mg)'},{t:'afternoon',l:'½ tab ('+(s/2)+'mg)'}]},
+  {label:'Week 2',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab ('+s+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'},{t:'afternoon',l:'1 tab ('+s+'mg)'}]},
+  {label:'Week 3',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'1 tab ('+s+'mg)'},{t:'afternoon',l:'1 tab ('+s+'mg)'}]},
+  {label:'Week 4',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'},{t:'afternoon',l:'1 tab ('+s+'mg)'}]},
+  {label:'Ongoing',ongoing:true,note:'Increase afternoon dose if needed.',doses:[{t:'morning',l:'2 tabs ('+(s*2)+'mg)'},{t:'midday',l:'2 tabs ('+(s*2)+'mg)'},{t:'afternoon',l:'2 tabs ('+(s*2)+'mg)'}]}
+];}
+function _afternoonSteps(s){return [
+  {label:'Ongoing',ongoing:true,note:'Take when long-acting medication wears off. Increase to 2 tabs if needed.',doses:[{t:'afternoon',l:'1 tab ('+s+'mg)'}]}
+];}
+
+(function attachIRProtocols(){
+  TIT_MEDS.dex.protocols=[
+    {key:'standard',label:'Standard BD',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Standard BD titration.',steps:TIT_MEDS.dex.steps},
+    {key:'bd_fast',label:'BD fast',auth:'Stimulant authority script. Faster titration for tolerant patients.',steps:_bdFastSteps(5)},
+    {key:'bd_slow',label:'BD slow',auth:'Stimulant authority script. Slower titration for sensitive patients.',steps:_bdSlowSteps(5)},
+    {key:'bd_to_tds',label:'BD → TDS',auth:'Stimulant authority script. 200-tab pack.',steps:_bdToTdsSteps(5)},
+    {key:'tds',label:'TDS standard',auth:'Stimulant authority script. 200-tab pack.',steps:_tdsSteps(5)},
+    {key:'afternoon',label:'Afternoon add-on',auth:'Stimulant authority script. 100 tabs sufficient.',steps:_afternoonSteps(5)}
+  ];
+  TIT_MEDS.ritalinIR.protocols=[
+    {key:'standard',label:'Standard BD',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',steps:TIT_MEDS.ritalinIR.steps},
+    {key:'bd_fast',label:'BD fast',auth:'Stimulant authority script.',steps:_bdFastSteps(10)},
+    {key:'bd_slow',label:'BD slow',auth:'Stimulant authority script.',steps:_bdSlowSteps(10)},
+    {key:'bd_to_tds',label:'BD → TDS',auth:'Stimulant authority script. 200-tab pack.',steps:_bdToTdsSteps(10)},
+    {key:'tds',label:'TDS standard',auth:'Stimulant authority script. 200-tab pack.',steps:_tdsSteps(10)},
+    {key:'afternoon',label:'Afternoon add-on',auth:'Stimulant authority script.',steps:_afternoonSteps(10)}
+  ];
+})();
+
+function getProtocols(key){
+  const def=TIT_MEDS[key];if(!def)return[];
+  if(def.protocols&&def.protocols.length)return def.protocols;
+  return [{key:'default',label:'Standard',steps:def.steps,auth:def.auth}];
+}
 
 // =================== FOLLOW-UP TEMPLATES ===================
 const FU_TEMPLATES = [
@@ -1394,43 +1432,43 @@ Review in 2–4 weeks.`},
   {nm:'Defer stimulant — needs workup', text:`PLAN — DEFER STIMULANT INITIATION
 
 Stimulant deferred pending:
-• [ ] ECG — recommend GP order; bring result
-• [ ] Cardiology review — for [specific concern]
-• [ ] Repeat BP readings — 7-day home log
-• [ ] Bloods — TFT, FBE, EUC, LFT, ferritin, B12
-• [ ] Clarify [substance / mood / anxiety / sleep / other] concern
-• [ ] Collateral — old school reports / parent / partner
+• ECG — recommend GP order; bring result
+• Cardiology review if cardiac concern
+• Repeat BP readings — 7-day home log
+• Bloods — TFT, FBE, EUC, LFT, ferritin, B12
+• Clarify substance / mood / anxiety / sleep concern
+• Collateral — old school reports / parent / partner
 
 Review once outstanding items completed.
 In the interim — non-pharmacological strategies (psychoeducation, CBT-ADHD, sleep hygiene, coaching).`},
 ];
 
-// =================== RENDER FUNCTIONS ===================
+// =================== HELPERS ===================
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+// =================== SECTION RENDER ===================
 function renderSection(key){
   const ul = document.querySelector('ul.dots[data-section="'+key+'"]');
   if(!ul) return;
   const items = SECTIONS[key] || [];
   ul.innerHTML = items.map((it,i)=>{
     const qid = key+'-'+i;
-    const qs = (it.q||[]).map(q=>'<li>'+escHtml(q)+'</li>').join('');
-    return `<li>
-      <span class="dot"></span>
-      <span class="txt">${escHtml(it.t)}</span>
-      ${qs?`<button class="q" onclick="toggleProbe('${qid}',this)" aria-label="Show example questions">?</button>`:''}
-    </li>${qs?`<div class="probes" id="probe-${qid}"><div class="head">Examples / probes</div><ul>${qs}</ul></div>`:''}`;
+    const hasQ = it.q && it.q.length;
+    const probes = hasQ ? `<div class="probes" id="probe-${qid}"><div class="head">Examples / probes</div><ul>${it.q.map(q=>'<li>'+escHtml(q)+'</li>').join('')}</ul></div>` : '';
+    return `<div class="row${hasQ?'':' no-q'}" id="row-${qid}" ${hasQ?`onclick="toggleProbe('${qid}')"`:''}>
+        <div class="line">
+          <span class="chev"></span>
+          <span class="txt">${escHtml(it.t)}</span>
+        </div>
+      </div>${probes}`;
   }).join('');
 }
 
-function toggleProbe(id, btn){
-  const el = document.getElementById('probe-'+id);
-  if(!el) return;
-  el.classList.toggle('open');
-  btn.classList.toggle('open');
+function toggleProbe(id){
+  document.getElementById('row-'+id).classList.toggle('open');
 }
 
-// =================== MSE RENDER ===================
+// =================== MSE ===================
 const mseState = {};
 function renderMSE(){
   const wrap = document.getElementById('mse-rows');
@@ -1496,7 +1534,7 @@ function copyMSE(btn){
   });
 }
 
-// =================== PSYCHOEDUCATION RENDER (accordion) ===================
+// =================== PSYCHOEDUCATION ACCORDION ===================
 function renderPE(){
   const wrap = document.getElementById('pe-list');
   wrap.innerHTML = PE_GROUPS.map((g,gi)=>{
@@ -1504,7 +1542,7 @@ function renderPE(){
       const itemId = 'pe-'+gi+'-'+i;
       return `<div class="pe-item" id="${itemId}">
         <div class="pe-item-head" onclick="togglePEItem('${itemId}')">
-          <span class="caret">▶</span>
+          <span class="chev"></span>
           <span>${escHtml(it.title)}</span>
         </div>
         <div class="pe-item-body">
@@ -1521,15 +1559,9 @@ function renderPE(){
     </div>`;
   }).join('');
 }
-function togglePEItem(id){
-  document.getElementById(id).classList.toggle('open');
-}
-function peExpandAll(){
-  document.querySelectorAll('.pe-item').forEach(el=>el.classList.add('open'));
-}
-function peCollapseAll(){
-  document.querySelectorAll('.pe-item').forEach(el=>el.classList.remove('open'));
-}
+function togglePEItem(id){document.getElementById(id).classList.toggle('open');}
+function peExpandAll(){document.querySelectorAll('.pe-item').forEach(el=>el.classList.add('open'));}
+function peCollapseAll(){document.querySelectorAll('.pe-item').forEach(el=>el.classList.remove('open'));}
 function copyPEItem(id, btn){
   const item = document.getElementById(id);
   const title = item.querySelector('.pe-item-head span:last-child').textContent.trim();
@@ -1542,54 +1574,97 @@ function copyPEItem(id, btn){
   });
 }
 
-// =================== TITRATION RENDER ===================
-let titSelected = 'vyvanse';
-let titScheduleIdx = 0;
+// =================== TITRATION TABLE RENDER ===================
+let titMed = 'vyvanse';
+let titProto = null;
+
+const TIME_ORDER = ['morning','midday','afternoon','evening','night'];
+const TIME_LABEL = {morning:'Morning',midday:'Midday',afternoon:'Afternoon',evening:'Evening',night:'Night'};
+
+function aggregateDoses(steps){
+  const used = new Set();
+  steps.forEach(s=>(s.doses||[]).forEach(d=>used.add(d.t)));
+  return TIME_ORDER.filter(t=>used.has(t));
+}
+function dosesAtTime(step, t){
+  const list = (step.doses||[]).filter(d=>d.t===t).map(d=>d.l);
+  return list.length ? list.join(' + ') : null;
+}
+
 function renderTit(){
-  const tabsEl = document.getElementById('tit-tabs');
-  tabsEl.innerHTML = Object.keys(TIT_PROTOCOLS).map(k=>{
-    const p = TIT_PROTOCOLS[k];
-    const on = k===titSelected;
-    return `<button class="tit-tab ${on?'on':''}" onclick="selectTit('${k}')">${escHtml(p.name)}</button>`;
+  document.getElementById('tit-tabs').innerHTML = Object.keys(TIT_MEDS).map(k=>{
+    const m = TIT_MEDS[k];
+    return `<button class="tit-tab ${k===titMed?'on':''}" onclick="selectTitMed('${k}')">${escHtml(m.name)}</button>`;
   }).join('');
-  const p = TIT_PROTOCOLS[titSelected];
-  if(titScheduleIdx >= p.schedules.length) titScheduleIdx = 0;
-  const subTabs = p.schedules.length>1
-    ? `<div class="tit-tabs" style="margin-top:8px">${p.schedules.map((s,i)=>`<button class="tit-tab ${i===titScheduleIdx?'on':''}" onclick="selectTitSched(${i})">${escHtml(s.label)}</button>`).join('')}</div>`
+  const med = TIT_MEDS[titMed];
+  const protos = getProtocols(titMed);
+  if(!titProto || !protos.find(p=>p.key===titProto)) titProto = protos[0].key;
+  const proto = protos.find(p=>p.key===titProto) || protos[0];
+  const times = aggregateDoses(proto.steps);
+
+  const protoTabs = protos.length>1
+    ? `<div class="proto-tabs">${protos.map(p=>`<button class="proto-tab ${p.key===titProto?'on':''}" onclick="selectTitProto('${p.key}')">${escHtml(p.label)}</button>`).join('')}</div>`
     : '';
-  const sch = p.schedules[titScheduleIdx];
+
+  const showNotes = proto.steps.some(s=>s.note);
+  const tableHtml = `<table class="tit-table">
+    <thead><tr>
+      <th>Phase</th>
+      ${times.map(t=>`<th>${TIME_LABEL[t]}</th>`).join('')}
+      ${showNotes?'<th>Notes</th>':''}
+    </tr></thead>
+    <tbody>
+      ${proto.steps.map(step=>{
+        const cells = times.map(t=>{
+          const d = dosesAtTime(step,t);
+          return `<td class="dose">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
+        }).join('');
+        return `<tr class="${step.ongoing?'ongoing':''}">
+          <td class="phase">${escHtml(step.label)}</td>
+          ${cells}
+          ${showNotes?`<td class="note">${escHtml(step.note||'')}</td>`:''}
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+
+  const auth = proto.auth || med.auth || '';
+
   document.getElementById('tit-display').innerHTML = `
-    ${subTabs}
-    <div class="tit-card" style="margin-top:10px">
+    <div class="tit-card">
       <div class="tit-card-h">
-        <div><div class="nm">${escHtml(p.name)}</div>
-        <div class="br">${escHtml(p.brand)}</div></div>
-        <button class="copybtn" onclick="copyTit(this,'__schedule__')">Copy schedule</button>
+        <div class="nm">${escHtml(med.name)}</div>
+        <div class="br">${escHtml(med.brand)}</div>
       </div>
-      <pre class="tit-text" id="tit-schedule-text">${escHtml(sch.text)}</pre>
-      <div style="margin-top:10px">
-        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Authority / prescribing notes</div>
-        <div style="font-size:12.5px;color:var(--slate);background:var(--amber-bg);padding:8px 11px;border-radius:6px;line-height:1.5" id="tit-auth-text">${escHtml(p.auth)}</div>
-        <button class="copybtn" onclick="copyTit(this,'__auth__')" style="background:var(--amber)">Copy authority text</button>
+      ${protoTabs}
+      ${tableHtml}
+      ${auth?`<div class="auth-box"><span class="label">Authority / prescribing notes</span>${escHtml(auth)}</div>`:''}
+      <div style="margin-top:6px">
+        <button class="copybtn" onclick="copyTit(this)">Copy as text</button>
       </div>
     </div>`;
 }
-function selectTit(k){
-  titSelected = k;
-  titScheduleIdx = 0;
-  renderTit();
-}
-function selectTitSched(i){
-  titScheduleIdx = i;
-  renderTit();
-}
-function copyTit(btn, which){
-  const el = which==='__schedule__' ? document.getElementById('tit-schedule-text') : document.getElementById('tit-auth-text');
-  const text = el.textContent.trim();
-  navigator.clipboard.writeText(text).then(()=>{
-    const orig = btn.textContent;
+
+function selectTitMed(k){titMed=k; titProto=null; renderTit();}
+function selectTitProto(k){titProto=k; renderTit();}
+
+function copyTit(btn){
+  const med = TIT_MEDS[titMed];
+  const protos = getProtocols(titMed);
+  const proto = protos.find(p=>p.key===titProto) || protos[0];
+  const times = aggregateDoses(proto.steps);
+  const lines = [];
+  lines.push(med.name+' — '+proto.label);
+  lines.push(med.brand);
+  lines.push('');
+  proto.steps.forEach(step=>{
+    const parts = times.map(t=>{const d=dosesAtTime(step,t); return d?TIME_LABEL[t]+': '+d:null;}).filter(Boolean);
+    lines.push(step.label+(step.ongoing?' (ongoing)':'')+' — '+parts.join('; ')+(step.note?'  ['+step.note+']':''));
+  });
+  if(proto.auth||med.auth){lines.push(''); lines.push('Authority: '+(proto.auth||med.auth));}
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
     btn.textContent='Copied!'; btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent=orig; btn.classList.remove('ok');},1500);
+    setTimeout(()=>{btn.textContent='Copy as text'; btn.classList.remove('ok');},1500);
   });
 }
 
@@ -1600,7 +1675,7 @@ function renderFU(){
     <div class="fu-card">
       <div class="nm">${escHtml(t.nm)}</div>
       <pre class="body-txt" id="fu-text-${i}">${escHtml(t.text)}</pre>
-      <button class="copybtn" onclick="copyFU(${i},this)" style="margin-top:8px">Copy</button>
+      <button class="copybtn" onclick="copyFU(${i},this)">Copy</button>
     </div>`).join('');
 }
 function copyFU(i, btn){
