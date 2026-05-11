@@ -6,119 +6,162 @@
 <title>ADHD Follow-Along Guide</title>
 <style>
 :root{
-  --bg:#f5f6f8; --surface:#fff; --ink:#0f172a; --muted:#64748b;
-  --border:#e2e8f0; --border-soft:#eef0f3;
-  --blue:#1d4ed8; --blue-bg:#eff4ff;
-  --green:#15803d; --green-bg:#ecfdf5;
-  --amber:#b45309; --amber-bg:#fef3c7;
-  --red:#b91c1c; --red-bg:#fee2e2;
-  --purple:#6d28d9; --purple-bg:#f3e8ff;
-  --teal:#0f766e; --teal-bg:#ccfbf1;
-  --slate:#334155; --slate-bg:#f1f5f9;
+  --bg:#f6f4ee;            /* warm cream */
+  --surface:#ffffff;
+  --ink:#1a2434;           /* deep slate */
+  --muted:#6c6760;
+  --border:#e6e0d2;        /* warm beige border */
+  --border-soft:#efeadc;
+  --blue:#2c4a6b;          /* deep navy */
+  --blue-bg:#eef2f7;
+  --green:#3d6b48;         /* sage */
+  --green-bg:#eef3ec;
+  --amber:#8a6a1c;         /* warm amber */
+  --amber-bg:#faf3df;
+  --red:#8a2c2c;           /* clinical red */
+  --red-bg:#f7e7e3;
+  --purple:#574375;        /* muted plum */
+  --purple-bg:#f0ecf2;
+  --teal:#2a5e60;
+  --teal-bg:#e6efee;
+  --slate:#465264;
+  --slate-bg:#eeece5;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  font:14.5px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font:15px/1.55 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:980px; margin:0 auto; padding:18px 18px 80px;}
+.wrap{max-width:920px; margin:0 auto; padding:0 22px 80px;}
+
+/* Non-sticky page header */
 header.top{
-  position:sticky; top:0; z-index:50; background:rgba(245,246,248,.95);
-  backdrop-filter:blur(8px); border-bottom:1px solid var(--border);
-  margin:-18px -18px 14px; padding:10px 18px;
+  padding:28px 0 18px; margin-bottom:18px;
+  border-bottom:1px solid var(--border);
 }
-header.top h1{margin:0; font-size:16px; font-weight:700; letter-spacing:-.01em}
-header.top .sub{font-size:11.5px; color:var(--muted); margin-top:1px}
+header.top h1{
+  margin:0; font:600 24px/1.2 "Source Serif Pro","Georgia",ui-serif,serif;
+  letter-spacing:-.01em; color:var(--ink);
+}
+header.top .sub{
+  font-size:13px; color:var(--muted); margin-top:4px;
+  font-style:italic;
+}
 nav.toc{
-  display:flex; flex-wrap:wrap; gap:5px; margin-top:8px;
+  display:flex; flex-wrap:wrap; gap:0; margin-top:14px;
+  font-size:12.5px; line-height:1.9;
 }
 nav.toc a{
-  text-decoration:none; color:var(--slate); font-size:11.5px; font-weight:600;
-  padding:4px 9px; border:1px solid var(--border); border-radius:999px;
-  background:#fff; transition:all .15s;
+  text-decoration:none; color:var(--blue); font-weight:500;
+  padding:0 10px 0 0; margin-right:8px;
+  border-right:1px solid var(--border);
 }
-nav.toc a:hover{background:var(--blue-bg); border-color:var(--blue); color:var(--blue)}
+nav.toc a:last-child{border-right:none}
+nav.toc a:hover{color:var(--ink); text-decoration:underline}
 
+/* Cards: white surface, subtle border, color expressed only in a thin left bar */
 section.card{
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; margin-bottom:14px; overflow:hidden;
-  box-shadow:0 1px 2px rgba(15,23,42,.03);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:4px solid var(--slate);
+  border-radius:6px;
+  margin-bottom:16px;
+  overflow:hidden;
 }
+section.card.blue  {border-left-color:var(--blue)}
+section.card.green {border-left-color:var(--green)}
+section.card.amber {border-left-color:var(--amber)}
+section.card.red   {border-left-color:var(--red)}
+section.card.purple{border-left-color:var(--purple)}
+section.card.teal  {border-left-color:var(--teal)}
+section.card.slate {border-left-color:var(--slate)}
+
 .ch{
-  padding:9px 14px; font-size:11.5px; font-weight:700; letter-spacing:.04em;
-  text-transform:uppercase; color:#fff; display:flex; align-items:center; gap:8px;
+  padding:14px 18px 4px; display:flex; align-items:baseline; gap:10px;
+  color:var(--ink); background:transparent;
+  font:600 16.5px/1.3 "Source Serif Pro","Georgia",ui-serif,serif;
+  letter-spacing:0; text-transform:none;
 }
 .ch .num{
-  background:rgba(255,255,255,.2); padding:1px 8px; border-radius:999px;
-  font-size:11px; font-weight:700;
+  font:700 11px/1 "Inter",sans-serif;
+  background:var(--slate-bg); color:var(--slate);
+  padding:3px 7px; border-radius:4px; letter-spacing:.06em;
+  text-transform:uppercase; flex-shrink:0;
+  position:relative; top:-1px;
 }
-.ch.blue{background:var(--blue)}
-.ch.green{background:var(--green)}
-.ch.amber{background:var(--amber)}
-.ch.red{background:var(--red)}
-.ch.purple{background:var(--purple)}
-.ch.teal{background:var(--teal)}
-.ch.slate{background:var(--slate)}
+section.card.blue   .ch .num{background:var(--blue-bg);   color:var(--blue)}
+section.card.green  .ch .num{background:var(--green-bg);  color:var(--green)}
+section.card.amber  .ch .num{background:var(--amber-bg);  color:var(--amber)}
+section.card.red    .ch .num{background:var(--red-bg);    color:var(--red)}
+section.card.purple .ch .num{background:var(--purple-bg); color:var(--purple)}
+section.card.teal   .ch .num{background:var(--teal-bg);   color:var(--teal)}
 
-.body{padding:12px 14px 14px}
+.body{padding:6px 18px 16px}
 .lead{
-  font-size:12.5px; color:var(--muted); margin:0 0 10px;
-  padding:6px 10px; background:var(--slate-bg); border-radius:7px;
-  border-left:3px solid var(--slate);
+  font-size:13px; color:var(--muted); margin:0 0 12px;
+  padding:0; background:transparent; border:none;
+  font-style:italic;
 }
 
-ul.dots{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:3px}
+ul.dots{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:1px}
 ul.dots > li{
-  display:flex; align-items:flex-start; gap:8px;
-  padding:5px 7px; border-radius:6px; transition:background .12s;
+  display:flex; align-items:flex-start; gap:10px;
+  padding:6px 4px; border-radius:4px; transition:background .12s;
+  border-bottom:1px solid var(--border-soft);
 }
-ul.dots > li:hover{background:var(--slate-bg)}
+ul.dots > li:last-of-type{border-bottom:none}
+ul.dots > li:hover{background:#faf8f1}
 ul.dots > li .dot{
-  flex-shrink:0; width:5px; height:5px; border-radius:50%;
-  background:var(--slate); margin-top:9px;
+  flex-shrink:0; width:4px; height:4px; border-radius:50%;
+  background:var(--muted); margin-top:10px;
 }
-ul.dots > li .txt{flex:1; font-size:14px; line-height:1.45}
+ul.dots > li .txt{flex:1; font-size:14.5px; line-height:1.5; color:var(--ink)}
 ul.dots > li .txt strong{font-weight:600}
 
 .q{
   flex-shrink:0; width:22px; height:22px; border-radius:50%;
-  border:1.5px solid var(--blue); background:#fff; color:var(--blue);
+  border:1px solid var(--border); background:#fff; color:var(--muted);
   font-weight:700; font-size:12px; cursor:pointer; padding:0;
   display:flex; align-items:center; justify-content:center;
   transition:all .15s;
 }
-.q:hover{background:var(--blue); color:#fff}
-.q.open{background:var(--blue); color:#fff}
+.q:hover{border-color:var(--blue); color:var(--blue)}
+.q.open{background:var(--blue); border-color:var(--blue); color:#fff}
 
 .probes{
-  display:none; margin:6px 0 4px 20px; padding:9px 12px;
-  background:var(--blue-bg); border-left:3px solid var(--blue);
-  border-radius:6px; font-size:13px; line-height:1.55;
+  display:none; margin:4px 0 8px 22px; padding:10px 14px;
+  background:#faf8f1; border-left:2px solid var(--blue);
+  border-radius:0 4px 4px 0; font-size:13.5px; line-height:1.6;
+  color:var(--slate);
 }
 .probes.open{display:block}
 .probes ul{margin:0; padding-left:18px}
-.probes li{margin:2px 0}
-.probes .head{font-size:11px; font-weight:700; color:var(--blue);
-  text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px}
-.probes em{color:var(--slate); font-style:italic}
+.probes li{margin:3px 0}
+.probes .head{font-size:10.5px; font-weight:700; color:var(--blue);
+  text-transform:uppercase; letter-spacing:.06em; margin-bottom:5px}
+.probes em{color:var(--muted); font-style:italic}
 
 /* Two-column dots on wider screens */
-.twocol ul.dots{display:grid; grid-template-columns:1fr; gap:3px}
+.twocol{display:grid; grid-template-columns:1fr; gap:14px}
 @media(min-width:720px){
-  .twocol ul.dots{grid-template-columns:1fr 1fr; gap:3px 14px}
+  .twocol{grid-template-columns:1fr 1fr}
+}
+.col-title{
+  font:600 12px/1 "Inter",sans-serif; color:var(--blue);
+  text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;
 }
 
 /* MSE */
 .mse-section{
-  padding:8px 0; border-bottom:1px solid var(--border-soft);
+  padding:9px 0; border-bottom:1px solid var(--border-soft);
 }
 .mse-section:last-child{border-bottom:none}
-.mse-label{font-weight:600; font-size:13px; margin-bottom:4px; color:var(--slate)}
-.mse-chips{display:flex; flex-wrap:wrap; gap:4px}
+.mse-label{font-weight:600; font-size:13px; margin-bottom:6px; color:var(--slate)}
+.mse-chips{display:flex; flex-wrap:wrap; gap:5px}
 .chip{
-  padding:4px 10px; font-size:12px; border-radius:999px;
-  border:1.5px solid var(--border); background:#fff; cursor:pointer;
+  padding:4px 10px; font-size:12.5px; border-radius:4px;
+  border:1px solid var(--border); background:#fff; cursor:pointer;
   color:var(--slate); font-weight:500; transition:all .12s; user-select:none;
 }
 .chip:hover{border-color:var(--blue); color:var(--blue)}
@@ -127,107 +170,136 @@ ul.dots > li .txt strong{font-weight:600}
 .chip.warn.on{background:var(--amber); border-color:var(--amber)}
 
 .output{
-  margin-top:12px; padding:11px 13px; background:#0f172a; color:#e2e8f0;
-  border-radius:8px; font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
+  margin-top:14px; padding:13px 15px; background:#fdfcf7; color:var(--ink);
+  border:1px solid var(--border); border-radius:5px;
+  font:14px/1.65 "Source Serif Pro","Georgia",ui-serif,serif;
   white-space:pre-wrap; min-height:60px;
 }
-.output:empty::before{content:"Select chips above — MSE prose will appear here."; color:#64748b; font-style:italic}
+.output:empty::before{
+  content:"Select chips above — MSE prose will appear here.";
+  color:var(--muted); font-style:italic;
+}
 
 .copybtn{
   display:inline-flex; align-items:center; gap:5px;
-  padding:5px 11px; font-size:12px; font-weight:600;
-  background:var(--blue); color:#fff; border:none; border-radius:6px;
-  cursor:pointer; margin-top:8px;
+  padding:6px 13px; font-size:12.5px; font-weight:500;
+  background:var(--blue); color:#fff; border:none; border-radius:4px;
+  cursor:pointer; margin-top:10px; letter-spacing:.01em;
 }
-.copybtn:hover{background:#1e40af}
+.copybtn:hover{background:#1c3a5b}
 .copybtn.ok{background:var(--green)}
 .copybtn:disabled{opacity:.5; cursor:default}
 
 .clearbtn{
   display:inline-flex; align-items:center; gap:5px;
-  padding:5px 11px; font-size:12px; font-weight:500;
-  background:#fff; color:var(--slate); border:1px solid var(--border);
-  border-radius:6px; cursor:pointer; margin-top:8px; margin-left:6px;
+  padding:6px 13px; font-size:12.5px; font-weight:500;
+  background:#fff; color:var(--muted); border:1px solid var(--border);
+  border-radius:4px; cursor:pointer; margin-top:10px; margin-left:6px;
 }
-.clearbtn:hover{background:var(--slate-bg)}
+.clearbtn:hover{background:var(--slate-bg); color:var(--ink)}
 
-/* Psychoeducation */
-.pe-group{margin-top:8px}
+/* Psychoeducation — accordion of readable cards */
+.pe-group{margin-top:18px}
 .pe-group:first-child{margin-top:0}
 .pe-group-label{
-  font-size:11px; font-weight:700; color:var(--purple); text-transform:uppercase;
-  letter-spacing:.04em; padding:8px 0 4px; border-bottom:1px solid var(--border-soft);
-  margin-bottom:6px;
+  font:600 12px/1 "Inter",sans-serif; color:var(--purple);
+  text-transform:uppercase; letter-spacing:.08em;
+  padding-bottom:6px; margin-bottom:8px;
+  border-bottom:1px solid var(--border);
 }
-.pe-chips{display:flex; flex-wrap:wrap; gap:5px}
-.pe-chip{
-  padding:5px 11px; font-size:12.5px; border-radius:999px;
-  border:1.5px solid var(--border); background:#fff; cursor:pointer;
-  color:var(--slate); font-weight:500; transition:all .12s;
+.pe-item{
+  border-bottom:1px solid var(--border-soft);
 }
-.pe-chip:hover{border-color:var(--purple); color:var(--purple)}
-.pe-chip.on{background:var(--purple); border-color:var(--purple); color:#fff}
-.pe-actions{display:flex; gap:6px; align-items:center; margin-top:10px; flex-wrap:wrap}
-.pe-count{font-size:11.5px; color:var(--muted); font-weight:600}
-.pe-handout{
-  margin-top:12px; padding:14px 16px; background:#fff;
-  border:1px solid var(--border); border-radius:8px;
-  display:none; max-height:480px; overflow-y:auto;
-  font-size:13.5px; line-height:1.55;
+.pe-item:last-child{border-bottom:none}
+.pe-item-head{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 2px; cursor:pointer; user-select:none;
+  font:600 14.5px/1.3 "Inter",sans-serif; color:var(--ink);
+  transition:color .12s;
 }
-.pe-handout.open{display:block}
-.pe-handout h3{font-size:14.5px; margin:14px 0 5px; color:var(--purple)}
-.pe-handout h3:first-child{margin-top:0}
-.pe-handout p, .pe-handout ul, .pe-handout table{margin:5px 0}
-.pe-handout ul{padding-left:20px}
-.pe-handout strong{font-weight:600}
-.pe-handout table{border-collapse:collapse; width:100%; font-size:12.5px}
-.pe-handout th, .pe-handout td{border:1px solid var(--border); padding:4px 7px; text-align:left}
-.pe-handout th{background:var(--slate-bg); font-weight:600}
-.pe-handout a{color:var(--purple)}
+.pe-item-head:hover{color:var(--purple)}
+.pe-item-head .caret{
+  width:18px; height:18px; display:inline-flex; align-items:center;
+  justify-content:center; color:var(--muted); font-size:11px;
+  transition:transform .15s; flex-shrink:0;
+}
+.pe-item.open > .pe-item-head .caret{transform:rotate(90deg); color:var(--purple)}
+.pe-item-body{
+  display:none; padding:6px 28px 16px 28px;
+  font:14.5px/1.65 "Source Serif Pro","Georgia",ui-serif,serif;
+  color:var(--ink);
+}
+.pe-item.open > .pe-item-body{display:block}
+.pe-item-body p, .pe-item-body ul{margin:8px 0}
+.pe-item-body ul{padding-left:22px}
+.pe-item-body li{margin:4px 0}
+.pe-item-body strong{font-weight:600}
+.pe-item-body table{border-collapse:collapse; width:100%; font-size:13px; margin:8px 0; font-family:"Inter",sans-serif}
+.pe-item-body th, .pe-item-body td{border:1px solid var(--border); padding:6px 9px; text-align:left}
+.pe-item-body th{background:var(--slate-bg); font-weight:600; color:var(--slate)}
+.pe-item-body a{color:var(--purple); text-decoration:none; border-bottom:1px solid var(--purple-bg)}
+.pe-item-body a:hover{border-bottom-color:var(--purple)}
+.pe-copy-row{
+  margin-top:10px; padding-top:8px; border-top:1px solid var(--border-soft);
+}
+.pe-actions{display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap}
+.pe-actions .small-btn{
+  font:500 12px "Inter",sans-serif;
+  padding:5px 11px; border-radius:4px; border:1px solid var(--border);
+  background:#fff; color:var(--slate); cursor:pointer;
+}
+.pe-actions .small-btn:hover{background:var(--slate-bg); color:var(--ink)}
 
 /* Titration */
 .tit-grid{display:grid; grid-template-columns:1fr; gap:10px}
 .tit-card{
-  border:1px solid var(--border); border-radius:8px;
-  padding:11px 13px; background:#fff;
+  border:1px solid var(--border); border-radius:5px;
+  padding:14px 16px; background:#fdfcf7;
 }
 .tit-card-h{
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:7px; gap:8px; flex-wrap:wrap;
+  display:flex; justify-content:space-between; align-items:flex-start;
+  margin-bottom:10px; gap:10px; flex-wrap:wrap;
 }
-.tit-card-h .nm{font-weight:700; font-size:14px; color:var(--ink)}
-.tit-card-h .br{font-size:11.5px; color:var(--muted); font-weight:500}
+.tit-card-h .nm{
+  font:600 15.5px/1.2 "Source Serif Pro","Georgia",ui-serif,serif;
+  color:var(--ink);
+}
+.tit-card-h .br{font-size:12px; color:var(--muted); font-weight:500; margin-top:2px}
 .tit-text{
-  font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;
-  background:var(--slate-bg); padding:9px 11px; border-radius:6px;
-  white-space:pre-wrap; color:var(--slate); margin:0;
+  font:13px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:#fff; padding:12px 14px; border-radius:4px;
+  white-space:pre-wrap; color:var(--ink); margin:0;
+  border:1px solid var(--border-soft);
 }
-.tit-tabs{display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px}
+.tit-tabs{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px}
 .tit-tab{
-  padding:4px 9px; font-size:11.5px; font-weight:600;
+  padding:5px 11px; font:500 12.5px "Inter",sans-serif;
   border:1px solid var(--border); background:#fff; color:var(--slate);
-  border-radius:6px; cursor:pointer;
+  border-radius:4px; cursor:pointer;
 }
+.tit-tab:hover{border-color:var(--green); color:var(--green)}
 .tit-tab.on{background:var(--green); border-color:var(--green); color:#fff}
 
 /* Follow-up snippets */
-.fu-grid{display:grid; grid-template-columns:1fr; gap:9px}
+.fu-grid{display:grid; grid-template-columns:1fr; gap:11px}
 @media(min-width:720px){.fu-grid{grid-template-columns:1fr 1fr}}
 .fu-card{
-  border:1px solid var(--border); border-radius:8px; padding:11px 13px;
-  background:#fff;
+  border:1px solid var(--border); border-radius:5px; padding:13px 15px;
+  background:#fdfcf7;
 }
-.fu-card .nm{font-weight:700; font-size:13px; margin-bottom:5px; color:var(--ink)}
+.fu-card .nm{
+  font:600 14px/1.3 "Source Serif Pro","Georgia",ui-serif,serif;
+  margin-bottom:7px; color:var(--ink);
+}
 .fu-card .body-txt{
-  font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;
-  white-space:pre-wrap; color:var(--slate); margin:0; padding:7px 9px;
-  background:var(--slate-bg); border-radius:5px;
+  font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
+  white-space:pre-wrap; color:var(--ink); margin:0; padding:10px 12px;
+  background:#fff; border-radius:4px; border:1px solid var(--border-soft);
 }
 
 footer{
-  text-align:center; padding:30px 14px 0; color:var(--muted);
-  font-size:11.5px; line-height:1.5;
+  text-align:center; padding:40px 14px 0; color:var(--muted);
+  font-size:12px; line-height:1.5; font-style:italic;
 }
 
 /* Print */
@@ -244,7 +316,7 @@ footer{
 
 <header class="top">
   <h1>ADHD Follow-Along Guide</h1>
-  <div class="sub">A prompt while AI transcribes. Click <strong style="color:var(--blue)">?</strong> on any line for example questions. No typing needed.</div>
+  <div class="sub">A prompt sheet to use alongside AI transcription. Tap <strong style="color:var(--blue);font-style:normal">?</strong> on any line for example questions.</div>
   <nav class="toc">
     <a href="#sec-open">Opening</a>
     <a href="#sec-a">A · Symptoms</a>
@@ -252,8 +324,10 @@ footer{
     <a href="#sec-c">C · Settings</a>
     <a href="#sec-d">D · Impairment</a>
     <a href="#sec-e">E · Differentials</a>
-    <a href="#sec-sub">Substance</a>
+    <a href="#sec-sub">Substance use</a>
+    <a href="#sec-card">Cardiac</a>
     <a href="#sec-med">Medical</a>
+    <a href="#sec-rx">Meds &amp; interactions</a>
     <a href="#sec-fam">Family</a>
     <a href="#sec-mse">MSE</a>
     <a href="#sec-inv">Investigations</a>
@@ -264,8 +338,8 @@ footer{
 </header>
 
 <!-- ============= OPENING ============= -->
-<section class="card" id="sec-open">
-  <div class="ch slate"><span class="num">0</span>Opening</div>
+<section class="card slate" id="sec-open">
+  <div class="ch"><span class="num">0</span>Opening</div>
   <div class="body">
     <p class="lead">Set the frame. Confirm consent. Hear the patient's story before you reach for criteria.</p>
     <ul class="dots" data-section="open"></ul>
@@ -273,17 +347,17 @@ footer{
 </section>
 
 <!-- ============= CRITERION A ============= -->
-<section class="card" id="sec-a">
-  <div class="ch blue"><span class="num">A</span>Symptoms · ≥5 inattention OR ≥5 hyperactive/impulsive in adulthood</div>
+<section class="card blue" id="sec-a">
+  <div class="ch"><span class="num">A</span>Symptoms · ≥5 inattention or ≥5 hyperactive/impulsive in adulthood</div>
   <div class="body">
     <p class="lead">Ask broadly — examples, not yes/no. Look for the pattern, not the checklist.</p>
-    <div class="twocol" style="display:grid;grid-template-columns:1fr;gap:14px">
+    <div class="twocol">
       <div>
-        <div style="font-weight:700;font-size:12.5px;color:var(--blue);margin-bottom:5px">INATTENTION</div>
+        <div class="col-title">Inattention</div>
         <ul class="dots" data-section="inattention"></ul>
       </div>
       <div>
-        <div style="font-weight:700;font-size:12.5px;color:var(--blue);margin-bottom:5px">HYPERACTIVITY / IMPULSIVITY</div>
+        <div class="col-title">Hyperactivity / impulsivity</div>
         <ul class="dots" data-section="hyperimp"></ul>
       </div>
     </div>
@@ -291,8 +365,8 @@ footer{
 </section>
 
 <!-- ============= CRITERION B ============= -->
-<section class="card" id="sec-b">
-  <div class="ch green"><span class="num">B</span>Several symptoms present before age 12</div>
+<section class="card green" id="sec-b">
+  <div class="ch"><span class="num">B</span>Several symptoms present before age 12</div>
   <div class="body">
     <p class="lead">Establish a continuous thread from childhood. Ask for examples, then keep asking "what else?"</p>
     <ul class="dots" data-section="childhood"></ul>
@@ -300,8 +374,8 @@ footer{
 </section>
 
 <!-- ============= CRITERION C ============= -->
-<section class="card" id="sec-c">
-  <div class="ch amber"><span class="num">C</span>Symptoms in ≥2 settings</div>
+<section class="card amber" id="sec-c">
+  <div class="ch"><span class="num">C</span>Symptoms in ≥2 settings</div>
   <div class="body">
     <p class="lead">Don't accept "just at work." Get specific examples in each setting.</p>
     <ul class="dots" data-section="settings"></ul>
@@ -309,8 +383,8 @@ footer{
 </section>
 
 <!-- ============= CRITERION D ============= -->
-<section class="card" id="sec-d">
-  <div class="ch red"><span class="num">D</span>Clear functional impairment</div>
+<section class="card red" id="sec-d">
+  <div class="ch"><span class="num">D</span>Clear functional impairment</div>
   <div class="body">
     <p class="lead">Impairment is the diagnosis. Be specific — what is harder than it should be, and what is the cost?</p>
     <ul class="dots" data-section="impairment"></ul>
@@ -318,8 +392,8 @@ footer{
 </section>
 
 <!-- ============= CRITERION E ============= -->
-<section class="card" id="sec-e">
-  <div class="ch purple"><span class="num">E</span>Not better explained by another condition</div>
+<section class="card purple" id="sec-e">
+  <div class="ch"><span class="num">E</span>Not better explained by another condition</div>
   <div class="body">
     <p class="lead">Screen each differential briefly. Comorbidity is the rule, not the exception.</p>
     <ul class="dots" data-section="differentials"></ul>
@@ -327,35 +401,53 @@ footer{
 </section>
 
 <!-- ============= SUBSTANCE USE ============= -->
-<section class="card" id="sec-sub">
-  <div class="ch red"><span class="num">·</span>Substance Use</div>
+<section class="card red" id="sec-sub">
+  <div class="ch"><span class="num">·</span>Substance use</div>
   <div class="body">
     <p class="lead">Screen every drug class. Don't skip caffeine, nicotine, or prescribed sedatives. Current vs past matters for safety.</p>
     <ul class="dots" data-section="substances"></ul>
   </div>
 </section>
 
-<!-- ============= MEDICAL HX ============= -->
-<section class="card" id="sec-med">
-  <div class="ch teal"><span class="num">·</span>Medical History &amp; Cardiac Screen</div>
+<!-- ============= CARDIAC ============= -->
+<section class="card red" id="sec-card">
+  <div class="ch"><span class="num">·</span>Cardiac screen</div>
   <div class="body">
-    <p class="lead">Stimulants are cardiovascular drugs. Screen carefully. Defer and refer if any red flag is unresolved.</p>
+    <p class="lead">Stimulants are cardiovascular drugs. Any red flag here means defer and refer.</p>
+    <ul class="dots" data-section="cardiac"></ul>
+  </div>
+</section>
+
+<!-- ============= MEDICAL HX ============= -->
+<section class="card teal" id="sec-med">
+  <div class="ch"><span class="num">·</span>Medical history</div>
+  <div class="body">
+    <p class="lead">Broader medical context — what could complicate stimulant treatment, or what could be the real explanation?</p>
     <ul class="dots" data-section="medical"></ul>
   </div>
 </section>
 
-<!-- ============= FAMILY HX ============= -->
-<section class="card" id="sec-fam">
-  <div class="ch purple"><span class="num">·</span>Family Psychiatric History</div>
+<!-- ============= CURRENT MEDS & INTERACTIONS ============= -->
+<section class="card teal" id="sec-rx">
+  <div class="ch"><span class="num">·</span>Current medications &amp; interactions</div>
   <div class="body">
-    <p class="lead">ADHD is highly heritable. Family history of bipolar/psychosis changes the risk-benefit calculus.</p>
+    <p class="lead">Full medication reconciliation — including OTC, supplements, herbals. Specific interactions to clear before stimulant.</p>
+    <ul class="dots" data-section="meds"></ul>
+  </div>
+</section>
+
+<!-- ============= FAMILY HX ============= -->
+<section class="card purple" id="sec-fam">
+  <div class="ch"><span class="num">·</span>Family psychiatric history</div>
+  <div class="body">
+    <p class="lead">ADHD is highly heritable. Family history of bipolar or psychosis changes the risk–benefit calculus.</p>
     <ul class="dots" data-section="family"></ul>
   </div>
 </section>
 
 <!-- ============= MSE ============= -->
-<section class="card" id="sec-mse">
-  <div class="ch slate"><span class="num">·</span>Mental State Examination</div>
+<section class="card slate" id="sec-mse">
+  <div class="ch"><span class="num">·</span>Mental state examination</div>
   <div class="body">
     <p class="lead">Click chips to compose your MSE. The prose updates live below — copy when done.</p>
     <div id="mse-rows"></div>
@@ -366,32 +458,29 @@ footer{
 </section>
 
 <!-- ============= INVESTIGATIONS ============= -->
-<section class="card" id="sec-inv">
-  <div class="ch teal"><span class="num">·</span>Investigations to Consider</div>
+<section class="card teal" id="sec-inv">
+  <div class="ch"><span class="num">·</span>Investigations to consider</div>
   <div class="body">
     <ul class="dots" data-section="investigations"></ul>
   </div>
 </section>
 
 <!-- ============= PSYCHOEDUCATION ============= -->
-<section class="card" id="sec-pe">
-  <div class="ch purple"><span class="num">·</span>Psychoeducation</div>
+<section class="card purple" id="sec-pe">
+  <div class="ch"><span class="num">·</span>Psychoeducation library</div>
   <div class="body">
-    <p class="lead">Click topics to add them to a copyable handout. Re-click to remove.</p>
-    <div id="pe-list"></div>
+    <p class="lead">Read or share any topic. Click a heading to expand — copy the text from inside.</p>
     <div class="pe-actions">
-      <span class="pe-count" id="pe-count">0 selected</span>
-      <button class="copybtn" onclick="togglePEHandout(this)" id="pe-toggle-btn">Show handout</button>
-      <button class="copybtn" onclick="copyPE(this)" id="pe-copy-btn" style="display:none">Copy handout</button>
-      <button class="clearbtn" onclick="clearPE()">Clear</button>
+      <button class="small-btn" onclick="peExpandAll()">Expand all</button>
+      <button class="small-btn" onclick="peCollapseAll()">Collapse all</button>
     </div>
-    <div class="pe-handout" id="pe-handout"></div>
+    <div id="pe-list"></div>
   </div>
 </section>
 
 <!-- ============= TITRATION ============= -->
-<section class="card" id="sec-tit">
-  <div class="ch green"><span class="num">·</span>Example Titration Schedules</div>
+<section class="card green" id="sec-tit">
+  <div class="ch"><span class="num">·</span>Example titration schedules</div>
   <div class="body">
     <p class="lead">Pick a medication. Click a schedule to view. Copy as-is — no editing needed.</p>
     <div class="tit-tabs" id="tit-tabs"></div>
@@ -400,8 +489,8 @@ footer{
 </section>
 
 <!-- ============= FOLLOW-UP ============= -->
-<section class="card" id="sec-fu">
-  <div class="ch blue"><span class="num">·</span>Follow-up &amp; Management Suggestions</div>
+<section class="card blue" id="sec-fu">
+  <div class="ch"><span class="num">·</span>Follow-up &amp; management suggestions</div>
   <div class="body">
     <p class="lead">Pick a follow-up template for the stage of care. Copy the snippet straight into your note.</p>
     <div class="fu-grid" id="fu-grid"></div>
@@ -710,44 +799,141 @@ substances: [
       "SafeScript / RTPM review — what does it show?"]},
 ],
 
+cardiac: [
+  {t:"Chest pain — at rest or on exertion",
+   q:["Any chest tightness, heaviness, or pain?",
+      "Comes on with exertion? Settles with rest?",
+      "Radiates to jaw, neck, arm? Associated sweating, nausea?"]},
+  {t:"Palpitations — awareness of skipped or racing heart",
+   q:["Heart races, pounds, or skips beats — when?",
+      "Triggered by caffeine, alcohol, stress, exertion?",
+      "Lasts seconds, minutes, longer?"]},
+  {t:"Syncope or near-syncope — especially on exertion",
+   q:["Ever fainted, blacked out, nearly fainted?",
+      "Happened on exertion or standing up?",
+      "Any warning, or sudden?"]},
+  {t:"Exertional dyspnoea or exercise intolerance",
+   q:["Get short of breath sooner than you should?",
+      "Can't keep up with people your age — physically?"]},
+  {t:"Orthostatic dizziness on standing",
+   q:["Dizzy or lightheaded when standing up quickly?",
+      "Sit-stand BP available?"]},
+  {t:"Known hypertension — treated or borderline",
+   q:["Ever been told your BP is high? On medication for it?",
+      "Home BP readings over the past month?"]},
+  {t:"Known structural heart disease",
+   q:["Murmur, valve problem, congenital heart disease, hole in heart?",
+      "Hypertrophic cardiomyopathy, dilated cardiomyopathy?"]},
+  {t:"Known arrhythmia — AF, SVT, long QT, channelopathy",
+   q:["Any arrhythmia diagnosis, ablation, or pacemaker?",
+      "Long QT? Brugada? CPVT?"]},
+  {t:"Previous MI, stroke, TIA, cardiac surgery",
+   q:["Ever had a heart attack, stroke, TIA, or cardiac procedure?"]},
+  {t:"Family — sudden cardiac death under 40",
+   q:["Anyone in family die suddenly under 40 — including SIDS?",
+      "Unexplained drowning or single-vehicle accident in family?"]},
+  {t:"Family — cardiomyopathy, long QT, channelopathy",
+   q:["Hypertrophic / dilated cardiomyopathy in family?",
+      "Long QT, Brugada, CPVT known?"]},
+  {t:"Family — early CAD (<55 male, <65 female)",
+   q:["Heart attack, stent, bypass in any first-degree relative — and at what age?"]},
+  {t:"Today's BP and HR",
+   q:["Baseline BP and HR documented. Repeat at every titration visit.",
+      "Patient to bring home or pharmacy readings between visits."]},
+],
+
 medical: [
-  {t:"Current medications — full list inc. OTC and supplements",
-   q:["Anything else — OTC, supplements, herbals, melatonin?",
-      "Any other GP, specialist or online prescribers?"]},
-  {t:"Allergies — including drug allergies",
-   q:["Any drug allergies and the reaction? Anaphylaxis or rash?"]},
-  {t:"Cardiac — chest pain, palpitations, syncope, exertional symptoms",
-   q:["Chest pain at rest or on exertion?",
-      "Palpitations, racing heart, awareness of skipped beats?",
-      "Fainted on exertion? Dizzy on standing?"]},
-  {t:"Hypertension — diagnosed or borderline",
-   q:["Ever been told your BP is high? On any BP medication?",
-      "Today's BP and HR — record before and during titration."]},
-  {t:"Family cardiac — sudden death, cardiomyopathy, long QT",
-   q:["Anyone in family die suddenly under 40?",
-      "Cardiomyopathy, long QT, channelopathy — known in family?"]},
-  {t:"Structural / arrhythmic disease (personal)",
-   q:["Known murmur, valve problem, structural heart disease?",
-      "Arrhythmia — AF, SVT, long QT?"]},
-  {t:"Neurological — seizures, head injury, migraine, tics",
-   q:["Ever had a seizure? Epilepsy diagnosis?",
-      "Head injury with loss of consciousness?",
-      "Migraine — frequency, triggers, treatment?",
-      "Tics — vocal or motor? Tourette's?"]},
-  {t:"Endocrine — thyroid, diabetes, weight",
-   q:["Thyroid checked? On thyroxine?",
-      "Diabetes — type, control, on metformin / insulin?"]},
-  {t:"Glaucoma — angle closure especially",
-   q:["Any eye disease? Glaucoma in family?"]},
-  {t:"Pregnancy / breastfeeding / contraception",
-   q:["Any chance of pregnancy? Planning? Currently breastfeeding?",
-      "What contraception are you using?"]},
-  {t:"Hepatic / renal disease",
-   q:["Any liver or kidney disease?"]},
-  {t:"MAOI use — ABSOLUTE contraindication to stimulants",
-   q:["Confirm no MAOI (phenelzine, tranylcypromine, moclobemide, selegiline) in past 14 days."]},
-  {t:"Today's observations — BP, HR, weight, height",
-   q:["Baseline BP, HR, weight, height, BMI documented for record."]},
+  {t:"Thyroid disease — hyper or hypo",
+   q:["Ever had thyroid problems? On thyroxine or carbimazole?",
+      "Last TFT — when, normal?"]},
+  {t:"Diabetes — type 1, type 2, or pre-diabetic",
+   q:["Diabetes — type, treatment, glycaemic control?",
+      "Stimulants suppress appetite — may need glucose monitoring adjustment."]},
+  {t:"Epilepsy / seizures",
+   q:["Ever had a seizure? Diagnosed epilepsy?",
+      "On any antiepileptic? Last seizure when?",
+      "Stimulants can lower seizure threshold — caution if uncontrolled."]},
+  {t:"Head injury with loss of consciousness",
+   q:["Any significant head injury — concussion, hospital admission, ongoing symptoms?",
+      "TBI can produce an acquired ADHD-like syndrome."]},
+  {t:"Migraine — frequency and treatment",
+   q:["Migraine — how often? On preventer or abortive treatment?",
+      "Triptans, propranolol, topiramate?"]},
+  {t:"Tics or Tourette's",
+   q:["Vocal or motor tics — historical or current?",
+      "Stimulants can unmask or worsen tics in some — non-stimulants safer."]},
+  {t:"Sleep apnoea — diagnosed or suspected",
+   q:["Snoring, witnessed apnoeas, choking at night, daytime sleepiness?",
+      "Epworth Sleepiness Scale?",
+      "Untreated OSA mimics ADHD inattention — treat it first."]},
+  {t:"Other sleep disorder — delayed phase, insomnia, restless legs",
+   q:["Natural night owl? Bedtime impossible before 2am?",
+      "Restless legs, periodic limb movements?"]},
+  {t:"Glaucoma — especially angle-closure",
+   q:["Any eye disease? Glaucoma in family?",
+      "Stimulants relatively contraindicated in angle-closure."]},
+  {t:"Liver disease — hepatitis, cirrhosis, fatty liver",
+   q:["Any liver problems? Hepatitis B / C? Fatty liver on imaging?",
+      "Atomoxetine — rare but serious liver injury risk."]},
+  {t:"Kidney disease — CKD stage",
+   q:["Any kidney disease? CKD? Dialysis?"]},
+  {t:"Asthma / COPD",
+   q:["Asthma — on salbutamol, ICS? Frequency of attacks?",
+      "Beta-agonists + stimulants additively raise HR — discuss."]},
+  {t:"Eating disorder — active or past anorexia, bulimia, BED",
+   q:["History of restricting, bingeing, purging?",
+      "Underweight currently? BMI?",
+      "Stimulants in active restrictive ED need very careful thought."]},
+  {t:"Pregnancy, planning, breastfeeding",
+   q:["Any chance of pregnancy? Currently planning?",
+      "Breastfeeding?",
+      "Contraception in use?"]},
+  {t:"Phaeochromocytoma (rare) or other adrenal disease",
+   q:["Episodic flushing, hypertension, sweating, headaches together?",
+      "Absolute contraindication to stimulants — exclude if suggestive history."]},
+  {t:"Other chronic illness — autoimmune, cancer, chronic pain",
+   q:["Any other ongoing medical condition under specialist care?"]},
+],
+
+meds: [
+  {t:"Current prescribed medications — name, dose, frequency",
+   q:["Full list — name, dose, frequency, who prescribes.",
+      "When started, any recent changes?"]},
+  {t:"OTC, supplements, herbals, melatonin",
+   q:["Any vitamins, supplements, herbal preparations?",
+      "St John's Wort, valerian, kava?",
+      "Pseudoephedrine for colds?"]},
+  {t:"Other prescribers — GP, specialist, online, overseas",
+   q:["Anyone else prescribing for you — GP, other specialist, online service?",
+      "Any medications from overseas or family members?"]},
+  {t:"Allergies and drug reactions",
+   q:["Drug allergies — and what reaction (rash, anaphylaxis, GI)?",
+      "Any medication ever caused mood, sleep, or cardiac side effects?"]},
+  {t:"MAOIs — absolute contraindication (14-day washout)",
+   q:["Confirm no MAOI: phenelzine, tranylcypromine, moclobemide, selegiline, rasagiline, methylene blue, linezolid.",
+      "Any of those in the past 14 days — stimulant contraindicated."]},
+  {t:"SSRIs / SNRIs — serotonin syndrome risk with atomoxetine",
+   q:["On fluoxetine, paroxetine, sertraline, escitalopram, venlafaxine, duloxetine, vortioxetine?",
+      "Fluoxetine and paroxetine dramatically increase atomoxetine levels — avoid combination."]},
+  {t:"Antipsychotics — additive cardiac effects",
+   q:["On any antipsychotic (especially clozapine, olanzapine, ziprasidone)?",
+      "Watch for additive QTc prolongation and metabolic effects."]},
+  {t:"Other dopaminergic / serotonergic drugs",
+   q:["Bupropion, tramadol, ondansetron, triptans, lithium?",
+      "Bupropion can dramatically raise atomoxetine levels."]},
+  {t:"Anticoagulants — warfarin especially",
+   q:["On warfarin? Methylphenidate may increase INR — monitor more frequently when initiating."]},
+  {t:"Beta-agonists — salbutamol, salmeterol",
+   q:["Inhaled beta-agonists for asthma — additive cardiac effects with stimulants."]},
+  {t:"Antihypertensives — particularly alpha-2 agonists",
+   q:["On clonidine, guanfacine, methyldopa? Existing alpha-2 agonist?",
+      "Beta-blockers — discuss before stimulant initiation."]},
+  {t:"Substances of misuse — already covered above",
+   q:["Re-confirm alcohol, cannabis, illicit stimulants, opioids, benzodiazepines.",
+      "Today's caffeine intake — coffees, energy drinks, pre-workout."]},
+  {t:"SafeScript / RTPM review before prescribing",
+   q:["Mandatory check before any controlled-substance prescription.",
+      "Looking for: opioids, benzodiazepines, existing stimulants, doctor-shopping pattern."]},
 ],
 
 family: [
@@ -1310,69 +1496,49 @@ function copyMSE(btn){
   });
 }
 
-// =================== PSYCHOEDUCATION RENDER ===================
-const peState = {};
+// =================== PSYCHOEDUCATION RENDER (accordion) ===================
 function renderPE(){
   const wrap = document.getElementById('pe-list');
-  wrap.innerHTML = PE_GROUPS.map(g=>{
-    const chips = g.items.map(it=>{
-      const on = !!peState[it.id];
-      return `<button class="pe-chip ${on?'on':''}" onclick="togglePE('${it.id}')">${escHtml(it.title)}</button>`;
+  wrap.innerHTML = PE_GROUPS.map((g,gi)=>{
+    const items = g.items.map((it,i)=>{
+      const itemId = 'pe-'+gi+'-'+i;
+      return `<div class="pe-item" id="${itemId}">
+        <div class="pe-item-head" onclick="togglePEItem('${itemId}')">
+          <span class="caret">▶</span>
+          <span>${escHtml(it.title)}</span>
+        </div>
+        <div class="pe-item-body">
+          ${it.body}
+          <div class="pe-copy-row">
+            <button class="copybtn" onclick="copyPEItem('${itemId}',this)">Copy topic</button>
+          </div>
+        </div>
+      </div>`;
     }).join('');
     return `<div class="pe-group">
       ${g.label?`<div class="pe-group-label">${escHtml(g.label)}</div>`:''}
-      <div class="pe-chips">${chips}</div>
+      ${items}
     </div>`;
   }).join('');
-  updatePECount();
 }
-function togglePE(id){
-  peState[id] = !peState[id];
-  renderPE();
-  if(document.getElementById('pe-handout').classList.contains('open')) buildPEHandout();
+function togglePEItem(id){
+  document.getElementById(id).classList.toggle('open');
 }
-function clearPE(){
-  Object.keys(peState).forEach(k=>peState[k]=false);
-  renderPE();
-  if(document.getElementById('pe-handout').classList.contains('open')) buildPEHandout();
+function peExpandAll(){
+  document.querySelectorAll('.pe-item').forEach(el=>el.classList.add('open'));
 }
-function updatePECount(){
-  const n = Object.values(peState).filter(Boolean).length;
-  document.getElementById('pe-count').textContent = n+' selected';
+function peCollapseAll(){
+  document.querySelectorAll('.pe-item').forEach(el=>el.classList.remove('open'));
 }
-function buildPEHandout(){
-  const sel = [];
-  PE_GROUPS.forEach(g=>g.items.forEach(it=>{if(peState[it.id]) sel.push(it);}));
-  const html = sel.length
-    ? sel.map(it=>`<h3>${escHtml(it.title)}</h3>${it.body}`).join('')
-    : '<p style="color:var(--muted);font-style:italic">Select topics above to build the handout.</p>';
-  document.getElementById('pe-handout').innerHTML = html;
-}
-function togglePEHandout(btn){
-  const h = document.getElementById('pe-handout');
-  const cbtn = document.getElementById('pe-copy-btn');
-  if(h.classList.contains('open')){
-    h.classList.remove('open');
-    btn.textContent = 'Show handout';
-    cbtn.style.display = 'none';
-  } else {
-    buildPEHandout();
-    h.classList.add('open');
-    btn.textContent = 'Hide handout';
-    cbtn.style.display = 'inline-flex';
-  }
-}
-function copyPE(btn){
-  const h = document.getElementById('pe-handout');
-  if(!h.innerHTML.trim()) return;
-  // Copy as plain text — strip HTML
-  const tmp = document.createElement('div');
-  tmp.innerHTML = h.innerHTML;
-  const text = (tmp.innerText||tmp.textContent||'').trim();
-  if(!text) return;
+function copyPEItem(id, btn){
+  const item = document.getElementById(id);
+  const title = item.querySelector('.pe-item-head span:last-child').textContent.trim();
+  const body = item.querySelector('.pe-item-body').cloneNode(true);
+  const cr = body.querySelector('.pe-copy-row'); if(cr) cr.remove();
+  const text = title + '\n\n' + (body.innerText||body.textContent||'').trim();
   navigator.clipboard.writeText(text).then(()=>{
     btn.textContent='Copied!'; btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent='Copy handout'; btn.classList.remove('ok');},1500);
+    setTimeout(()=>{btn.textContent='Copy topic'; btn.classList.remove('ok');},1500);
   });
 }
 
