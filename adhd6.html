@@ -431,6 +431,47 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
 .script-box.short-box{background:var(--primary-bg); border-color:#d6e4fc; margin-top:8px}
 .script-box.short-box .label{color:var(--primary)}
 .script-box.short-box pre{font:13.5px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--ink)}
+
+/* HOC handover — script-card "authority script" look */
+.hoc-med-card{
+  position:relative;
+  background:#f0f6ff;
+  border:1px solid #c7ddff;
+  border-radius:7px;
+  padding:14px 16px 10px;
+  margin:6px 0 10px;
+}
+.hoc-med-card .rx-tag{
+  position:absolute; top:10px; right:14px;
+  font:700 10px/1 "Inter",sans-serif;
+  color:var(--primary);
+  text-transform:uppercase; letter-spacing:.1em;
+  padding:3px 8px; background:#fff;
+  border:1px solid #c7ddff; border-radius:4px;
+}
+.hoc-med-card .rm{
+  position:absolute; top:8px; right:60px;
+  width:24px; height:24px;
+  border:1px solid #c7ddff; background:#fff;
+  border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font:600 16px/1 "Inter",sans-serif; color:var(--muted);
+}
+.hoc-med-card .rm:hover{background:#fef2f2; border-color:var(--red); color:var(--red)}
+.hoc-med-card .bd-row{margin-top:8px}
+.hoc-med-card .bd-row:first-of-type{margin-top:18px}
+.hoc-med-card .bd-label{color:var(--primary); font-weight:600}
+.hoc-med-card .bd-text, .hoc-med-card .bd-textarea{background:#fff}
+
+.hoc-add-med{
+  display:block; margin:6px auto 14px;
+  padding:7px 18px;
+  background:#fff;
+  border:1px dashed var(--primary); color:var(--primary);
+  border-radius:999px; cursor:pointer;
+  font:600 12.5px "Inter",sans-serif;
+}
+.hoc-add-med:hover{background:var(--primary-bg)}
 .script-box pre{
   margin:0; font:13px/1.6 "Inter",sans-serif; white-space:pre-wrap;
   color:var(--ink); background:transparent; padding:0;
@@ -886,30 +927,10 @@ footer{
       </div>
 
       <div class="bd-row">
-        <label class="bd-label">Script — medication</label>
-        <div class="bd-controls bd-inline">
-          <input type="text" id="hoc-medname" class="bd-text" placeholder="Generic name (Brand)" oninput="hocRender()">
-          <input type="text" id="hoc-medstrength" class="bd-text" placeholder="Strength (e.g. 30mg cap)" oninput="hocRender()">
-        </div>
+        <label class="bd-label">Script(s) for ongoing prescribing</label>
       </div>
-      <div class="bd-row">
-        <label class="bd-label">Script — quantity &amp; repeats</label>
-        <div class="bd-controls bd-inline">
-          <input type="text" id="hoc-medqty" class="bd-text" placeholder="Quantity (e.g. 30 caps)" oninput="hocRender()">
-          <input type="text" id="hoc-medrepeats" class="bd-text" placeholder="Repeats (e.g. 5)" oninput="hocRender()">
-          <input type="text" id="hoc-medauth" class="bd-text" placeholder="Authorisation no. (optional)" oninput="hocRender()">
-        </div>
-      </div>
-      <div class="bd-row">
-        <label class="bd-label">Indication</label>
-        <div class="bd-controls bd-inline">
-          <input type="text" id="hoc-medindication" class="bd-text" placeholder="e.g. ADHD" oninput="hocRender()" style="flex:1 1 100%">
-        </div>
-      </div>
-      <div class="bd-row">
-        <label class="bd-label">Instructions / Sig</label>
-        <textarea id="hoc-medsig" class="bd-textarea" rows="2" placeholder="e.g. Take 1 capsule each morning on waking. Avoid acidic drinks at dosing time." oninput="hocRender()"></textarea>
-      </div>
+      <div id="hoc-meds-list"></div>
+      <button type="button" class="hoc-add-med" onclick="addHocMed()">+ Add another medication</button>
 
       <div class="bd-row">
         <label class="bd-label">Include in letter</label>
@@ -2739,10 +2760,75 @@ function hocToggle(btn){
   hocRender();
 }
 function hocClear(){
-  ['hoc-first','hoc-last','hoc-gp','hoc-gppractice','hoc-clin','hoc-quals',
-   'hoc-medname','hoc-medstrength','hoc-medqty','hoc-medrepeats','hoc-medauth','hoc-medindication','hoc-medsig',
-   'hoc-notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  ['hoc-first','hoc-last','hoc-gp','hoc-gppractice','hoc-clin','hoc-quals','hoc-notes']
+    .forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  const list = document.getElementById('hoc-meds-list');
+  if(list){ list.innerHTML = makeHocMedCardHTML(); refreshHocCards(); }
   hocRender();
+}
+
+// Multi-medication script cards
+function makeHocMedCardHTML(){
+  return `<div class="hoc-med-card">
+    <span class="rx-tag">Rx</span>
+    <button class="rm" type="button" onclick="removeHocMed(this)" aria-label="Remove">&times;</button>
+    <div class="bd-row">
+      <label class="bd-label">Medication</label>
+      <div class="bd-controls bd-inline">
+        <input type="text" class="bd-text hoc-medname" placeholder="Generic name (Brand)" oninput="hocRender()">
+        <input type="text" class="bd-text hoc-medstrength" placeholder="Strength (e.g. 30mg cap)" oninput="hocRender()">
+      </div>
+    </div>
+    <div class="bd-row">
+      <label class="bd-label">Quantity &amp; repeats</label>
+      <div class="bd-controls bd-inline">
+        <input type="text" class="bd-text hoc-medqty" placeholder="Quantity (e.g. 30 caps)" oninput="hocRender()">
+        <input type="text" class="bd-text hoc-medrepeats" placeholder="Repeats" oninput="hocRender()">
+        <input type="text" class="bd-text hoc-medauth" placeholder="Authorisation no. (optional)" oninput="hocRender()">
+      </div>
+    </div>
+    <div class="bd-row">
+      <label class="bd-label">Indication</label>
+      <div class="bd-controls bd-inline">
+        <input type="text" class="bd-text hoc-medindication" placeholder="e.g. ADHD" oninput="hocRender()" style="flex:1 1 100%">
+      </div>
+    </div>
+    <div class="bd-row">
+      <label class="bd-label">Instructions</label>
+      <textarea class="bd-textarea hoc-medsig" rows="2" placeholder="e.g. Take 1 capsule each morning on waking. Avoid acidic drinks at dosing time." oninput="hocRender()"></textarea>
+    </div>
+  </div>`;
+}
+function addHocMed(){
+  const list = document.getElementById('hoc-meds-list');
+  if(!list) return;
+  list.insertAdjacentHTML('beforeend', makeHocMedCardHTML());
+  refreshHocCards();
+  hocRender();
+}
+function removeHocMed(btn){
+  const list = document.getElementById('hoc-meds-list');
+  const cards = list.querySelectorAll('.hoc-med-card');
+  if(cards.length<=1) return; // never remove the last
+  btn.closest('.hoc-med-card').remove();
+  refreshHocCards();
+  hocRender();
+}
+function refreshHocCards(){
+  const cards = document.querySelectorAll('.hoc-med-card');
+  cards.forEach((c,i)=>{
+    const tag = c.querySelector('.rx-tag');
+    if(tag) tag.textContent = cards.length>1 ? ('Rx '+(i+1)) : 'Rx';
+    const rm = c.querySelector('.rm');
+    if(rm) rm.style.display = cards.length>1 ? '' : 'none';
+  });
+}
+function initHocMeds(){
+  const list = document.getElementById('hoc-meds-list');
+  if(list && !list.querySelector('.hoc-med-card')){
+    list.innerHTML = makeHocMedCardHTML();
+    refreshHocCards();
+  }
 }
 function hocPronouns(g){
   if(g==='Female') return {sub:'she', obj:'her', poss:'her', possS:'hers'};
@@ -2764,13 +2850,21 @@ function hocRender(){
   const quals = _v('hoc-quals');
   const notes = _v('hoc-notes');
 
-  const medName       = _v('hoc-medname');
-  const medStrength   = _v('hoc-medstrength');
-  const medQty        = _v('hoc-medqty');
-  const medRepeats    = _v('hoc-medrepeats');
-  const medAuth       = _v('hoc-medauth');
-  const medIndication = _v('hoc-medindication');
-  const medSig        = _v('hoc-medsig');
+  // Multi-medication: read every script card
+  const meds = [];
+  document.querySelectorAll('.hoc-med-card').forEach(c=>{
+    const grab = sel => {const el = c.querySelector(sel); return el ? (el.value||'').trim() : '';};
+    meds.push({
+      name:        grab('.hoc-medname'),
+      strength:    grab('.hoc-medstrength'),
+      qty:         grab('.hoc-medqty'),
+      repeats:     grab('.hoc-medrepeats'),
+      auth:        grab('.hoc-medauth'),
+      indication:  grab('.hoc-medindication'),
+      sig:         grab('.hoc-medsig'),
+    });
+  });
+  if(!meds.length) meds.push({name:'',strength:'',qty:'',repeats:'',auth:'',indication:'',sig:''});
 
   const fullName = (first+' '+last).trim() || '[Patient name]';
   const p = hocPronouns(hocState.g);
@@ -2790,18 +2884,22 @@ function hocRender(){
   lines.push(fullName+' meets DSM-5-TR criteria for Attention Deficit Hyperactivity Disorder (ADHD). The diagnosis was established following comprehensive psychiatric assessment including pre-screening, thorough clinical interview, review of collateral history, assessment of substance use, and a medical screen.');
   lines.push('');
   lines.push('CURRENT MEDICATION REGIMEN');
-  const medFirstLine = [medName, medStrength].filter(Boolean).join(' — ');
-  lines.push(medFirstLine || '[Medication — name and strength]');
-  const qtyLine = [];
-  if(medQty) qtyLine.push('Quantity: '+medQty);
-  if(medRepeats) qtyLine.push('Repeats: '+medRepeats);
-  if(qtyLine.length) lines.push(qtyLine.join('   '));
-  if(medAuth) lines.push('Authorisation: '+medAuth);
-  if(medIndication) lines.push('Indication: '+medIndication);
-  if(medSig){
-    lines.push('Sig:');
-    medSig.split(/\n+/).forEach(l=>{if(l.trim()) lines.push('  '+l.trim());});
-  }
+  const numbered = meds.length>1;
+  meds.forEach((m,i)=>{
+    if(i>0) lines.push('');
+    const head = [m.name, m.strength].filter(Boolean).join(' — ') || '[Medication — name and strength]';
+    lines.push(numbered ? ((i+1)+'. '+head) : head);
+    const qtyLine = [];
+    if(m.qty) qtyLine.push('Quantity: '+m.qty);
+    if(m.repeats) qtyLine.push('Repeats: '+m.repeats);
+    if(qtyLine.length) lines.push('   '+qtyLine.join('   '));
+    if(m.auth) lines.push('   Authorisation: '+m.auth);
+    if(m.indication) lines.push('   Indication: '+m.indication);
+    if(m.sig){
+      lines.push('   Instructions:');
+      m.sig.split(/\n+/).forEach(l=>{if(l.trim()) lines.push('     '+l.trim());});
+    }
+  });
   lines.push('');
   lines.push(_capFirst(p.sub)+' has been carefully titrated to this regimen, has demonstrated good therapeutic response, and tolerates the medication well with no significant adverse effects at present.');
   lines.push('');
@@ -2896,6 +2994,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   renderFUNumStrip();
   fuRender();
   renderTrt();
+  initHocMeds();
   hocRender();
 });
 </script>
