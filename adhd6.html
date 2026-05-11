@@ -935,11 +935,13 @@ footer{
       <div class="bd-row">
         <label class="bd-label">Include in letter</label>
         <div class="bd-controls bd-multi">
+          <button type="button" class="pill on" data-hoc="inc" data-val="authority" onclick="hocToggle(this)">Authority pathways (state-by-state)</button>
           <button type="button" class="pill on" data-hoc="inc" data-val="monitoring" onclick="hocToggle(this)">Monitoring requirements</button>
           <button type="button" class="pill on" data-hoc="inc" data-val="sideeffects" onclick="hocToggle(this)">Side-effect management</button>
           <button type="button" class="pill on" data-hoc="inc" data-val="sleep" onclick="hocToggle(this)">Sleep management</button>
           <button type="button" class="pill on" data-hoc="inc" data-val="nonstim" onclick="hocToggle(this)">Non-stimulant alternatives</button>
           <button type="button" class="pill on" data-hoc="inc" data-val="referback" onclick="hocToggle(this)">When to refer back</button>
+          <button type="button" class="pill on" data-hoc="inc" data-val="resources" onclick="hocToggle(this)">Useful resources</button>
         </div>
       </div>
       <div class="bd-row">
@@ -2745,7 +2747,7 @@ function copyTrt(btn){
 }
 
 // =================== HANDOVER LETTER ===================
-const hocState = {g:'Other', inc:new Set(['monitoring','sideeffects','sleep','nonstim','referback'])};
+const hocState = {g:'Other', inc:new Set(['authority','monitoring','sideeffects','sleep','nonstim','referback','resources'])};
 function hocPick(btn){
   const grp = btn.dataset.hoc;
   hocState[grp] = btn.dataset.val;
@@ -2906,60 +2908,155 @@ function hocRender(){
   lines.push('SPECIALIST RECOMMENDATION');
   lines.push('I support '+gp+' taking over ongoing prescribing of '+fullName+'\'s ADHD stimulant medication in accordance with the applicable state prescribing framework. This letter confirms specialist diagnosis, initiation and stabilisation of treatment, and is provided as the written specialist recommendation required to support any necessary state authority, permit, notification, or approval process. Please attach this letter to your relevant authority application or retain it in the patient\'s record as required by your jurisdiction.');
 
+  if(hocState.inc.has('authority')){
+    lines.push('');
+    lines.push('────────────────────────────────────────────────');
+    lines.push('GP PRESCRIBING GUIDE — ADHD STIMULANT MEDICATIONS');
+    lines.push('────────────────────────────────────────────────');
+    lines.push('Prescribing regulations across Australian states and territories are subject to ongoing change. Always verify current requirements with your state health authority before applying for prescribing authority. Document last reviewed April 2026.');
+    lines.push('');
+    lines.push('UNIVERSAL PRESCRIBING STEPS (all jurisdictions)');
+    lines.push('1. Check your state RTPM system first — review SafeScript / equivalent before every stimulant prescription.');
+    lines.push('2. Review history — confirm diagnosis and current regimen; assess mental health, substance use, cardiovascular history; red flags for misuse, psychosis, mania.');
+    lines.push('3. Confirm monitoring requirements — response, adherence, adverse effects, mental state, substance use risk every review; BP, HR, weight at least every 6–12 months; ECG when clinically indicated.');
+    lines.push('4. Obtain authority then prescribe — complete any required RTPM registration, permit, approval, authority or notification for your state, then issue the prescription.');
+    lines.push('');
+    lines.push('STATE-BY-STATE AUTHORITY GUIDE');
+    lines.push('');
+    lines.push('NEW SOUTH WALES — SafeScript NSW (safescript.health.nsw.gov.au)');
+    lines.push('  1. Check SafeScript NSW before every script.');
+    lines.push('  2. Apply to become a NSW continuation prescriber via the ADHD care in general practice pathway: aci.health.nsw.gov.au/projects/adhd-in-general-practice/clinicians/how-to-apply');
+    lines.push('  3. Once approved, prescribe within the NSW continuation prescriber framework.');
+    lines.push('  Contact: NSW Health Pharmaceutical Regulatory Unit — 02 9424 5923');
+    lines.push('');
+    lines.push('VICTORIA — SafeScript VIC (safescript.vic.gov.au)');
+    lines.push('  1. Check SafeScript VIC before prescribing.');
+    lines.push('  2. Apply for a Schedule 8 stimulant permit before prescribing — attach this letter.');
+    lines.push('  3. Permit requirements: health.vic.gov.au/drugs-and-poisons/stimulants-for-adhd-or-narcolepsy-permit-requirements');
+    lines.push('  Contact: VIC Safer Prescribing Team — dpcs@dhhs.vic.gov.au');
+    lines.push('');
+    lines.push('QUEENSLAND — QScript (qld.gov.au/health/conditions/all/qscript)');
+    lines.push('  1. Check QScript before prescribing.');
+    lines.push('  2. Confirm you hold FRACGP or FACRRM fellowship (qualifies as specialist GP under the QLD framework, December 2025).');
+    lines.push('  3. Include the condition name on the script and your qualifications as your prescribing authorisation.');
+    lines.push('  Contact: QLD Monitored Medicines Unit — 13 78 46 | MMU@health.qld.gov.au');
+    lines.push('');
+    lines.push('SOUTH AUSTRALIA — ScriptCheckSA (scriptcheck.sa.gov.au)');
+    lines.push('  1. Check ScriptCheckSA before prescribing.');
+    lines.push('  2. Apply for a Section 18A authority via ScriptCheckSA (paper forms no longer accepted as of January 2026), with this letter attached.');
+    lines.push('  3. Info: cdn.wchn.sa.gov.au/downloads/WCH/professionals/gp/ADHD/ADHD-Shared-Care-GP-Information-March-2025.pdf');
+    lines.push('  Contact: SA Health DDU — 1300 652 584 | healthdrugsofdependenceunit@sa.gov.au');
+    lines.push('');
+    lines.push('WESTERN AUSTRALIA — ScriptCheckWA (scriptcheck.health.wa.gov.au)');
+    lines.push('  1. Check ScriptCheckWA (mandatory).');
+    lines.push('  2. WA requires a urine drug screen (ANZ Standard 4308) for all patients aged 16+ before commencing treatment.');
+    lines.push('  3. Prescribe under WA shared-care rules. For non-routine cases (comorbid SUD, doses above limits, history of psychosis), obtain patient-specific authorisation from the WA Stimulant Assessment Panel.');
+    lines.push('  Contact: WA Stimulants — 08 9222 4424 | stimulants@health.wa.gov.au');
+    lines.push('');
+    lines.push('ACT — Canberra Script (canberrascript.act.gov.au)');
+    lines.push('  1. Check Canberra Script (mandatory under the ACT Standing CHO Approval NI2026-8 pathway).');
+    lines.push('  2. Complete the required one-off notification to ACT Health Protection Services.');
+    lines.push('  3. Electronic prescribing (eScripts) only — handwritten scripts not valid under this pathway.');
+    lines.push('  Contact: ACT Health Protection Services — 02 6205 0998 | hps@act.gov.au');
+    lines.push('');
+    lines.push('NORTHERN TERRITORY — NTScript (health.nt.gov.au/professionals/medicines-and-poisons)');
+    lines.push('  1. Check NTScript before prescribing.');
+    lines.push('  2. Apply for individual CHO approval before prescribing — required for each patient in the NT.');
+    lines.push('  3. Ongoing specialist involvement is required under the NT framework.');
+    lines.push('  Contact: NT Medicines and Poisons Control — 08 8922 7341 | poisonscontrol@nt.gov.au');
+    lines.push('');
+    lines.push('TASMANIA — TasScript (health.tas.gov.au/health-topics/drugs-and-poisons/information-for-medical-practitioners)');
+    lines.push('  1. Check TasScript before prescribing.');
+    lines.push('  2. Apply for a Section 59E authority through the Pharmaceutical Services Branch, with this letter attached.');
+    lines.push('  3. Guidance: health.tas.gov.au/publications/seeking-authorisation-prescribe-s8-psychostimulants-tasmania');
+    lines.push('  Contact: TAS Pharmaceutical Services Branch — 03 6166 0400 | pharmserv@health.tas.gov.au');
+  }
+
   if(hocState.inc.has('monitoring')){
     lines.push('');
-    lines.push('RECOMMENDED GP MONITORING');
-    lines.push('• Every review: therapeutic benefit, adherence, adverse effects, mental state, substance use risk, cardiovascular status');
-    lines.push('• Every 6–12 months: blood pressure, heart rate, weight');
-    lines.push('• ECG: as clinically indicated (cardiac history, exertional symptoms, syncope, palpitations, significant family history)');
-    lines.push('• Urine drug screening: at your discretion — does not imply misuse');
-    lines.push('• Recheck SafeScript / RTPM before every prescription');
-    lines.push('• Review at least every 6 months; sooner if any concerns arise');
+    lines.push('CARDIOVASCULAR & GENERAL MONITORING');
+    lines.push('Stimulants cause sympathomimetic effects — small average increases in heart rate (~5–7 bpm) and systolic BP (~1–5 mmHg), clinically significant in vulnerable patients.');
+    lines.push('• Every review: therapeutic benefit, adherence, adverse effects, mental state, substance use risk, cardiovascular status; resting BP and pulse.');
+    lines.push('• Every 6–12 months: BP, HR, weight.');
+    lines.push('• ECG: cardiac history, exertional symptoms, syncope, palpitations, significant family history of arrhythmia or sudden death, or persistently abnormal parameters.');
+    lines.push('• Refer to cardiology if: persistent BP >140/90, HR >100 at rest, new arrhythmia, chest pain, or unexplained syncope.');
+    lines.push('• Use with caution in: significant structural heart disease, severe hypertension, recent coronary events, or arrhythmias — seek specialist advice before continuing.');
+    lines.push('• Urine drug screening: at your discretion — does not imply misuse.');
+    lines.push('• Recheck SafeScript / RTPM before every prescription.');
+    lines.push('• Review at least every 6 months; sooner if any concerns.');
   }
 
   if(hocState.inc.has('sideeffects')){
     lines.push('');
     lines.push('COMMON SIDE EFFECTS — MANAGEMENT');
-    lines.push('• Reduced appetite / weight loss → substantial breakfast pre-dose; protein-rich snacks; high-calorie evening meal once medication has worn off; monitor weight monthly during titration');
-    lines.push('• Headache → usually transient; hydration, regular meals; check BP; consider bruxism');
-    lines.push('• Dry mouth / nausea → take with food; usually settles');
-    lines.push('• Rebound irritability → reduce inter-dose gap; longer-acting formulation; refer if persistent');
-    lines.push('• Increased anxiety → dose too high — reduce; treat anxiety separately if pre-existing');
-    lines.push('• Elevated BP / HR → reduce dose; ECG if symptomatic; cardiology if persistent; clonidine can help BP + sleep together');
-    lines.push('• Emotional blunting / "zombie" — DOSE TOO HIGH; reduce, do not tolerate');
+    lines.push('• Reduced appetite / weight loss — substantial breakfast before dosing; high-calorie evening meal once medication has worn off; protein-rich snacks; consider weekend medication holidays.');
+    lines.push('• Headache — usually transient; hydration, regular meals; review dose; check BP; may also be due to bruxism — consider dose adjustment or relaxation measures.');
+    lines.push('• Dry mouth / nausea — take with food; adequate hydration; usually settles with time.');
+    lines.push('• Rebound irritability / mood lability — review dose timing; reduce inter-dose gap; consider formulation change; refer to psychiatrist if persistent.');
+    lines.push('• Increased anxiety — usually improves if anxiety is secondary to ADHD; may indicate dose too high — reduce; treat underlying anxiety separately if present; consider non-stimulant alternative.');
+    lines.push('• Elevated BP / HR — reduce dose; ECG if indicated; clonidine may help with sleep, hyperarousal and BP together; refer to psychiatrist if persistent.');
+    lines.push('• Emotional blunting / "zombie" — DOSE TOO HIGH; reduce, do not tolerate.');
   }
 
   if(hocState.inc.has('sleep')){
     lines.push('');
-    lines.push('SLEEP MANAGEMENT');
-    lines.push('Insomnia is common in ADHD — many patients sleep better once treated, due to reduced stress. ADHD is strongly associated with delayed sleep phase syndrome.');
-    lines.push('• Short-acting stimulant: last dose ≥6–8 hours before bed');
-    lines.push('• Long-acting: shift to earliest practical morning time');
-    lines.push('• Caffeine cut-off ≥10 hours before bed');
-    lines.push('• Sleep hygiene; fixed wake time 7 days/week');
-    lines.push('• Morning bright light therapy (eg Re-Timer 3, 30–60 min within 1 hr of waking)');
-    lines.push('• Melatonin 2–4mg as chronobiotic — 3–4 hours before desired bedtime');
-    lines.push('• Clonidine 50–200mcg nocte for hyperarousal / agitation');
-    lines.push('• Consider CBT-I (psychologist or This Way Up)');
+    lines.push('MANAGING INSOMNIA');
+    lines.push('Insomnia is common in ADHD. Stimulants may or may not worsen it — many patients actually sleep better on treatment due to reduced stress from improved task management. ADHD is strongly associated with Delayed Sleep Phase Syndrome.');
+    lines.push('');
+    lines.push('Initial actions:');
+    lines.push('  • Short-acting stimulant: move last dose to ≥6–8 hours before bedtime.');
+    lines.push('  • Long-acting: take earlier in the day.');
+    lines.push('  • Reduce caffeine — cut off at least 10 hours before bed.');
+    lines.push('  • Optimise sleep hygiene (below).');
+    lines.push('  • CBT-I (psychologist or This Way Up) for willing patients.');
+    lines.push('');
+    lines.push('Sleep hygiene:');
+    lines.push('  • Fixed wake time 7 days/week.');
+    lines.push('  • Morning bright light therapy (Re-Timer 3 for 30–60 min within 1 hr of waking).');
+    lines.push('  • Melatonin 2–4mg as a chronobiotic — taken 3–4 hours before desired bedtime (not at bedtime).');
+    lines.push('  • 10-3-2-1-0 wind-down: caffeine 10 hrs before bed; no heavy meals or alcohol 3 hrs before; stop work 2 hrs before; screens off 1 hr before; sleep mask + earplugs at bedtime.');
+    lines.push('');
+    lines.push('Medication options:');
+    lines.push('  • Melatonin 1–5mg — highly effective, especially in ADHD/ASD; 3–4 hrs before bed.');
+    lines.push('  • Clonidine 50–200mcg — useful for nocturnal agitation or hyperarousal.');
+    lines.push('  • Lemborexant 5–10mg.');
+    lines.push('  • Suvorexant 15–30mg.');
+    lines.push('  • Doxylamine 12.5–50mg — short-term; next-day sedation common.');
+    lines.push('  • Mirtazapine 15–30mg — also addresses mood / anxiety; monitor weight.');
+    lines.push('  • Quetiapine 12.5–50mg IR.');
+    lines.push('  • Benzodiazepines — reserve for severe insomnia crisis only, <4 weeks.');
+    lines.push('');
+    lines.push('Recommended products: Re-Timer 3 light therapy glasses (retimer.com.au); Manta Sleep SOUND mask (mantasleep.com.au); Loop Dream / Quiet 2 earplugs (au.loopearplugs.com).');
   }
 
   if(hocState.inc.has('nonstim')){
     lines.push('');
     lines.push('NON-STIMULANT ALTERNATIVES (no S8 authority required)');
-    lines.push('• Atomoxetine (Strattera) — SNRI; once daily; 4–12 weeks to full effect; useful for comorbid anxiety; rare hepatotoxicity. PBS streamlined.');
-    lines.push('• Guanfacine XR (Intuniv) — alpha-2 agonist; useful for hyperactivity, impulsivity, emotional dysregulation; monitor BP; do not stop abruptly. PBS requires childhood diagnosis.');
-    lines.push('• Clonidine (Catapres) — off-label adjunct; primarily for sleep, hyperarousal, tics; monitor BP. Private script.');
+    lines.push('• Atomoxetine (Strattera) — selective NRI; once daily; 4–12 weeks to full effect; useful for comorbid anxiety; rare hepatotoxicity. Most psychiatrists are happy to initiate this and create a titration plan.');
+    lines.push('• Guanfacine XR (Intuniv) — alpha-2 agonist; useful for hyperactivity and impulsivity; monitor BP; cannot stop abruptly. PBS access requires childhood diagnosis — otherwise ~$30–50/month privately.');
+    lines.push('• Clonidine (Catapres) — off-label adjunct; primarily for sleep and tics; monitor BP; can be very effective for nocturnal agitation or hyperarousal.');
   }
 
   if(hocState.inc.has('referback')){
     lines.push('');
     lines.push('WHEN TO REFER BACK TO PSYCHIATRY');
-    lines.push('• Inadequate treatment response or need for dose escalation beyond current regimen');
-    lines.push('• New psychiatric symptoms not warranting ED presentation');
-    lines.push('• Concerns about whether the patient should remain on stimulants');
-    lines.push('• Significant or persistent side effects');
-    lines.push('• Pregnancy or breastfeeding');
-    lines.push('• Suspected psychosis or mania — psychiatric emergency; cease stimulant immediately and arrange ED or urgent community mental health review (more common when combined with cannabis)');
+    lines.push('• Inadequate treatment response or need for dose escalation beyond the current regimen.');
+    lines.push('• New psychiatric symptoms not warranting ED presentation.');
+    lines.push('• Concerns about whether the patient should remain on stimulants.');
+    lines.push('• Significant or persistent side effects.');
+    lines.push('• Pregnancy or breastfeeding.');
+    lines.push('');
+    lines.push('PSYCHOSIS OR MANIA — PSYCHIATRIC EMERGENCY');
+    lines.push('Rare but more common in patients combining stimulants with cannabis. Cease stimulant medication immediately. Make a judgement call about sending the patient to ED (recommended), or manage in the community with antipsychotics while arranging urgent public community mental health review.');
+  }
+
+  if(hocState.inc.has('resources')){
+    lines.push('');
+    lines.push('USEFUL RESOURCES');
+    lines.push('• Pandion Health state-by-state guide (March 2026): pandionhealth.com.au/adhd-stimulant-prescribing-in-australia-a-step-by-step-guide-for-every-state');
+    lines.push('• RACGP Adult ADHD in General Practice: racgp.org.au/FSDEDEV/media/documents/Faculties/SI/RACGP-Adult-ADHD-in-general-practice.pdf');
+    lines.push('• AADPA Prescribing Regulations guide (updated regularly): aadpa.com.au/adhd-stimulant-prescribing-regulations-in-australia-new-zealand');
+    lines.push('• AADPA Prescribing Guide for GPs: aadpa.com.au/adhd-prescribing-guide-for-general-practice');
   }
 
   if(notes){
