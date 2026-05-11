@@ -428,6 +428,9 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
 }
 .script-box{background:var(--slate-bg); border:1px solid var(--border); color:var(--ink-soft)}
 .script-box .label{color:var(--slate)}
+.script-box.short-box{background:var(--primary-bg); border-color:#d6e4fc; margin-top:8px}
+.script-box.short-box .label{color:var(--primary)}
+.script-box.short-box pre{font:13.5px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--ink)}
 .script-box pre{
   margin:0; font:13px/1.6 "Inter",sans-serif; white-space:pre-wrap;
   color:var(--ink); background:transparent; padding:0;
@@ -2194,13 +2197,15 @@ function renderTit(){
     scriptText = ''; // no single ongoing dose for the conversion table
   } else {
     const colCount = times.length + 1;
-    const tableRows = proto.steps.map(step=>{
+    const tableRows = proto.steps.map((step,i)=>{
+      const prev = i>0 ? proto.steps[i-1] : null;
+      const phaseDisplay = displayPhaseLabel(step, prev);
       const cells = times.map(t=>{
         const d = dosesAtTime(step,t);
         return `<td class="dose" data-time="${TIME_LABEL[t]}">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
       }).join('');
       const doseRow = `<tr class="${step.ongoing?'ongoing':''}">
-          <td class="phase">${escHtml(step.label)}${step.ongoing?'<div class="ongoing-tag">ongoing</div>':''}</td>
+          <td class="phase">${escHtml(phaseDisplay)}${step.ongoing?'<div class="ongoing-tag">ongoing</div>':''}</td>
           ${cells}
         </tr>`;
       const noteRow = step.note
@@ -2218,6 +2223,7 @@ function renderTit(){
     </table></div>`;
     scriptText = buildScriptText(med, proto);
   }
+  const shortScript = isConversion ? '' : buildShortScript(med, proto);
 
   const auth = proto.auth || med.auth || '';
 
@@ -2233,15 +2239,35 @@ function renderTit(){
       <div class="tit-actions">
         ${copyTableBtn}
         ${scriptText?`<button class="copybtn" onclick="copyTitScript(this)">Copy directions</button>`:''}
+        ${shortScript?`<button class="copybtn" onclick="copyTitShort(this)">Copy eScript-short ✨</button>`:''}
         ${auth?`<button class="copybtn" onclick="copyTitAuth(this)">Copy authority text</button>`:''}
       </div>
       ${scriptText?`<div class="script-box"><span class="label">Titration directions</span><pre id="tit-script-text">${escHtml(scriptText)}</pre></div>`:''}
+      ${shortScript?`<div class="script-box short-box"><span class="label">eScript-short version (fits in directions field)</span><pre id="tit-short-text">${escHtml(shortScript)}</pre></div>`:''}
       ${auth?`<div class="auth-box"><span class="label">Authority / prescribing notes</span><span id="tit-auth-text">${escHtml(auth)}</span></div>`:''}
     </div>`;
 }
 
 function selectTitMed(k){titMed=k; titProto=null; renderTit(); if(typeof hocRender==='function') hocRender(); if(typeof renderTrt==='function') renderTrt();}
 function selectTitProto(k){titProto=k; renderTit(); if(typeof hocRender==='function') hocRender(); if(typeof renderTrt==='function') renderTrt();}
+
+// Derive a "Week N+" / "Day N+" prefix from the previous step,
+// so the ongoing phase reads "Week 4+ — 50mg" instead of "Ongoing — 50mg".
+function deriveOngoingPrefix(prev){
+  if(!prev) return null;
+  let m = prev.label.match(/^Weeks?\s+(\d+)(?:-(\d+))?\b/i);
+  if(m) return `Week ${parseInt(m[2]||m[1],10)+1}+`;
+  m = prev.label.match(/^Days?\s+(\d+)(?:-(\d+))?\b/i);
+  if(m) return `Day ${parseInt(m[2]||m[1],10)+1}+`;
+  return null;
+}
+function displayPhaseLabel(step, prev){
+  if(step.ongoing && /^ongoing\b/i.test(step.label)){
+    const pre = deriveOngoingPrefix(prev);
+    if(pre) return step.label.replace(/^ongoing/i, pre);
+  }
+  return step.label;
+}
 
 // Build plain-English titration directions — every phase as a line.
 function buildScriptText(med, proto){
@@ -2251,16 +2277,65 @@ function buildScriptText(med, proto){
   const lines = [];
   lines.push(med.name+(proto.label?' — '+proto.label:''));
   lines.push('');
-  proto.steps.forEach(step=>{
+  proto.steps.forEach((step,i)=>{
+    const prev = i>0 ? proto.steps[i-1] : null;
     const ordered = TIME_ORDER.filter(t=>(step.doses||[]).some(d=>d.t===t));
     const parts = ordered.map(t=>{
       const ds = (step.doses||[]).filter(d=>d.t===t).map(d=>d.l).join(' + ');
       return ds+' '+TIME_PHRASE[t];
     });
-    const phaseLabel = step.label+((step.ongoing && !/ongoing/i.test(step.label))?' (ongoing)':'');
+    const phaseLabel = displayPhaseLabel(step, prev);
     let line = phaseLabel+': '+parts.join(' + ')+'.';
     if(step.note) line += '   '+step.note;
     lines.push(line);
+  });
+  return lines.join('\n');
+}
+
+// Build short eScript-friendly directions.
+// "Wk1: 1/2 tab mane, 1/2 tab midi, 1/2 tab PM"
+function buildShortScript(med, proto){
+  if(!proto || !proto.steps || !proto.steps.length || proto.conversion) return '';
+  const TIME_ORDER = ['morning','midday','afternoon','evening','night'];
+  const TIME_ABBR  = {morning:'mane', midday:'midi', afternoon:'PM', evening:'eve', night:'noct'};
+  function shortPhase(label, prev, isOngoing){
+    if(isOngoing && /^ongoing\b/i.test(label)){
+      let mm = prev && prev.label.match(/^Weeks?\s+(\d+)(?:-(\d+))?\b/i);
+      if(mm) return label.replace(/^ongoing/i, `Wk${parseInt(mm[2]||mm[1],10)+1}+`).replace(/^Wk(\d+\+)/, 'Wk$1');
+      mm = prev && prev.label.match(/^Days?\s+(\d+)(?:-(\d+))?\b/i);
+      if(mm) return label.replace(/^ongoing/i, `D${parseInt(mm[2]||mm[1],10)+1}+`);
+    }
+    // Shorten Week / Days prefixes
+    let m = label.match(/^Weeks?\s+(\d+)(?:-(\d+))?(.*)$/i);
+    if(m) return 'Wk'+m[1]+(m[2]?'-'+m[2]:'')+(m[3]||'');
+    m = label.match(/^Days?\s+(\d+)(?:-(\d+))?(.*)$/i);
+    if(m) return 'D'+m[1]+(m[2]?'-'+m[2]:'')+(m[3]||'');
+    return label;
+  }
+  const singleStrength = med.strengths && med.strengths.length === 1;
+  function shortDose(l){
+    let s = String(l).replace(/\s*=\s*\d+(?:\.\d+)?(?:mg|mcg)\s*$/, '');
+    if(singleStrength){
+      // Only one strength exists — drop the redundant "(Xmg)" total
+      s = s.replace(/\s*\([^)]*(?:mg|mcg)\)/g, '');
+    }
+    s = s.replace(/¼/g,'1/4').replace(/¾/g,'3/4').replace(/1½/g,'1.5')
+         .replace(/2½/g,'2.5').replace(/3½/g,'3.5').replace(/4½/g,'4.5').replace(/½/g,'1/2');
+    s = s.replace(/\btabs\b/gi,'tab').replace(/\bcaps\b/gi,'cap');
+    return s.replace(/\s+/g,' ').trim();
+  }
+  const lines = [];
+  lines.push(med.name+(proto.label?' — '+proto.label:''));
+  lines.push('');
+  proto.steps.forEach((step,i)=>{
+    const prev = i>0 ? proto.steps[i-1] : null;
+    const ordered = TIME_ORDER.filter(t=>(step.doses||[]).some(d=>d.t===t));
+    const parts = ordered.map(t=>{
+      const ds = (step.doses||[]).filter(d=>d.t===t).map(d=>shortDose(d.l)).join(' + ');
+      return ds+' '+TIME_ABBR[t];
+    });
+    const phase = shortPhase(step.label, prev, step.ongoing);
+    lines.push(phase+': '+parts.join(', '));
   });
   return lines.join('\n');
 }
@@ -2296,6 +2371,12 @@ function copyTitScript(btn){
   const t = document.getElementById('tit-script-text');
   if(!t) return;
   navigator.clipboard.writeText(t.textContent).then(()=>flashCopy(btn,'Copy directions'));
+}
+
+function copyTitShort(btn){
+  const t = document.getElementById('tit-short-text');
+  if(!t) return;
+  navigator.clipboard.writeText(t.textContent).then(()=>flashCopy(btn,'Copy eScript-short ✨'));
 }
 
 function copyTitAuth(btn){
