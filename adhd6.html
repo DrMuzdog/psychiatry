@@ -164,6 +164,11 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
   font:600 10.5px/1 "Inter",sans-serif; color:var(--primary);
   text-transform:uppercase; letter-spacing:.08em; margin-bottom:7px;
 }
+.probes .explain{
+  margin-top:9px; padding-top:9px; border-top:1px dashed #c7ddff;
+  font-size:13px; line-height:1.55; color:var(--ink-soft);
+}
+.probes .explain strong{font-weight:600; color:var(--ink)}
 
 /* Two-column dot grids */
 .twocol{display:grid; grid-template-columns:1fr; gap:18px}
@@ -292,35 +297,69 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
 .proto-tab:hover{border-color:var(--primary); color:var(--primary)}
 .proto-tab.on{background:var(--primary); border-color:var(--primary); color:#fff}
 
+.tit-table-wrap{
+  margin:10px 0; overflow-x:auto;
+  border:1px solid var(--border); border-radius:6px;
+}
 .tit-table{
-  width:100%; border-collapse:collapse; margin:10px 0;
+  width:100%; border-collapse:collapse;
   font-size:13.5px; background:#fff;
 }
 .tit-table th, .tit-table td{
-  border:1px solid var(--border); padding:9px 11px; text-align:left;
+  border-bottom:1px solid var(--border); padding:9px 12px; text-align:left;
   vertical-align:top;
 }
 .tit-table th{
-  background:var(--slate-bg); font:600 11.5px/1.2 "Inter",sans-serif;
-  color:var(--slate); text-transform:uppercase; letter-spacing:.04em;
+  background:var(--slate-bg); font:600 11px/1.2 "Inter",sans-serif;
+  color:var(--slate); text-transform:uppercase; letter-spacing:.06em;
+  position:sticky; top:0;
 }
-.tit-table .phase{font-weight:600; color:var(--ink); white-space:nowrap}
-.tit-table .ongoing td{background:var(--green-bg)}
-.tit-table .ongoing .phase{color:var(--green)}
-.tit-table .dose{font-variant-numeric:tabular-nums}
+.tit-table tbody tr:last-child td{border-bottom:none}
+.tit-table .phase{
+  font-weight:600; color:var(--ink); white-space:nowrap;
+  min-width:120px;
+}
+.tit-table .phase .ongoing-tag{
+  display:inline-block; margin-top:3px;
+  font:600 9.5px/1 "Inter",sans-serif; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--green);
+  background:var(--green-bg); border:1px solid #bbf7d0;
+  padding:2px 6px; border-radius:3px;
+}
+.tit-table tr.ongoing td{background:#fafdfb}
+.tit-table .dose{font-variant-numeric:tabular-nums; white-space:nowrap}
 .tit-table .none{color:var(--muted)}
-.tit-table .note{font-size:12.5px; color:var(--muted); font-style:italic}
-
-.auth-box{
-  margin-top:14px; padding:11px 14px;
-  background:var(--amber-bg); border:1px solid #fde0a3;
-  border-radius:6px; font-size:13px; color:#7a4f00; line-height:1.55;
+.tit-table tr.note-row td{
+  border-top:none; border-bottom:1px solid var(--border);
+  padding:4px 14px 10px; background:transparent;
 }
-.auth-box .label{
-  font:600 10.5px/1 "Inter",sans-serif; color:var(--amber);
-  text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px;
+.tit-table tr.note-row.ongoing td{background:#fafdfb}
+.tit-table tr.note-row .note{
+  font-size:12.5px; color:var(--muted); font-style:italic;
+  line-height:1.5;
+}
+
+.tit-actions{
+  display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 4px;
+}
+
+.script-box, .auth-box{
+  margin-top:14px; padding:12px 14px;
+  border-radius:6px; font-size:13px; line-height:1.55;
+}
+.script-box .label, .auth-box .label{
+  font:600 10.5px/1 "Inter",sans-serif;
+  text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;
   display:block;
 }
+.script-box{background:var(--slate-bg); border:1px solid var(--border); color:var(--ink-soft)}
+.script-box .label{color:var(--slate)}
+.script-box pre{
+  margin:0; font:13px/1.6 "Inter",sans-serif; white-space:pre-wrap;
+  color:var(--ink); background:transparent; padding:0;
+}
+.auth-box{background:var(--amber-bg); border:1px solid #fde0a3; color:#7a4f00}
+.auth-box .label{color:var(--amber)}
 
 /* Follow-up */
 .fu-grid{display:grid; grid-template-columns:1fr; gap:11px}
@@ -438,7 +477,7 @@ footer{
 <section class="card violet" id="sec-e">
   <div class="ch"><span class="num">E</span>Not better explained by another condition</div>
   <div class="body">
-    <p class="lead">Screen each differential briefly. Comorbidity is the rule, not the exception.</p>
+    <p class="lead">For each differential — 2–3 differentiating questions, then a brief note on how to discern from ADHD. Click any line to expand.</p>
     <ul class="dots" data-section="differentials"></ul>
   </div>
 </section>
@@ -446,7 +485,7 @@ footer{
 <section class="card rose" id="sec-sub">
   <div class="ch"><span class="num">·</span>Substance use</div>
   <div class="body">
-    <p class="lead">Screen every drug class. Don't skip caffeine, nicotine, or prescribed sedatives. Current vs past matters for safety.</p>
+    <p class="lead">Clinical notes per substance — what to look out for, red flags, treatment implications. Click any line to expand.</p>
     <ul class="dots" data-section="substances"></ul>
   </div>
 </section>
@@ -454,7 +493,7 @@ footer{
 <section class="card red" id="sec-card">
   <div class="ch"><span class="num">·</span>Cardiac screen</div>
   <div class="body">
-    <p class="lead">Stimulants are cardiovascular drugs. Any red flag here means defer and refer.</p>
+    <p class="lead">Clinical implications per finding — when to defer, when to refer, what to monitor. Click any line to expand.</p>
     <ul class="dots" data-section="cardiac"></ul>
   </div>
 </section>
@@ -462,7 +501,7 @@ footer{
 <section class="card teal" id="sec-med">
   <div class="ch"><span class="num">·</span>Medical history</div>
   <div class="body">
-    <p class="lead">Broader medical context — what could complicate stimulant treatment, or what could be the real explanation.</p>
+    <p class="lead">What each condition means for ADHD pharmacotherapy — agent choice, dosing, monitoring. Click any line to expand.</p>
     <ul class="dots" data-section="medical"></ul>
   </div>
 </section>
@@ -470,7 +509,7 @@ footer{
 <section class="card teal" id="sec-rx">
   <div class="ch"><span class="num">·</span>Current medications &amp; interactions</div>
   <div class="body">
-    <p class="lead">Full medication reconciliation — including OTC, supplements, herbals. Specific interactions to clear before stimulant.</p>
+    <p class="lead">Specific interactions, contraindications, and combinations to watch for. Click any line to expand.</p>
     <ul class="dots" data-section="meds"></ul>
   </div>
 </section>
@@ -740,264 +779,528 @@ settings: [
 ],
 
 impairment: [
-  {t:"Attention difficulties — meetings, reading, conversations",
-   q:["What's the actual cost — missed promotions, repeat year of study, forgotten obligations?"]},
-  {t:"Task initiation — chronic procrastination",
-   q:["What does the procrastination look like in your life right now?"]},
-  {t:"Disorganisation — physical, digital, mental",
-   q:["What's lost or late this week because of disorganisation?"]},
-  {t:"Time management / time blindness",
-   q:["Always late? Or always 30 minutes early because lateness terrifies you?"]},
-  {t:"Forgetfulness — appointments, names, commitments",
-   q:["What has forgetting cost you — friendship, job, relationship?"]},
-  {t:"Impulsivity — financial, social, sexual, dietary",
-   q:["Any decisions made impulsively that you'd take back?",
-      "Money — spending, gambling, investing without thinking?",
-      "Said or done anything impulsively that damaged a relationship?"]},
-  {t:"Restlessness — physical or internal",
-   q:["What does restlessness stop you from doing — meditation, rest, deep work?"]},
-  {t:"Emotional dysregulation",
-   q:["Big feelings, fast — go from 0 to 100 in seconds?",
-      "Outbursts you regret? Crying / shouting / shutting down?"]},
-  {t:"Rejection sensitive dysphoria (RSD)",
-   q:["Does perceived criticism or rejection floor you for hours or days?",
-      "Avoid challenges because the possibility of failing feels unbearable?"]},
-  {t:"Low mood — secondary to chronic underperformance",
-   q:["Has the underperformance made you feel low about yourself?"]},
-  {t:"Anxiety — performance, social, generalised",
-   q:["Is the anxiety mostly about coping / keeping up / being found out?"]},
-  {t:"Burnout — cycles of overdrive then collapse",
-   q:["Push hard, burn out, recover, push hard again — does that pattern fit?"]},
-  {t:"Sleep — delayed onset, can't switch off",
-   q:["Bedtime — can you switch your brain off, or does it spool up?"]},
-  {t:"Substance use as self-regulation",
-   q:["Anything you use to switch your brain off — alcohol, cannabis, food, screens, scrolling?"]},
-  {t:"Eating dysregulation — binge / forget / impulse",
-   q:["Eating patterns — skip meals then binge? Eat impulsively?"]},
-  {t:"Relationship difficulties",
-   q:["Has anyone left you, or threatened to, because of these patterns?"]},
-  {t:"Workplace underperformance / unemployment",
-   q:["Where are you now vs. where you thought you'd be at this age?"]},
-  {t:"Financial difficulties",
-   q:["Are finances okay? Late fees, debts, money disappearing?"]},
-  {t:"Driving safety",
-   q:["Insurance excess used? Demerit points?"]},
-  {t:"Sensory sensitivities",
-   q:["Sensitive to noise, light, textures, smells — to the point of overwhelm?"]},
+  {t:"Attention difficulties — meetings, reading, conversations", q:[
+    "What's the actual cost — missed promotions, repeat year of study, forgotten obligations?",
+    "How often do you have to ask for things to be repeated, in a typical week?",
+    "What's the hit-rate on instructions you receive — get them right first time, or constantly need clarification?",
+    "How long is the longest piece of text you've been able to read attentively in the past month?"
+  ]},
+  {t:"Task initiation — chronic procrastination", q:[
+    "Walk me through what tax / paperwork / admin looks like in your life right now.",
+    "What's the longest you've avoided starting something important — days, weeks, months?",
+    "Is the procrastination painful and ego-dystonic, or do you genuinely not care about the task?",
+    "Are you only able to start when the deadline becomes terrifying?"
+  ]},
+  {t:"Disorganisation — physical, digital, mental", q:[
+    "What's lost or late this week because of disorganisation?",
+    "How much time do you spend looking for things in a typical day?",
+    "Inbox count? Open browser tabs? Unread messages?",
+    "Has disorganisation cost you a job, a relationship, money?"
+  ]},
+  {t:"Time management / time blindness", q:[
+    "Always late, or always 30 minutes early because lateness terrifies you?",
+    "Can you accurately estimate how long a task will take? Off by what factor?",
+    "Do deadlines blindside you? When do they start feeling real — a week before, a day, an hour?",
+    "Do you lose hours without noticing when on the phone / computer?"
+  ]},
+  {t:"Forgetfulness — appointments, names, commitments", q:[
+    "What has forgetting cost you — friendship, job, relationship, money?",
+    "How many appointments have you missed in the past three months?",
+    "Forget to take medication, eat, drink water, reply to messages?",
+    "Forget commitments you've made — promises to family / partner / colleagues?"
+  ]},
+  {t:"Impulsivity — financial, social, sexual, dietary", q:[
+    "Any decisions made impulsively that you'd take back?",
+    "Money — spending, gambling, investing without thinking?",
+    "Said or done anything impulsively that damaged a relationship?",
+    "Eating, drinking, drug use, sexual decisions — patterns of acting before thinking?",
+    "Has impulsivity ever put you in physical danger — driving, risky decisions?"
+  ]},
+  {t:"Restlessness — physical or internal", q:[
+    "What does restlessness stop you from doing — meditation, rest, deep work?",
+    "Holidays — can you actually sit still and do nothing, or is it agonising?",
+    "Hard to relax even when you're exhausted?",
+    "Need constant background stimulation (music, podcast, second screen)?"
+  ]},
+  {t:"Emotional dysregulation", q:[
+    "Big feelings, fast — go from 0 to 100 in seconds?",
+    "Outbursts you regret? Crying, shouting, shutting down?",
+    "How long does it take to come back to baseline after being triggered?",
+    "Has emotional reactivity cost you relationships, jobs, friendships?"
+  ]},
+  {t:"Rejection sensitive dysphoria (RSD)", q:[
+    "Does perceived criticism or rejection floor you for hours or days?",
+    "Avoid challenges because the possibility of failing feels unbearable?",
+    "Replay perceived slights repeatedly — even small ones?",
+    "Has RSD shaped your career choices — avoiding promotion, performance review, feedback?"
+  ]},
+  {t:"Low mood — secondary to chronic underperformance", q:[
+    "Has the underperformance made you feel low about yourself?",
+    "Imposter syndrome — feeling you'll be found out?",
+    "Has the gap between potential and performance become a source of grief?",
+    "When did you stop believing you could change things?"
+  ]},
+  {t:"Anxiety — performance, social, generalised", q:[
+    "Is the anxiety mostly about coping / keeping up / being found out?",
+    "Performance anxiety — only when stakes are high, or constant?",
+    "Social anxiety — when did it start, has it ever resolved?",
+    "Is the anxiety a driver (gets things done) or a paralysis?"
+  ]},
+  {t:"Burnout — cycles of overdrive then collapse", q:[
+    "Push hard, burn out, recover, push hard again — does that pattern fit?",
+    "Last burnout — when, how long did recovery take, what triggered it?",
+    "Are you in a burnout phase right now?",
+    "Is the cycle getting shorter / more frequent over time?"
+  ]},
+  {t:"Sleep — delayed onset, can't switch off", q:[
+    "Bedtime — can you switch your brain off, or does it spool up?",
+    "What time would your body naturally want to sleep and wake?",
+    "How many hours do you actually sleep on a normal week night?",
+    "Daytime sleepiness — Epworth?"
+  ]},
+  {t:"Substance use as self-regulation", q:[
+    "Anything you use to switch your brain off — alcohol, cannabis, food, screens, scrolling?",
+    "What does the substance do for you that nothing else does?",
+    "Have you tried to stop / cut down — what happened?"
+  ]},
+  {t:"Eating dysregulation — binge / forget / impulse", q:[
+    "Eating patterns — skip meals then binge? Eat impulsively?",
+    "Forget to eat for hours, then ravenous?",
+    "Binge in response to boredom, stress, frustration?",
+    "Weight history — fluctuations, patterns?"
+  ]},
+  {t:"Relationship difficulties", q:[
+    "Has anyone left you, or threatened to, because of these patterns?",
+    "What's the most common complaint your partner has about living with you?",
+    "Family of origin still ring you about forgotten birthdays / promises?",
+    "Friendships lost to unreliability, last-minute cancelling, forgotten plans?"
+  ]},
+  {t:"Workplace underperformance / unemployment", q:[
+    "Where are you now vs. where you thought you'd be at this age?",
+    "Performance reviews — pattern of feedback?",
+    "Lost jobs, warnings, formal performance management?",
+    "Currently working at full capacity, or constantly underperforming relative to ability?"
+  ]},
+  {t:"Financial difficulties", q:[
+    "Are finances okay? Late fees, debts, money disappearing?",
+    "Bills paid on time, or surprise red letters?",
+    "Impulse spending — what's the worst recent example?",
+    "Tax — up to date, or years behind?"
+  ]},
+  {t:"Driving safety", q:[
+    "Crashes, near-misses, fines, suspensions?",
+    "Demerit points, insurance excess used in the past 12 months?",
+    "Lose track on long drives — miss exits, run reds?",
+    "Road rage or impatient driving?"
+  ]},
+  {t:"Sensory sensitivities", q:[
+    "Sensitive to noise, light, textures, smells — to the point of overwhelm?",
+    "Clothing tags, sock seams, specific fabrics — issues?",
+    "Sensory shutdown when overstimulated — what does that look like?",
+    "Need to mask sensory input regularly (headphones, sunglasses, etc.)?"
+  ]},
 ],
-
 differentials: [
-  {t:"Mood — Depression",
-   q:["Anhedonia, low mood, hopelessness — present most days for ≥2 weeks at any point?",
-      "Has there been a period where you couldn't get out of bed for a week or more?",
-      "Could the 'inattention' be depressive cognitive slowing instead?"]},
-  {t:"Mood — Bipolar (I or II, hypomania)",
-   q:["Ever had ≥4 days of elevated mood, reduced sleep need, racing thoughts, increased activity?",
-      "Spending sprees, hypersexuality, grandiose plans during these periods?",
-      "Family history of bipolar — anyone hospitalised, lithium, ECT?",
-      "Crucial before stimulants: untreated bipolar is a relative contraindication."]},
-  {t:"Anxiety — GAD, social, panic",
-   q:["Is the restlessness anxiety-driven or motor-driven?",
-      "Worry that you can't switch off — is it focused or constant?",
-      "Panic attacks? Social avoidance?"]},
-  {t:"PTSD / trauma",
-   q:["Any traumatic events — childhood, adult, witnessed?",
-      "Nightmares, flashbacks, hypervigilance, avoidance?",
-      "Trauma can mimic ADHD: hypervigilance ≠ distractibility, but looks similar."]},
-  {t:"Autism spectrum",
-   q:["Lifelong social differences — friendships, reading rooms, intense interests?",
-      "Need for routine, sensory sensitivity, masking exhaustion?",
-      "50–70% overlap with ADHD — flag for AuDHD framing if both."]},
-  {t:"OCD",
-   q:["Intrusive thoughts driving compulsive behaviour to neutralise them?",
-      "Time-consuming rituals — handwashing, checking, counting, ordering?",
-      "Distinguishing from ADHD: ADHD is forgetful, OCD is rigid."]},
-  {t:"Psychosis / schizophrenia spectrum",
-   q:["Ever felt people were watching, talking about you, putting thoughts in your head?",
-      "Heard voices others can't hear?",
-      "Family history of psychosis changes the risk-benefit of stimulants."]},
-  {t:"Personality — BPD especially",
-   q:["Pattern of intense unstable relationships, identity disturbance, chronic emptiness?",
-      "Pattern of self-harm or recurrent crises?",
-      "BPD and ADHD overlap heavily in emotional dysregulation."]},
-  {t:"Eating disorders — restrict, binge, purge",
-   q:["Any pattern of restriction, binge eating, or purging?",
-      "Stimulants in active eating disorders need very careful thought."]},
-  {t:"Sleep disorders — OSA, delayed phase, insomnia",
-   q:["Snoring, witnessed apnoeas, daytime sleepiness — Epworth?",
-      "Untreated OSA mimics ADHD inattention almost perfectly."]},
-  {t:"Medical / neurological",
-   q:["Thyroid checked? Iron, ferritin, B12?",
-      "Head injury, seizures, neurological history?",
-      "TBI can cause an acquired ADHD-like syndrome."]},
-  {t:"Medication / iatrogenic",
-   q:["Any current medication that could cause attention / restlessness — steroids, beta-agonists, antihistamines, antipsychotics?"]},
+  {t:"Depression", qLabel:"Differentiating questions", q:[
+    "When your mood is normal, do attention and organisation problems still remain?",
+    "Did concentration problems begin only during depressive episodes?",
+    "Has low mood been present more days than not for years, or in discrete episodes?"
+  ], explain:"<strong>How to discern:</strong> ADHD is lifelong and trait-like — symptoms persist between mood episodes. Depression produces episodic cognitive slowing tied to mood. If concentration improves dramatically when mood lifts, think depression. If it persists regardless of mood, ADHD is likely (or comorbid). Anhedonia is depression; chronic boredom is ADHD."},
+  {t:"Bipolar-spectrum disorder", qLabel:"Differentiating questions", q:[
+    "Have there been clear episodes of elevated or irritable mood with reduced need for sleep?",
+    "Do periods of high energy and risk-taking alternate with more normal or low periods?",
+    "Is distractibility tied mainly to mood episodes rather than being lifelong?"
+  ], explain:"<strong>How to discern:</strong> ADHD restlessness is constant; bipolar restlessness is episodic and goal-directed. Bipolar hypomania involves reduced sleep <em>need</em> (not delayed onset), grandiosity, and pressured productive activity. ADHD impulsivity is trait-level and present every day. Family history of bipolar + episodic mood = treat the bipolar first. Misdiagnosis is consequential — stimulants in untreated bipolar can precipitate mania."},
+  {t:"Anxiety disorder (GAD, social, panic)", qLabel:"Differentiating questions", q:[
+    "Does your mind wander due to general distractibility, or because it gets stuck on worry?",
+    "When anxiety settles, do focus and organisation improve substantially?",
+    "Does avoidance feel more about fear / perfectionism than about boredom or difficulty starting?"
+  ], explain:"<strong>How to discern:</strong> Anxiety attention is hijacked by worry — focused but on the wrong content. ADHD attention drifts to whatever is novel or stimulating. Anxiety restlessness has a cognitive 'fear' quality; ADHD restlessness is motor / sensorimotor. Treatment of anxiety reduces inattention if anxiety is primary. Comorbidity is common — many adults with ADHD develop anxiety secondary to chronic underperformance."},
+  {t:"PTSD / complex trauma", qLabel:"Differentiating questions", q:[
+    "Did concentration problems begin after trauma exposure?",
+    "Is attention hijacked by hypervigilance, intrusive memories, or dissociation?",
+    "Do symptoms spike around triggers rather than being constant?"
+  ], explain:"<strong>How to discern:</strong> Trauma hypervigilance can look exactly like ADHD distractibility. Key clues: <em>onset</em> after trauma (vs. lifelong), spike around triggers (vs. constant), nightmares / flashbacks / avoidance, dissociation. Complex trauma adds affect dysregulation and identity disturbance, overlapping with ADHD + BPD picture. Treat trauma first if symptoms started post-trauma."},
+  {t:"Autism spectrum", qLabel:"Differentiating questions", q:[
+    "Have there been longstanding differences in social communication and flexibility?",
+    "Are task problems driven more by rigidity / sensory overload than distractibility?",
+    "Were autistic traits present before academic attention issues were noticed?"
+  ], explain:"<strong>How to discern:</strong> ADHD and ASD overlap in 50–70% of cases — both can co-exist (AuDHD). ASD-only: difficulty with change, intense focused interests, sensory sensitivities, social-communication differences. ADHD-only: variable attention, broad impulsivity, low routine adherence. Both: many adults present here — flag for ASD assessment and frame treatment accordingly."},
+  {t:"OCD / OCD-spectrum", qLabel:"Differentiating questions", q:[
+    "Is time lost to rituals, checking, or intrusive thoughts rather than distractibility?",
+    "Are you late because of compulsions rather than losing track of time?",
+    "When compulsions are managed, do executive problems substantially resolve?"
+  ], explain:"<strong>How to discern:</strong> ADHD is forgetful and disorganised; OCD is the opposite — rigid, over-checking, ritualised. The lateness has different causes: ADHD = time blindness and underestimating tasks; OCD = repeated checking, re-doing, ritual completion. Intrusive thoughts driving behaviour = OCD. SSRIs treat OCD; stimulants can worsen anxiety in OCD."},
+  {t:"Personality — BPD especially", qLabel:"Differentiating questions", q:[
+    "Is the core difficulty unstable relationships, identity and affect, rather than inattention?",
+    "Are impulsive acts mostly linked to relational crises or intense emotional states?",
+    "When affect is regulated, do executive symptoms largely resolve?",
+    "Is there chronic emptiness or identity disturbance beyond time-blindness and disorganisation?"
+  ], explain:"<strong>How to discern:</strong> BPD and ADHD share emotional dysregulation, impulsivity, and RSD. Key BPD features ADHD lacks: identity disturbance, chronic emptiness, frantic abandonment efforts, transient stress-related dissociation / paranoia, recurrent suicidality / self-harm. ADHD impulsivity is broad (financial, dietary, social); BPD impulsivity is largely relational. Comorbid is common — treat both. DBT + stimulant trial is a viable combination."},
+  {t:"Psychosis / schizophrenia spectrum", qLabel:"Differentiating questions", q:[
+    "Are there positive symptoms — hallucinations, delusions, disorganised thinking?",
+    "Did concentration change markedly around psychotic symptom onset?",
+    "Is there negative symptom burden — flat affect, avolition?"
+  ], explain:"<strong>How to discern:</strong> ADHD does not include positive symptoms. Disorganised speech in ADHD is tangential / hyperverbal but coherent; psychosis includes loosening, derailment, neologisms. Avolition in schizophrenia is flat / unreactive; ADHD task avoidance is interest-driven (highly capable in engaging tasks). Family history of psychosis + first-episode age = caution before any stimulant. Stimulants can precipitate or worsen psychosis."},
+  {t:"Eating disorders (AN, BN, BED)", qLabel:"Differentiating questions", q:[
+    "Are there significant dietary restriction, binge eating, or purging?",
+    "Could cognitive symptoms be partly explained by malnutrition or low weight?",
+    "Is impulsivity mainly expressed through eating rather than across domains?"
+  ], explain:"<strong>How to discern:</strong> Malnutrition itself impairs cognition — restore weight before final diagnostic decision. ED + ADHD comorbid is common, especially BED. Stimulants in active restriction or BED with restriction patterns are problematic (worsen restriction). Treat the ED first; reassess ADHD once nutritionally stable. ADHD treatment can reduce BED frequency in selected patients."},
+  {t:"Sleep disorder (OSA, delayed phase, insomnia)", qLabel:"Differentiating questions", q:[
+    "Are you consistently short on sleep or unrefreshed on waking?",
+    "Do you snore loudly, stop breathing, or have restless legs at night?",
+    "Do cognitive problems track sleep quality more than anything else?"
+  ], explain:"<strong>How to discern:</strong> Untreated OSA mimics ADHD perfectly — inattention, irritability, hyperactivity in some children. Epworth ≥10 + snoring + BMI elevated = sleep study. Delayed sleep phase syndrome very common in ADHD — natural night owls forced into a 9-to-5. Treat the sleep disorder first and reassess; many supposed-ADHD cases resolve."},
+  {t:"Neurodegenerative disorder", qLabel:"Differentiating questions", q:[
+    "Is there a noticeable decline from a previously higher level of functioning?",
+    "Are memory, language, or processing speed declining over months to years?",
+    "Are activities of daily living now compromised?"
+  ], explain:"<strong>How to discern:</strong> ADHD is lifelong. New cognitive decline in middle / later life = workup for dementia, depression-related pseudodementia, or other neurological cause. Memory loss (especially short-term recall) is dementia, not ADHD (ADHD is working memory failure, not encoding failure). Order MMSE / MoCA, bloods, neuroimaging if onset > 50."},
+  {t:"Acquired brain injury / TBI", qLabel:"Differentiating questions", q:[
+    "Did cognitive difficulties begin or worsen significantly after a head injury?",
+    "Are there domain-specific deficits consistent with the injury pattern?",
+    "Has there been formal neuropsychological assessment post-injury?"
+  ], explain:"<strong>How to discern:</strong> Post-TBI cognitive syndrome can phenocopy ADHD, but onset is post-injury rather than developmental. Document injury severity (LOC duration, PTA). Stimulants may help post-TBI cognitive symptoms — same prescribing principles, slower titration. Neuropsychology testing helpful when uncertain."},
+  {t:"Substance-induced or medication-induced", qLabel:"Differentiating questions", q:[
+    "Could stimulant, cannabis, alcohol, or other substance use explain or worsen the picture?",
+    "Do cognitive symptoms resolve during sustained abstinence?",
+    "Is there an active SUD that needs prioritising?"
+  ], explain:"<strong>How to discern:</strong> Cannabis dependence, chronic heavy alcohol, daily benzodiazepines, sedating antihistamines all produce ADHD-like presentations. Defer ADHD diagnosis until at least 4–6 weeks of meaningful abstinence / cessation. Iatrogenic causes: anticholinergics, opioids, sedating antipsychotics, antiepileptics."},
+  {t:"Medical / neurological cause", qLabel:"Differentiating questions", q:[
+    "Did symptoms start after a medical illness, injury, or medication change?",
+    "Could thyroid, anaemia, B12, ferritin, sleep, or pain contribute?",
+    "Has relevant medical investigation been completed?"
+  ], explain:"<strong>How to discern:</strong> Treat reversible medical causes first. Thyroid disease, iron deficiency, B12 deficiency, sleep apnoea, chronic pain syndromes, perimenopause all produce ADHD-like cognitive complaints. Order baseline bloods. If symptoms have a clear medical onset rather than lifelong pattern, work the medical cause first."},
+  {t:"Tic disorder / Tourette's", qLabel:"Differentiating questions", q:[
+    "Are there repetitive, involuntary motor or vocal tics?",
+    "Do tics cause distress or impairment beyond the attention difficulties?",
+    "Is the attention picture complicated by tic-related disruption?"
+  ], explain:"<strong>How to discern:</strong> Tics and ADHD frequently co-occur. ADHD distractibility is internal; tic-related disruption is observable. Stimulants can unmask or worsen tics in some — discuss before prescribing. Alpha-2 agonists (guanfacine, clonidine) treat both tics and ADHD."},
+  {t:"Suicidal ideation / risk", qLabel:"Differentiating questions", q:[
+    "Are there current thoughts of suicide or self-harm?",
+    "Recent planning, intent, preparatory behaviour?",
+    "What protective factors are in place and how robust?"
+  ], explain:"<strong>How to discern (and act):</strong> Not a differential per se — a safety priority. Document risk explicitly, safety plan if active. ADHD treatment reduces suicide risk over time (population data). Acute risk: stabilise first; don't initiate stimulants in active suicidal crisis without psychiatric support."},
 ],
-
 substances: [
-  {t:"Alcohol — quantity / frequency, last drink, dependence features",
-   q:["How many standard drinks a week? On a heavy day?",
-      "Ever needed a morning drink? Tremor without it?",
-      "AUDIT-C: how often, how much, how often ≥6?"]},
-  {t:"Cannabis — frequency, mode, dependence",
-   q:["How often, how much, when did you start?",
-      "Smoking, vaping, edibles?",
-      "Notice any problems — anxiety, paranoia, memory, motivation?"]},
-  {t:"Stimulants (illicit) — meth, cocaine, MDMA",
-   q:["Ever tried meth, cocaine, MDMA — recreational or otherwise?",
-      "Last use? Pattern of use?"]},
-  {t:"Prescription stimulants from elsewhere",
-   q:["Taken anyone else's Vyvanse, dex, Ritalin? Bought online or off a friend?",
-      "How did it feel — what changed for you?"]},
-  {t:"Opioids — prescribed or illicit",
-   q:["Any history with codeine, oxycodone, tramadol, heroin?",
-      "Currently on any opioid medication?"]},
-  {t:"Benzodiazepines — prescribed or otherwise",
-   q:["Diazepam, alprazolam, oxazepam — prescribed or borrowed?",
-      "Daily? Escalating doses?"]},
-  {t:"Nicotine — cigarettes, vapes",
-   q:["Smoking or vaping — how much, how long?",
-      "Stimulants and nicotine interact — useful to know."]},
-  {t:"Caffeine — coffee, energy drinks, pre-workout",
-   q:["How many coffees / energy drinks per day?",
-      "If you ran out by 10am, would you function?"]},
-  {t:"Other — GHB, ketamine, hallucinogens, inhalants",
-   q:["Anything else worth mentioning — recreational, microdosing, festivals?"]},
-  {t:"Diversion risk / red flags",
-   q:["Has anyone ever asked to buy or borrow your meds?",
-      "History of selling or sharing prescription meds?",
-      "Doctor-shopping? Lost scripts? Early re-supplies?",
-      "SafeScript / RTPM review — what does it show?"]},
+  {t:"Alcohol", qLabel:"Clinical notes", q:[
+    "AUDIT-C: ≥4 men / ≥3 women = at-risk; ≥8 hazardous.",
+    "Dependence features: morning shakes, tolerance, withdrawal, drinking to function.",
+    "Stimulants mask sedating effects → risk of drinking more than intended; counsel explicitly.",
+    "Clonidine and guanfacine: additive sedation and hypotension — avoid or strictly limit alcohol.",
+    "Heavy use → fatty liver / LFT derangement before atomoxetine.",
+    "Hazardous use without dependence: harm reduction + ongoing review. Dependence: stabilise / treat the SUD first before initiating stimulants."
+  ]},
+  {t:"Cannabis", qLabel:"Clinical notes", q:[
+    "Worsens ADHD symptoms — particularly working memory, motivation, sleep.",
+    "Reduces stimulant treatment benefit; cannabis dependence predicts poorer response.",
+    "Increased psychosis risk in vulnerable individuals — especially high-THC products, daily use, early-life use.",
+    "Counselling priority: address use explicitly — many patients minimise. Frame as a treatment barrier.",
+    "Withdrawal: irritability, insomnia, anxiety — peaks day 2–6. Often mistaken for worsening ADHD.",
+    "Daily / heavy use without willingness to reduce → consider non-stimulant trial or defer."
+  ]},
+  {t:"Methamphetamine / amphetamine (illicit)", qLabel:"Clinical notes", q:[
+    "Prior exposure increases tolerance and reduces felt response to prescribed stimulants.",
+    "Past use without current dependence: not an absolute contraindication, but discuss diversion and escalation risk.",
+    "Active use: contraindication to stimulants. Treat the SUD first.",
+    "Cardiotoxicity from chronic meth use → low threshold for ECG, BP monitoring.",
+    "Document the rationale clearly if prescribing stimulants in someone with past illicit amphetamine use."
+  ]},
+  {t:"Cocaine / other illicit stimulants", qLabel:"Clinical notes", q:[
+    "Cardiotoxicity — vasospasm, MI risk, cardiomyopathy. ECG before stimulant if any recent use.",
+    "Active use: contraindication.",
+    "Past heavy use → discuss vascular risk, monitor BP / HR closely if prescribing.",
+    "Treat any current SUD before stimulant trial."
+  ]},
+  {t:"MDMA / hallucinogens / ketamine / GHB", qLabel:"Clinical notes", q:[
+    "Serotonergic agents — serotonin syndrome risk with atomoxetine, SSRIs.",
+    "MDMA crashes mimic depressive episodes — clarify timing.",
+    "Pattern of regular use (not occasional festival) is concerning; treat as polysubstance.",
+    "Discuss harm reduction; ideally cease for the duration of titration."
+  ]},
+  {t:"Prescription stimulants from elsewhere (diversion)", qLabel:"Clinical notes", q:[
+    "Borrowed Vyvanse / dex / Ritalin: get the felt effect (felt-better, calmer, focused) — useful clue.",
+    "Online purchases / family supply: SafeScript red flag; document.",
+    "Patient who is already self-medicating with stimulants — discuss formal trial vs. continued unregulated use.",
+    "Adverse effects from non-prescribed stimulants are common reason for first presentation."
+  ]},
+  {t:"Opioids — prescribed or illicit", qLabel:"Clinical notes", q:[
+    "RTPM / SafeScript mandatory check before any stimulant.",
+    "Concurrent opioids + stimulants is a documented diversion / abuse pattern — high-risk combination.",
+    "Sedation potentially masked by stimulants → respiratory risk with high opioid doses.",
+    "If patient on chronic opioids — coordinate with prescriber; document rationale carefully."
+  ]},
+  {t:"Benzodiazepines", qLabel:"Clinical notes", q:[
+    "Dependence is common, often iatrogenic. Daily use ≥4 weeks → physical dependence.",
+    "RTPM check mandatory before stimulant.",
+    "Stimulants can be used to 'wake up' from over-sedation — combined misuse pattern.",
+    "If chronic: do not stop abruptly. Discuss tapering plan with primary prescriber alongside ADHD treatment."
+  ]},
+  {t:"Tobacco / nicotine", qLabel:"Clinical notes", q:[
+    "Highly prevalent in ADHD — nicotine acts as a mild stimulant (self-medication).",
+    "Additive cardiac effects: raised BP, HR, vasoconstriction.",
+    "Vaping: nicotine concentrations now often higher than cigarettes — quantify daily intake.",
+    "Smoking cessation often becomes feasible once ADHD treated effectively."
+  ]},
+  {t:"Caffeine", qLabel:"Clinical notes", q:[
+    "High intake (>400mg/day = ~4 strong coffees) common in undiagnosed ADHD.",
+    "Energy drinks, pre-workout, Bang, Monster — quantify in grams of caffeine.",
+    "Additive cardiac with stimulants — BP, HR, palpitations.",
+    "Worsens anxiety, insomnia, rebound. Counsel to reduce during titration.",
+    "Sudden cessation → withdrawal headache, fatigue, lower mood — taper gradually."
+  ]},
+  {t:"Red flags — diversion risk / SafeScript", qLabel:"Clinical notes", q:[
+    "Doctor-shopping: multiple prescribers, multiple pharmacies, requested specific doses early.",
+    "History of selling, sharing, swapping prescription meds.",
+    "Loss of scripts / requests for early re-supply.",
+    "Specific demands for particular formulations (often the most divertible — dex IR, Vyvanse).",
+    "Online ADHD assessment with immediate medication request.",
+    "SafeScript / RTPM concern requires documented rationale before prescribing; consider non-stimulant or supervised dispensing."
+  ]},
 ],
 
 cardiac: [
-  {t:"Chest pain — at rest or on exertion",
-   q:["Any chest tightness, heaviness, or pain?",
-      "Comes on with exertion? Settles with rest?",
-      "Radiates to jaw, neck, arm? Associated sweating, nausea?"]},
-  {t:"Palpitations — awareness of skipped or racing heart",
-   q:["Heart races, pounds, or skips beats — when?",
-      "Triggered by caffeine, alcohol, stress, exertion?",
-      "Lasts seconds, minutes, longer?"]},
-  {t:"Syncope or near-syncope — especially on exertion",
-   q:["Ever fainted, blacked out, nearly fainted?",
-      "Happened on exertion or standing up?",
-      "Any warning, or sudden?"]},
-  {t:"Exertional dyspnoea or exercise intolerance",
-   q:["Get short of breath sooner than you should?",
-      "Can't keep up with people your age — physically?"]},
-  {t:"Orthostatic dizziness on standing",
-   q:["Dizzy or lightheaded when standing up quickly?",
-      "Sit-stand BP available?"]},
-  {t:"Known hypertension — treated or borderline",
-   q:["Ever been told your BP is high? On medication for it?",
-      "Home BP readings over the past month?"]},
-  {t:"Known structural heart disease",
-   q:["Murmur, valve problem, congenital heart disease, hole in heart?",
-      "Hypertrophic cardiomyopathy, dilated cardiomyopathy?"]},
-  {t:"Known arrhythmia — AF, SVT, long QT, channelopathy",
-   q:["Any arrhythmia diagnosis, ablation, or pacemaker?",
-      "Long QT? Brugada? CPVT?"]},
-  {t:"Previous MI, stroke, TIA, cardiac surgery",
-   q:["Ever had a heart attack, stroke, TIA, or cardiac procedure?"]},
-  {t:"Family — sudden cardiac death under 40",
-   q:["Anyone in family die suddenly under 40 — including SIDS?",
-      "Unexplained drowning or single-vehicle accident in family?"]},
-  {t:"Family — cardiomyopathy, long QT, channelopathy",
-   q:["Hypertrophic / dilated cardiomyopathy in family?",
-      "Long QT, Brugada, CPVT known?"]},
-  {t:"Family — early CAD (<55 male, <65 female)",
-   q:["Heart attack, stent, bypass in any first-degree relative — and at what age?"]},
+  {t:"Exertional chest pain / unexplained dyspnoea / exercise intolerance", qLabel:"Clinical notes", q:[
+    "Possible structural heart disease or ischaemia.",
+    "Defer stimulants pending cardiology or medical assessment.",
+    "Do not initiate until cause clarified."
+  ]},
+  {t:"Palpitations / syncope / pre-syncope", qLabel:"Clinical notes", q:[
+    "Possible arrhythmia or conduction disorder.",
+    "Obtain ECG and clinical review before stimulant.",
+    "Defer until cause clarified — syncope on exertion is especially concerning."
+  ]},
+  {t:"Dizziness on standing / postural symptoms", qLabel:"Clinical notes", q:[
+    "Check lying and standing BP and HR before initiating treatment.",
+    "Address hydration and contributing medications.",
+    "Alpha-2 agonists (clonidine, guanfacine) worsen orthostatic symptoms — use with caution.",
+    "If marked or progressive — autonomic / cardiology workup."
+  ]},
+  {t:"Family — sudden cardiac death under 40 / unexplained syncope or seizures", qLabel:"Clinical notes", q:[
+    "Suggests possible inherited arrhythmia syndrome (long QT, HCM, channelopathy).",
+    "Obtain ECG.",
+    "Low threshold for cardiology review before stimulant initiation."
+  ]},
+  {t:"Family — cardiomyopathy / long QT / channelopathy", qLabel:"Clinical notes", q:[
+    "Inherited structural or electrical disease in family.",
+    "Cardiology input recommended before stimulant.",
+    "Document family screening if available."
+  ]},
+  {t:"Family — early-onset CAD (M <55, F <65)", qLabel:"Clinical notes", q:[
+    "Elevates vascular risk in adulthood — relevant when prescribing stimulants.",
+    "Optimise modifiable cardiovascular risk factors first.",
+    "Monitor BP carefully through titration."
+  ]},
+  {t:"Known congenital or structural heart disease", qLabel:"Clinical notes", q:[
+    "Liaise with treating cardiologist before prescribing.",
+    "If stimulant used — start low, monitor BP / pulse / symptoms closely.",
+    "Consider non-stimulant first."
+  ]},
+  {t:"Known arrhythmia / tachyarrhythmia / long QT", qLabel:"Clinical notes", q:[
+    "Higher risk with sympathomimetic drugs.",
+    "Use stimulants only with cardiology oversight.",
+    "Consider non-stimulants (atomoxetine, alpha-2 agonists, with QTc-aware choice) first."
+  ]},
+  {t:"Hypertension — diagnosed or borderline", qLabel:"Clinical notes", q:[
+    "Control BP before initiating stimulants.",
+    "Defer titration if uncontrolled (≥140/90).",
+    "Monitor regularly during titration and annually thereafter.",
+    "Consider alternative if BP rises significantly on treatment."
+  ]},
+  {t:"Current MAOI use — ABSOLUTE CONTRAINDICATION", qLabel:"Clinical notes", q:[
+    "Stimulants AND atomoxetine both contraindicated with MAOIs.",
+    "MAOIs: phenelzine, tranylcypromine, moclobemide, selegiline, rasagiline, methylene blue, linezolid.",
+    "14-day washout required.",
+    "Hypertensive crisis / serotonin syndrome risk."
+  ]},
+  {t:"Today's BP and HR — baseline", qLabel:"Clinical notes", q:[
+    "Document BP and HR at every visit during titration.",
+    "Defer if BP ≥140/90 or HR persistently >100.",
+    "Patient to bring home / pharmacy / GP readings between visits."
+  ]},
 ],
 
 medical: [
-  {t:"Thyroid disease — hyper or hypo",
-   q:["Ever had thyroid problems? On thyroxine or carbimazole?",
-      "Last TFT — when, normal?"]},
-  {t:"Diabetes — type 1, type 2, or pre-diabetic",
-   q:["Diabetes — type, treatment, glycaemic control?",
-      "Stimulants suppress appetite — may need glucose monitoring adjustment."]},
-  {t:"Epilepsy / seizures",
-   q:["Ever had a seizure? Diagnosed epilepsy?",
-      "On any antiepileptic? Last seizure when?",
-      "Stimulants can lower seizure threshold — caution if uncontrolled."]},
-  {t:"Head injury with loss of consciousness",
-   q:["Any significant head injury — concussion, hospital admission, ongoing symptoms?",
-      "TBI can produce an acquired ADHD-like syndrome."]},
-  {t:"Migraine — frequency and treatment",
-   q:["Migraine — how often? On preventer or abortive treatment?",
-      "Triptans, propranolol, topiramate?"]},
-  {t:"Tics or Tourette's",
-   q:["Vocal or motor tics — historical or current?",
-      "Stimulants can unmask or worsen tics in some — non-stimulants safer."]},
-  {t:"Sleep apnoea — diagnosed or suspected",
-   q:["Snoring, witnessed apnoeas, choking at night, daytime sleepiness?",
-      "Epworth Sleepiness Scale?",
-      "Untreated OSA mimics ADHD inattention — treat it first."]},
-  {t:"Other sleep disorder — delayed phase, insomnia, restless legs",
-   q:["Natural night owl? Bedtime impossible before 2am?",
-      "Restless legs, periodic limb movements?"]},
-  {t:"Glaucoma — especially angle-closure",
-   q:["Any eye disease? Glaucoma in family?",
-      "Stimulants relatively contraindicated in angle-closure."]},
-  {t:"Liver disease — hepatitis, cirrhosis, fatty liver",
-   q:["Any liver problems? Hepatitis B / C? Fatty liver on imaging?",
-      "Atomoxetine — rare but serious liver injury risk."]},
-  {t:"Kidney disease — CKD stage",
-   q:["Any kidney disease? CKD? Dialysis?"]},
-  {t:"Asthma / COPD",
-   q:["Asthma — on salbutamol, ICS? Frequency of attacks?",
-      "Beta-agonists + stimulants additively raise HR — discuss."]},
-  {t:"Eating disorder — active or past anorexia, bulimia, BED",
-   q:["History of restricting, bingeing, purging?",
-      "Underweight currently? BMI?",
-      "Stimulants in active restrictive ED need very careful thought."]},
-  {t:"Pregnancy, planning, breastfeeding",
-   q:["Any chance of pregnancy? Currently planning?",
-      "Breastfeeding?",
-      "Contraception in use?"]},
-  {t:"Phaeochromocytoma (rare) or other adrenal disease",
-   q:["Episodic flushing, hypertension, sweating, headaches together?",
-      "Absolute contraindication to stimulants — exclude if suggestive history."]},
-  {t:"Other chronic illness — autoimmune, cancer, chronic pain",
-   q:["Any other ongoing medical condition under specialist care?"]},
+  {t:"Epilepsy / seizure disorder", qLabel:"Clinical notes", q:[
+    "Stimulants may lower seizure threshold.",
+    "Check recent seizure control and neurology input before initiating.",
+    "Start at lowest effective dose with close monitoring."
+  ]},
+  {t:"Glaucoma (narrow-angle)", qLabel:"Clinical notes", q:[
+    "Avoid stimulants and atomoxetine in narrow-angle glaucoma.",
+    "Consider non-stimulant alternatives (alpha-2 agonist).",
+    "Open-angle glaucoma is not a contraindication but discuss with ophthalmology."
+  ]},
+  {t:"Thyroid disorder", qLabel:"Clinical notes", q:[
+    "Treat or stabilise hyperthyroidism before stimulants — additive sympathomimetic effects.",
+    "Recent TFT — when, normal?",
+    "Hypothyroidism can mimic inattention — treat first, reassess."
+  ]},
+  {t:"Tic disorder / Tourette's", qLabel:"Clinical notes", q:[
+    "Stimulants can exacerbate tics in some patients — not all.",
+    "Consider atomoxetine or alpha-2 agonists first if prominent tics.",
+    "Cautious stimulant trial possible with close monitoring."
+  ]},
+  {t:"Migraine or chronic headache", qLabel:"Clinical notes", q:[
+    "Variable effect — stimulants may trigger via vasoconstriction OR reduce frequency via better sleep / stress.",
+    "Watch for additive BP effects with propranolol prophylaxis.",
+    "Topiramate prophylaxis adds cognitive blunting — assess interaction.",
+    "Start low, titrate slowly, monitor headache frequency."
+  ]},
+  {t:"Sleep apnoea (OSA)", qLabel:"Clinical notes", q:[
+    "Untreated OSA mimics and amplifies ADHD inattention — treat first.",
+    "Time stimulant doses to minimise insomnia.",
+    "Snoring, witnessed apnoeas, BMI > 30, Epworth ≥10 → low threshold for sleep study.",
+    "Consider alpha-2 agonist for nocturnal hyperarousal once OSA managed."
+  ]},
+  {t:"Eating disorder — active or recent", qLabel:"Clinical notes", q:[
+    "Stimulants suppress appetite — worsen restriction.",
+    "Avoid or minimise stimulants in active anorexia or BED with restriction patterns.",
+    "Prioritise nutritional rehabilitation first.",
+    "Atomoxetine or alpha-2 agonist generally safer in this context."
+  ]},
+  {t:"Low BMI (<18.5)", qLabel:"Clinical notes", q:[
+    "Appetite suppression problematic.",
+    "Prefer non-stimulants OR cautious stimulant with close weight monitoring.",
+    "Consider underlying cause (ED, malabsorption, hyperthyroid)."
+  ]},
+  {t:"Obesity with metabolic syndrome", qLabel:"Clinical notes", q:[
+    "Stimulants may modestly reduce appetite and weight — incidentally helpful.",
+    "Monitor BP, weight, metabolic parameters through treatment.",
+    "Stimulants not a treatment for obesity in isolation."
+  ]},
+  {t:"Hepatic impairment", qLabel:"Clinical notes", q:[
+    "Atomoxetine exposure increases markedly — use lower doses, monitor LFTs.",
+    "Stimulants: dose-adjust in severe impairment.",
+    "Avoid hepatotoxic combinations (alcohol, paracetamol excess)."
+  ]},
+  {t:"Renal impairment / CKD", qLabel:"Clinical notes", q:[
+    "Clonidine and guanfacine may accumulate — titrate slowly, monitor for hypotension and sedation.",
+    "End-stage renal disease — alpha-2 agonists very cautiously, coordinate with nephrology.",
+    "Stimulants generally well tolerated but reduce dose in severe impairment."
+  ]},
+  {t:"Pregnancy", qLabel:"Clinical notes", q:[
+    "Prefer non-pharmacological strategies where possible.",
+    "If pharmacotherapy needed — lowest effective dose, agents with best safety data, obstetric coordination.",
+    "First trimester especially — favour stopping or reducing where feasible.",
+    "Methylphenidate has more safety data than amphetamines in pregnancy."
+  ]},
+  {t:"Breastfeeding", qLabel:"Clinical notes", q:[
+    "Small amounts pass into milk. Methylphenidate has lowest excretion — generally preferred.",
+    "Monitor infant for irritability or feeding changes.",
+    "Atomoxetine, guanfacine, clonidine: limited safety data — generally avoided."
+  ]},
+  {t:"Raynaud's phenomenon / peripheral vasospasm", qLabel:"Clinical notes", q:[
+    "Stimulants can worsen vasospasm.",
+    "Monitor for digital symptoms during titration.",
+    "Reduce dose or switch agent if symptomatic."
+  ]},
+  {t:"Coronary artery disease / vascular disease", qLabel:"Clinical notes", q:[
+    "Stimulants raise BP and HR — optimise vascular risk factors first.",
+    "Cardiology input recommended before initiating.",
+    "Any stimulant trial: start low, monitor haemodynamics closely."
+  ]},
+  {t:"Endocrine / autonomic disorders with labile BP", qLabel:"Clinical notes", q:[
+    "Examples: Addison disease, autonomic neuropathy, POTS.",
+    "Stimulants raise BP; alpha-2 agonists lower BP with rebound — both can destabilise.",
+    "Titrate cautiously with frequent postural checks."
+  ]},
+  {t:"Phaeochromocytoma — rare but absolute contraindication", qLabel:"Clinical notes", q:[
+    "Episodic flushing, hypertension, sweating, headaches together → screen.",
+    "Plasma or urine metanephrines if suggestive history.",
+    "Absolute contraindication — stimulants and atomoxetine both.",
+    "Consider in any patient with treatment-resistant hypertension or unexplained autonomic episodes."
+  ]},
+  {t:"Benign prostatic hyperplasia", qLabel:"Clinical notes", q:[
+    "Atomoxetine can worsen urinary retention.",
+    "Monitor lower urinary tract symptoms; avoid in severe BPH.",
+    "Stimulants generally tolerated."
+  ]},
+  {t:"Chronic dizziness / high falls risk", qLabel:"Clinical notes", q:[
+    "Alpha-2 agonists increase orthostatic symptoms and falls risk.",
+    "Minimise dose; regular standing BP checks.",
+    "Stimulants may be preferable if orthostatic intolerance prominent."
+  ]},
+  {t:"Chronic pain on sedating analgesia", qLabel:"Clinical notes", q:[
+    "Clonidine / guanfacine add to sedation and hypotension.",
+    "Adjust other sedatives carefully.",
+    "Stimulants can improve pain coping via attention regulation."
+  ]},
 ],
 
 meds: [
-  {t:"Current prescribed medications — name, dose, frequency",
-   q:["Full list — name, dose, frequency, who prescribes.",
-      "When started, any recent changes?"]},
-  {t:"OTC, supplements, herbals, melatonin",
-   q:["Any vitamins, supplements, herbal preparations?",
-      "St John's Wort, valerian, kava?",
-      "Pseudoephedrine for colds?"]},
-  {t:"Other prescribers — GP, specialist, online, overseas",
-   q:["Anyone else prescribing for you — GP, other specialist, online service?",
-      "Any medications from overseas or family members?"]},
-  {t:"Allergies and drug reactions",
-   q:["Drug allergies — and what reaction (rash, anaphylaxis, GI)?",
-      "Any medication ever caused mood, sleep, or cardiac side effects?"]},
-  {t:"MAOIs — absolute contraindication (14-day washout)",
-   q:["Confirm no MAOI: phenelzine, tranylcypromine, moclobemide, selegiline, rasagiline, methylene blue, linezolid.",
-      "Any of those in the past 14 days — stimulant contraindicated."]},
-  {t:"SSRIs / SNRIs — serotonin syndrome risk with atomoxetine",
-   q:["On fluoxetine, paroxetine, sertraline, escitalopram, venlafaxine, duloxetine, vortioxetine?",
-      "Fluoxetine and paroxetine dramatically increase atomoxetine levels — avoid combination."]},
-  {t:"Antipsychotics — additive cardiac effects",
-   q:["On any antipsychotic (especially clozapine, olanzapine, ziprasidone)?",
-      "Watch for additive QTc prolongation and metabolic effects."]},
-  {t:"Other dopaminergic / serotonergic drugs",
-   q:["Bupropion, tramadol, ondansetron, triptans, lithium?",
-      "Bupropion can dramatically raise atomoxetine levels."]},
-  {t:"Anticoagulants — warfarin especially",
-   q:["On warfarin? Methylphenidate may increase INR — monitor more frequently when initiating."]},
-  {t:"Beta-agonists — salbutamol, salmeterol",
-   q:["Inhaled beta-agonists for asthma — additive cardiac effects with stimulants."]},
-  {t:"Antihypertensives — particularly alpha-2 agonists",
-   q:["On clonidine, guanfacine, methyldopa? Existing alpha-2 agonist?",
-      "Beta-blockers — discuss before stimulant initiation."]},
+  {t:"MAOIs — ABSOLUTE contraindication", qLabel:"Clinical notes", q:[
+    "Phenelzine, tranylcypromine, moclobemide, selegiline, rasagiline, methylene blue, linezolid.",
+    "14-day washout required before stimulant OR atomoxetine.",
+    "Risk: hypertensive crisis (stimulants), serotonin syndrome (atomoxetine).",
+    "Confirm explicitly. Document washout date in notes."
+  ]},
+  {t:"SSRIs / SNRIs", qLabel:"Clinical notes", q:[
+    "Fluoxetine and paroxetine dramatically increase atomoxetine levels — avoid combination or reduce atomoxetine dose substantially.",
+    "Stimulants + SSRIs is generally safe — common comorbid prescribing pattern.",
+    "Serotonin syndrome theoretical risk with atomoxetine + serotonergics — clinically rare.",
+    "Watch for additive jitteriness / insomnia / appetite suppression."
+  ]},
+  {t:"Antipsychotics", qLabel:"Clinical notes", q:[
+    "Additive QTc prolongation — especially with ziprasidone, haloperidol, IV droperidol.",
+    "Clozapine + stimulants: monitor neutrophils (theoretical), seizure threshold.",
+    "Olanzapine, quetiapine: metabolic effects compound — discuss with patient.",
+    "Aripiprazole, brexpiprazole: better cardio-metabolic profile."
+  ]},
+  {t:"Bupropion", qLabel:"Clinical notes", q:[
+    "Dramatically raises atomoxetine levels — avoid combination.",
+    "Stimulants + bupropion: additive seizure threshold reduction, additive cardiac.",
+    "Useful adjunct in some cases (off-label for ADHD itself) — specialist call."
+  ]},
+  {t:"Anticoagulants — warfarin", qLabel:"Clinical notes", q:[
+    "Methylphenidate may increase INR — monitor more frequently during initiation / dose change.",
+    "Atomoxetine: minimal effect.",
+    "Stimulants do not alter DOAC pharmacokinetics significantly."
+  ]},
+  {t:"Beta-agonists — salbutamol, salmeterol, formoterol", qLabel:"Clinical notes", q:[
+    "Additive cardiac effects: tachycardia, palpitations.",
+    "Frequent reliever use (>2x/week) → review asthma control rather than tolerate.",
+    "ICS-only regimens have minimal additive effect."
+  ]},
+  {t:"Alpha-2 agonists already prescribed (clonidine, guanfacine)", qLabel:"Clinical notes", q:[
+    "Existing prescriber? Indication? Dose?",
+    "Useful as combination with stimulants in select cases.",
+    "Do not stop abruptly — rebound hypertension and tachycardia."
+  ]},
+  {t:"Antihypertensives (other)", qLabel:"Clinical notes", q:[
+    "Stimulants raise BP — may need dose increase of antihypertensive.",
+    "Beta-blockers: discuss before stimulant — additive bradycardia in some.",
+    "Coordinate dose adjustments with GP."
+  ]},
+  {t:"Pseudoephedrine / phenylephrine / decongestants", qLabel:"Clinical notes", q:[
+    "Additive sympathomimetic effect — avoid OTC cold preparations during titration.",
+    "Counsel explicitly — many patients don't realise these interact.",
+    "Codeine-based cold preparations not appropriate either."
+  ]},
+  {t:"Tramadol, triptans, ondansetron, lithium", qLabel:"Clinical notes", q:[
+    "Serotonergic agents — additive risk with atomoxetine, less so stimulants.",
+    "Tramadol: also lowers seizure threshold — additive with bupropion / stimulants.",
+    "Lithium: monitor levels if any nausea / vomiting during stimulant titration."
+  ]},
+  {t:"OTC, supplements, herbals, melatonin", qLabel:"Clinical notes", q:[
+    "St John's Wort: CYP3A4 induction — reduces concentrations of many drugs.",
+    "Valerian, kava, GABA, ashwagandha: additive sedation with alpha-2 agonists.",
+    "High-dose vitamin C / citric acid: reduces methylphenidate and amphetamine absorption — counsel re: dosing windows.",
+    "Melatonin: useful adjunct for delayed sleep phase. 0.5–3mg, 4–6 hours before desired sleep onset."
+  ]},
+  {t:"Multiple prescribers / online services / overseas supply", qLabel:"Clinical notes", q:[
+    "Document all prescribers; obtain medication list directly where possible.",
+    "Online ADHD services with rapid prescribing — clarify ongoing arrangements.",
+    "SafeScript / RTPM mandatory check for controlled substances.",
+    "Coordinate care explicitly — patient is the conduit, but written communication is best."
+  ]},
+  {t:"Allergies and prior drug reactions", qLabel:"Clinical notes", q:[
+    "Document specific reaction (rash, anaphylaxis, GI, mood, cardiac).",
+    "Any previous stimulant / atomoxetine reaction — type, dose, time course.",
+    "Sulfa allergy: relevant for some formulations (e.g. older stimulant excipients) — uncommon."
+  ]},
 ],
-
 family: [
   {t:"ADHD or learning disorders",
    q:["Anyone diagnosed — or strongly suspected — ADHD, dyslexia, learning issues?"]},
@@ -1122,94 +1425,74 @@ const MSE_DATA = [
 // =================== PSYCHOEDUCATION DATA ===================
 const PE_GROUPS = [
   {label:null, items:[
-    {id:'what_adhd_is', title:'Explaining ADHD',
-     body:'<p><strong>Key message:</strong> ADHD is not a deficit of attention — it is a regulation problem. The brain runs on interest, urgency and novelty rather than importance alone. When something genuinely captures your interest, you can hyperfocus brilliantly. When something feels dull or unrewarding, starting it can feel genuinely impossible — not because of laziness, but because the brain\'s motivational circuitry works differently.</p><p><strong>Neurobiology:</strong> The prefrontal cortex — managing planning, organising, task initiation, working memory and emotional regulation — is underactive and less connected to the rest of the brain in ADHD. This reduces dopamine and noradrenaline signalling. Medication restores these neurotransmitters in the prefrontal cortex.</p><p><strong>Key facts:</strong> Affects 5–10% of adults. Among the most heritable conditions in medicine. ADHD medications are among the most effective treatments in all of psychiatry.</p>'},
-    {id:'how_adhd_manifests', title:'How ADHD manifests',
-     body:'<p><strong>Core symptoms:</strong> Inattention, executive dysfunction, impulsivity, hyperactivity — often internalised in adults as a constant inner restlessness rather than visible movement.</p><p><strong>Often-missed features — frequently the most disabling:</strong></p><ul><li><strong>Emotional dysregulation:</strong> emotions arrive faster and more intensely because the prefrontal "braking system" is less effective.</li><li><strong>Rejection Sensitive Dysphoria (RSD):</strong> intense emotional pain triggered by perceived rejection, criticism or failure.</li><li><strong>Time blindness:</strong> time exists in two states: "now" and "not now."</li><li><strong>Working memory deficits:</strong> losing thought mid-sentence, forgetting why you walked into a room.</li><li><strong>Hyperfocus:</strong> same dysregulation flipped to tunnel-vision absorption.</li></ul>'},
-    {id:'how_treatable', title:'How treatable ADHD is',
-     body:'<p><strong>Response rates:</strong> 70–80% in children, 60–75% in adults.</p><ul><li>21% reduction in all-cause mortality with ADHD medication</li><li>25% reduction in unnatural-cause deaths</li><li>~13% reduction in substance use disorder risk per year on stimulants</li><li>72% of measured long-term outcomes improved</li><li>Lower motor vehicle crash rates while on medication</li><li>Reduced criminal offending during treatment periods</li></ul><p><strong>Key message:</strong> The risks of not treating ADHD are substantially greater than the risks of properly managed treatment.</p>'},
-    {id:'what_to_expect', title:'What to expect from treatment',
-     body:'<p><strong>When medication is working well:</strong></p><ul><li>Calm clarity — genuinely quiet in your own head</li><li>Boring-but-important tasks become manageable</li><li>More pause between feeling and reacting</li><li>Anxiety often improves</li><li>Low mood lifts when you stop falling short of your own capabilities</li></ul><p><strong>What it should NOT feel like:</strong> Robotic, flat, zombie-like. That signals dose too high — adjust, don\'t tolerate.</p><p><strong>Starting:</strong> Low dose, increased gradually. Stimulants work the same day at therapeutic dose. Lunch appetite often suppressed. Missing a dose: take when you remember unless it\'s late afternoon — then skip.</p>'},
-    {id:'faqs', title:'Frequently asked questions',
-     body:'<p><strong>Will it change my personality?</strong> No — at therapeutic doses you feel more like yourself.</p><p><strong>Will I need it forever?</strong> ADHD is typically lifelong. Long-term stimulant use is safe.</p><p><strong>Are stimulants addictive?</strong> Used correctly for ADHD, they lower addiction risk.</p><p><strong>Can I drive?</strong> Yes. No restrictions in Australia. Evidence shows lower crash rates on medication.</p><p><strong>Coffee?</strong> Moderate is fine. Excess worsens anxiety and insomnia.</p><p><strong>What if it doesn\'t work?</strong> Switch to the other stimulant class. If stimulants not tolerated, non-stimulants are effective.</p><p><strong>Cannabis?</strong> Avoid — worsens ADHD symptoms, reduces treatment benefit, increases psychosis risk.</p>'},
+    {id:'what_adhd_is',title:'Explaining ADHD',body:'<p><strong>Key message:</strong> ADHD is not a deficit of attention — it is a regulation problem. The brain runs on interest, urgency, and novelty rather than importance alone. When something genuinely captures your interest, you can hyperfocus brilliantly. When something feels dull or unrewarding, starting it can feel genuinely impossible — not because of laziness, but because the brain\'s motivational circuitry works differently.</p><p><strong>Neurobiology:</strong> The prefrontal cortex — the region managing planning, organising, task initiation, working memory, and emotional regulation — is underactive and less connected to the rest of the brain in ADHD. This reduces dopamine and noradrenaline signalling, which are the neurotransmitters responsible for focus, motivation, and impulse control. Medication restores these neurotransmitters in the prefrontal cortex.</p><p><strong>What this looks like daily:</strong> Starting tasks feels insurmountable. Losing the thread mid-task. Forgetting why you walked into a room. Emotions that hit fast and hard. Acting before thinking. Constant inner restlessness. Time feeling abstract until a deadline is imminent.</p><p><strong>Key facts:</strong> Affects 5–10% of adults. One of the most heritable conditions in medicine. ADHD medications are among the most effective treatments in all of psychiatry. When medication works well, people often describe it as finally having access to the version of themselves they always knew was there.</p>'},
+    {id:'how_adhd_manifests',title:'How ADHD manifests',body:'<p><strong>Core symptoms:</strong> Inattention, executive dysfunction (organising, starting, time management, working memory), impulsivity, and hyperactivity — often internalised in adults as a constant inner restlessness rather than visible movement.</p><p><strong>Often missed features — the most disabling aspects are frequently not on the official list:</strong></p><ul><li><strong>Emotional dysregulation:</strong> Emotions arrive faster and more intensely because the prefrontal "braking system" is less effective. Frustration, excitement, rejection, and disappointment hit harder. This is neurological, not a personality trait.</li><li><strong>Rejection Sensitive Dysphoria (RSD):</strong> Intense emotional pain triggered by perceived rejection, criticism, or failure — even when mild or imagined. Can dominate relationships and cause avoidance of challenge. Extremely common, rarely discussed.</li><li><strong>Time blindness:</strong> The internal sense of time is impaired. Time exists in two states: "now" and "not now." Deadlines days away feel unreal, producing chronic lateness and last-minute rushes.</li><li><strong>Working memory deficits:</strong> The mental notepad used to hold information while doing something else is impaired — causing thought loss mid-sentence, forgetting what you walked into a room for, re-reading the same paragraph repeatedly.</li><li><strong>Hyperfocus:</strong> The same dysregulation causing inattention can flip to tunnel-vision absorption where hours pass unnoticed. Same system, different direction.</li><li><strong>Sleep problems, appetite dysregulation, low frustration tolerance, chronic underachievement despite high ability.</strong></li></ul><p><strong>Adult presentation:</strong> Many people — especially those who are intellectually capable — compensated through school via intelligence or anxiety-driven perfectionism, then found that when demands exceeded coping strategies, everything unravelled.</p>'},
+    {id:'how_treatable',title:'How treatable ADHD is',body:'<p><strong>Response rates:</strong> 70–80% in children, 60–75% in adults. If one stimulant class does not work, switching to the other class helps many non-responders.</p><p><strong>The evidence base:</strong></p><ul><li>21% reduction in all-cause mortality with ADHD medication</li><li>25% reduction in unnatural-cause deaths (accidents, suicide)</li><li>~13% reduction in substance use disorder risk per year on stimulants</li><li>72% of measured long-term outcomes improved — academic, work, social, driving</li><li>Lower motor vehicle crash rates while on medication</li><li>Reduced criminal offending during treatment periods</li><li>Better employment outcomes and improved relationship stability</li></ul><p><strong>Key message:</strong> The risks of not treating ADHD are substantially greater than the risks of properly managed treatment.</p>'},
+    {id:'what_to_expect',title:'What to expect from treatment',body:'<p><strong>When medication is working well, most people describe:</strong></p><ul><li>Calm clarity — genuinely quiet in your own head</li><li>Boring-but-important tasks becoming manageable</li><li>More pause between feeling and reacting</li><li>Anxiety often improves (much ADHD anxiety is downstream from chronic underperformance)</li><li>Low mood lifts when you are no longer falling short of your own capabilities</li></ul><p><strong>What it should NOT feel like:</strong> Robotic, flat, zombie-like, or like a different person. If it feels that way, the dose is probably too high — that is a signal to adjust, not tolerate.</p><p><strong>Starting out:</strong> We start at a low dose and increase gradually. Stimulants work the same day at therapeutic dose. Appetite suppression is common especially at lunch. The first few doses may feel unremarkable as the body acclimatises.</p><p><strong>Missing a dose:</strong> Take it when you remember, unless it is late afternoon — then skip it. Never double up the next day.</p><p><strong>If it stops working as well:</strong> Sleep, stress, hormones, appetite, and routine all affect medication response. Sometimes dose or timing needs review — contact your psychiatrist rather than adjusting independently.</p>'},
+    {id:'faqs',title:'Commonly asked questions',body:'<p><strong>Will it change my personality?</strong> No — at therapeutic doses you feel more like yourself. Flat or robotic = dose too high.</p><p><strong>Will I need it forever?</strong> ADHD is typically lifelong. Most prefer continuing because symptoms return when stopped. Long-term stimulant use is safe.</p><p><strong>Are stimulants addictive?</strong> Used correctly for ADHD, they actually lower addiction risk. Careful prescribing is why robust diagnosis matters.</p><p><strong>Can I drive?</strong> Yes. No restrictions in Australia. Evidence shows lower crash rates on medication.</p><p><strong>Coffee on stimulants?</strong> Moderate is fine (1–2 cups morning). Excess worsens anxiety and insomnia.</p><p><strong>What if it does not work?</strong> Try the other stimulant class. If stimulants not tolerated, non-stimulant options are effective.</p><p><strong>Cannabis?</strong> Avoid — worsens ADHD symptoms, reduces treatment benefit, increases psychosis risk in vulnerable individuals.</p><p><strong>How will I know when it is working?</strong> Everyday tasks feel easier to start and finish. Your mind feels quieter, less overwhelmed. Often the change is subtle at first.</p><p><strong>I have never taken medication before!</strong> Very common. We start low, increase gradually, review how you respond. You are not locked in.</p><p><strong>What if it is not ADHD?</strong> Diagnosis is based on a proper assessment, not just a feeling. Doubting yourself does not mean you are wrong.</p><p><strong>Why was I not diagnosed as a kid?</strong> Many adults were missed — especially if they were bright, quiet, anxious, or coping reasonably well.</p><p><strong>Do I have autism too?</strong> ADHD and autism overlap in 50–70% of cases. If you have long-standing social differences, sensory sensitivities, or a strong need for routine, it is worth discussing.</p><p><strong>Can I travel with stimulant medications?</strong> Usually yes. Keep them in original packaging with a prescription or doctor letter. Check rules for each country.</p><p><strong>Can I let someone else try my medication?</strong> No. Never share prescription medication. Sharing controlled substances is illegal.</p><p><strong>The meds are not working as well anymore — why?</strong> Sleep, stress, hormones, appetite, and routine all affect medication response. Sometimes dose or timing needs review.</p><p><strong>How do I not lean into the diagnosis as an excuse?</strong> Use it as a tool, not an identity. It should help you understand yourself and make better choices, not limit you.</p>'},
   ]},
   {label:'Medication Information', items:[
-    {id:'med_options', title:'Medication options overview',
-     body:'<p><strong>First-line — Stimulants</strong></p><table><thead><tr><th>Medication</th><th>Duration</th><th>Notes</th></tr></thead><tbody><tr><td>Dex IR</td><td>4–6 hrs</td><td>Amphetamine. 2–3x/day. Flexible coverage. Rebound possible.</td></tr><tr><td>Vyvanse</td><td>10–12 hrs</td><td>Amphetamine prodrug. Smoothest once-daily. Low abuse potential.</td></tr><tr><td>Ritalin IR</td><td>3–4 hrs</td><td>Methylphenidate. Milder than dex. 2–3x/day.</td></tr><tr><td>Ritalin LA</td><td>~8 hrs</td><td>Methylphenidate. Once daily. Two-pulse delivery.</td></tr><tr><td>Concerta</td><td>10–12 hrs</td><td>OROS methylphenidate. Once daily. Swallow whole.</td></tr></tbody></table><p><strong>Second-line — Non-stimulants</strong> (no abuse potential, slower onset):</p><ul><li><strong>Atomoxetine</strong> — SNRI; good for anxiety, tics, SUD history</li><li><strong>Guanfacine XR</strong> — alpha-2A agonist; helpful for emotional dysregulation</li><li><strong>Clonidine</strong> — alpha-2 agonist; useful for sleep, hyperarousal, tics</li></ul>'},
-    {id:'side_effects', title:'Side effects and monitoring',
-     body:'<p><strong>Common stimulant side effects:</strong> reduced appetite (especially lunch), dry mouth, insomnia if taken late, increased heart rate, headache (usually resolves 2–3 weeks), irritability, jaw clenching, rebound.</p><p><strong>Less common:</strong> elevated BP, emotional blunting at higher doses (reduce dose), worsened anxiety in some.</p><p><strong>Monitoring:</strong> BP and HR at each review. GP for routine monitoring between psychiatric appointments.</p><p><strong>Red flags — contact doctor:</strong> elevated mood + reduced sleep + rapid speech (possible mania), chest pain or palpitations, severe anxiety, marked personality change.</p>'},
-    {id:'med_dex', title:'Dexamphetamine IR',
-     body:'<p><strong>Onset:</strong> 30–45 min. <strong>Duration:</strong> 4–6 hrs. 2–3x/day.</p><p>Take after food. Avoid acidic drinks (juice, soft drink) at dosing time — they reduce absorption.</p><p><strong>Common side effects:</strong> Appetite suppression, dry mouth, insomnia if late, headache (settles 2–3 wks), jaw clenching, rebound.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Pseudoephedrine — discuss before combining.</p>'},
-    {id:'med_vyvanse', title:'Vyvanse (lisdexamfetamine)',
-     body:'<p><strong>Onset:</strong> 1–2 hrs. <strong>Duration:</strong> 10–12 hrs. Once daily morning.</p><p>Prodrug — gradually metabolised to dexamphetamine. Smoothest stimulant. Low abuse potential. Capsule can be opened and dissolved in water.</p><p><strong>Common side effects:</strong> Appetite suppression (often settles), dry mouth, insomnia if late, headache, evening irritability as it wears off.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication.</p>'},
-    {id:'med_ritalin_ir', title:'Ritalin IR / Artige (methylphenidate IR)',
-     body:'<p><strong>Onset:</strong> 30–45 min. <strong>Duration:</strong> 3–4 hrs. 2–3x/day.</p><p>Take after food. Avoid acidic drinks, vitamin C, citric acid at dosing.</p><p><strong>Common side effects:</strong> Lunchtime appetite suppression, headache (settles 2–3 wks), insomnia if late, jitteriness, stomach discomfort.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication.</p>'},
-    {id:'med_ritalin_la', title:'Ritalin LA',
-     body:'<p>Methylphenidate long-acting. Two-pulse SODAS system: 50% immediate, 50% over 4–8 hrs. About 8 hrs total. Once daily. Swallow whole.</p><p><strong>Common side effects:</strong> Reduced appetite (less than IR), insomnia if late, headache.</p>'},
-    {id:'med_concerta', title:'Concerta (methylphenidate OROS)',
-     body:'<p>OROS osmotic pump: 22% immediate, 78% over 10–12 hrs. Ascending blood level.</p><p><strong>Must swallow whole</strong> — don\'t crush or chew. Empty shell in stool is normal.</p><p>PBS authority requires diagnosis before age 18.</p>'},
-    {id:'med_strattera', title:'Atomoxetine (Strattera)',
-     body:'<p>NOT a stimulant. SNRI. Takes 4–12 weeks for full effect. No abuse potential.</p><p>Good for anxiety, tics, SUD history, or as add-on. PBS streamlined.</p><p><strong>Common side effects:</strong> Nausea (take with food), dry mouth, constipation, dizziness, mood changes during titration, urinary hesitancy.</p><p><strong>Rare but serious:</strong> Liver injury — jaundice / dark urine / abdominal pain → stop and seek urgent care.</p><p><strong>Interactions:</strong> Fluoxetine, paroxetine, bupropion dramatically increase levels.</p>'},
-    {id:'med_intuniv', title:'Guanfacine XR (Intuniv)',
-     body:'<p>Alpha-2A agonist. Strengthens prefrontal connections. 4–8 weeks for full effect. No abuse potential.</p><p><strong>Do not stop suddenly</strong> — rebound hypertension and tachycardia. Always taper.</p><p>Helpful for emotional dysregulation, impulsivity, hyperactivity. Often combined with stimulants.</p><p><strong>Side effects:</strong> Sedation (settles), low BP, dizziness on standing, dry mouth.</p>'},
-    {id:'med_clonidine', title:'Clonidine (Catapres)',
-     body:'<p>Alpha-2 agonist. Useful for hyperarousal, impulsivity, sleep onset. No abuse potential.</p><p><strong>Do not stop suddenly</strong> — rebound hypertension. Always taper.</p><p><strong>Side effects:</strong> Sedation (can be significant), dizziness on standing, low BP, dry mouth.</p><p>Alcohol significantly increases sedation — avoid or strictly limit.</p>'},
+    {id:'stimulant_differences',title:'Medication Options',body:'<p><strong>First-line — Stimulants</strong> (block reuptake of dopamine and noradrenaline; amphetamines also trigger release):</p><table><thead><tr><th>Medication</th><th>Duration</th><th>Key practical notes</th></tr></thead><tbody><tr><td><strong>Dex IR</strong></td><td>4–6 hrs</td><td>Amphetamine. Flexible, 2–3x/day. Good for tailoring coverage. Rebound possible.</td></tr><tr><td><strong>Vyvanse</strong></td><td>10–12 hrs</td><td>Amphetamine (prodrug). Smoothest once-daily. Can open capsule in water. Low abuse potential.</td></tr><tr><td><strong>Ritalin IR</strong></td><td>3–4 hrs</td><td>Methylphenidate. Milder than dex. 2–3x/day. Rebound common.</td></tr><tr><td><strong>Ritalin LA</strong></td><td>~8 hrs</td><td>Methylphenidate. Once daily. 50/50 two-pulse delivery. Some add small afternoon IR top-up.</td></tr><tr><td><strong>Concerta</strong></td><td>10–12 hrs</td><td>Methylphenidate. Once daily. Ascending OROS delivery. Must swallow whole — never crush. PBS: Dx before age 18.</td></tr></tbody></table><p><strong>All stimulants:</strong> Avoid acidic drinks (juice, soft drink) at dosing time — reduces absorption. Take with food to reduce nausea.</p><p><strong>Second-line — Non-stimulants</strong> (no abuse potential; slower onset):</p><table><thead><tr><th>Medication</th><th>Onset</th><th>Key practical notes</th></tr></thead><tbody><tr><td><strong>Atomoxetine (Strattera)</strong></td><td>4–12 wks</td><td>SNRI. Good for anxiety, tics, substance use history. PBS streamlined.</td></tr><tr><td><strong>Guanfacine XR (Intuniv)</strong></td><td>4–8 wks</td><td>Alpha-2A agonist. Helpful for emotional dysregulation and impulsivity. Taper on cessation.</td></tr><tr><td><strong>Clonidine (Catapres)</strong></td><td>Gradual</td><td>Alpha-2 agonist. Useful for sleep, hyperarousal, tics. Private script. Taper on cessation.</td></tr></tbody></table>'},
+    {id:'side_effects',title:'Key side effects and monitoring',body:'<p><strong>Common stimulant side effects:</strong> Reduced appetite (especially lunch), dry mouth, insomnia if taken late, increased heart rate, headache (usually resolves 2–3 weeks), irritability, jaw clenching, rebound as medication wears off.</p><p><strong>Less common:</strong> Elevated blood pressure, emotional blunting at higher doses (reduce dose — do not tolerate), anxiety worsening in some.</p><p><strong>Monitoring:</strong> BP and heart rate at each review. GP for routine monitoring between psychiatric appointments.</p><p><strong>Red flags — contact doctor if:</strong> Elevated mood + reduced sleep + rapid speech (possible mania), chest pain or palpitations, severe anxiety, marked personality change.</p><p><strong>Atomoxetine-specific:</strong> Nausea initially — take with food. Rare: liver injury (jaundice, dark urine → stop and seek help urgently).</p><p><strong>Key interactions:</strong> MAOIs absolute contraindication. Pseudoephedrine — discuss before combining. Alcohol — stimulants mask sedating effects, risk of drinking more than intended.</p>'},
+    {id:'med_dex',title:'Dexamphetamine IR (immediate release)',body:'<p><strong>How it works:</strong> Stimulant — increases dopamine and noradrenaline by blocking recycling AND triggering extra release. Slightly stronger effect than methylphenidate, with slightly higher side effect risk.</p><p><strong>Practical details:</strong> Short-acting tablet. Effects begin 30–45 min, last 4–6 hrs. Usually 2–3x/day. Avoid acidic drinks at same time; take after food to reduce nausea.</p><p><strong>What to expect:</strong> Improved task initiation and sustained effort, quieter internal restlessness, better impulse control. Appetite suppression common at lunchtime. Rebound (mood/focus drop as it wears off) can occur.</p><p><strong>Common side effects:</strong> Reduced appetite, dry mouth, insomnia if taken too late, increased heart rate, headache (settles 2–3 weeks), irritability/anxiety in some, jaw clenching, rebound.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Pseudoephedrine decongestants — discuss with doctor. Acidic drinks reduce absorption.</p>'},
+    {id:'med_vyvanse',title:'Vyvanse (lisdexamfetamine)',body:'<p><strong>How it works:</strong> Dexamphetamine in prodrug form — released gradually after swallowing for a smoother, longer effect. Very low abuse potential by design (must be metabolised to become active).</p><p><strong>Practical details:</strong> Capsule — swallow whole or open and dissolve in water. Effects start within 1–2 hrs, last 10–12 hrs (longest-acting stimulant in Australia). Once daily in the morning. Avoid acidic drinks.</p><p><strong>What to expect:</strong> Smooth, consistent effect with fewer peaks and troughs than IR. Useful for sustained evening coverage or when rebound from dex IR is difficult. Appetite suppression common.</p><p><strong>Common side effects:</strong> Reduced appetite (often improves after first weeks), dry mouth, insomnia if taken too late, headache, irritability as it wears off in the evening, increased heart rate.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_ritalin_ir',title:'Ritalin IR / Artige (methylphenidate IR)',body:'<p><strong>How it works:</strong> Blocks dopamine and noradrenaline transporters (reuptake inhibition only — does NOT trigger release). Slightly milder effect than dexamphetamine.</p><p><strong>Practical details:</strong> Short-acting tablet. Effects begin 30–45 min, last 3–4 hrs. Usually 2–3x/day. Avoid acidic drinks, vitamin C, citric acid at dosing time — reduces absorption. Take after food to reduce nausea.</p><p><strong>Common side effects:</strong> Reduced appetite at lunchtime, headache (settles 2–3 weeks), insomnia if afternoon dose too late, increased heart rate, jitteriness or anxiety in some, stomach discomfort.</p><p><strong>Less common:</strong> Elevated blood pressure, rebound (mood drop as it wears off — discuss if significant), mania in bipolar disorder.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_ritalin_la',title:'Ritalin LA (methylphenidate long-acting)',body:'<p><strong>How it works:</strong> Same mechanism as Ritalin IR but delivers 50% immediately then 50% over the next 4–8 hours via two-pulse SODAS system. Smooth onset, longer coverage.</p><p><strong>Practical details:</strong> Capsule — swallow whole. Approximately 8 hrs from one morning dose. Avoid acidic drinks. Some add a small Ritalin IR afternoon dose for extended coverage.</p><p><strong>Common side effects:</strong> Reduced appetite (less pronounced than IR), insomnia if taken too late, headache, increased heart rate, jitteriness or anxiety in some.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_concerta',title:'Concerta (methylphenidate ER)',body:'<p><strong>How it works:</strong> OROS osmotic pump: 22% delivered immediately, 78% released gradually over 10–12 hrs. Creates a slowly ascending blood level. Same reuptake inhibition mechanism as Ritalin.</p><p><strong>Practical details:</strong> Tablet — <strong>must swallow whole</strong> (do not crush or chew). Empty shell may appear in stool (normal). 10–12 hrs from one morning dose. Avoid acidic drinks.</p><p><strong>What to expect:</strong> Gradual ascending delivery rather than an early peak. Extended duration suits people needing afternoon/evening coverage.</p><p><strong>Common side effects:</strong> Reduced appetite, insomnia (take in morning), headache, increased heart rate, dry mouth.</p><p><strong>Interactions:</strong> MAOIs — absolute contraindication. Acidic drinks reduce absorption.</p>'},
+    {id:'med_strattera',title:'Strattera (atomoxetine)',body:'<p><strong>How it works:</strong> NOT a stimulant. Selective noradrenaline reuptake inhibitor (SNRI). Blocks the noradrenaline transporter — which in the prefrontal cortex also indirectly increases dopamine. No abuse potential; not a controlled substance.</p><p><strong>Practical details:</strong> Takes <strong>4–12 weeks</strong> for full effect. Once or twice daily, titrated slowly. 24-hr coverage at therapeutic dose. Good option for anxiety, tic disorders, substance use history, or as add-on to stimulants.</p><p><strong>Common side effects:</strong> Nausea/stomach discomfort (take with food — helps significantly), dry mouth, constipation, dizziness, mood changes during titration, urinary hesitancy, reduced appetite (milder than stimulants).</p><p><strong>Rare but important:</strong> Liver injury — if jaundice (yellow skin/eyes), dark urine, or persistent abdominal pain, stop and seek urgent help immediately.</p><p><strong>Interactions:</strong> Fluoxetine, paroxetine, bupropion dramatically increase atomoxetine levels — avoid combination. Salbutamol (Ventolin) may increase cardiovascular effects.</p>'},
+    {id:'med_intuniv',title:'Intuniv (guanfacine XR)',body:'<p><strong>How it works:</strong> Non-stimulant. Acts on alpha-2A adrenergic receptors in the prefrontal cortex, strengthening neural connections that control attention and impulse regulation. No abuse potential.</p><p><strong>Practical details:</strong> Once daily, same time each day. Therapeutic effect develops over 4–8 weeks. Avoid high-fat meals at dose time. <strong>Do not stop suddenly</strong> — can cause rebound hypertension and tachycardia. Always taper under medical guidance.</p><p><strong>What to expect:</strong> Particularly helpful for emotional dysregulation, impulsivity, and hyperactivity. Often combined with stimulants. Initial sedation usually settles.</p><p><strong>Common side effects:</strong> Drowsiness/sedation (especially first weeks — evening dosing helps), decreased blood pressure (dizziness on standing), decreased heart rate, headache, dry mouth, constipation.</p><p><strong>Interactions:</strong> Other blood pressure medications — effects add. Avoid high-fat meals at dose time.</p>'},
+    {id:'med_clonidine',title:'Catapres (clonidine)',body:'<p><strong>How it works:</strong> Non-stimulant. Acts on alpha-2 adrenergic receptors in the brain and peripheral nervous system. Helps regulate arousal, reduce impulsivity, and improve sleep onset. No abuse potential.</p><p><strong>Practical details:</strong> Titrated slowly as specified. <strong>Do not stop suddenly</strong> — can cause rebound elevated blood pressure and heart rate. Always taper gradually. Alcohol significantly increases sedation — avoid or strictly limit.</p><p><strong>What to expect:</strong> Useful for hyperarousal, impulsivity, and sleep difficulties. Sedation common initially. Low BP and dizziness (especially on standing) usually diminish after weeks at a stable dose.</p><p><strong>Common side effects:</strong> Sedation (can be significant when starting), dizziness on standing, decreased blood pressure, decreased heart rate, dry mouth, constipation, headache, low mood or fatigue in some.</p><p><strong>Interactions:</strong> Alcohol significantly increases sedation — avoid/limit. Other blood pressure medications — effects add. Inform all doctors you are taking it.</p>'},
   ]},
-  {label:'Non-Pharmacological Strategies', items:[
-    {id:'non_pharm', title:'Non-pharmacological approaches',
-     body:'<p><strong>Psychological therapies with evidence in ADHD:</strong></p><ul><li><strong>CBT for ADHD</strong> — procrastination, disorganisation, time management, avoidance, negative self-beliefs.</li><li><strong>ACT</strong> — psychological flexibility; defusion, values, committed action.</li><li><strong>DBT skills</strong> — for emotional dysregulation and RSD: mindfulness, distress tolerance, emotion regulation, interpersonal effectiveness.</li><li><strong>ADHD coaching</strong> — practical, present-focused, accountability. Look for ICF-accredited coaches with ADHD training.</li><li><strong>Occupational therapy</strong> — workspace organisation, routine scaffolding, sensory strategies.</li></ul><p><strong>Practical strategies:</strong></p><ul><li><strong>Body doubling</strong> — working alongside another person. Focusmate (free) for online sessions.</li><li><strong>Brain dump + priority matrix</strong> — externalise the task list; sort by importance and urgency.</li><li><strong>Time blocking + visual timers</strong> — Time Timer, Pomodoro.</li><li><strong>If-then planning</strong> — "If it\'s 9am and I sit at my desk, then I open the document first."</li><li><strong>Exercise</strong> — single bout = ~1–4 hours of improved attention. Aerobic, earlier in day, 20+ minutes.</li></ul>'},
-    {id:'phone_use', title:'Reducing phone and screen use',
-     body:'<p>For ADHD brains, goal is <strong>friction</strong>, not willpower. Make undesirable habits harder to start.</p><ul><li><strong>Hidden folders:</strong> bury social apps inside a folder within a folder on the last page.</li><li><strong>Grayscale mode:</strong> Settings → Accessibility → Color Filters → Greyscale.</li><li><strong>Screen Time limits</strong> — have someone else set the override passcode.</li><li><strong>Brick</strong> — physical NFC card that locks apps.</li><li><strong>Notification audit</strong> — turn off all non-essential notifications.</li><li><strong>Charge phone outside the bedroom.</strong></li></ul>'},
-    {id:'emotional_reg', title:'Emotional regulation strategies',
-     body:'<p>Emotional dysregulation is neurological — same prefrontal circuits as attention. Not a character flaw.</p><p><strong>In the moment:</strong></p><ul><li><strong>TIPP:</strong> Temperature (cold water on face), Intense exercise (60 sec), Paced breathing (4 in, 7 out), Progressive muscle relaxation.</li><li><strong>STOP:</strong> Stop, Take a step back, Observe, Proceed mindfully.</li><li><strong>90-second rule:</strong> the physiological surge lasts ~90 seconds if you don\'t feed it.</li></ul><p><strong>Longer-term:</strong></p><ul><li><strong>PLEASE skills:</strong> treat physical illness, eat, avoid mood-altering substances, sleep, exercise.</li><li><strong>Opposite Action:</strong> shame says withdraw → reach out. Anger says attack → approach gently.</li><li><strong>Defusion:</strong> "I notice I\'m having the thought that I\'m worthless" rather than "I\'m worthless."</li><li><strong>Emotion naming:</strong> "I feel rejected and ashamed" — activates prefrontal cortex.</li></ul>'},
-    {id:'sleep', title:'Sleep and ADHD',
-     body:'<p><strong>What helps:</strong></p><ul><li><strong>Bright light therapy in the morning</strong> — 10,000 lux light box or Re-Timer glasses for 30–60 min. Resets circadian rhythm.</li><li><strong>Consistent wake time</strong> — including weekends. Anchors rhythm better than bedtime.</li><li><strong>Review stimulant timing</strong> if sleep onset is problematic.</li><li><strong>Sleep hygiene:</strong> cool dark room, no screens 1 hr before bed.</li><li><strong>Melatonin or clonidine</strong> may assist sleep onset — discuss.</li><li>Persistent issues → consider formal sleep assessment.</li></ul>'},
-    {id:'binge_eating', title:'Binge eating and appetite',
-     body:'<p>Binge eating is significantly more common in ADHD — ADHD brains seek dopamine, palatable food provides a reliable hit.</p><ul><li>Eat regularly — small lunch even if not hungry — prevents evening loss of control.</li><li>Reduce friction for healthy food; increase friction for binge foods.</li><li>Identify emotional triggers — boredom, frustration, overwhelm.</li><li>Movement, music, or brief engaging task can replace dopamine seeking.</li><li>If significantly impacting life — raise with psychiatrist; CBT-E or DBT have good evidence.</li></ul>'},
-    {id:'study', title:'Study tips',
-     body:'<p>Standard advice is for neurotypical brains. ADHD requires interest-driven techniques.</p><ul><li><strong>Active recall, not re-reading:</strong> read, close, write everything you remember, check. Anki for spaced repetition.</li><li><strong>Phone in another room.</strong> Get a smartwatch.</li><li><strong>Feynman technique:</strong> explain aloud as if teaching. Where you get stuck is the gap.</li><li><strong>Body doubling for study:</strong> library, café, Focusmate.</li><li><strong>Study during medication peak</strong> — 60–90 minutes after dosing.</li></ul>'},
-    {id:'workplace', title:'Workplace adjustments',
-     body:'<p>Not legally required to disclose. Disclose on need-to-know basis only.</p><p><strong>Useful adjustments:</strong> quiet or people-filled workspace (whichever helps), noise-cancelling headphones, standing desk, regular brief check-ins with manager, written task lists, clear deadlines.</p><p><strong>Self-employed:</strong> batch admin weekly, automate invoicing, fixed daily start routine, accountability via coach or colleague.</p>'},
-    {id:'communication', title:'Communication with partner / family',
-     body:'<p><strong>For the person with ADHD:</strong> write things down immediately, ask for written summaries, time important conversations for when medication is active.</p><p><strong>For partners / family:</strong> short direct requests, written reminders, don\'t take forgetfulness personally, repair conflict quickly, assume positive intent.</p>'},
-    {id:'pregnancy', title:'Pregnancy and breastfeeding',
-     body:'<p><strong>Stimulants in pregnancy:</strong> small increased risk of preterm birth, low birth weight. Usually stopped or reduced, especially first trimester, unless risks of untreated ADHD significant.</p><p><strong>Non-stimulants:</strong> atomoxetine, guanfacine, clonidine generally stopped — limited safety data.</p><p><strong>Breastfeeding:</strong> Small amounts in milk. Ritalin has lowest excretion and is generally preferred. Monitor infant.</p><p><strong>Plan early</strong> — individual decision with psychiatrist and obstetrician.</p>'},
+  {label:'Non-pharmacological Strategies', items:[
+    {id:'non_pharm',title:'Non-pharmacological approaches and techniques',body:'<p><strong>Psychological therapies:</strong></p><ul><li><strong>CBT for ADHD</strong> (strong evidence): Targets procrastination, disorganisation, time management, avoidance, and negative self-beliefs. Skills-based and practical. ~60–70% show meaningful functional gains.</li><li><strong>ACT — Acceptance and Commitment Therapy</strong> (moderate–strong): Teaches psychological flexibility. Key techniques: defusion ("I notice I am having the thought that I am useless" rather than "I am useless"), values clarification, committed action. Particularly helpful for those exhausted by trying to control their mind.</li><li><strong>DBT skills training</strong> (moderate–strong): Especially for emotional dysregulation and rejection sensitivity. Four modules — mindfulness, distress tolerance, emotion regulation, interpersonal effectiveness — map directly onto ADHD\'s most impairing features.</li><li><strong>ADHD coaching</strong> (moderate): Practical and present-focused. Goal attainment, accountability, routine-building. Best for functionally stable people needing structured accountability. Look for ICF-accredited coaches with ADHD training.</li><li><strong>Occupational therapy</strong> (emerging): Hands-on solutions — workspace organisation, routine scaffolding, sensory strategies, assistive technology. May be fundable through NDIS.</li></ul><p><strong>Practical strategies:</strong></p><ul><li><strong>Body doubling:</strong> Working in the presence of another person — physically or via video — without necessarily collaborating. Many people with ADHD initiate and sustain tasks dramatically better when someone is simply present. Focusmate (focusmate.com) provides free online sessions.</li><li><strong>Brain dump + priority matrix:</strong> Get everything out of your head onto a list — everything, regardless of size or urgency. Then sort by importance and urgency. Do this weekly or when mental load feels unmanageable. Externalising the task list is itself calming.</li><li><strong>Time blocking with visual timers:</strong> Allocate specific tasks to specific time slots. The Time Timer (visual countdown as shrinking red disc) makes time passage concrete. Pomodoro technique: 25 minutes on, 5-minute break.</li><li><strong>If-then planning:</strong> "If it is 9am and I sit at my desk, then I will open the document I need to work on first." More specific = more effective. Write it down.</li><li><strong>Reward pairing:</strong> Listen to a favourite podcast only while doing routine tasks. Use a specific playlist only for focused work. Set a small, concrete reward for completing a defined block.</li><li><strong>Exercise:</strong> A single session of aerobic exercise produces immediate, measurable improvement in attention, working memory, and impulse control for 1–4 hours — comparable to a low-dose stimulant. Regular exercise improves baseline executive function. Aim for 20+ minutes aerobic, earlier in the day.</li><li><strong>Decision fatigue:</strong> Automate recurring decisions — weekly meal structure, default answers to common requests. Batch similar decisions. Do cognitively demanding work during your medication peak, not in the evening.</li></ul>'},
+    {id:'phone_use',title:'Reducing phone and social media use',body:'<p>Smartphones are engineered to capture attention. For ADHD brains, the goal is not willpower — it is <strong>friction</strong>. Make undesirable habits physically harder.</p><ul><li><strong>Hidden folders:</strong> Move Instagram/TikTok into a folder within a folder on the last page. Extra taps break the automatic reflex.</li><li><strong>Grayscale mode:</strong> Settings → Accessibility → Colour Filters → Greyscale. Makes the phone boring. Works.</li><li><strong>Screen Time limits:</strong> Set daily limits per app. Have someone else set the passcode if you override impulsively.</li><li><strong>Brick:</strong> Physical NFC card (<a href="http://brickself.com" target="_blank">brickself.com</a>) that locks apps for a set period.</li><li><strong>Notification audit:</strong> Turn off all non-essential notifications. Every interruption costs 10–20 minutes of reorientation.</li><li><strong>Charge outside bedroom:</strong> Eliminates late-night scrolling and morning phone-grab before medication kicks in.</li></ul>'},
+    {id:'emotional_reg',title:'Emotional regulation strategies',body:'<p>Emotional dysregulation in ADHD is neurological — the same prefrontal circuits managing attention also regulate emotional responses. Emotions arrive faster, feel more intense, and take longer to settle. This is not a character flaw; it is the same mechanism as the attention problems.</p><p><strong>In the moment — when already activated:</strong></p><ul><li><strong>TIPP (DBT):</strong> Temperature (submerge face in cold water 15–30 seconds, or cold water on wrists — activates the mammalian dive reflex, rapidly lowers heart rate and emotional intensity); Intense exercise (60 seconds of jumping jacks burns physiological activation); Paced breathing (exhale longer than inhale: 4 in, 7 out — activates the parasympathetic system); Progressive muscle relaxation.</li><li><strong>STOP skill (DBT):</strong> Stop. Take a step back physically if possible. Observe what you are feeling without acting on it. Proceed mindfully — even 30 seconds changes outcomes.</li><li><strong>90-second rule:</strong> The physiological component of an emotional response lasts approximately 90 seconds if you do not feed it with rumination. Ride the wave without acting and it naturally subsides.</li></ul><p><strong>Longer-term regulation:</strong></p><ul><li><strong>PLEASE skills (DBT):</strong> Emotional regulation is dramatically worse when your physical baseline is poor. Treat physical illness. Eat regularly. Avoid mood-altering substances. Sleep adequately. Exercise daily. These are prerequisites, not optional extras.</li><li><strong>Opposite Action (DBT):</strong> When the emotion is prompting an action that makes things worse, do the opposite. Shame says withdraw — opposite is to reach out. Anger says attack — opposite is to approach gently.</li><li><strong>Defusion (ACT):</strong> Create distance from intense thoughts. Instead of "I am worthless," try "I notice I am having the thought that I am worthless." This small shift activates the prefrontal cortex.</li><li><strong>Emotion naming:</strong> Accurately labelling the feeling — not just "bad" but "I feel rejected and ashamed" — activates the prefrontal cortex and reduces amygdala reactivity.</li><li><strong>Map RSD triggers in advance:</strong> Identify situations that reliably activate rejection sensitivity. Knowing the trigger in advance lets you apply skills before you are flooded.</li></ul>'},
+    {id:'study_tips',title:'Study tips',body:'<p>Standard study advice is written for neurotypical brains. ADHD requires techniques that work with the interest-driven attention system.</p><ul><li><strong>Active recall, not re-reading:</strong> Read a section, close it, write everything you remember, then check. Flashcards with spaced repetition (Anki app) are ideal.</li><li><strong>Remove the phone:</strong> Get a smartwatch and put your phone in another room. Non-negotiable.</li><li><strong>Feynman Technique:</strong> Explain the concept aloud as if teaching someone. Where you get stuck is the exact gap. Fill it, then explain again.</li><li><strong>Body doubling for study:</strong> Library, cafe, or Focusmate (virtual body doubling service).</li><li><strong>Study during medication peak:</strong> Schedule demanding work 60–90 minutes after taking stimulant. Do not save it for when medication has worn off.</li><li><strong>Interest bridging:</strong> Find the angle that connects the material to something you care about. ADHD brains learn through interest.</li></ul>'},
+    {id:'binge_eating',title:'Binge eating and appetite',body:'<p>Binge eating is significantly more common in ADHD. The ADHD brain seeks dopamine; highly palatable food provides a reliable, immediate hit. Impulsivity reduces the pause between urge and action. Skipping meals (especially when stimulants suppress lunch appetite) drives hunger that accelerates loss of control later.</p><ul><li><strong>Eat regularly:</strong> Small, scheduled lunch — even if not hungry — prevents significant hunger driving evening overconsumption.</li><li><strong>Reduce friction for healthy eating:</strong> Keep easy, adequate food accessible; make high-stimulation binge foods harder to reach.</li><li><strong>Identify the emotional trigger:</strong> Binge urges often follow boredom, procrastination, frustration, or overwhelm — not just hunger.</li><li><strong>Address the dopamine need directly:</strong> Movement, music, or a brief engaging task can reduce the urge without eating.</li><li><strong>If significantly impacting life:</strong> Raise with your psychiatrist. Medication adjustments and/or psychological support (CBT-E or DBT) have good evidence.</li></ul>'},
+    {id:'insomnia',title:'Sleep and ADHD',body:'<p><strong>Why ADHD and sleep do not mix:</strong> The ADHD brain struggles to disengage at bedtime — thoughts keep firing when you want to wind down. Delayed sleep phase (being a natural night owl) is more common in ADHD. Stimulant timing can also affect sleep onset.</p><p><strong>What actually helps:</strong></p><ul><li><strong>Bright light therapy:</strong> Morning bright light (10,000 lux light box or Re-Timer glasses worn for 30–60 minutes on waking) is one of the higher-yield sleep interventions in ADHD. It resets the circadian rhythm and makes falling asleep at night easier.</li><li><strong>Consistent wake time</strong> — including weekends — anchors the circadian rhythm more effectively than a consistent bedtime.</li><li><strong>Review stimulant timing</strong> with your psychiatrist if sleep onset is problematic.</li><li><strong>Sleep hygiene basics:</strong> Cool, dark room; no screens 1 hour before bed; white noise if helpful.</li><li><strong>Melatonin or clonidine</strong> can assist with sleep onset — discuss with your psychiatrist.</li><li>If sleep problems persist despite these measures, ask your GP about a formal sleep assessment.</li></ul>'},
+    {id:'disclosing',title:'Disclosing your diagnosis',body:'<p>You are never obligated to disclose your diagnosis. It is a personal decision with real trade-offs.</p><p><strong>Before disclosing, consider:</strong></p><ul><li>Stigma remains real. Not everyone understands ADHD or believes in it. Some will see it as an excuse.</li><li>Disclosure does not guarantee protection or accommodation.</li><li>Some contexts are safer than others (close relationships vs workplace vs casual acquaintances).</li></ul><p><strong>When disclosure may help:</strong></p><ul><li>Requesting specific, practical accommodations that would meaningfully help your performance.</li><li>Partners and close family — understanding often significantly reduces relationship friction.</li><li>Trusted colleagues who can provide informal support or accountability.</li></ul><p><strong>If people are sceptical:</strong> You do not need to convince them. A simple response: "I have had a thorough assessment and I am comfortable with the diagnosis." You do not owe anyone a debate.</p>'},
+    {id:'workplace',title:'Workplace adjustments',body:'<p><strong>Disclosure:</strong> Not legally required. Disclose on a need-to-know basis only. Stigma remains real — proceed thoughtfully.</p><p><strong>Useful adjustments:</strong> Quiet or people-filled workspace (choose what works), noise-cancelling headphones, standing desk, regular brief check-ins with manager, written task lists and clear deadlines.</p><p><strong>Self-employed:</strong> Batch admin into one weekly block, automate invoicing, fixed daily start routine, external accountability via coach or colleague.</p>'},
+    {id:'bfrbs',title:'Body-focused repetitive behaviours (BFRBs)',body:'<p><strong>What they are:</strong> Skin picking, hair pulling (trichotillomania), nail biting, cheek chewing. Significantly more common with ADHD.</p><p><strong>Why they occur:</strong> Stimulation-seeking, impulsivity, emotional regulation via habit loop, often automatic/unconscious.</p><p><strong>What helps:</strong> Habit Reversal Training (most evidence-based), barrier strategies (pimple patches, gloves while driving), fidget substitutes, awareness training. ADHD treatment itself often reduces frequency.</p>'},
+    {id:'communication',title:'Communication and ADHD',body:'<p><strong>How ADHD affects communication:</strong> Impulsive interrupting, losing the conversational thread, emotional reactivity in conflict, inconsistency between intention and follow-through.</p><p><strong>For the person with ADHD:</strong> Write things down immediately, ask for written summaries, time important conversations for when medication is active.</p><p><strong>For partners/family:</strong> Short direct requests, written reminders, do not take forgetfulness personally, repair conflict quickly, assume positive intent.</p>'},
+    {id:'pregnancy',title:'Pregnancy and breastfeeding',body:'<p><strong>Stimulants in pregnancy:</strong> Small increased risk of preterm birth and low birth weight. Usual approach: discuss stopping or reducing, especially first trimester, unless risks of untreated ADHD are significant.</p><p><strong>Non-stimulants:</strong> Atomoxetine, guanfacine, clonidine — generally stopped in pregnancy due to limited safety data.</p><p><strong>Breastfeeding:</strong> Small amounts pass into breast milk. Ritalin has lowest excretion and is generally preferred. Monitor infant for reduced feeding or irritability.</p><p><strong>Key message:</strong> Individual decision with psychiatrist and obstetrician. Plan early. Non-pharmacological strategies become particularly important during this period.</p>'},
   ]},
-  {label:'Resources', items:[
-    {id:'books', title:'Recommended books',
-     body:'<ul><li><strong>ADHD 2.0</strong> — Hallowell &amp; Ratey. Readable, evidence-based, good starting point.</li><li><strong>Driven to Distraction</strong> — Hallowell &amp; Ratey. The original classic.</li><li><strong>Smart but Stuck</strong> — Thomas Brown. For high-achieving adults underperforming.</li><li><strong>Scattered Minds</strong> — Gabor Mate. Psychodynamic lens; early developmental patterns.</li></ul>'},
-    {id:'tools', title:'Useful products and tools',
-     body:'<ul><li><strong>Re-Timer glasses</strong> — light therapy for circadian / sleep phase. retimer.com.au</li><li><strong>Loop Earplugs</strong> — reduce noise without distortion. au.loopearplugs.com</li><li><strong>Manta Sleep masks</strong> — blackout / sound mask combo. mantasleep.com.au</li><li><strong>Focusmate</strong> — free virtual body doubling. focusmate.com</li><li><strong>Anki</strong> — spaced-repetition flashcards. ankiweb.net</li></ul>'},
+  {label:'Products and Resources', items:[
+    {id:'retimer',title:'Re-timer 3 (light therapy glasses)',body:'<p>Light therapy glasses worn for 30–60 minutes each morning. Help regulate circadian rhythm, improve mood, and advance sleep timing — particularly useful for the delayed sleep phase common in ADHD.</p><p><strong>How to use:</strong> Wear on waking, continue normal morning activities (eating, reading). Consistency matters more than duration.</p><p><strong>Where to get:</strong> <a href="https://www.retimer.com.au/retimer-3/" target="_blank">retimer.com.au/retimer-3</a> — use code <strong>BMURRIE</strong> for 20% off the Re-timer 3.</p>'},
+    {id:'manta',title:'Manta Sleep Masks',body:'<p>High-quality blackout sleep masks — particularly the <strong>Manta Sleep SOUND</strong>, which combines a comfortable blackout eye mask with the ability to listen to calming music or white noise. Excellent for the ADHD brain that struggles to disengage at bedtime.</p><p><strong>Where to get:</strong> <a href="https://mantasleep.com.au/" target="_blank">mantasleep.com.au</a> — use code <strong>SLEEPBETTER_15</strong> for 15% off non-promotional items.</p>'},
+    {id:'loop',title:'Loop Earplugs',body:'<p>High-quality reusable earplugs useful for both sleep and reducing daytime distractions. Different models offer different levels of noise reduction — some designed to reduce volume without distorting sound (good for work/social settings), others for fuller noise blocking.</p><p><strong>Where to get:</strong> <a href="https://au.loopearplugs.com" target="_blank">au.loopearplugs.com</a> — discounts frequently available on the site.</p>'},
+    {id:'books',title:'Recommended books',body:'<p><strong>ADHD 2.0</strong> — Edward Hallowell and John Ratey. Highly readable, compassionate, and evidence-based. Good starting point for newly diagnosed adults.</p><p><strong>Driven to Distraction</strong> — Hallowell and Ratey. The original classic. Excellent for understanding the lived experience.</p><p><strong>Smart but Stuck</strong> — Thomas Brown. Particularly good for high-achieving adults with ADHD who cannot understand why they keep underperforming.</p><p><strong>The ADHD Advantage</strong> — Dale Archer. Useful reframe for strengths-based thinking.</p><p><strong>Scattered Minds</strong> — Gabor Mate. More psychodynamic lens; good for understanding early developmental patterns.</p>'},
+    {id:'other_resources',title:'Other useful resources and products',body:'<p><strong>Lovevery</strong> — High quality developmental play kits for young children. Great for parents with ADHD. <a href="https://lovevery.com.au/" target="_blank">lovevery.com.au</a></p><p><strong>Kaiko Fidgets</strong> — Good quality fidget toys and harm reduction tools. Useful for managing restlessness and focus. <a href="https://kaikofidgets.com/" target="_blank">kaikofidgets.com</a></p><p><strong>Melodic Forest</strong> — Fun, easy-to-play musical instruments (kalimba, tongue drums). The kalimba is an excellent phone replacement — soothing and stimulating. <a href="https://www.melodicforest.com.au/" target="_blank">melodicforest.com.au</a></p><p><strong>Neptune Blanket</strong> — Weighted blankets, acupressure mats. Weighted blankets can help with sleep onset and sensory regulation. <a href="https://neptuneblanket.com.au/" target="_blank">neptuneblanket.com.au</a></p><p><strong>Focusmate</strong> — Free body doubling service. Schedule 50-minute virtual co-working sessions with strangers. Remarkably effective for task initiation. <a href="https://www.focusmate.com/" target="_blank">focusmate.com</a></p>'},
   ]},
 ];
 
+
 // =================== TITRATION DATA — full original ===================
 const TIT_MEDS={
-  dex:{name:'Dexamphetamine IR',brand:'Dexamphetamine sulfate 5mg',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Request 200 tabs if 5+ tabs/day.',
+  dex:{name:'Dexamphetamine IR',brand:'Dexamphetamine sulfate 5mg tabs',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA. Request 200 tabs if 5+ tabs/day.',
     unit:'mg',form:'tab',strengths:[5],
     steps:[{label:'Days 1-2',ongoing:false,note:'Start low. Take on waking.',doses:[{t:'morning',l:'½ tab (2.5mg)'},{t:'midday',l:'½ tab (2.5mg)'}]},
       {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (5mg)'},{t:'midday',l:'1 tab (5mg)'}]},
       {label:'Days 10-16',ongoing:false,note:'Good tolerability required.',doses:[{t:'morning',l:'2 tabs (10mg)'},{t:'midday',l:'1 tab (5mg)'}]},
       {label:'Ongoing',ongoing:true,note:'Continue until next review.',doses:[{t:'morning',l:'2 tabs (10mg)'},{t:'midday',l:'2 tabs (10mg)'}]}]},
-  ritalinIR:{name:'Ritalin IR / Artige',brand:'Methylphenidate hydrochloride 10mg',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
+  ritalinIR:{name:'Methylphenidate IR (Ritalin / Artige)',brand:'Methylphenidate hydrochloride 10mg tabs',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
     unit:'mg',form:'tab',strengths:[10],
     steps:[{label:'Days 1-2',ongoing:false,note:'Start low.',doses:[{t:'morning',l:'½ tab (5mg)'},{t:'midday',l:'½ tab (5mg)'}]},
       {label:'Days 3-9',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (10mg)'},{t:'midday',l:'1 tab (10mg)'}]},
       {label:'Days 10-16',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'1 tab (10mg)'}]},
       {label:'Ongoing',ongoing:true,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'2 tabs (20mg)'}]}]},
-  ritalinLA:{name:'Ritalin LA',brand:'Methylphenidate modified-release capsules (10, 20, 30, 40, 60mg)',auth:'Stimulant authority script. Add CA2023 (NSW). Once daily. Capsule can be sprinkled onto soft food.',
+  ritalinLA:{name:'Methylphenidate LA (Ritalin LA)',brand:'Methylphenidate modified-release capsules (10, 20, 30, 40, 60mg)',auth:'Stimulant authority script. Add CA2023 (NSW). Once daily. Capsule can be sprinkled onto soft food.',
     unit:'mg',form:'cap',strengths:[10,20,30,40,60],
     steps:[{label:'Week 1',ongoing:false,note:'Morning. Can sprinkle onto soft food.',doses:[{t:'morning',l:'1 cap (10mg)'}]},
       {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (20mg)'}]},
       {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 cap (30mg)'}]},
       {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 cap (40mg)'}]}]},
-  concerta:{name:'Concerta',brand:'Methylphenidate OROS (18, 27, 36, 54mg)',auth:'PBS authority via PRODA. ADHD diagnosis must have been made before age 18. Add CA2023 (NSW). Swallow whole — do NOT crush.',
+  concerta:{name:'Methylphenidate OROS (Concerta)',brand:'Methylphenidate OROS 18, 27, 36, 54mg',auth:'PBS authority via PRODA. ADHD diagnosis must have been made before age 18. Add CA2023 (NSW). Swallow whole — do NOT crush.',
     unit:'mg',form:'tab',strengths:[18,27,36,54],
     steps:[{label:'Week 1',ongoing:false,note:'Swallow whole — must NOT be crushed.',doses:[{t:'morning',l:'1 tab (18mg)'}]},
       {label:'Weeks 2-3',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (27mg)'}]},
       {label:'Weeks 4-5',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (36mg)'}]},
       {label:'Ongoing',ongoing:true,note:'Maximum dose.',doses:[{t:'morning',l:'1 tab (54mg)'}]}]},
-  vyvanse:{name:'Vyvanse',brand:'Lisdexamfetamine (20, 30, 40, 50, 60, 70mg capsules)',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
+  vyvanse:{name:'Lisdexamfetamine (Vyvanse)',brand:'Lisdexamfetamine 20, 30, 40, 50, 60, 70mg capsules',auth:'Stimulant authority script. Add CA2023 (NSW). Authority via PRODA.',
     unit:'mg',form:'cap',strengths:[20,30,40,50,60,70],
     steps:[],
     protocols:[
@@ -1260,7 +1543,7 @@ const TIT_MEDS={
           {label:'Ongoing — 30mg if needed',ongoing:true,note:'Increase to 30mg only if 20mg minimal effect but tolerated. Review at 6 weeks.',doses:[{t:'morning',l:'1 cap (30mg)'}]}
         ]}
     ]},
-  strattera:{name:'Atomoxetine (Strattera)',brand:'Atomoxetine 10, 18, 25, 40, 60, 80mg',auth:'Streamlined PBS — 7876 (initiation), 7890 (continuation). NOT a controlled drug. Full effect 4–12 weeks.',
+  strattera:{name:'Atomoxetine (Strattera)',brand:'Atomoxetine 10, 18, 25, 40, 60, 80mg capsules',auth:'Streamlined PBS — 7876 (initiation), 7890 (continuation). NOT a controlled drug. Full effect 4–12 weeks.',
     unit:'mg',form:'cap',strengths:[10,18,25,40,60,80],
     steps:[],
     protocols:[
@@ -1282,18 +1565,18 @@ const TIT_MEDS={
          {label:'Ongoing — 100mg',ongoing:true,note:'Continue at 100mg if tolerated and effective.',doses:[{t:'morning',l:'1 cap (40mg) + 1 cap (60mg) = 100mg'}]}
        ]}
     ]},
-  intuniv:{name:'Guanfacine XR (Intuniv)',brand:'Guanfacine XR 1, 2, 3, 4mg',auth:'Not a controlled drug. Do NOT stop abruptly — taper on cessation. Monitor BP regularly.',
+  intuniv:{name:'Guanfacine XR (Intuniv)',brand:'Guanfacine XR 1, 2, 3, 4mg tabs',auth:'Not a controlled drug. Do NOT stop abruptly — taper on cessation. Monitor BP regularly.',
     unit:'mg',form:'tab',strengths:[1,2,3,4],
     steps:[{label:'Weeks 1-2',ongoing:false,note:'Take nightly. Monitor BP.',doses:[{t:'evening',l:'1 tab (1mg)'}]},
       {label:'Weeks 3-4',ongoing:false,note:'',doses:[{t:'evening',l:'1 tab (2mg)'}]},
       {label:'Weeks 5-6',ongoing:false,note:'',doses:[{t:'evening',l:'1 tab (3mg)'}]},
       {label:'Ongoing — max 4mg',ongoing:true,note:'Do NOT stop suddenly — taper.',doses:[{t:'evening',l:'1 tab (4mg)'}]}]},
-  catnanight:{name:'Clonidine (nocte)',brand:'Clonidine 100, 150mcg',auth:'Private script — not PBS listed for ADHD. Do NOT stop abruptly. Monitor BP.',
+  catnanight:{name:'Clonidine nocte (Catapres)',brand:'Clonidine 100, 150mcg tabs',auth:'Private script — not PBS listed for ADHD. Do NOT stop abruptly. Monitor BP.',
     unit:'mcg',form:'tab',strengths:[100,150],
     steps:[{label:'Day 1',ongoing:false,note:'Very low start. Drowsiness expected.',doses:[{t:'night',l:'½ tab (50mcg)'}]},
       {label:'Week 1',ongoing:false,note:'Increase to 100mcg if tolerated.',doses:[{t:'night',l:'1 tab (100mcg)'}]},
       {label:'Ongoing',ongoing:true,note:'Up to 200mcg if needed. Taper on cessation.',doses:[{t:'night',l:'2 tabs (200mcg)'}]}]},
-  catnaday:{name:'Clonidine (BD/TDS)',brand:'Clonidine 100, 150mcg',auth:'Private script. Increase gradually. Do NOT stop suddenly — taper.',
+  catnaday:{name:'Clonidine BD/TDS (Catapres)',brand:'Clonidine 100, 150mcg tabs',auth:'Private script. Increase gradually. Do NOT stop suddenly — taper.',
     unit:'mcg',form:'tab',strengths:[100,150],
     steps:[{label:'Week 1',ongoing:false,note:'Monitor for dizziness and low BP.',doses:[{t:'morning',l:'½ tab (50mcg)'},{t:'afternoon',l:'½ tab (50mcg)'}]},
       {label:'Week 2',ongoing:false,note:'',doses:[{t:'morning',l:'1 tab (100mcg)'},{t:'afternoon',l:'1 tab (100mcg)'}]},
@@ -1453,8 +1736,11 @@ function renderSection(key){
   const items = SECTIONS[key] || [];
   ul.innerHTML = items.map((it,i)=>{
     const qid = key+'-'+i;
-    const hasQ = it.q && it.q.length;
-    const probes = hasQ ? `<div class="probes" id="probe-${qid}"><div class="head">Examples / probes</div><ul>${it.q.map(q=>'<li>'+escHtml(q)+'</li>').join('')}</ul></div>` : '';
+    const hasQ = (it.q && it.q.length) || it.explain;
+    const headerLabel = it.qLabel || 'Examples / probes';
+    const qList = it.q && it.q.length ? `<ul>${it.q.map(q=>'<li>'+escHtml(q)+'</li>').join('')}</ul>` : '';
+    const explain = it.explain ? `<div class="explain">${it.explain}</div>` : '';
+    const probes = hasQ ? `<div class="probes" id="probe-${qid}"><div class="head">${escHtml(headerLabel)}</div>${qList}${explain}</div>` : '';
     return `<div class="row${hasQ?'':' no-q'}" id="row-${qid}" ${hasQ?`onclick="toggleProbe('${qid}')"`:''}>
         <div class="line">
           <span class="chev"></span>
@@ -1606,29 +1892,32 @@ function renderTit(){
     ? `<div class="proto-tabs">${protos.map(p=>`<button class="proto-tab ${p.key===titProto?'on':''}" onclick="selectTitProto('${p.key}')">${escHtml(p.label)}</button>`).join('')}</div>`
     : '';
 
-  const showNotes = proto.steps.some(s=>s.note);
-  const tableHtml = `<table class="tit-table">
+  const colCount = times.length + 1; // phase + time cols
+  const tableRows = proto.steps.map(step=>{
+    const cells = times.map(t=>{
+      const d = dosesAtTime(step,t);
+      return `<td class="dose">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
+    }).join('');
+    const doseRow = `<tr class="${step.ongoing?'ongoing':''}">
+        <td class="phase">${escHtml(step.label)}${step.ongoing?'<div class="ongoing-tag">ongoing</div>':''}</td>
+        ${cells}
+      </tr>`;
+    const noteRow = step.note
+      ? `<tr class="note-row ${step.ongoing?'ongoing':''}"><td colspan="${colCount}" class="note">${escHtml(step.note)}</td></tr>`
+      : '';
+    return doseRow + noteRow;
+  }).join('');
+
+  const tableHtml = `<div class="tit-table-wrap"><table class="tit-table">
     <thead><tr>
       <th>Phase</th>
       ${times.map(t=>`<th>${TIME_LABEL[t]}</th>`).join('')}
-      ${showNotes?'<th>Notes</th>':''}
     </tr></thead>
-    <tbody>
-      ${proto.steps.map(step=>{
-        const cells = times.map(t=>{
-          const d = dosesAtTime(step,t);
-          return `<td class="dose">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
-        }).join('');
-        return `<tr class="${step.ongoing?'ongoing':''}">
-          <td class="phase">${escHtml(step.label)}</td>
-          ${cells}
-          ${showNotes?`<td class="note">${escHtml(step.note||'')}</td>`:''}
-        </tr>`;
-      }).join('')}
-    </tbody>
-  </table>`;
+    <tbody>${tableRows}</tbody>
+  </table></div>`;
 
   const auth = proto.auth || med.auth || '';
+  const scriptText = buildScriptText(med, proto);
 
   document.getElementById('tit-display').innerHTML = `
     <div class="tit-card">
@@ -1638,17 +1927,31 @@ function renderTit(){
       </div>
       ${protoTabs}
       ${tableHtml}
-      ${auth?`<div class="auth-box"><span class="label">Authority / prescribing notes</span>${escHtml(auth)}</div>`:''}
-      <div style="margin-top:6px">
-        <button class="copybtn" onclick="copyTit(this)">Copy as text</button>
+      <div class="tit-actions">
+        <button class="copybtn" onclick="copyTitTable(this)">Copy table</button>
+        <button class="copybtn" onclick="copyTitScript(this)">Copy script text</button>
+        ${auth?`<button class="copybtn" onclick="copyTitAuth(this)">Copy authority text</button>`:''}
       </div>
+      ${scriptText?`<div class="script-box"><span class="label">Script text — ongoing dose</span><pre id="tit-script-text">${escHtml(scriptText)}</pre></div>`:''}
+      ${auth?`<div class="auth-box"><span class="label">Authority / prescribing notes</span><span id="tit-auth-text">${escHtml(auth)}</span></div>`:''}
     </div>`;
 }
 
 function selectTitMed(k){titMed=k; titProto=null; renderTit();}
 function selectTitProto(k){titProto=k; renderTit();}
 
-function copyTit(btn){
+function buildScriptText(med, proto){
+  const ongoing = proto.steps.find(s=>s.ongoing) || proto.steps[proto.steps.length-1];
+  if(!ongoing) return '';
+  const times = aggregateDoses([ongoing]);
+  const sig = times.map(t=>{
+    const d = dosesAtTime(ongoing, t);
+    return d ? TIME_LABEL[t]+': '+d : null;
+  }).filter(Boolean).join('  +  ');
+  return med.name+'\n'+med.brand+'\n\nSig: '+sig+(ongoing.note?'\nNote: '+ongoing.note:'');
+}
+
+function copyTitTable(btn){
   const med = TIT_MEDS[titMed];
   const protos = getProtocols(titMed);
   const proto = protos.find(p=>p.key===titProto) || protos[0];
@@ -1659,13 +1962,27 @@ function copyTit(btn){
   lines.push('');
   proto.steps.forEach(step=>{
     const parts = times.map(t=>{const d=dosesAtTime(step,t); return d?TIME_LABEL[t]+': '+d:null;}).filter(Boolean);
-    lines.push(step.label+(step.ongoing?' (ongoing)':'')+' — '+parts.join('; ')+(step.note?'  ['+step.note+']':''));
+    lines.push(step.label+(step.ongoing?' (ongoing)':'')+' — '+parts.join('; '));
+    if(step.note) lines.push('  Note: '+step.note);
   });
-  if(proto.auth||med.auth){lines.push(''); lines.push('Authority: '+(proto.auth||med.auth));}
-  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
-    btn.textContent='Copied!'; btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent='Copy as text'; btn.classList.remove('ok');},1500);
-  });
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>flashCopy(btn,'Copy table'));
+}
+
+function copyTitScript(btn){
+  const t = document.getElementById('tit-script-text');
+  if(!t) return;
+  navigator.clipboard.writeText(t.textContent).then(()=>flashCopy(btn,'Copy script text'));
+}
+
+function copyTitAuth(btn){
+  const t = document.getElementById('tit-auth-text');
+  if(!t) return;
+  navigator.clipboard.writeText(t.textContent).then(()=>flashCopy(btn,'Copy authority text'));
+}
+
+function flashCopy(btn, original){
+  btn.textContent='Copied!'; btn.classList.add('ok');
+  setTimeout(()=>{btn.textContent=original; btn.classList.remove('ok');},1500);
 }
 
 // =================== FOLLOW-UP RENDER ===================
