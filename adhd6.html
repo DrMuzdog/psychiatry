@@ -822,9 +822,22 @@ footer{
 </section>
 
 <section class="card green" id="sec-trtplan">
-  <div class="ch"><span class="num">·</span>Treatment plan — non-pharmacological &amp; GP management</div>
+  <div class="ch"><span class="num">·</span>Treatment plan</div>
   <div class="body">
-    <p class="lead">Standard non-pharm recommendations for the patient and a structured GP management plan. Copy ready.</p>
+    <p class="lead">Compose the full plan. Click any pill to include / exclude that section — output updates live.</p>
+
+    <div class="builder">
+      <div class="bd-row">
+        <label class="bd-label">Include in plan</label>
+        <div class="bd-controls">
+          <button type="button" class="pill on" data-trt="pharm"    onclick="trtToggle(this)">Pharmacotherapy</button>
+          <button type="button" class="pill on" data-trt="fu"       onclick="trtToggle(this)">Follow-up plan</button>
+          <button type="button" class="pill on" data-trt="nonpharm" onclick="trtToggle(this)">Non-pharmacotherapy</button>
+          <button type="button" class="pill on" data-trt="gp"       onclick="trtToggle(this)">GP management</button>
+        </div>
+      </div>
+    </div>
+
     <div class="script-box">
       <span class="label">Treatment plan — copy ready</span>
       <pre id="trt-out"></pre>
@@ -2227,8 +2240,8 @@ function renderTit(){
     </div>`;
 }
 
-function selectTitMed(k){titMed=k; titProto=null; renderTit(); if(typeof hocRender==='function') hocRender();}
-function selectTitProto(k){titProto=k; renderTit(); if(typeof hocRender==='function') hocRender();}
+function selectTitMed(k){titMed=k; titProto=null; renderTit(); if(typeof hocRender==='function') hocRender(); if(typeof renderTrt==='function') renderTrt();}
+function selectTitProto(k){titProto=k; renderTit(); if(typeof hocRender==='function') hocRender(); if(typeof renderTrt==='function') renderTrt();}
 
 // Build plain-English titration directions — every phase as a line.
 function buildScriptText(med, proto){
@@ -2390,6 +2403,7 @@ function fuRender(){
   }
   const out = document.getElementById('fu-out');
   if(out) out.textContent = lines.join('\n');
+  if(typeof renderTrt==='function') renderTrt();
 }
 function copyFU(btn){
   const t = document.getElementById('fu-out').textContent;
@@ -2397,95 +2411,165 @@ function copyFU(btn){
   navigator.clipboard.writeText(t).then(()=>flashCopy(btn,'Copy follow-up plan'));
 }
 
-// =================== TREATMENT PLAN (non-pharm + GP MP) ===================
-function renderTrt(){
-  const text = `TREATMENT PLAN — NON-PHARMACOLOGICAL & GP MANAGEMENT
+// =================== TREATMENT PLAN (composable) ===================
+const trtState = new Set(['pharm','fu','nonpharm','gp']);
+function trtToggle(btn){
+  const k = btn.dataset.trt;
+  if(trtState.has(k)){trtState.delete(k); btn.classList.remove('on');}
+  else {trtState.add(k); btn.classList.add('on');}
+  renderTrt();
+}
 
-=============================================
-PATIENT — NON-PHARMACOLOGICAL RECOMMENDATIONS
-=============================================
+function buildTrtPharm(){
+  if(typeof titMed==='undefined' || !TIT_MEDS[titMed]) return '';
+  const med = TIT_MEDS[titMed];
+  const protos = getProtocols(titMed);
+  const proto = protos.find(p=>p.key===titProto) || protos[0];
+  const lines = [];
+  lines.push('MEDICATION & TITRATION PLAN');
+  lines.push('');
+  if(proto.conversion){
+    if(proto.intro){lines.push(proto.intro); lines.push('');}
+    lines.push('Daily IR dose      Ritalin LA              Concerta');
+    (proto.conversionTable||[]).forEach(r=>{
+      lines.push(r.ir.padEnd(18)+' '+r.la.padEnd(23)+' '+r.concerta);
+    });
+    lines.push('');
+    lines.push('* = nearest available dose — reassess at follow-up.');
+  } else {
+    lines.push(buildScriptText(med, proto));
+  }
+  const auth = proto.auth || med.auth || '';
+  if(auth){lines.push(''); lines.push('Authority / prescribing notes:'); lines.push(auth);}
+  return lines.join('\n');
+}
+
+function buildTrtFU(){
+  const notes = (document.getElementById('fu-notes')?.value||'').trim();
+  const lines = [];
+  lines.push('FOLLOW-UP PLAN');
+  lines.push('');
+  lines.push('Review with: '+fuState.who);
+  lines.push('When: in '+fuState.num+' '+fuState.unit);
+  if(fuState.dur) lines.push('Appointment duration: '+fuState.dur+' minutes');
+  if(fuState.req.size){
+    lines.push('');
+    lines.push('Patient to arrange before the next review:');
+    [...fuState.req].forEach(r=>lines.push('  • '+r));
+  }
+  if(fuState.blood.size){
+    lines.push('');
+    lines.push('Bloods to order: '+[...fuState.blood].join(', ')+'.');
+    if(fuState.path) lines.push('  '+fuState.path+'.');
+  } else if(fuState.path){
+    lines.push('');
+    lines.push(fuState.path+'.');
+  }
+  if(notes){
+    lines.push('');
+    lines.push('Notes / instructions:');
+    notes.split(/\n+/).forEach(l=>{if(l.trim()) lines.push('  '+l.trim());});
+  }
+  return lines.join('\n');
+}
+
+const TRT_NONPHARM = `NON-PHARMACOTHERAPY — PATIENT RECOMMENDATIONS
 
 SLEEP
-• Fixed wake time 7 days/week (anchors circadian rhythm).
-• Morning bright light therapy on waking — 30–60 min (e.g. Re-Timer 3 glasses, retimer.com.au).
-• Caffeine cut-off ≥10 hours before bed; no heavy meals or alcohol within 3 hours of bed; screens off 1 hour before.
-• Sleep environment: cool, dark, quiet. Manta Sleep mask + Loop earplugs if needed.
-• Melatonin 0.5–4mg as a chronobiotic — 3–4 hours before desired bedtime (not at bedtime).
-• Clonidine 50–200mcg nocte for hyperarousal / agitation if persistent.
+• Fix your wake time across all 7 days of the week — including weekends.
+• Get bright outdoor or therapy light in the first hour of waking, for 30–60 minutes. The Re-Timer 3 light therapy glasses (retimer.com.au) are effective.
+• Cut caffeine off at least 10 hours before bed. Stop heavy meals and alcohol at least 3 hours before bed. Screens off 1 hour before bed.
+• Keep the bedroom cool, dark, and quiet — a quality blackout mask (Manta Sleep) and earplugs (Loop) help.
+• Do not nap after 3pm.
 
 EXERCISE
-• 20+ minutes of aerobic exercise, earlier in the day. Acute bout = 1–4 hours of improved attention.
-• Regular movement breaks throughout the day.
-• Strength training 2–3x/week.
+• Aim for at least 20 minutes of brisk aerobic exercise most days, ideally earlier in the day. One session improves attention for 1–4 hours afterwards.
+• Add short movement breaks between tasks.
+• Resistance / strength training 2–3 times a week.
 
 DIET
-• Eat breakfast before dosing — pre-empts stimulant appetite suppression.
-• Protein-rich snacks; high-calorie evening meal once medication has worn off.
-• Regular meals, even if not hungry — particularly lunch.
-• Reduce ultra-processed foods and excess sugar; address binge patterns if present.
+• Eat breakfast — protein-rich is best.
+• Keep regular meals, especially lunch (eat even if not hungry).
+• Have an evening meal once medication has worn off, so appetite returns.
+• Reduce ultra-processed foods, added sugar, and high-glycaemic snacks.
+
+CANNABIS — STOP
+• Cannabis worsens ADHD symptoms, reduces treatment benefit, and increases the risk of psychosis. Cease entirely.
+• If finding it hard to stop, raise it directly — we will support you to come off.
+
+ALCOHOL & CAFFEINE
+• Alcohol — limit to occasional, moderate use. Stimulants mask the sedating effects, so it is easy to drink more than intended.
+• Caffeine — moderate is fine in the morning. Excess worsens anxiety, sleep onset, and heart rate.
 
 PHONE / DIGITAL HYGIENE
 • Hide social apps inside folders within folders on the last page.
-• Grayscale mode (Settings → Accessibility → Color Filters → Greyscale).
-• Screen Time limits — have someone else set the override passcode.
-• Notifications off for all non-essential apps.
-• Charge phone outside the bedroom.
+• Switch the phone to grayscale (Settings → Accessibility → Color Filters → Greyscale) — it stops being rewarding.
+• Set Screen Time limits and have someone else set the override passcode.
+• Turn off notifications for everything non-essential.
+• Charge the phone outside the bedroom.
 
-PRODUCTIVITY / EXECUTIVE STRATEGIES
-• Body doubling: work alongside another person, in person or via Focusmate (free, focusmate.com).
-• Brain dump + priority matrix weekly — externalise the task list, then sort by importance and urgency.
-• Time blocking with visual timers (Time Timer; Pomodoro 25 min on, 5 off).
-• If-then planning: "If it is 9am and I sit at my desk, then I open document X."
-• Schedule demanding work for the medication peak (60–90 min after dosing).
+PRODUCTIVITY & EXECUTIVE STRATEGIES
+• Body doubling — work in the presence of another person, in real life or virtually via Focusmate (free, focusmate.com).
+• Weekly brain dump and priority matrix — get every task out of your head onto a list, then sort by importance and urgency.
+• Time blocking with a visual timer (Time Timer; or Pomodoro: 25 min on, 5 min off).
+• If-then planning — be specific: "If it is 9am and I sit at my desk, then I open document X."
+• Schedule demanding tasks for when your medication is at peak effect (60–90 minutes after dosing).
 
 EMOTIONAL REGULATION
-• TIPP in the moment: Temperature (cold water on face), Intense exercise 60 sec, Paced breathing 4-in 7-out, PMR.
-• STOP: Stop — step back — observe — proceed mindfully.
-• 90-second rule: physiological surge lasts ~90 seconds if not fed by rumination.
-• Defusion (ACT): "I notice I'm having the thought that I'm worthless" rather than "I'm worthless."
+• TIPP in the moment — cold water on the face, 60 seconds of intense exercise, paced breathing (4-in, 7-out), progressive muscle relaxation.
+• STOP — stop, take a step back, observe what you are feeling, then proceed mindfully.
+• 90-second rule — the physiological surge of an emotion lasts ~90 seconds if you do not feed it with rumination.
+• Distance yourself from intense thoughts — "I notice I am having the thought that I am worthless" rather than "I am worthless."
 
-SUBSTANCE & STIMULANT-INTERACTION ADVICE
-• Cannabis — strongly recommend cessation; worsens ADHD symptoms and reduces treatment benefit.
-• Alcohol — moderate at most; stimulants mask sedating effects.
-• Caffeine — moderate is fine; excess worsens anxiety and insomnia.
+WORK & STUDY
+• Disclose only as needed for specific accommodations.
+• Quiet or noise-cancelling headphones; written task lists with clear deadlines; brief regular check-ins with your manager.
+• Schedule your hardest work during your medication peak.
 
-PSYCHOLOGICAL THERAPIES (evidence-based for ADHD)
-• CBT for ADHD — procrastination, organisation, time management, avoidance, negative self-beliefs.
-• ACT — psychological flexibility; values, committed action, defusion.
-• DBT skills — particularly for emotional dysregulation and rejection-sensitive dysphoria.
-• ADHD coaching — practical, present-focused accountability (ICF-accredited coach with ADHD training).
-• Occupational therapy — workspace organisation, sensory strategies; may be NDIS-fundable.
+DRIVING
+• Stimulants do not restrict driving and evidence shows fewer crashes on treatment.
+• Avoid driving for prolonged periods when medication has worn off.
+
+WHAT TO WATCH FOR — CALL EARLY IF
+• Chest pain, palpitations, or fainting.
+• A sudden lift in mood with reduced need for sleep, racing thoughts, or out-of-character behaviour.
+• Severe anxiety or panic.
+• Any thoughts of suicide or self-harm.
+• Pregnancy, planning pregnancy, or breastfeeding.
+
+PSYCHOLOGICAL THERAPIES (your psychiatrist or GP can refer)
+• CBT for ADHD — procrastination, organisation, time management, avoidance.
+• ACT — psychological flexibility, values-based action.
+• DBT skills — emotional dysregulation and rejection sensitivity.
+• ADHD coaching — practical, present-focused accountability.
 
 USEFUL RESOURCES
 • Books: ADHD 2.0 (Hallowell & Ratey), Driven to Distraction, Smart but Stuck (Brown), Scattered Minds (Mate).
-• Apps / services: Focusmate (free body doubling), Anki (spaced repetition), Brick (NFC app-locker).
-• Products: Re-Timer 3 glasses, Loop earplugs, Manta Sleep masks, Time Timer.
+• Apps / services: Focusmate (focusmate.com — free body doubling), Anki (ankiweb.net — spaced repetition), Brick (brickself.com — NFC app-locker).
+• Products: Re-Timer 3 (retimer.com.au), Loop earplugs (au.loopearplugs.com), Manta Sleep masks (mantasleep.com.au), Time Timer.
+• ADHD coaching directories — AADPA (aadpa.com.au), ADHD Australia (adhdaustralia.org.au), ICF (coachingfederation.org).`;
 
-=============================================
-GP MANAGEMENT PLAN
-=============================================
+const TRT_GP = `GP MANAGEMENT PLAN
 
-1. MENTAL HEALTH TREATMENT PLAN (MHTP) — Item 2715
-   • Refer to an ADHD-aware psychologist for CBT-ADHD, ACT, or DBT-skills training.
-   • Initial 10 Better Access sessions; extend by recommendation under continuing care.
-   • For emotional dysregulation / RSD — prioritise DBT skills modules.
+1. PSYCHOLOGY REFERRAL
+   • Refer to an ADHD-aware psychologist for CBT-ADHD, ACT, or DBT skills training.
+   • Prioritise DBT skills modules where emotional dysregulation or rejection sensitivity is prominent.
 
 2. ALLIED HEALTH REFERRALS (as clinically indicated)
-   • ADHD coach — ICF-accredited with ADHD training.
+   • ADHD coaching — directories: aadpa.com.au, adhdaustralia.org.au, coachingfederation.org.
    • Occupational therapy — workspace, sensory and routine strategies; NDIS-fundable where eligible.
-   • Dietitian — if appetite or weight concerns.
-   • Sleep psychologist or CBT-I program (This Way Up) if persistent insomnia.
+   • Dietitian — if appetite or weight concerns during titration.
+   • Sleep psychologist or CBT-I program (e.g. This Way Up) for persistent insomnia.
 
-3. ROUTINE MONITORING (every GP review during stimulant treatment)
-   • Therapeutic response, adherence, side effects, mental state, substance use risk, cardiovascular status.
-   • Resting BP and pulse at every review.
+3. ROUTINE MONITORING (every GP review on stimulant treatment)
+   • Therapeutic response, adherence, side effects, mental state, substance use, cardiovascular status.
+   • Resting BP and pulse every review.
    • Weight: monthly during titration; 6-monthly once stable.
-   • Ask about sleep, appetite, mood, rebound, headache, anxiety.
+   • Specifically ask about sleep, appetite, mood, rebound, headache, anxiety.
 
 4. PATHOLOGY (annual, or sooner if clinically indicated)
    • FBC, EUC, LFT, TFT, ferritin, iron studies, B12, folate, Vitamin D.
    • HbA1c and fasting lipids if metabolic risk.
-   • Pre-atomoxetine: baseline LFT (rare hepatotoxicity).
 
 5. ECG
    • As clinically indicated: cardiac history, exertional symptoms, syncope, palpitations, significant family history of arrhythmia or sudden death, age >40 with cardiovascular risk factors.
@@ -2494,21 +2578,36 @@ GP MANAGEMENT PLAN
 6. RTPM / SAFESCRIPT
    • Mandatory check before every controlled-substance prescription in most jurisdictions.
 
-7. WHEN TO CONTACT / REFER BACK TO PSYCHIATRY
-   • Inadequate treatment response or need for dose escalation beyond current regimen.
-   • New psychiatric symptoms.
+7. ADJUNCTIVE PRESCRIBING — SLEEP & HYPERAROUSAL (GP can initiate)
+   • Melatonin 0.5–4mg taken 3–4 hours BEFORE desired bedtime (used as a chronobiotic — not at bedtime).
+   • Clonidine 50–200mcg nocte — for hyperarousal, agitation, sleep onset.
+   • Doxylamine 12.5–25mg nocte — short-term only.
+   • Mirtazapine 15mg nocte — option if comorbid low mood / anxiety; monitor weight.
+   • Avoid benzodiazepines for chronic insomnia.
+   • Do NOT initiate stimulants, atomoxetine, or guanfacine — refer back to the psychiatrist for any ADHD-specific pharmacotherapy adjustment.
+
+8. WHEN TO REFER BACK TO PSYCHIATRY
+   • Inadequate treatment response or need for dose change.
    • Significant or persistent side effects.
    • Cardiovascular concerns (persistent BP ≥140/90, HR persistently >100).
-   • Suspected psychosis or mania — cease stimulant, arrange ED or urgent community mental health review (especially if combined with cannabis).
-   • Pregnancy planning, pregnancy, breastfeeding.
+   • New psychiatric symptoms.
+   • Suspected psychosis or mania — psychiatric emergency: cease stimulant immediately, send to ED or arrange urgent community mental health review (more common when combined with cannabis).
+   • Suicidal ideation or self-harm.
+   • Pregnancy planning, pregnancy, breastfeeding.`;
 
-8. PATIENT EDUCATION RESOURCES TO PROVIDE
-   • Written titration plan and side-effect management guide.
-   • Sleep hygiene + chronobiotic melatonin instructions.
-   • Reading list and useful apps / products (above).
-`;
+function renderTrt(){
+  const parts = [];
+  if(trtState.has('pharm'))    {const t = buildTrtPharm();   if(t) parts.push(t);}
+  if(trtState.has('fu'))       parts.push(buildTrtFU());
+  if(trtState.has('nonpharm')) parts.push(TRT_NONPHARM);
+  if(trtState.has('gp'))       parts.push(TRT_GP);
   const out = document.getElementById('trt-out');
-  if(out) out.textContent = text;
+  if(out) out.textContent = parts.length ? parts.join('\n\n\n') : '(Select at least one section above.)';
+}
+function copyTrt(btn){
+  const t = document.getElementById('trt-out').textContent;
+  if(!t.trim()) return;
+  navigator.clipboard.writeText(t).then(()=>flashCopy(btn,'Copy treatment plan'));
 }
 function copyTrt(btn){
   const t = document.getElementById('trt-out').textContent;
