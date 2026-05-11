@@ -473,7 +473,8 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
 }
 .hoc-add-med:hover{background:var(--primary-bg)}
 .script-box pre{
-  margin:0; font:13px/1.6 "Inter",sans-serif; white-space:pre-wrap;
+  margin:0; font:13px/1.6 "Inter",sans-serif;
+  white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;
   color:var(--ink); background:transparent; padding:0;
 }
 .auth-box{background:var(--amber-bg); border:1px solid #fde0a3; color:#7a4f00}
@@ -2910,9 +2911,7 @@ function hocRender(){
 
   if(hocState.inc.has('authority')){
     lines.push('');
-    lines.push('────────────────────────────────────────────────');
-    lines.push('GP PRESCRIBING GUIDE — ADHD STIMULANT MEDICATIONS');
-    lines.push('────────────────────────────────────────────────');
+    lines.push('═══ GP PRESCRIBING GUIDE — ADHD STIMULANT MEDICATIONS ═══');
     lines.push('Prescribing regulations across Australian states and territories are subject to ongoing change. Always verify current requirements with your state health authority before applying for prescribing authority. Document last reviewed April 2026.');
     lines.push('');
     lines.push('UNIVERSAL PRESCRIBING STEPS (all jurisdictions)');
