@@ -436,6 +436,63 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
 .auth-box .label{color:var(--amber)}
 
 /* Follow-up */
+/* Builder forms (follow-up plan, HOC letter) */
+.builder{
+  display:flex; flex-direction:column; gap:12px;
+  margin-bottom:14px;
+}
+.bd-row{
+  display:flex; flex-direction:column; gap:6px;
+}
+.bd-label{
+  font:600 12px/1.3 "Inter",sans-serif; color:var(--slate);
+  text-transform:uppercase; letter-spacing:.05em;
+  display:flex; align-items:center; gap:8px;
+}
+.bd-controls{display:flex; flex-wrap:wrap; gap:5px; align-items:center}
+.bd-when{align-items:center}
+.bd-inline{flex-wrap:wrap; gap:6px}
+.bd-multi .pill{}
+.bd-num{
+  width:64px; padding:6px 9px;
+  font:500 14px "Inter",sans-serif;
+  border:1px solid var(--border); border-radius:5px;
+  background:#fff; color:var(--ink); text-align:center;
+}
+.bd-num:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-bg)}
+.bd-text{
+  flex:1 1 140px; min-width:120px;
+  padding:7px 10px; font:500 13.5px "Inter",sans-serif;
+  border:1px solid var(--border); border-radius:5px;
+  background:#fff; color:var(--ink);
+}
+.bd-text:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-bg)}
+.bd-textarea{
+  width:100%; padding:9px 11px;
+  font:14px/1.5 "Inter",sans-serif;
+  border:1px solid var(--border); border-radius:5px;
+  background:#fff; color:var(--ink); resize:vertical;
+}
+.bd-textarea:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-bg)}
+.pill{
+  padding:6px 12px;
+  font:500 12.5px/1.2 "Inter",sans-serif;
+  border:1px solid var(--border); background:#fff; color:var(--slate);
+  border-radius:999px; cursor:pointer;
+  transition:all .12s;
+}
+.pill:hover{border-color:var(--primary); color:var(--primary)}
+.pill.on{
+  background:var(--primary); border-color:var(--primary); color:#fff;
+  font-weight:600;
+}
+.bd-divider{
+  font:600 11px/1 "Inter",sans-serif; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.08em;
+  padding:14px 0 8px; margin-top:8px;
+  border-top:1px solid var(--border);
+}
+
 .fu-grid{display:grid; grid-template-columns:1fr; gap:11px}
 @media(min-width:720px){.fu-grid{grid-template-columns:1fr 1fr}}
 .fu-card{
@@ -488,6 +545,7 @@ footer{
     <a href="#sec-pe">Psychoeducation</a>
     <a href="#sec-tit">Titration</a>
     <a href="#sec-fu">Follow-up</a>
+    <a href="#sec-hoc">Handover letter</a>
   </nav>
 </header>
 
@@ -637,10 +695,138 @@ footer{
 </section>
 
 <section class="card primary" id="sec-fu">
-  <div class="ch"><span class="num">·</span>Follow-up &amp; management suggestions</div>
+  <div class="ch"><span class="num">·</span>Follow-up plan</div>
   <div class="body">
-    <p class="lead">Pick a follow-up template for the stage of care. Copy the snippet straight into your note.</p>
+    <p class="lead">Build the plan with the controls below — output updates live. Click <strong style="color:var(--primary)">?</strong> for example follow-up regimes.</p>
+
+    <div class="builder">
+      <div class="bd-row">
+        <label class="bd-label">Review with
+          <button class="q" type="button" onclick="toggleFUHelp()" title="Example follow-up regimes">?</button>
+        </label>
+        <div class="bd-controls">
+          <button type="button" class="pill on" data-fu="who" data-val="Psychiatrist" onclick="fuPick(this)">Psychiatrist</button>
+          <button type="button" class="pill"    data-fu="who" data-val="GP"          onclick="fuPick(this)">GP</button>
+          <button type="button" class="pill"    data-fu="who" data-val="Psychologist" onclick="fuPick(this)">Psychologist</button>
+          <button type="button" class="pill"    data-fu="who" data-val="Shared care" onclick="fuPick(this)">Shared care (psych + GP)</button>
+        </div>
+      </div>
+
+      <div class="probes" id="fu-help" style="display:none">
+        <div class="head">Typical follow-up sequence</div>
+        <ul>
+          <li><strong>1–2 weeks:</strong> phone safety check after initiation</li>
+          <li><strong>4–6 weeks:</strong> first formal titration review (BP, HR, side effects, response)</li>
+          <li><strong>3 months:</strong> stabilisation review once on ongoing dose</li>
+          <li><strong>3–4 months:</strong> handover letter drafted if stable</li>
+          <li><strong>4–6 months:</strong> first GP-led review under shared care</li>
+          <li><strong>Annually:</strong> psychiatric review for stable regime</li>
+        </ul>
+      </div>
+
+      <div class="bd-row">
+        <label class="bd-label">In</label>
+        <div class="bd-controls bd-when">
+          <input type="number" id="fu-num" min="1" max="24" value="6" class="bd-num" oninput="fuRender()">
+          <button type="button" class="pill" data-fu="unit" data-val="days"   onclick="fuPick(this)">days</button>
+          <button type="button" class="pill on" data-fu="unit" data-val="weeks"  onclick="fuPick(this)">weeks</button>
+          <button type="button" class="pill" data-fu="unit" data-val="months" onclick="fuPick(this)">months</button>
+        </div>
+      </div>
+
+      <div class="bd-row">
+        <label class="bd-label">Patient to arrange</label>
+        <div class="bd-controls bd-multi">
+          <button type="button" class="pill" data-fu="req" data-val="BP and HR readings (home, pharmacy or GP)" onclick="fuToggle(this)">BP &amp; HR</button>
+          <button type="button" class="pill" data-fu="req" data-val="Weight check" onclick="fuToggle(this)">Weight</button>
+          <button type="button" class="pill" data-fu="req" data-val="ECG via GP" onclick="fuToggle(this)">ECG</button>
+          <button type="button" class="pill" data-fu="req" data-val="Bloods (TFT, FBE, EUC, LFT, ferritin, B12)" onclick="fuToggle(this)">Bloods</button>
+          <button type="button" class="pill" data-fu="req" data-val="Urine drug screen" onclick="fuToggle(this)">UDS</button>
+          <button type="button" class="pill" data-fu="req" data-val="Old school reports / NAPLAN / parent-teacher feedback" onclick="fuToggle(this)">School reports</button>
+          <button type="button" class="pill" data-fu="req" data-val="Adult informant report (partner / parent)" onclick="fuToggle(this)">Adult informant</button>
+          <button type="button" class="pill" data-fu="req" data-val="Childhood informant report (parent / sibling)" onclick="fuToggle(this)">Childhood informant</button>
+          <button type="button" class="pill" data-fu="req" data-val="Sleep diary (2 weeks)" onclick="fuToggle(this)">Sleep diary</button>
+          <button type="button" class="pill" data-fu="req" data-val="Mood / symptom diary" onclick="fuToggle(this)">Mood diary</button>
+          <button type="button" class="pill" data-fu="req" data-val="Written list of any questions or concerns" onclick="fuToggle(this)">Written questions</button>
+          <button type="button" class="pill" data-fu="req" data-val="Previous psychology / paediatric / psychiatric letters" onclick="fuToggle(this)">Prior letters</button>
+        </div>
+      </div>
+
+      <div class="bd-row">
+        <label class="bd-label">Notes / instructions</label>
+        <textarea id="fu-notes" class="bd-textarea" rows="3" placeholder="Anything additional — eg specific questions to raise, contingency plans, what to do if symptoms worsen…" oninput="fuRender()"></textarea>
+      </div>
+    </div>
+
+    <div class="script-box">
+      <span class="label">Follow-up plan — copy ready</span>
+      <pre id="fu-out"></pre>
+    </div>
+    <button class="copybtn" onclick="copyFU(this)">Copy follow-up plan</button>
+    <button class="clearbtn" onclick="fuClear()">Clear</button>
+
+    <div class="bd-divider">Pre-built templates (click to copy)</div>
     <div class="fu-grid" id="fu-grid"></div>
+  </div>
+</section>
+
+<section class="card teal" id="sec-hoc">
+  <div class="ch"><span class="num">·</span>Handover-of-care letter (to GP)</div>
+  <div class="body">
+    <p class="lead">For when the patient is stable and ready for GP shared-care. Fill in the form — letter updates live. The script comes from whichever titration protocol is currently selected above.</p>
+
+    <div class="builder">
+      <div class="bd-row">
+        <label class="bd-label">Patient</label>
+        <div class="bd-controls bd-inline">
+          <input type="text" id="hoc-first" class="bd-text" placeholder="First name" oninput="hocRender()">
+          <input type="text" id="hoc-last"  class="bd-text" placeholder="Last name"  oninput="hocRender()">
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Gender (pronouns)</label>
+        <div class="bd-controls">
+          <button type="button" class="pill" data-hoc="g" data-val="Female" onclick="hocPick(this)">Female (she/her)</button>
+          <button type="button" class="pill" data-hoc="g" data-val="Male"   onclick="hocPick(this)">Male (he/him)</button>
+          <button type="button" class="pill on" data-hoc="g" data-val="Other" onclick="hocPick(this)">Other (they/them)</button>
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">GP name</label>
+        <div class="bd-controls bd-inline">
+          <input type="text" id="hoc-gp" class="bd-text" placeholder="Dr Smith" oninput="hocRender()">
+          <input type="text" id="hoc-gppractice" class="bd-text" placeholder="Practice (optional)" oninput="hocRender()">
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Your name / qualifications</label>
+        <div class="bd-controls bd-inline">
+          <input type="text" id="hoc-clin" class="bd-text" placeholder="Dr Your Name" oninput="hocRender()">
+          <input type="text" id="hoc-quals" class="bd-text" placeholder="FRANZCP / qualifications" oninput="hocRender()">
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Include in letter</label>
+        <div class="bd-controls bd-multi">
+          <button type="button" class="pill on" data-hoc="inc" data-val="monitoring" onclick="hocToggle(this)">Monitoring requirements</button>
+          <button type="button" class="pill on" data-hoc="inc" data-val="sideeffects" onclick="hocToggle(this)">Side-effect management</button>
+          <button type="button" class="pill on" data-hoc="inc" data-val="sleep" onclick="hocToggle(this)">Sleep management</button>
+          <button type="button" class="pill on" data-hoc="inc" data-val="nonstim" onclick="hocToggle(this)">Non-stimulant alternatives</button>
+          <button type="button" class="pill on" data-hoc="inc" data-val="referback" onclick="hocToggle(this)">When to refer back</button>
+        </div>
+      </div>
+      <div class="bd-row">
+        <label class="bd-label">Additional notes</label>
+        <textarea id="hoc-notes" class="bd-textarea" rows="2" placeholder="Anything specific to add to the letter…" oninput="hocRender()"></textarea>
+      </div>
+    </div>
+
+    <div class="script-box">
+      <span class="label">Handover letter — copy ready</span>
+      <pre id="hoc-out"></pre>
+    </div>
+    <button class="copybtn" onclick="copyHOC(this)">Copy letter</button>
+    <button class="clearbtn" onclick="hocClear()">Clear</button>
   </div>
 </section>
 
@@ -1789,17 +1975,68 @@ Consider:
 • Confirm adherence and timing
 
 Review in 4 weeks after change.`},
-  {nm:'Concerning side effects — adjust', text:`PLAN — SIDE EFFECT MANAGEMENT
+  {nm:'Side-effect management plan', text:`SIDE-EFFECT MANAGEMENT PLAN
 
-Specific adjustment based on side effect:
-• Emotional blunting → reduce dose
-• Insomnia → bring last dose earlier; consider short-acting only
-• Appetite loss → small frequent meals; protein at breakfast; reverse-rebound dinner
-• Rebound → consider longer-acting; small IR top-up; reduce dose
-• Headache → usually settles 2–3 weeks; hydration; reduce dose if persistent
-• Cardiovascular (raised BP / HR) → reduce dose; consider non-stimulant; cardiology if persistent
+REDUCED APPETITE / WEIGHT LOSS
+• Substantial breakfast before dosing.
+• High-calorie evening meal once medication has worn off.
+• Protein-rich snacks throughout the day; smoothies / shakes if needed.
+• Weekend / holiday medication-free days for adolescents with poor growth.
+• Weigh monthly during titration. If BMI dropping or <18.5: reduce dose or switch agent.
 
-Review in 2–4 weeks.`},
+INSOMNIA / DELAYED SLEEP
+• Short-acting stimulant: move last dose ≥6–8 hrs before bedtime.
+• Long-acting: shift to earliest practical morning time.
+• Cut caffeine ≥10 hrs before bed.
+• Optimise sleep hygiene; fixed wake time 7 days/week.
+• Morning bright light (Re-Timer 3, 30–60 min within 1 hr of waking).
+• Melatonin 2–4mg as chronobiotic — 3–4 hrs before desired bedtime (not at bedtime).
+• Clonidine 50–200mcg nocte if hyperarousal / agitation.
+• Consider CBT-I (psychologist or This Way Up).
+
+HEADACHE
+• Usually transient — give it 2–3 weeks.
+• Ensure hydration, regular meals.
+• Check BP — if elevated, reduce dose.
+• Consider bruxism (jaw clenching) as contributor — relaxation, mouthguard, dose review.
+
+DRY MOUTH / NAUSEA
+• Take with food.
+• Adequate hydration; sugar-free gum.
+• Usually settles with time.
+
+REBOUND IRRITABILITY / MOOD LABILITY / EVENING CRASH
+• Reduce inter-dose gap (eg add midday dose) or switch to longer-acting.
+• Small IR top-up at the time rebound starts.
+• Reduce overall dose if persistent.
+• Refer back to psychiatrist if not resolving.
+
+INCREASED ANXIETY / JITTERINESS
+• Often signals dose too high — reduce.
+• If anxiety pre-dated treatment: treat the anxiety disorder separately.
+• Consider switching to the other stimulant class, or to a non-stimulant.
+
+ELEVATED BP / HR
+• Recheck on separate occasion.
+• If sustained BP ≥140/90 or HR persistently >100 — reduce dose.
+• ECG if symptoms (palpitations, chest pain, syncope).
+• Cardiology if persistent or new abnormality.
+• Clonidine 50–200mcg nocte can help BP, sleep and hyperarousal together.
+
+EMOTIONAL BLUNTING / "ZOMBIE" / PERSONALITY CHANGE
+• Dose too high — REDUCE. Do not tolerate this.
+• Patient should feel more like themselves, not less.
+
+PSYCHOSIS OR MANIA — PSYCHIATRIC EMERGENCY
+• Cease stimulant immediately.
+• Send to ED, or manage in community with antipsychotic + urgent community mental health review.
+• More common when combined with cannabis. Re-take substance use history.
+
+TICS — NEW OR WORSENED
+• Reduce dose or switch to non-stimulant (atomoxetine, alpha-2 agonist).
+• Tics often pre-exist; clarify whether truly new vs unmasked.
+
+REVIEW IN 2–4 WEEKS after any adjustment.`},
   {nm:'Patient action items — between visits', text:`PATIENT TO ARRANGE BEFORE NEXT REVIEW
 
 • BP and HR readings (pharmacy / GP / home cuff) — bring records
@@ -2059,8 +2296,8 @@ function renderTit(){
     </div>`;
 }
 
-function selectTitMed(k){titMed=k; titProto=null; renderTit();}
-function selectTitProto(k){titProto=k; renderTit();}
+function selectTitMed(k){titMed=k; titProto=null; renderTit(); if(typeof hocRender==='function') hocRender();}
+function selectTitProto(k){titProto=k; renderTit(); if(typeof hocRender==='function') hocRender();}
 
 // Build plain-English titration directions — every phase as a line.
 function buildScriptText(med, proto){
@@ -2135,15 +2372,225 @@ function renderFU(){
     <div class="fu-card">
       <div class="nm">${escHtml(t.nm)}</div>
       <pre class="body-txt" id="fu-text-${i}">${escHtml(t.text)}</pre>
-      <button class="copybtn" onclick="copyFU(${i},this)">Copy</button>
+      <button class="copybtn" onclick="copyFUTpl(${i},this)">Copy</button>
     </div>`).join('');
 }
-function copyFU(i, btn){
+function copyFUTpl(i, btn){
   const text = document.getElementById('fu-text-'+i).textContent;
-  navigator.clipboard.writeText(text).then(()=>{
-    btn.textContent='Copied!'; btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent='Copy'; btn.classList.remove('ok');},1500);
-  });
+  navigator.clipboard.writeText(text).then(()=>flashCopy(btn,'Copy'));
+}
+
+// =================== FOLLOW-UP PLAN BUILDER ===================
+const fuState = {who:'Psychiatrist', unit:'weeks', req:new Set()};
+function fuPick(btn){
+  const grp = btn.dataset.fu;
+  fuState[grp] = btn.dataset.val;
+  document.querySelectorAll('.pill[data-fu="'+grp+'"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  fuRender();
+}
+function fuToggle(btn){
+  const v = btn.dataset.val;
+  if(fuState.req.has(v)){fuState.req.delete(v); btn.classList.remove('on');}
+  else {fuState.req.add(v); btn.classList.add('on');}
+  fuRender();
+}
+function fuClear(){
+  fuState.req.clear();
+  document.querySelectorAll('.pill[data-fu="req"]').forEach(b=>b.classList.remove('on'));
+  const n = document.getElementById('fu-notes'); if(n) n.value = '';
+  const num = document.getElementById('fu-num'); if(num) num.value = 6;
+  fuRender();
+}
+function toggleFUHelp(){
+  const h = document.getElementById('fu-help');
+  h.style.display = (h.style.display==='none' || !h.style.display) ? 'block' : 'none';
+}
+function fuRender(){
+  const num = document.getElementById('fu-num').value || '?';
+  const notes = (document.getElementById('fu-notes').value||'').trim();
+  const lines = [];
+  lines.push('FOLLOW-UP PLAN');
+  lines.push('');
+  lines.push('Review with: '+fuState.who);
+  lines.push('When: in '+num+' '+fuState.unit);
+  if(fuState.req.size){
+    lines.push('');
+    lines.push('Patient to arrange before the next review:');
+    [...fuState.req].forEach(r=>lines.push('  • '+r));
+  }
+  if(notes){
+    lines.push('');
+    lines.push('Notes / instructions:');
+    notes.split(/\n+/).forEach(l=>{if(l.trim()) lines.push('  '+l.trim());});
+  }
+  document.getElementById('fu-out').textContent = lines.join('\n');
+}
+function copyFU(btn){
+  const t = document.getElementById('fu-out').textContent;
+  if(!t.trim()) return;
+  navigator.clipboard.writeText(t).then(()=>flashCopy(btn,'Copy follow-up plan'));
+}
+
+// =================== HANDOVER LETTER ===================
+const hocState = {g:'Other', inc:new Set(['monitoring','sideeffects','sleep','nonstim','referback'])};
+function hocPick(btn){
+  const grp = btn.dataset.hoc;
+  hocState[grp] = btn.dataset.val;
+  document.querySelectorAll('.pill[data-hoc="'+grp+'"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  hocRender();
+}
+function hocToggle(btn){
+  const v = btn.dataset.val;
+  if(hocState.inc.has(v)){hocState.inc.delete(v); btn.classList.remove('on');}
+  else {hocState.inc.add(v); btn.classList.add('on');}
+  hocRender();
+}
+function hocClear(){
+  ['hoc-first','hoc-last','hoc-gp','hoc-gppractice','hoc-clin','hoc-quals','hoc-notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  hocRender();
+}
+function hocPronouns(g){
+  if(g==='Female') return {sub:'she', obj:'her', poss:'her', possS:'hers'};
+  if(g==='Male')   return {sub:'he',  obj:'him', poss:'his', possS:'his'};
+  return {sub:'they', obj:'them', poss:'their', possS:'theirs'};
+}
+function _todayLong(){
+  const d = new Date();
+  return d.toLocaleDateString('en-AU',{day:'numeric', month:'long', year:'numeric'});
+}
+function _capFirst(s){return s ? s.charAt(0).toUpperCase()+s.slice(1) : s;}
+function hocCurrentTitration(){
+  if(typeof titMed==='undefined' || !TIT_MEDS[titMed]) return null;
+  const med = TIT_MEDS[titMed];
+  const protos = getProtocols(titMed);
+  const proto = protos.find(p=>p.key===titProto) || protos[0];
+  if(proto.conversion) return {med, proto, directions:'(see methylphenidate IR → long-acting conversion table)'};
+  return {med, proto, directions: buildScriptText(med, proto)};
+}
+function hocRender(){
+  const first = (document.getElementById('hoc-first').value||'').trim();
+  const last  = (document.getElementById('hoc-last').value||'').trim();
+  const gpRaw = (document.getElementById('hoc-gp').value||'').trim();
+  const gpPrac= (document.getElementById('hoc-gppractice').value||'').trim();
+  const clin  = (document.getElementById('hoc-clin').value||'').trim();
+  const quals = (document.getElementById('hoc-quals').value||'').trim();
+  const notes = (document.getElementById('hoc-notes').value||'').trim();
+
+  const fullName = (first+' '+last).trim() || '[Patient name]';
+  const firstName = first || '[First name]';
+  const p = hocPronouns(hocState.g);
+  const gp = gpRaw ? (/^dr/i.test(gpRaw) ? gpRaw : 'Dr '+gpRaw) : '[GP name]';
+  const tit = hocCurrentTitration();
+
+  const lines = [];
+  lines.push(_todayLong());
+  if(gpPrac) lines.push(gpPrac);
+  lines.push('');
+  lines.push('Dear '+gp+',');
+  lines.push('');
+  lines.push('Re: '+fullName);
+  lines.push('');
+  lines.push('Thank you for your ongoing care of '+fullName+'. I am writing to confirm '+p.poss+' diagnosis, current treatment, and to provide my written specialist recommendation supporting you as the ongoing prescriber of '+p.poss+' stimulant medication, in accordance with your state or territory prescribing framework.');
+  lines.push('');
+  lines.push('DIAGNOSIS');
+  lines.push(fullName+' meets DSM-5-TR criteria for Attention Deficit Hyperactivity Disorder (ADHD). The diagnosis was established following comprehensive psychiatric assessment including pre-screening, thorough clinical interview, review of collateral history, assessment of substance use, and a medical screen.');
+  lines.push('');
+  lines.push('CURRENT MEDICATION REGIMEN');
+  if(tit){
+    lines.push(tit.med.name+' — '+tit.proto.label);
+    lines.push(tit.med.brand);
+    lines.push('');
+    // Strip the header lines that buildScriptText itself adds, since we already showed them
+    const dir = (tit.directions||'').replace(/^[^\n]*\n[^\n]*\n+/, '');
+    lines.push(dir || tit.directions);
+  } else {
+    lines.push('[Select a titration protocol in the Titration section above]');
+  }
+  lines.push('');
+  lines.push(_capFirst(p.sub)+' has been carefully titrated to this regimen, has demonstrated good therapeutic response, and tolerates the medication well with no significant adverse effects at present.');
+  lines.push('');
+  lines.push('SPECIALIST RECOMMENDATION');
+  lines.push('I support '+gp+' taking over ongoing prescribing of '+fullName+'\'s ADHD stimulant medication in accordance with the applicable state prescribing framework. This letter confirms specialist diagnosis, initiation and stabilisation of treatment, and is provided as the written specialist recommendation required to support any necessary state authority, permit, notification, or approval process. Please attach this letter to your relevant authority application or retain it in the patient\'s record as required by your jurisdiction.');
+
+  if(hocState.inc.has('monitoring')){
+    lines.push('');
+    lines.push('RECOMMENDED GP MONITORING');
+    lines.push('• Every review: therapeutic benefit, adherence, adverse effects, mental state, substance use risk, cardiovascular status');
+    lines.push('• Every 6–12 months: blood pressure, heart rate, weight');
+    lines.push('• ECG: as clinically indicated (cardiac history, exertional symptoms, syncope, palpitations, significant family history)');
+    lines.push('• Urine drug screening: at your discretion — does not imply misuse');
+    lines.push('• Recheck SafeScript / RTPM before every prescription');
+    lines.push('• Review at least every 6 months; sooner if any concerns arise');
+  }
+
+  if(hocState.inc.has('sideeffects')){
+    lines.push('');
+    lines.push('COMMON SIDE EFFECTS — MANAGEMENT');
+    lines.push('• Reduced appetite / weight loss → substantial breakfast pre-dose; protein-rich snacks; high-calorie evening meal once medication has worn off; monitor weight monthly during titration');
+    lines.push('• Headache → usually transient; hydration, regular meals; check BP; consider bruxism');
+    lines.push('• Dry mouth / nausea → take with food; usually settles');
+    lines.push('• Rebound irritability → reduce inter-dose gap; longer-acting formulation; refer if persistent');
+    lines.push('• Increased anxiety → dose too high — reduce; treat anxiety separately if pre-existing');
+    lines.push('• Elevated BP / HR → reduce dose; ECG if symptomatic; cardiology if persistent; clonidine can help BP + sleep together');
+    lines.push('• Emotional blunting / "zombie" — DOSE TOO HIGH; reduce, do not tolerate');
+  }
+
+  if(hocState.inc.has('sleep')){
+    lines.push('');
+    lines.push('SLEEP MANAGEMENT');
+    lines.push('Insomnia is common in ADHD — many patients sleep better once treated, due to reduced stress. ADHD is strongly associated with delayed sleep phase syndrome.');
+    lines.push('• Short-acting stimulant: last dose ≥6–8 hours before bed');
+    lines.push('• Long-acting: shift to earliest practical morning time');
+    lines.push('• Caffeine cut-off ≥10 hours before bed');
+    lines.push('• Sleep hygiene; fixed wake time 7 days/week');
+    lines.push('• Morning bright light therapy (eg Re-Timer 3, 30–60 min within 1 hr of waking)');
+    lines.push('• Melatonin 2–4mg as chronobiotic — 3–4 hours before desired bedtime');
+    lines.push('• Clonidine 50–200mcg nocte for hyperarousal / agitation');
+    lines.push('• Consider CBT-I (psychologist or This Way Up)');
+  }
+
+  if(hocState.inc.has('nonstim')){
+    lines.push('');
+    lines.push('NON-STIMULANT ALTERNATIVES (no S8 authority required)');
+    lines.push('• Atomoxetine (Strattera) — SNRI; once daily; 4–12 weeks to full effect; useful for comorbid anxiety; rare hepatotoxicity. PBS streamlined.');
+    lines.push('• Guanfacine XR (Intuniv) — alpha-2 agonist; useful for hyperactivity, impulsivity, emotional dysregulation; monitor BP; do not stop abruptly. PBS requires childhood diagnosis.');
+    lines.push('• Clonidine (Catapres) — off-label adjunct; primarily for sleep, hyperarousal, tics; monitor BP. Private script.');
+  }
+
+  if(hocState.inc.has('referback')){
+    lines.push('');
+    lines.push('WHEN TO REFER BACK TO PSYCHIATRY');
+    lines.push('• Inadequate treatment response or need for dose escalation beyond current regimen');
+    lines.push('• New psychiatric symptoms not warranting ED presentation');
+    lines.push('• Concerns about whether the patient should remain on stimulants');
+    lines.push('• Significant or persistent side effects');
+    lines.push('• Pregnancy or breastfeeding');
+    lines.push('• Suspected psychosis or mania — psychiatric emergency; cease stimulant immediately and arrange ED or urgent community mental health review (more common when combined with cannabis)');
+  }
+
+  if(notes){
+    lines.push('');
+    lines.push('ADDITIONAL NOTES');
+    notes.split(/\n+/).forEach(l=>{if(l.trim()) lines.push(l.trim());});
+  }
+
+  lines.push('');
+  lines.push('Please do not hesitate to contact my rooms with any questions or concerns.');
+  lines.push('');
+  lines.push('Yours sincerely,');
+  lines.push('');
+  lines.push(clin||'[Your name]');
+  if(quals) lines.push(quals);
+  lines.push('Consultant Psychiatrist');
+
+  document.getElementById('hoc-out').textContent = lines.join('\n');
+}
+function copyHOC(btn){
+  const t = document.getElementById('hoc-out').textContent;
+  if(!t.trim()) return;
+  navigator.clipboard.writeText(t).then(()=>flashCopy(btn,'Copy letter'));
 }
 
 // =================== INIT ===================
@@ -2151,6 +2598,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   Object.keys(SECTIONS).forEach(renderSection);
   renderMSE();
   renderPE();
+  fuRender();
+  hocRender();
   renderTit();
   renderFU();
 });
