@@ -8,6 +8,9 @@ All tools run entirely in your browser — no data is sent anywhere, nothing is 
 
 ## ADHD Assessment
 
+### [ADHD Assessment Follow Along Guide](adhd6.html)
+A guide to follow along with during an ADHD assessment.
+
 ### [Ben's Amazing ADHD Assessment Generator](adhd5.html)
 This has everything you need — suitable for both initial assessments and follow-up reviews:
 - Interview template to follow with the key things, plus DSM-5-TR criteria
