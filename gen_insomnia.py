@@ -273,6 +273,23 @@ groups = [
 <li>The coffee nap: drinking a coffee immediately before a 20-minute nap produces better post-nap alertness than either coffee or nap alone. Caffeine takes approximately 20 minutes to absorb — you wake at peak effect. Useful for acute performance demands.</li>
 </ul>
 <p><strong>Delaying sleep phase vs insomnia:</strong> Some people who report insomnia actually have delayed sleep phase syndrome — a circadian clock disorder where the sleep window is simply shifted later (e.g. naturally falling asleep at 2am and waking at 10am, sleeping well within that window). This is biologically distinct from insomnia and requires different treatment (chronotherapy, timed bright light, melatonin in specific timing protocols). The distinction is clinically important and worth discussing if your difficulty is specifically sleep-onset at a conventional time while overall sleep quality is good.</p>"""
+            },
+            {
+                "id": "tapping_hypnosis",
+                "title": "Complementary approaches — tapping and clinical hypnosis",
+                "body": """<p><strong>EFT tapping (Emotional Freedom Technique):</strong></p>
+<p>EFT involves tapping on specific acupressure points on the face and body while verbally acknowledging a problem and affirming self-acceptance. It has been studied for anxiety and stress, with a modest but growing evidence base. Its direct evidence for chronic insomnia disorder is limited, but mechanistically it may reduce hyperarousal at bedtime through:</p>
+<ul>
+<li>Activation of the parasympathetic nervous system via facial acupressure points (particularly around the eye and chin — areas rich in vagal nerve branches)</li>
+<li>Exposure and desensitisation to distressing thoughts through the verbal acknowledgement component</li>
+<li>Focused attention that interrupts cognitive rumination loops</li>
+</ul>
+<p><strong>How to use it for sleep:</strong> A brief 5–10 minute tapping sequence as part of a wind-down routine — targeting the specific worry or physical tension most present. The Tapping Solution app provides guided sequences and is one of the more clinically structured platforms available. EFT is best used as an adjunct to CBT-I, not a standalone replacement.</p>
+<p><strong>Clinical hypnosis for insomnia:</strong></p>
+<p>Clinical hypnosis (distinct from stage hypnosis — it is a focused state of relaxed attention with increased receptivity to suggestion) has a reasonable evidence base for insomnia. A 2014 study in Sleep found that hypnotic suggestion significantly increased slow-wave sleep (the most physically restorative stage) compared to relaxation controls. Other studies show reductions in sleep onset latency and waking after sleep onset.</p>
+<p><strong>What it involves:</strong> A trained clinical hypnotherapist induces a relaxed, focused state and uses suggestion to reduce hyperarousal, reframe catastrophic sleep beliefs, and anchor relaxation to bedtime cues. Audio recordings can be used independently after initial sessions.</p>
+<p><strong>What hypnosis is not:</strong> You are not unconscious, you cannot be made to do things against your will, and you will not lose awareness. It is a state of focused relaxation — not unlike the threshold between waking and sleep. This is why it is useful for insomnia specifically.</p>
+<p><strong>Finding a practitioner:</strong> Look for an Australian Hypnotherapy Association (AHA) or Australian Society of Clinical Hypnotherapists (ASCH) registered practitioner with experience in sleep disorders. Audio recordings from licensed clinical hypnotherapists (e.g. Andrew Johnson's Sleep app, Hypnosis for Sleep by Max Kirsten) are a lower-cost starting point.</p>"""
             }
         ]
     },
@@ -291,13 +308,22 @@ groups = [
             },
             {
                 "id": "insomnia_apps_resources",
-                "title": "Apps, digital programmes, and resources",
+                "title": "Apps and digital programmes",
                 "body": """<p><strong>Sleepio</strong> — Digital CBT-I programme with the strongest evidence base of any sleep app. Developed by Oxford researchers, multiple randomised controlled trials demonstrating efficacy comparable to face-to-face CBT-I. 6-week interactive programme with animated sessions, sleep diary, and personalised weekly programme. Available via Big Health. <a href="https://www.sleepio.com" target="_blank">sleepio.com</a></p>
 <p><strong>Somryst</strong> — FDA-cleared prescription digital therapeutic for chronic insomnia in the US. Delivers CBT-I components with clinical-grade evidence. Not available as a prescription digital therapeutic in Australia, but accessible as a self-pay app. Rigorous content. <a href="https://www.somryst.com" target="_blank">somryst.com</a></p>
 <p><strong>Insomnia Coach</strong> — Free app developed by the US Department of Veterans Affairs. Delivers a structured CBT-I programme based on treatment developed at Stanford. Sleep diary, weekly sleep data, psychoeducation, and guidance. No paywall. <a href="https://mobile.va.gov/app/insomnia-coach" target="_blank">mobile.va.gov/app/insomnia-coach</a></p>
 <p><strong>Sleep Foundation</strong> — Research-reviewed sleep information resource. Good for checking evidence on specific sleep topics without the commercial bias of many sleep websites. <a href="https://www.sleepfoundation.org" target="_blank">sleepfoundation.org</a></p>
 <p><strong>Sleep Health Foundation (Australia)</strong> — Australian sleep medicine organisation with patient information resources, fact sheets, and clinician directory. <a href="https://www.sleephealthfoundation.org.au" target="_blank">sleephealthfoundation.org.au</a></p>
 <p><strong>Headspace / Calm</strong> — Both offer sleep-specific content (sleep meditations, sleepcasts, body scans). Not CBT-I and not evidence-based for insomnia disorder specifically — but can be useful adjuncts for reducing somatic arousal in people who find mindfulness or meditation helpful. Not a substitute for CBT-I.</p>"""
+            },
+            {
+                "id": "insomnia_sleep_tools",
+                "title": "Sleep aids and tools",
+                "body": """<p><strong>Re-Timer 3 (light therapy glasses)</strong> — Light therapy glasses worn for 30–60 minutes each morning. Advance the circadian rhythm, improve morning alertness, and are particularly effective for delayed sleep phase and seasonal mood changes. Worn while doing normal morning activities. Use code <strong>BMURRIE</strong> for 20% off at <a href="https://www.retimer.com.au/retimer-3/" target="_blank">retimer.com.au/retimer-3</a></p>
+<p><strong>Manta Sleep SOUND Mask</strong> — Blackout sleep mask with integrated flat speakers for audio at night. The contoured eye cups apply zero pressure on eyelids (important for people who find contact-pressure alerting). Useful for people who need audio (white noise, sleep hypnosis recordings, ambient sound) but find earbuds uncomfortable. Use code <strong>SLEEPBETTER_15</strong> for 15% off at <a href="https://mantasleep.com.au" target="_blank">mantasleep.com.au</a></p>
+<p><strong>Loop Earplugs — Dream or Quiet</strong> — High-quality reusable earplugs with meaningful noise attenuation without completely sealing the ear. The Dream model (25dB reduction) and Quiet model are designed specifically for sleep. Better than disposable foam for people who find total silence alerting — they reduce volume without eliminating ambient sound entirely. <a href="https://au.loopearplugs.com" target="_blank">au.loopearplugs.com</a></p>
+<p><strong>White noise / pink noise machines</strong> — Dedicated devices (e.g. LectroFan, Marpac Dohm) provide consistent masking sound. Pink noise (deeper, like rain) has some evidence for improving slow-wave sleep quality in older adults. More effective than phone speakers for consistent sound level. Useful when environmental noise is a major trigger for arousals.</p>
+<p><strong>Weighted blankets</strong> — Deep pressure stimulation from weighted blankets (ideally 7–12% of body weight) activates the parasympathetic nervous system and reduces physiological arousal. Reasonable adjunct for people with anxiety-driven insomnia or sensory sensitivities. Neptune Blanket offers good quality with regular discounts at <a href="https://neptuneblanket.com.au" target="_blank">neptuneblanket.com.au</a></p>"""
             }
         ]
     }

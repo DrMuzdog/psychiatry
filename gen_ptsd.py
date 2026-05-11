@@ -1,0 +1,539 @@
+#!/usr/bin/env python3
+"""Generate ptsd-psychoeducation.html with PTSD_PE_GROUPS for use by gen_psychoeducation.py."""
+
+def esc(s):
+    return s.replace("'", "\\'")
+
+groups = [
+    {
+        "label": None,
+        "optional": False,
+        "items": [
+            {
+                "id": "what_ptsd_is",
+                "title": "What PTSD is — and what it is not",
+                "body": """<p><strong>A key reframe:</strong> PTSD is not a sign that something is wrong with you — it is a sign that your nervous system responded normally to something abnormal. The symptoms that cause problems now were, in the moment of trauma, adaptive survival responses. The problem is not that the system activated — it is that it has not been able to switch off.</p>
+<p><strong>Diagnostic criteria (DSM-5):</strong> Following exposure to actual or threatened death, serious injury, or sexual violence (directly, witnessing, learning it happened to someone close, or through repeated professional exposure):</p>
+<ul>
+<li><strong>Intrusion:</strong> Flashbacks, nightmares, unwanted distressing memories, intense psychological or physiological distress when encountering reminders</li>
+<li><strong>Avoidance:</strong> Of distressing memories, thoughts, feelings, or external reminders (people, places, objects, conversations) associated with the trauma</li>
+<li><strong>Negative alterations in cognition and mood:</strong> Persistent negative beliefs about self/world, distorted blame, persistent negative emotional states, detachment, inability to experience positive emotions</li>
+<li><strong>Hyperarousal and reactivity:</strong> Irritability, aggression, reckless behaviour, hypervigilance, exaggerated startle, sleep disturbance, concentration difficulties</li>
+</ul>
+<p>Symptoms must persist beyond one month and cause significant impairment. Symptoms in the first month are called Acute Stress Disorder.</p>
+<p><strong>Prevalence:</strong> Lifetime prevalence is approximately 7–8% in the general population. Rates are substantially higher following high-impact trauma types: combat (10–30%), sexual assault (30–50%), torture (50%). Women are twice as likely as men to develop PTSD following equivalent exposures — a difference largely explained by differential rates of interpersonal and sexual trauma, not differential vulnerability.</p>
+<p><strong>What PTSD is not:</strong> A character weakness. A choice. Inevitable after trauma (most people who experience trauma do not develop PTSD — resilience is the norm). A condition that requires complete symptom elimination to achieve good quality of life.</p>"""
+            },
+            {
+                "id": "trauma_memory",
+                "title": "Why trauma memories are different — and why that matters",
+                "body": """<p><strong>Ordinary memories vs trauma memories:</strong> Normal memories are autobiographical — they have a clear time stamp ("that happened then, it is in the past"), a narrative structure, and can be deliberately recalled and then set aside. Trauma memories, under certain conditions, are encoded differently.</p>
+<p><strong>What happens in the traumatised brain:</strong></p>
+<ul>
+<li>During extreme threat, the amygdala (threat detection) goes into overdrive while the hippocampus (context and time-stamping) and prefrontal cortex (meaning-making, language) become relatively suppressed. This means trauma is laid down with intense sensory and emotional detail but without the contextual "this happened at that time" framework that normal memories have.</li>
+<li>The result is a memory that does not feel like the past — it feels like now. Flashbacks are not "remembering" in the usual sense; they are the nervous system re-experiencing the event without the safety of temporal context.</li>
+<li>Sensory fragments — a smell, a sound, a physical sensation — can activate the memory because the original encoding was sensory-dominant rather than narrative.</li>
+</ul>
+<p><strong>Peritraumatic dissociation:</strong> During the trauma itself, many people experience depersonalisation (watching yourself from outside), derealisation (the world feels unreal), or time distortion. This is a normal protective response that paradoxically predicts a higher risk of PTSD development — possibly because it disrupts the narrative encoding needed to process the experience.</p>
+<p><strong>Why this matters for treatment:</strong> Effective trauma therapy does not aim to erase the memory — it aims to give the memory a time stamp: "This happened. It is over. I survived." Trauma-focused therapies (EMDR, Prolonged Exposure, CPT) work by enabling the full memory to be processed in a safe context, so the nervous system can file it as past rather than ongoing.</p>"""
+            },
+            {
+                "id": "why_ptsd_persists",
+                "title": "Why PTSD persists — the avoidance trap",
+                "body": """<p><strong>The maintenance cycle:</strong></p>
+<p style="background:#fff1f2;border-left:3px solid #be123c;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12pt">Trauma memory (with sensory triggers) → intrusion/distress → avoidance of reminders, situations, thoughts → short-term relief → incomplete memory processing → memory remains unintegrated → any trigger reactivates it → loop continues</p>
+<p><strong>Avoidance is the engine of PTSD.</strong> It makes sense as a short-term strategy — avoiding what is painful relieves pain temporarily. The cost is that avoidance prevents the processing that would eventually allow the memory to be filed as past. The trauma remains raw and immediately accessible because the nervous system has never had the chance to learn "this is not happening anymore."</p>
+<p><strong>Types of avoidance in PTSD:</strong></p>
+<ul>
+<li><strong>Situational:</strong> Places, people, objects, conversations that serve as reminders</li>
+<li><strong>Internal:</strong> Suppressing thoughts and memories, emotional numbing, dissociation</li>
+<li><strong>Behavioural:</strong> Substance use to dampen intrusions, keeping constantly busy, not sleeping to avoid nightmares, social withdrawal</li>
+<li><strong>Safety behaviours:</strong> Sitting with back to the wall, excessive checking, never relaxing, hypervigilance as a perceived protection</li>
+</ul>
+<p><strong>How PTSD expands through avoidance:</strong> The range of triggers typically grows over time. Initially one place may be triggering; over months it can generalise — the neighbourhood, then the whole city, then anything associated with that city. Avoidance makes the world progressively smaller.</p>
+<p><strong>Numbing vs recovery:</strong> Emotional numbing — feeling flat, detached, unable to feel pleasure — is often mistaken for recovery ("I feel nothing about it now"). Numbing is avoidance at the emotional level, not processing. It is maintained by the same mechanisms as other avoidance and responds to the same treatment.</p>"""
+            },
+            {
+                "id": "window_of_tolerance",
+                "title": "The nervous system in PTSD — window of tolerance",
+                "body": """<p><strong>The window of tolerance:</strong> The zone of nervous system arousal in which you can function effectively — not too activated, not too shut down. In this window, you can think clearly, feel emotions without being overwhelmed, and engage with the present. Trauma narrows this window.</p>
+<p><strong>Hyperarousal (above the window):</strong> Anxiety, panic, hypervigilance, irritability, aggression, startle reactions, intrusive memories, insomnia, physical tension. The body is in "threat mode" — threat detection is maximal, the threat-assessment system is sensitive and hair-trigger. The physiological state is fight-or-flight.</p>
+<p><strong>Hypoarousal (below the window):</strong> Numbness, dissociation, emotional flatness, collapse, shutdown, feeling disconnected or unreal, extreme fatigue, difficulty thinking or moving. This is the freeze/collapse response — an evolutionarily ancient defence that activates when fight-or-flight is not possible. It is commonly misidentified as depression.</p>
+<p><strong>Why trauma therapy must work within the window:</strong> Processing trauma while outside the window — either flooded with hyperarousal or shut down in hypoarousal — does not produce new learning. It just retraumatises. Good trauma therapy manages arousal levels carefully, working close to but within the window of tolerance.</p>
+<p><strong>Signs your window is being exceeded in session:</strong> If you are having a flashback, completely dissociating, or shutting down entirely — the pace is too fast. This is not failure; it is information. Skilled trauma therapists are attuned to this and slow down or use stabilisation techniques accordingly.</p>
+<p><strong>Expanding the window:</strong> Stabilisation work, grounding techniques, body-based regulation skills (breath, movement, cold water), and gradual exposure all widen the window over time. The goal is not to be unaffected — it is to be able to approach difficult material without being overwhelmed by it.</p>"""
+            },
+            {
+                "id": "complex_ptsd",
+                "title": "Complex PTSD vs PTSD — what the difference means",
+                "body": """<p><strong>When PTSD develops from prolonged, repeated, or inescapable trauma</strong> — particularly interpersonal trauma in childhood, domestic abuse, prolonged captivity, torture, or chronic childhood neglect — the presentation often includes features beyond the standard PTSD criteria. The ICD-11 recognises this as Complex PTSD (C-PTSD).</p>
+<p><strong>The three additional domains in C-PTSD:</strong></p>
+<ul>
+<li><strong>Affect dysregulation:</strong> Emotions that are difficult to modulate — explosiveness, rapid cycling between states, emotional numbing, chronic shame, difficulty identifying or describing feelings (alexithymia). Not a personality problem — an injury to the regulatory systems that develop through safe early attachment.</li>
+<li><strong>Negative self-concept:</strong> Persistent beliefs of being worthless, defective, damaged, or permanently different from others. Pervasive shame rather than guilt. This is not low self-esteem in the ordinary sense — it is a deeply held sense of being fundamentally wrong.</li>
+<li><strong>Disturbed relationships:</strong> Difficulty trusting others, alternating between clinging and distancing, difficulty with intimacy, vulnerability to re-victimisation, hypervigilance to interpersonal threat.</li>
+</ul>
+<p><strong>C-PTSD and personality disorder diagnoses:</strong> Many people with C-PTSD are diagnosed with Borderline Personality Disorder, which shares several features. C-PTSD is increasingly preferred when the features are clearly trauma-driven and the person does not have the stable identity disturbance and chronic emptiness characteristic of BPD. The distinction matters because the treatment emphasis differs — and because "C-PTSD" carries less stigma and is more accurately aetiological.</p>
+<p><strong>Treatment for C-PTSD:</strong> Generally uses a phased approach — stabilisation first, then trauma processing, then reconnection and integration. Going directly into trauma-focused processing without sufficient stabilisation can be destabilising when dysregulation and self-concept are severely disrupted.</p>"""
+            }
+        ]
+    },
+    {
+        "label": "Treatment",
+        "optional": False,
+        "items": [
+            {
+                "id": "emdr",
+                "title": "EMDR — Eye Movement Desensitisation and Reprocessing",
+                "body": """<p><strong>EMDR is one of the two most evidence-based treatments for PTSD.</strong> WHO guidelines, NICE guidelines, and the American Psychological Association all recommend it as a first-line treatment. It works — with response rates of 60–80% in clinical trials, broadly comparable to Prolonged Exposure.</p>
+<p><strong>What it involves:</strong> While holding the traumatic memory in mind (image, emotion, body sensation, and associated belief), the client tracks the therapist's fingers moving bilaterally, or receives alternating taps or sounds. This bilateral stimulation continues while attention is directed at the memory, allowing the distress to process.</p>
+<p><strong>Why it works — competing theories:</strong></p>
+<ul>
+<li><strong>Working memory theory:</strong> The most supported current explanation. Holding the traumatic memory in mind while simultaneously tracking bilateral stimulation taxes working memory. Because working memory has limited capacity, both tasks cannot be held at full vividness — the memory becomes less vivid and less distressing with each pass. Over time, a new, lower-intensity representation becomes the stored version.</li>
+<li><strong>Adaptive Information Processing (AIP) model (Shapiro):</strong> The original framework. Trauma leaves information "stuck" in unprocessed form. Bilateral stimulation activates a natural information processing mechanism that allows the memory to be integrated into a broader adaptive memory network.</li>
+</ul>
+<p><strong>What it does not require:</strong> EMDR does not require detailed verbal narration of the trauma — an advantage for people who struggle to put the experience into words. It does not require homework between sessions. The eye movements are not essential — the bilateral stimulation can be tactile or auditory.</p>
+<p><strong>Finding a trained EMDR therapist:</strong> Look for EMDR Association of Australia (emdrassociation.org.au) accredited practitioners. Effectiveness depends significantly on therapist training and adherence to protocol.</p>"""
+            },
+            {
+                "id": "prolonged_exposure",
+                "title": "Prolonged Exposure and trauma-focused CBT",
+                "body": """<p><strong>Prolonged Exposure (PE) is the other first-line evidence-based treatment for PTSD</strong> — equally well-supported by the evidence base as EMDR, with decades of research across diverse trauma types and populations.</p>
+<p><strong>The core principle:</strong> Repeated, deliberate approach to trauma memories and associated situations, until the distress reduces — habituation. Avoidance maintains PTSD; approach extinguishes the conditioned fear response over time.</p>
+<p><strong>Two components:</strong></p>
+<ul>
+<li><strong>Imaginal exposure:</strong> Revisiting the traumatic memory in detail with the therapist, as if reliving it in the present tense — describing what happened, the thoughts, feelings, and sensory experience. This is recorded and listened to between sessions. The distress reduces with repeated exposure — not because you become numb, but because the brain learns "the memory is not the threat."</li>
+<li><strong>In vivo exposure:</strong> A graduated approach to avoided real-world situations that have become linked to the trauma but are objectively safe — certain places, activities, or social situations. Similar mechanics to exposure therapy for other anxiety disorders.</li>
+</ul>
+<p><strong>Trauma-focused CBT more broadly</strong> includes PE as well as Cognitive Processing Therapy (CPT) and other structured trauma-focused interventions. All share the core principle of approach rather than avoidance, and direct engagement with trauma material rather than stabilisation-only approaches.</p>
+<p><strong>What to expect:</strong> PE is emotionally demanding. Distress typically increases before it decreases, particularly in the first several sessions of imaginal exposure. This is the treatment working, not failing. Most protocols run 12–15 sessions. The research is very clear: people who complete PE achieve substantial and durable reductions in PTSD severity.</p>"""
+            },
+            {
+                "id": "cpt",
+                "title": "CPT — Cognitive Processing Therapy",
+                "body": """<p><strong>CPT is a first-line evidence-based PTSD treatment</strong> — particularly well-suited when the predominant features are negative cognitions and beliefs rather than intrusive re-experiencing. It is structured, time-limited (typically 12 sessions), and has strong evidence across diverse trauma populations.</p>
+<p><strong>What CPT targets:</strong> "Stuck points" — problematic beliefs that developed in response to the trauma. These include beliefs about oneself, others, the world, and the future that are keeping the trauma unprocessed and maintaining distress.</p>
+<p><strong>Five themes — the areas where stuck points most commonly develop:</strong></p>
+<ul>
+<li><strong>Safety:</strong> "Nowhere is safe. I am always at risk." → Leads to hypervigilance and restriction of activity.</li>
+<li><strong>Trust:</strong> "I can never trust anyone again." → Leads to isolation and relationship avoidance.</li>
+<li><strong>Power/Control:</strong> "I am completely powerless. Things can never be controlled." → Leads to helplessness or the reverse — rigid need to control everything.</li>
+<li><strong>Esteem:</strong> "I am permanently damaged/worthless/to blame." → Leads to shame, depression, and self-destructive behaviour.</li>
+<li><strong>Intimacy:</strong> "I am unable to connect with others. I am fundamentally different now." → Leads to withdrawal and relationship breakdown.</li>
+</ul>
+<p><strong>How it works:</strong> CPT uses structured questioning (Socratic dialogue) to examine the evidence for and against stuck points, identify where the thinking is inflexible or extreme, and develop more balanced, accurate beliefs. It is not positive thinking — it is accurate thinking.</p>
+<p><strong>The written account:</strong> Early in CPT, clients write a detailed account of the most distressing moment of the trauma and what it means. This serves both as a processing tool and as a diagnostic one — it surfaces the stuck points that become the focus of treatment.</p>"""
+            },
+            {
+                "id": "medication_ptsd",
+                "title": "Medication for PTSD — an honest review",
+                "body": """<p><strong>Key framing:</strong> Medication does not process trauma. It can reduce symptom severity enough to make trauma-focused therapy more accessible — this is its primary value in PTSD. Medication as a standalone treatment produces modest gains that do not persist after stopping.</p>
+<table>
+<thead><tr><th>Drug / Class</th><th>Evidence / Role</th><th>Considerations</th></tr></thead>
+<tbody>
+<tr><td><strong>Sertraline</strong><br>(Zoloft)</td><td>FDA and TGA approved for PTSD. Good evidence for core PTSD symptoms, particularly hyperarousal and avoidance. Most commonly used first-line medication.</td><td>4–8 weeks for meaningful effect. Standard SSRI side effects — nausea, sexual dysfunction, sleep changes. Evidence modest compared to trauma therapy.</td></tr>
+<tr><td><strong>Paroxetine</strong><br>(Aropax)</td><td>FDA approved for PTSD. Similar efficacy to sertraline.</td><td>Significant discontinuation syndrome — must taper slowly. Higher anticholinergic burden. Fluoxetine or sertraline generally preferred.</td></tr>
+<tr><td><strong>Venlafaxine</strong><br>(Effexor)</td><td>Strong evidence for PTSD — comparable to SSRIs and sometimes superior for hyperarousal symptoms. Not FDA-approved but widely used and guideline-recommended.</td><td>Discontinuation syndrome significant. Blood pressure monitoring at higher doses. Good choice for comorbid depression.</td></tr>
+<tr><td><strong>Prazosin</strong></td><td>Alpha-1 blocker. Specific evidence for PTSD-related nightmares and sleep disturbance. Useful adjunct — not a primary PTSD treatment.</td><td>Blood pressure lowering — monitor orthostatic hypotension. Taken at night. Start low and titrate.</td></tr>
+<tr><td><strong>Benzodiazepines</strong><br>(diazepam, clonazepam)</td><td>NOT recommended for PTSD by any current guideline. May worsen long-term outcomes by facilitating avoidance and impairing fear extinction learning.</td><td>Significant dependence risk. Does not treat PTSD and may actively impair processing. Short-term crisis use only with plan to cease.</td></tr>
+<tr><td><strong>Quetiapine / antipsychotics</strong><br>(off-label)</td><td>Some evidence for quetiapine in PTSD refractory to SSRI — particularly for hyperarousal and dissociation. Not first- or second-line.</td><td>Metabolic effects, sedation, QTc. Use thoughtfully and with clear rationale.</td></tr>
+<tr><td><strong>MDMA-assisted therapy</strong></td><td>Phase 3 trials (MAPS) showed very large effect sizes for treatment-resistant PTSD. Not yet TGA approved; available in Australia through compassionate access schemes from 2023.</td><td>Requires highly structured protocol with trained therapists. Not recreational — used as an adjunct to intensive psychotherapy sessions. Emerging.</td></tr>
+</tbody>
+</table>
+<p><strong>Summary:</strong> For PTSD, trauma-focused psychotherapy (EMDR, PE, CPT) is the primary treatment. Medication is most useful for reducing the symptom burden enough to engage in therapy — particularly hyperarousal, sleep disturbance, and the emotional dysregulation that can make trauma work inaccessible.</p>"""
+            },
+            {
+                "id": "treatment_expectations_ptsd",
+                "title": "What to expect from treatment",
+                "body": """<p><strong>The core truth:</strong> Effective PTSD treatment requires approaching the trauma — not indefinitely avoiding it. This is counterintuitive and initially uncomfortable. The discomfort is the mechanism of change, not a sign that treatment is causing harm.</p>
+<p><strong>The phased model for complex presentations:</strong></p>
+<ul>
+<li><strong>Phase 1 — Stabilisation:</strong> Building safety, regulation skills, and the therapeutic relationship. Grounding, distress tolerance, window of tolerance work. Not processing the trauma yet — building the foundations to do so safely.</li>
+<li><strong>Phase 2 — Trauma processing:</strong> Direct engagement with traumatic memories using EMDR, PE, or CPT. This is where most of the therapeutic work happens and where distress typically peaks before reducing.</li>
+<li><strong>Phase 3 — Integration and reconnection:</strong> Meaning-making, rebuilt relationships with self and others, re-engagement with valued living, grief for what was lost.</li>
+</ul>
+<p><strong>What does improvement look like?</strong></p>
+<ul>
+<li>Intrusions become less frequent and less vivid</li>
+<li>Triggers provoke less intense responses and recover faster</li>
+<li>The memory can be thought about without the same physiological alarm response</li>
+<li>Avoidance reduces — previously off-limits situations become manageable</li>
+<li>Sleep improves; emotional regulation widens</li>
+<li>The trauma becomes something that happened, not something that is always happening</li>
+</ul>
+<p><strong>The goal is not forgetting.</strong> The memory will remain. The goal is for it to be a memory — contextualised in time, accessible without overwhelming distress, stripped of its current power to hi-jack the present.</p>
+<p><strong>Relapse:</strong> Significant stressors, anniversaries, similar events, and life transitions can temporarily re-activate PTSD symptoms. This is predictable and does not mean treatment failed. The skills learned in therapy remain and recovery is faster with each cycle.</p>"""
+            }
+        ]
+    },
+    {
+        "label": "Strategies",
+        "optional": True,
+        "items": [
+            {
+                "id": "grounding_ptsd",
+                "title": "Grounding — when intrusions and dissociation strike",
+                "body": """<p><strong>What grounding does:</strong> Grounding techniques interrupt intrusions, flashbacks, and dissociative episodes by anchoring attention to the present sensory environment. They do not process the trauma — that is therapy's job — but they reduce the intensity and duration of intrusive episodes and help restore capacity to function.</p>
+<p><strong>Sensory grounding techniques:</strong></p>
+<ul>
+<li><strong>5-4-3-2-1:</strong> Name 5 things you can see, 4 you can physically feel (your feet on the floor, fabric of clothing), 3 you can hear, 2 you can smell, 1 you can taste. Precise sensory description anchors you in the present moment.</li>
+<li><strong>Cold water / ice:</strong> Hold ice cubes, submerge hands in cold water, splash cold water on your face. The strong physical sensation activates the parasympathetic system rapidly and is difficult to "flashback through." Highly effective for severe dissociation and flashback interruption.</li>
+<li><strong>Foot stomping / physical pressure:</strong> Press feet firmly into the floor, push hands against a wall, stamp. Proprioceptive input grounds the body in physical space and interrupts depersonalisation.</li>
+<li><strong>Orientation statement:</strong> State aloud where you are, the date, your name, what you can see around you. "It is [date]. I am in [place]. I am safe. That was then — this is now." Explicitly activates the prefrontal cortex and provides temporal context.</li>
+<li><strong>The TIPP skill (DBT):</strong> Temperature (cold water on face), Intense exercise (30-60 seconds), Paced breathing (long slow exhale), Paired muscle relaxation. For acute hyperarousal.</li>
+</ul>
+<p><strong>For dissociation specifically:</strong> Grounding in physical sensation is more effective than cognitive techniques when dissociated. Movement, cold, strong taste (sour sweets, strong mint), and physical pressure are all more activating than thinking or talking.</p>
+<p><strong>Knowing your personal grounding kit:</strong> Different techniques work differently for different people. Experiment when relatively calm, not during an episode. Know in advance what works for you — when flooded or dissociated, the capacity for problem-solving is impaired.</p>"""
+            },
+            {
+                "id": "triggers_ptsd",
+                "title": "Understanding and managing triggers",
+                "body": """<p><strong>What triggers are:</strong> Stimuli — sensory, situational, interpersonal — that activate the trauma memory and its associated physiological alarm response. They do not have to make logical sense. The nervous system was encoded during the trauma to associate specific sensory details with danger, often outside conscious awareness.</p>
+<p><strong>Common trigger types:</strong></p>
+<ul>
+<li>Sensory (smell, sound, touch, visual details) that were present during the trauma</li>
+<li>Anniversaries and calendar dates</li>
+<li>Similar locations or environments</li>
+<li>Interpersonal dynamics that recapitulate the trauma (authority figures, specific tones of voice, perceived lack of control)</li>
+<li>Internal states (fear, vulnerability, pain) that were present during the trauma</li>
+<li>Media coverage of similar events</li>
+</ul>
+<p><strong>Trigger mapping — knowing your landscape:</strong> Work with your therapist to identify your specific triggers. Knowing them in advance reduces the shock of being triggered and allows forward planning. It also helps distinguish triggers (present-moment safe stimuli activating past fear) from genuine threats (present danger requiring action).</p>
+<p><strong>The difference between avoidance and management:</strong> Not every triggered situation requires approach every time. The clinical goal is to reduce the range and power of triggers — not to be trigger-proof. Avoidance as a total strategy maintains PTSD; planned, graduated approach within therapy shrinks the power of triggers over time.</p>
+<p><strong>After a trigger:</strong> Have a plan. Grounding first. Then, when regulated, consider whether this was a trigger event worth bringing to therapy — some triggers are the most important material to work with directly.</p>"""
+            },
+            {
+                "id": "sleep_ptsd",
+                "title": "Sleep in PTSD — nightmares, hyperarousal, and what helps",
+                "body": """<p><strong>Why PTSD and sleep are incompatible:</strong> The hyperaroused PTSD nervous system does not permit the degree of relaxation and physiological safety that normal sleep requires. The bedroom may be a trigger environment. Sleep itself — with its loss of control and reduced awareness — can feel threatening. Nightmares replay or transform the trauma, punishing sleep with re-experiencing. The result is a vicious cycle: trauma worsens sleep, and sleep deprivation worsens PTSD.</p>
+<p><strong>Nightmare-specific interventions:</strong></p>
+<ul>
+<li><strong>Imagery Rehearsal Therapy (IRT):</strong> The most evidence-based intervention for PTSD nightmares. Write down a recurrent nightmare, modify the ending or content in any way you choose (however unrealistic), then rehearse the new version in detail while awake each day. IRT significantly reduces nightmare frequency and intensity in most people within 2–4 weeks. Often done as part of PTSD therapy.</li>
+<li><strong>Prazosin:</strong> Alpha-1 blocker with specific evidence for PTSD nightmares and sleep disruption. Taken at night; discuss with your prescriber.</li>
+</ul>
+<p><strong>General sleep strategies in PTSD:</strong></p>
+<ul>
+<li>Fixed wake time — the most powerful circadian anchor (see insomnia psychoeducation if needed).</li>
+<li>Stimulus control — keeping bed associated with sleep, not hypervigilance or distress.</li>
+<li>Safety-proofing the sleep environment if needed: orientation items, nightlight, grounding objects nearby.</li>
+<li>A wind-down routine that is predictable and calming — not involving screens or distressing content.</li>
+<li>If woken by a nightmare and unable to return to sleep: get up, ground, do something calm, return when sleepy. Lying in bed in hyperarousal reinforces the bed-threat association.</li>
+</ul>
+<p><strong>Note on medication:</strong> Benzodiazepines worsen nightmare content and disrupt sleep architecture. Alcohol suppresses REM initially then causes rebound, worsening nightmares in the second half of the night. Neither is a sleep solution in PTSD.</p>"""
+            },
+            {
+                "id": "relationships_ptsd",
+                "title": "PTSD and relationships",
+                "body": """<p><strong>How PTSD affects relationships:</strong> Hypervigilance, emotional numbing, irritability, and withdrawal create distance. Trust impairment — particularly when the trauma was interpersonal — makes closeness feel threatening. Sexual difficulties are common when the trauma involved sexual violence or when the body itself has become associated with threat. Partners who do not understand PTSD often misinterpret symptoms as disinterest, rejection, or aggression.</p>
+<p><strong>Secondary traumatisation:</strong> Partners and close family members of people with PTSD are themselves at significant risk of developing trauma-related symptoms through repeated exposure to the person's distress, hyperarousal, and trauma content. This is not weakness — it is a recognised phenomenon. Carers need their own support.</p>
+<p><strong>What to tell people close to you:</strong></p>
+<ul>
+<li>You do not need to share the details of the trauma to explain PTSD and how it works.</li>
+<li>Explaining triggers — including interpersonal ones — in advance prevents them being experienced as personal.</li>
+<li>Naming the nervous system response: "When I go quiet/get angry/need to leave, it is not about you — my nervous system is reacting to something."</li>
+<li>Letting people know what helps: being given space, grounding support, a specific phrase that helps, or just sitting quietly nearby.</li>
+</ul>
+<p><strong>Intimacy and sexual function:</strong> Common and underreported. Physical touch, loss of control, specific positions or situations can be triggering. Communication with partners about specific triggers and limits is important — and difficult. Trauma-informed couple therapy can help navigate this when needed.</p>
+<p><strong>Seeking peer support:</strong> Connection with others who have had similar experiences — through veteran groups, sexual assault support organisations, or condition-specific peer support — can provide both normalisation and practical wisdom that individual therapy cannot replicate.</p>"""
+            }
+        ]
+    },
+    {
+        "label": "Products and Resources",
+        "optional": True,
+        "items": [
+            {
+                "id": "ptsd_books",
+                "title": "Recommended books",
+                "body": """<p><strong>The Body Keeps the Score</strong> — Bessel van der Kolk. The most widely read book on trauma and its effects on the body and brain. Excellent for understanding why trauma is a body-based experience and why body-oriented approaches matter. Note: the sections on specific treatments have been criticised by some researchers for overstating evidence for newer modalities — read the scientific claims critically.</p>
+<p><strong>Trauma and Recovery</strong> — Judith Herman. The foundational clinical text on complex trauma and recovery. Herman's three-phase model (safety → remembrance and mourning → reconnection) has shaped trauma treatment for decades. Essential reading for anyone wanting to understand the theoretical framework underlying modern trauma therapy.</p>
+<p><strong>Getting Past Your Past</strong> — Francine Shapiro. Written by the developer of EMDR. Accessible explanation of EMDR and the Adaptive Information Processing model, with practical self-help techniques. Good for understanding what EMDR is actually doing.</p>
+<p><strong>The PTSD Workbook</strong> — Mary Beth Williams &amp; Soili Poijula. Structured, evidence-based workbook with exercises drawing on CBT, EMDR, and somatic approaches. Good for people wanting to do active work between therapy sessions.</p>
+<p><strong>Waking the Tiger</strong> — Peter Levine. Somatic Experiencing approach to trauma. Focuses on body-based processing, incomplete physiological responses, and the "discharge" of traumatic activation. Useful complement to cognitive approaches for those who experience trauma primarily somatically.</p>
+<p><strong>What My Mother and I Don't Talk About</strong> — Michele Filgate (ed.). Anthology of literary essays. Not clinical — but for understanding the lived experience of complex relational trauma and family secrets, it is one of the most honest collections available.</p>"""
+            },
+            {
+                "id": "ptsd_apps_resources",
+                "title": "Apps, services, and crisis resources",
+                "body": """<p><strong>Phoenix Australia</strong> — Australian Centre for Posttraumatic Mental Health. National guidelines, resources, and clinical directory. <a href="https://www.phoenixaustralia.org" target="_blank">phoenixaustralia.org</a></p>
+<p><strong>Open Arms (Veterans &amp; Families Counselling)</strong> — 24/7 mental health support specifically for veterans, current ADF members, and their families. Free, confidential. <strong>1800 011 046</strong>. <a href="https://www.openarms.gov.au" target="_blank">openarms.gov.au</a></p>
+<p><strong>1800RESPECT</strong> — National sexual assault, domestic and family violence counselling service. 24/7. <strong>1800 737 732</strong>. Also online chat at <a href="https://www.1800respect.org.au" target="_blank">1800respect.org.au</a></p>
+<p><strong>PTSD Coach Australia</strong> — Free app developed with Phoenix Australia and the US NCPTSD. Psychoeducation, self-assessment (PCL-5), coping tools (grounding, breathing, thought challenging), and crisis links. Clinician-reviewed content. Available iOS and Android.</p>
+<p><strong>Lifeline</strong> — 24/7 crisis support. <strong>13 11 14</strong>. Text: 0477 13 11 14.</p>
+<p><strong>Beyond Blue</strong> — <strong>1300 22 4636</strong>. Mental health support and referral. beyondblue.org.au</p>
+<p><strong>EMDR Association of Australia</strong> — Accredited EMDR therapist directory. <a href="https://www.emdrassociation.org.au" target="_blank">emdrassociation.org.au</a></p>
+<p><strong>Australian Psychological Society (APS) Find a Psychologist</strong> — Search for trauma-specialist psychologists. <a href="https://www.psychology.org.au/find-a-psychologist" target="_blank">psychology.org.au/find-a-psychologist</a></p>"""
+            }
+        ]
+    }
+]
+
+def build_items_js(groups):
+    lines = []
+    lines.append("var PTSD_PE_GROUPS=[")
+    for gi, g in enumerate(groups):
+        label = "null" if g["label"] is None else ("'" + esc(g["label"]) + "'")
+        optional = "true" if g["optional"] else "false"
+        lines.append("  {label:" + label + ",optional:" + optional + ",items:[")
+        for ii, item in enumerate(g["items"]):
+            title = esc(item["title"])
+            body = esc(item["body"])
+            body = body.replace("\n", " ").replace("  ", " ")
+            comma = "," if ii < len(g["items"]) - 1 else ""
+            lines.append("    {id:'" + item["id"] + "',title:'" + title + "',body:'" + body + "'}" + comma)
+        group_comma = "," if gi < len(groups) - 1 else ""
+        lines.append("  ]}" + group_comma)
+    lines.append("]")
+    return "\n".join(lines)
+
+groups_js = build_items_js(groups)
+
+html = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PTSD Psychoeducation Handout Generator — Dr Benjamin Murrie</title>
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--border:#e2e6ed;--text:#1a1d23;--muted:#6b7280;--ptsd:#be123c;--ptsd-bg:#ffe4e6;--ptsd-dark:#881337;--ptsd-mid:#9f1239;--navy:#0f172a;--sans:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.topbar{background:var(--navy);padding:10px 14px;border-bottom:3px solid var(--ptsd);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topbar-title{font-size:13px;font-weight:800;color:#fda4af;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.ti{background:#1e293b;border:1px solid #334155;color:#f1f5f9;padding:5px 9px;border-radius:7px;font:inherit;font-size:13px;min-width:0}
+.ti::placeholder{color:#64748b}
+.ti:focus{outline:1px solid var(--ptsd);background:#243349}
+.content{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
+.section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:7px;margin-top:16px}
+.condition-block{margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.condition-header{padding:10px 14px;font:700 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px;background:var(--ptsd-dark)}
+.cond-sel-btns{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+.cond-sel-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font:600 11px var(--sans);padding:3px 10px;border-radius:5px;cursor:pointer;transition:background .1s}
+.cond-sel-btn:hover{background:rgba(255,255,255,.3)}
+.topic-list{background:#fff}
+.pe-group-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:10px 14px 5px;background:#f8fafc;border-top:1px solid #f0f2f5}
+.pe-section{border-top:1px solid #f4f5f8}
+.pe-section:first-child{border-top:none}
+.pe-header{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pe-header:hover{background:#f9fafb}
+.pe-tick-btn{font-size:1rem;color:var(--muted);flex-shrink:0;min-width:20px;text-align:center;line-height:1;padding:2px;border-radius:4px;transition:color .1s}
+.pe-title{font-weight:600;font-size:13px;color:var(--text);flex:1;line-height:1.35}
+.pe-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .15s;margin-left:auto}
+.pe-section.pe-open .pe-arrow{transform:rotate(90deg)}
+.pe-body{display:none;padding:8px 14px 14px 43px;font-size:12.5px;line-height:1.65;color:#374151;border-top:1px solid #f4f5f8}
+.pe-section.pe-open .pe-body{display:block}
+.pe-body p{margin:0 0 7px}
+.pe-body p:last-child{margin:0}
+.pe-body ul{margin:4px 0 8px 16px}
+.pe-body li{margin-bottom:4px}
+.pe-body table{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 10px}
+.pe-body th{background:#fff1f2;padding:5px 8px;text-align:left;border:1px solid var(--border);font-size:11px}
+.pe-body td{padding:4px 8px;border:1px solid var(--border);vertical-align:top}
+.pe-body a{color:var(--ptsd-mid)}
+.pe-section.ptsd-done{background:#fff1f2}
+.pe-section.ptsd-done .pe-tick-btn{color:var(--ptsd)}
+.pe-section.pe-optional{opacity:.88}
+.export-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.export-row .ex-label{font:700 12px var(--sans);color:var(--muted);flex-shrink:0;white-space:nowrap}
+.abtn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);font:600 12px var(--sans);cursor:pointer;transition:background .1s,border-color .1s}
+.abtn:hover{background:#f3f4f6;border-color:#94a3b8}
+.abtn.copied{background:#dcfce7;border-color:#86efac;color:#166534}
+.preview-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.preview-head{background:#f8fafc;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.preview-head-title{font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.preview-body{padding:22px 26px;font-family:Arial,sans-serif;font-size:10pt;line-height:1.55;color:#111;min-height:100px}
+.preview-body .empty-msg{color:var(--muted);font-style:italic;text-align:center;padding:36px 20px;font-size:11pt}
+.ho-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e5e7eb}
+.ho-pt{font-size:17pt;font-weight:800;color:#0f172a;margin-bottom:2px}
+.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:12px}
+.ho-notice{font-size:9.5pt;background:#fff1f2;border-left:3px solid #be123c;padding:9px 12px;line-height:1.5;color:#881337}
+.ho-group-label{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px;padding-bottom:3px;border-bottom:2px solid currentColor}
+.ho-group-label.ptsd-g-core{color:#881337;border-bottom-color:#881337}
+.ho-group-label.ptsd-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
+.ho-group-label.ptsd-g-strategies{color:#0e7490;border-bottom-color:#0e7490}
+.ho-group-label.ptsd-g-resources{color:#065f46;border-bottom-color:#065f46}
+.ho-topic{margin-bottom:7px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:7px;background:#fffafa}
+.ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
+.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
+.ho-topic-body p{margin:0 0 6px}
+.ho-topic-body p:last-child{margin:0}
+.ho-topic-body ul{margin:3px 0 7px 16px}
+.ho-topic-body li{margin-bottom:3px}
+.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:5px 0 8px}
+.ho-topic-body th{background:#fff1f2;padding:4px 7px;text-align:left;border:1px solid #d1d5db;font-size:9pt}
+.ho-topic-body td{padding:3pt 7pt;border:1px solid #d1d5db;vertical-align:top}
+.ho-topic-body a{color:#9f1239}
+.ho-footer{margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:8.5pt;color:#9ca3af;font-style:italic}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-title">PTSD Psychoeducation</span>
+  <input class="ti" id="ptName" placeholder="Patient name..." style="flex:1;min-width:130px;max-width:210px" oninput="refresh()">
+  <input class="ti" id="ptDate" type="date" style="flex:0 0 128px" oninput="refresh()">
+  <input class="ti" id="drName" placeholder="Clinician name..." style="flex:1;min-width:130px;max-width:200px" oninput="refresh()">
+</div>
+<div class="content">
+  <div class="condition-block" style="margin-top:12px">
+    <div class="condition-header">
+      PTSD — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll()">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll()">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="ptsd-topic-list"></div>
+  </div>
+  <div class="export-row">
+    <span class="ex-label">Export</span>
+    <button class="abtn" id="btn-docx" onclick="dlDocx()">Download .docx</button>
+    <button class="abtn" id="btn-plain" onclick="copyPlain(this)">Copy plain text</button>
+    <button class="abtn" id="btn-fmt" onclick="copyFormatted(this)">Copy formatted</button>
+  </div>
+  <div class="preview-wrap">
+    <div class="preview-head">
+      <span class="preview-head-title">Handout Preview</span>
+      <button class="abtn" onclick="refresh()" style="padding:4px 11px;font-size:11px">Refresh</button>
+    </div>
+    <div class="preview-body" id="preview">
+      <div class="empty-msg">Tick topics above to generate the handout.</div>
+    </div>
+  </div>
+</div>
+<script>
+var sel={};
+function $(id){return document.getElementById(id);}
+function f(id){var el=$(id);return el?el.value.trim():\'\';}
+function esc(s){if(!s)return \'\';return String(s).replace(/&/g,\'&amp;\').replace(/</g,\'&lt;\').replace(/>/g,\'&gt;\').replace(/"/g,\'&quot;\');}
+
+''' + groups_js + r'''
+
+function renderTopics(){
+  var el=$('ptsd-topic-list'); if(!el) return;
+  var html='';
+  PTSD_PE_GROUPS.forEach(function(g){
+    if(g.label) html+='<div class="pe-group-label">'+(g.optional?'<span style="font-size:9px;opacity:.6;font-weight:600;margin-right:4px">OPTIONAL</span>':'')+esc(g.label)+'</div>';
+    g.items.forEach(function(item){
+      var done=!!sel[item.id];
+      html+='<div class="pe-section'+(done?' ptsd-done':'')+(g.optional?' pe-optional':'')+'" data-id="'+item.id+'">';
+      html+='<div class="pe-header"><span class="pe-tick-btn">'+(done?'&#9745;':'&#9744;')+'</span>';
+      html+='<span class="pe-title">'+esc(item.title)+'</span>';
+      html+='<span class="pe-arrow">&#9658;</span></div>';
+      html+='<div class="pe-body">'+item.body+'</div></div>';
+    });
+  });
+  el.innerHTML=html;
+  el.addEventListener('click',function(e){
+    var sec=e.target.closest('[data-id]'); if(!sec) return;
+    var id=sec.getAttribute('data-id');
+    if(e.target.classList.contains('pe-tick-btn')){
+      e.stopPropagation();
+      sel[id]=!sel[id];
+      sec.classList.toggle('ptsd-done',!!sel[id]);
+      sec.querySelector('.pe-tick-btn').innerHTML=sel[id]?'&#9745;':'&#9744;';
+      refresh();
+    } else {
+      var hdr=e.target.closest('.pe-header'); if(hdr) sec.classList.toggle('pe-open');
+    }
+  });
+}
+function selectAll(){PTSD_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){sel[item.id]=true;});});renderTopics();refresh();}
+function clearAll(){Object.keys(sel).forEach(function(k){sel[k]=false;});renderTopics();refresh();}
+var GROUP_COLOR_CLASS={'null':'ptsd-g-core','Treatment':'ptsd-g-treatment','Strategies':'ptsd-g-strategies','Products and Resources':'ptsd-g-resources'};
+function buildHandout(){
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+  var hasAny=false;
+  PTSD_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){if(sel[item.id])hasAny=true;});});
+  if(!hasAny) return null;
+  var h='<div class="ho-header">';
+  h+='<div class="ho-pt">PTSD — Psychoeducation Handout</div>';
+  h+='<div class="ho-meta">Patient: <strong>'+esc(name)+'</strong>';
+  if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
+  h+=' &nbsp;|&nbsp; Clinician: <strong>'+esc(dr)+'</strong></div>';
+  h+='<div class="ho-notice">The following information was discussed or provided as educational material during your appointment. It is a reference guide only — all treatment decisions should be made in consultation with your treating clinician.</div></div>';
+  PTSD_PE_GROUPS.forEach(function(g){
+    var gItems=g.items.filter(function(item){return sel[item.id];});
+    if(!gItems.length) return;
+    var gKey=g.label||'null';
+    var cls=GROUP_COLOR_CLASS[gKey]||'ptsd-g-core';
+    if(g.label) h+='<div class="ho-group-label '+cls+'">'+esc(g.label)+'</div>';
+    gItems.forEach(function(item){
+      h+='<div class="ho-topic"><div class="ho-topic-title">'+esc(item.title)+'</div>';
+      h+='<div class="ho-topic-body">'+item.body+'</div></div>';
+    });
+  });
+  h+='<div class="ho-footer">This handout was prepared specifically for '+esc(name)+(ds?' following a psychiatric appointment on '+esc(ds):'')+'. It is not a substitute for clinical advice.</div>';
+  return h;
+}
+function refresh(){
+  var html=buildHandout();
+  var pv=$('preview');
+  if(!html){pv.innerHTML='<div class="empty-msg">Tick topics above to generate the handout.</div>';return;}
+  pv.innerHTML=html;
+}
+function buildDocxHtml(){
+  var html=buildHandout(); if(!html) return null;
+  return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+    '<head><meta charset="UTF-8"><style>'+
+    '@page{margin:2cm 2.5cm;}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#111;}'+
+    '.ho-header{margin-bottom:14pt;padding-bottom:10pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-pt{font-size:17pt;font-weight:bold;color:#0f172a;margin-bottom:3pt;}'+
+    '.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:10pt;}'+
+    '.ho-notice{font-size:9.5pt;background:#fff1f2;border-left:3pt solid #be123c;padding:8pt 10pt;color:#881337;}'+
+    '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:12pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
+    '.ho-group-label.ptsd-g-core{color:#881337;}.ho-group-label.ptsd-g-treatment{color:#1e3a5f;}.ho-group-label.ptsd-g-strategies{color:#0e7490;}.ho-group-label.ptsd-g-resources{color:#065f46;}'+
+    '.ho-topic{margin-bottom:7pt;padding:8pt 11pt;border:1pt solid #e5e7eb;background:#fffafa;}'+
+    '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
+    '.ho-topic-body p{margin:0 0 5pt;}.ho-topic-body ul{margin:3pt 0 6pt 14pt;}.ho-topic-body li{margin-bottom:3pt;}'+
+    '.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9pt;margin:5pt 0 8pt;}'+
+    '.ho-topic-body th{background:#fff1f2;padding:4pt 6pt;text-align:left;border:1pt solid #d1d5db;font-size:8.5pt;}'+
+    '.ho-topic-body td{padding:3pt 6pt;border:1pt solid #d1d5db;vertical-align:top;}'+
+    '.ho-footer{margin-top:20pt;padding-top:10pt;border-top:1pt solid #e5e7eb;font-size:8pt;color:#9ca3af;font-style:italic;}'+
+    '</style></head><body>'+html+'</body></html>';
+}
+function dlDocx(){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected.');return;}
+  var name=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
+  var blob=new Blob(['﻿'+docx],{type:'application/msword;charset=utf-8'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='PTSD_Handout_'+name+'.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  flash($('btn-docx'),'Downloaded!');
+}
+function copyPlain(btn){
+  if(!buildHandout()){alert('No topics selected.');return;}
+  navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied!');}).catch(function(){});
+}
+function copyFormatted(btn){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected.');return;}
+  if(window.ClipboardItem){
+    var blob=new Blob([docx],{type:'text/html'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':blob})]).then(function(){flash(btn,'Copied!');}).catch(function(){
+      navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied (plain)!');});
+    });
+  } else {
+    navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied!');});
+  }
+}
+function flash(btn,msg){
+  if(!btn)return;
+  var orig=btn.textContent;btn.textContent=msg;btn.classList.add('copied');
+  setTimeout(function(){btn.textContent=orig;btn.classList.remove('copied');},2000);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var td=new Date().toISOString().slice(0,10);
+  var dtEl=$('ptDate'); if(dtEl&&!dtEl.value) dtEl.value=td;
+  renderTopics();
+  refresh();
+});
+</script>
+</body>
+</html>'''
+
+with open('/home/user/psychiatric-tools/ptsd-psychoeducation.html', 'w', encoding='utf-8') as fh:
+    fh.write(html)
+print("Done.")
