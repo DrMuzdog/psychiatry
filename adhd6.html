@@ -339,6 +339,53 @@ ul.dots > .row .txt em{font-style:normal; color:var(--muted); font-size:13px; ma
   line-height:1.5;
 }
 
+/* Mobile: stack each titration step as a card */
+@media (max-width:640px){
+  .tit-table-wrap{
+    overflow:visible; border:none; background:transparent;
+  }
+  .tit-table{display:block; background:transparent}
+  .tit-table thead{display:none}
+  .tit-table tbody{display:block}
+  .tit-table tr{
+    display:block; background:#fff;
+    border:1px solid var(--border); border-radius:7px;
+    margin-bottom:8px; padding:10px 12px;
+  }
+  .tit-table tr.ongoing{background:#fafdfb; border-color:#bbf7d0}
+  .tit-table td{
+    display:block; border:none !important; padding:3px 0;
+    background:transparent !important;
+  }
+  .tit-table td.phase{
+    font-size:14px; font-weight:600; margin-bottom:6px;
+    white-space:normal; min-width:0;
+    padding-bottom:6px; border-bottom:1px solid var(--border-soft) !important;
+  }
+  .tit-table td.phase .ongoing-tag{margin-left:6px; margin-top:0; display:inline-block}
+  .tit-table td.dose{
+    font-size:13.5px; padding:4px 0; white-space:normal;
+    display:flex; align-items:baseline; gap:8px;
+  }
+  .tit-table td.dose::before{
+    content:attr(data-time);
+    flex-shrink:0; min-width:80px;
+    font:600 10.5px/1 "Inter",sans-serif; color:var(--slate);
+    text-transform:uppercase; letter-spacing:.06em;
+  }
+  .tit-table td.dose .none{color:var(--muted)}
+  .tit-table tr.note-row{padding:0; border:none; background:transparent; margin-top:-8px; margin-bottom:8px}
+  .tit-table tr.note-row td{
+    padding:6px 12px 10px !important;
+    background:#fafaf5 !important;
+    border:1px solid var(--border) !important;
+    border-top:none !important;
+    border-radius:0 0 7px 7px;
+    margin-top:-1px;
+  }
+  .tit-table tr.note-row.ongoing td{background:#f0fdf4 !important; border-color:#bbf7d0 !important}
+}
+
 .tit-actions{
   display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 4px;
 }
@@ -1491,7 +1538,7 @@ const TIT_MEDS={
       {label:'Days 10-16',ongoing:false,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'1 tab (10mg)'}]},
       {label:'Ongoing',ongoing:true,note:'',doses:[{t:'morning',l:'2 tabs (20mg)'},{t:'midday',l:'2 tabs (20mg)'}]}]},
   mphLA:{name:'Methylphenidate long-acting (Ritalin LA / Concerta)',brand:'Ritalin LA 10, 20, 30, 40, 60mg caps · Concerta 18, 27, 36, 54mg tabs',auth:'Stimulant authority script. Add CA2023 (NSW). Concerta: PBS authority requires ADHD diagnosis made before age 18 — must be swallowed whole. Ritalin LA: can be sprinkled onto soft food.',
-    unit:'mg',form:'',strengths:[],
+    unit:'mg',form:'',strengths:[10,18,20,27,30,36,40,54,60],
     steps:[],
     protocols:[
       {key:'conversion',label:'IR → long-acting conversion (preferred)',conversion:true,
@@ -1952,7 +1999,7 @@ function renderTit(){
     const tableRows = proto.steps.map(step=>{
       const cells = times.map(t=>{
         const d = dosesAtTime(step,t);
-        return `<td class="dose">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
+        return `<td class="dose" data-time="${TIME_LABEL[t]}">${d?escHtml(d):'<span class="none">—</span>'}</td>`;
       }).join('');
       const doseRow = `<tr class="${step.ongoing?'ongoing':''}">
           <td class="phase">${escHtml(step.label)}${step.ongoing?'<div class="ongoing-tag">ongoing</div>':''}</td>
@@ -1971,7 +2018,7 @@ function renderTit(){
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table></div>`;
-    scriptText = buildScriptText(med, proto);
+    scriptText = buildScriptText(med, proto, titMed);
   }
 
   const auth = proto.auth || med.auth || '';
@@ -1998,15 +2045,129 @@ function renderTit(){
 function selectTitMed(k){titMed=k; titProto=null; renderTit();}
 function selectTitProto(k){titProto=k; renderTit();}
 
-function buildScriptText(med, proto){
+// Script defaults per medication
+const SCRIPT_DEFAULTS = {
+  dex:        {genericName:'Dexamphetamine sulfate',         mitte:100, repeats:0, interval:20},
+  ritalinIR:  {genericName:'Methylphenidate hydrochloride',  mitte:100, repeats:0, interval:20},
+  mphLA:      {genericName:'Methylphenidate',                 mitte:30,  repeats:0, interval:20, brandByStrength:{10:'Ritalin LA',20:'Ritalin LA',30:'Ritalin LA',40:'Ritalin LA',60:'Ritalin LA',18:'Concerta',27:'Concerta',36:'Concerta',54:'Concerta'}},
+  vyvanse:    {genericName:'Lisdexamfetamine',                mitte:30,  repeats:0, interval:20},
+  strattera:  {genericName:'Atomoxetine',                     mitte:30,  repeats:5, interval:0,  pbs:'PBS streamlined 7876 (initiation) / 7890 (continuation)'},
+  intuniv:    {genericName:'Guanfacine XR',                   mitte:30,  repeats:5, interval:0},
+  catnanight: {genericName:'Clonidine',                       mitte:100, repeats:5, interval:0},
+  catnaday:   {genericName:'Clonidine',                       mitte:100, repeats:5, interval:0},
+};
+
+// Parse a dose label like "1 cap (30mg)", "½ tab (2.5mg)", "2 caps (40mg)"
+// or composite "1 cap (30mg) + 2 caps (20mg) = 70mg".
+// strengths[] from the med tells us whether (Xmg) is per-unit (Vyvanse: caps come in fixed
+// strengths) or total (Dex IR: single tablet strength, labels show total dose).
+function parseDoseLabel(l, strengths){
+  const stripped = l.replace(/\s*=\s*\d+(?:\.\d+)?(?:mg|mcg)\s*$/, '');
+  const parts = stripped.split(/\s*\+\s*/);
+  const qMap = {'¼':0.25,'½':0.5,'¾':0.75,'1½':1.5,'2½':2.5,'3½':3.5,'4½':4.5};
+  const out = [];
+  parts.forEach(p=>{
+    const m = p.trim().match(/^(¼|½|¾|1½|2½|3½|4½|\d+(?:\.\d+)?)\s*(tabs?|caps?)\s*\((\d+(?:\.\d+)?)(mg|mcg)\)/);
+    if(m){
+      const q = (qMap[m[1]] !== undefined) ? qMap[m[1]] : parseFloat(m[1]);
+      const form = m[2].startsWith('cap') ? 'capsule' : 'tablet';
+      const total = parseFloat(m[3]);
+      // Decide whether (Xmg) is per-unit or total
+      let strength;
+      const perUnit = total;
+      const asTotal = q ? Math.round((total/q)*1000)/1000 : null;
+      if(strengths && strengths.length){
+        if(strengths.indexOf(perUnit)>=0 && (q!==1 || !strengths.includes(asTotal))){
+          // label "X caps (Ymg)" where Ymg is a known strength and X>1 → per-unit
+          strength = perUnit;
+        } else if(asTotal!==null && strengths.indexOf(asTotal)>=0){
+          // label "X tabs (Ymg)" where Y/X matches a known strength → total
+          strength = asTotal;
+        } else {
+          // ambiguous — default to per-unit if total is a known strength, else total
+          strength = strengths.indexOf(perUnit)>=0 ? perUnit : asTotal;
+        }
+      } else {
+        strength = asTotal;
+      }
+      out.push({q, form, strength, unit:m[4], parsed:true});
+    } else {
+      out.push({raw:p.trim(), parsed:false});
+    }
+  });
+  return out;
+}
+
+// Build a paste-able Australian-style script for the ongoing dose
+function buildScriptText(med, proto, medKey){
   const ongoing = proto.steps.find(s=>s.ongoing) || proto.steps[proto.steps.length-1];
   if(!ongoing) return '';
-  const times = aggregateDoses([ongoing]);
-  const sig = times.map(t=>{
-    const d = dosesAtTime(ongoing, t);
-    return d ? TIME_LABEL[t]+': '+d : null;
-  }).filter(Boolean).join('  +  ');
-  return med.name+'\n'+med.brand+'\n\nSig: '+sig+(ongoing.note?'\nNote: '+ongoing.note:'');
+
+  const defs = SCRIPT_DEFAULTS[medKey] || {mitte:30, repeats:0, interval:20};
+  const genericBase = defs.genericName || med.name.split(' (')[0];
+  const brandPart = (med.name.match(/\(([^)]+)\)/) || [])[1] || '';
+
+  // Group by (strength, form), summing daily quantity per time
+  const TIME_ORDER = ['morning','midday','afternoon','evening','night'];
+  const groups = {};
+  const rawNotes = [];
+  (ongoing.doses||[]).forEach(d=>{
+    const parsed = parseDoseLabel(d.l, med.strengths);
+    parsed.forEach(p=>{
+      if(!p.parsed){ rawNotes.push((d.t?TIME_LABEL[d.t]+': ':'')+p.raw); return; }
+      const k = `${p.strength}${p.unit}|${p.form}`;
+      if(!groups[k]) groups[k] = {strength:p.strength, unit:p.unit, form:p.form, times:{}};
+      groups[k].times[d.t] = (groups[k].times[d.t]||0) + p.q;
+    });
+  });
+
+  // For each strength → a script block
+  function fracWord(q){
+    if(q===0.25) return 'a quarter of a';
+    if(q===0.5)  return 'half a';
+    if(q===0.75) return 'three-quarters of a';
+    if(q===1)    return 'one';
+    if(q===1.5)  return 'one and a half';
+    if(q===2)    return 'two';
+    if(q===2.5)  return 'two and a half';
+    if(q===3)    return 'three';
+    if(q===3.5)  return 'three and a half';
+    if(q===4)    return 'four';
+    if(q===4.5)  return 'four and a half';
+    if(q===5)    return 'five';
+    return String(q);
+  }
+  function pluralForm(q,form){return (q===1||q===0.5||q===0.25||q===0.75) ? form : form+'s';}
+  const TIME_PHRASE = {morning:'in the morning', midday:'at midday', afternoon:'in the afternoon', evening:'in the evening', night:'at night'};
+
+  const blocks = Object.values(groups).map(g=>{
+    const ordered = TIME_ORDER.filter(t=>g.times[t]);
+    const sigParts = ordered.map(t=>`${fracWord(g.times[t])} ${pluralForm(g.times[t], g.form)} ${TIME_PHRASE[t]}`);
+    const sig = ordered.length===1
+      ? `Take ${sigParts[0]}.`
+      : `Take ${sigParts.slice(0,-1).join(', ')} and ${sigParts[sigParts.length-1]}.`;
+    const totalDaily = ordered.reduce((a,t)=>a+g.times[t],0);
+    const monthly = Math.ceil(totalDaily*30);
+    const mitte = Math.max(defs.mitte, monthly);
+    const brandLabel = (defs.brandByStrength && defs.brandByStrength[g.strength]) || brandPart;
+    const lines = [
+      `${genericBase} ${g.strength}${g.unit} ${g.form}${brandLabel?'  ['+brandLabel+']':''}`,
+      `Mitte:    ${mitte} ${g.form}s`,
+      `Repeats:  ${defs.repeats}${defs.interval?`  (minimum supply interval ${defs.interval} days)`:''}`,
+      `Sig:      ${sig}`
+    ];
+    return lines.join('\n');
+  });
+
+  const out = [];
+  if(blocks.length) out.push(blocks.join('\n\n'));
+  if(rawNotes.length){
+    out.push('Additional instructions:\n  '+rawNotes.join('\n  '));
+  }
+  if(ongoing.note){
+    out.push('Clinical note: '+ongoing.note);
+  }
+  return out.join('\n\n');
 }
 
 function copyTitTable(btn){
