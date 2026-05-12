@@ -593,6 +593,7 @@ footer{
   <nav class="toc">
     <a href="#sec-open">Opening</a>
     <a href="#sec-pre">Pre-screening</a>
+    <a href="#sec-fam">Family</a>
     <a href="#sec-a">A · Symptoms</a>
     <a href="#sec-b">B · Childhood</a>
     <a href="#sec-c">C · Settings</a>
@@ -602,7 +603,6 @@ footer{
     <a href="#sec-card">Cardiac</a>
     <a href="#sec-med">Medical</a>
     <a href="#sec-rx">Meds</a>
-    <a href="#sec-fam">Family</a>
     <a href="#sec-mse">MSE</a>
     <a href="#sec-inv">Investigations</a>
     <a href="#sec-pe">Psychoeducation</a>
@@ -626,6 +626,14 @@ footer{
   <div class="body">
     <p class="lead">Validated tools, prior reports, and informant accounts. Cover before you start the formal DSM-5 review.</p>
     <ul class="dots" data-section="prescreening"></ul>
+  </div>
+</section>
+
+<section class="card violet" id="sec-fam">
+  <div class="ch"><span class="num">·</span>Family psychiatric history</div>
+  <div class="body">
+    <p class="lead">ADHD is highly heritable. Family history of bipolar or psychosis changes the risk–benefit calculus.</p>
+    <ul class="dots" data-section="family"></ul>
   </div>
 </section>
 
@@ -707,14 +715,6 @@ footer{
   <div class="body">
     <p class="lead">Specific interactions, contraindications, and combinations to watch for. Click any line to expand.</p>
     <ul class="dots" data-section="meds"></ul>
-  </div>
-</section>
-
-<section class="card violet" id="sec-fam">
-  <div class="ch"><span class="num">·</span>Family psychiatric history</div>
-  <div class="body">
-    <p class="lead">ADHD is highly heritable. Family history of bipolar or psychosis changes the risk–benefit calculus.</p>
-    <ul class="dots" data-section="family"></ul>
   </div>
 </section>
 
@@ -815,15 +815,31 @@ footer{
         <div class="bd-controls bd-multi">
           <button type="button" class="pill" data-fu="req" data-val="BP and HR readings (home, pharmacy or GP)" onclick="fuToggle(this)">BP &amp; HR</button>
           <button type="button" class="pill" data-fu="req" data-val="Weight check" onclick="fuToggle(this)">Weight</button>
-          <button type="button" class="pill" data-fu="req" data-val="ECG via GP" onclick="fuToggle(this)">ECG</button>
+          <button type="button" class="pill" data-fu="req" data-val="Height" onclick="fuToggle(this)">Height</button>
+          <button type="button" class="pill" data-fu="req" data-val="ECG" onclick="fuToggle(this)">ECG</button>
           <button type="button" class="pill" data-fu="req" data-val="Urine drug screen" onclick="fuToggle(this)">UDS</button>
+          <button type="button" class="pill" data-fu="req" data-val="Cardiology review" onclick="fuToggle(this)">Cardiology review</button>
+          <button type="button" class="pill" data-fu="req" data-val="Sleep study / OSA assessment" onclick="fuToggle(this)">Sleep study</button>
+          <button type="button" class="pill" data-fu="req" data-val="Neuropsychological testing" onclick="fuToggle(this)">Neuropsych testing</button>
+          <button type="button" class="pill" data-fu="req" data-val="Cognitive / IQ assessment" onclick="fuToggle(this)">IQ / cognitive testing</button>
           <button type="button" class="pill" data-fu="req" data-val="Old school reports / NAPLAN / parent-teacher feedback" onclick="fuToggle(this)">School reports</button>
           <button type="button" class="pill" data-fu="req" data-val="Adult informant report (partner / parent)" onclick="fuToggle(this)">Adult informant</button>
           <button type="button" class="pill" data-fu="req" data-val="Childhood informant report (parent / sibling)" onclick="fuToggle(this)">Childhood informant</button>
+          <button type="button" class="pill" data-fu="req" data-val="Bring partner or family member to the next review" onclick="fuToggle(this)">Bring partner / family</button>
+          <button type="button" class="pill" data-fu="req" data-val="Previous psychology / paediatric / psychiatric letters" onclick="fuToggle(this)">Prior letters</button>
+          <button type="button" class="pill" data-fu="req" data-val="Past medical records / discharge summaries" onclick="fuToggle(this)">Past medical records</button>
+          <button type="button" class="pill" data-fu="req" data-val="Current medication list (including dosages and OTC)" onclick="fuToggle(this)">Current medication list</button>
+          <button type="button" class="pill" data-fu="req" data-val="ASRS v1.1 self-report" onclick="fuToggle(this)">ASRS</button>
+          <button type="button" class="pill" data-fu="req" data-val="DIVA-5 self-completed" onclick="fuToggle(this)">DIVA-5</button>
+          <button type="button" class="pill" data-fu="req" data-val="WURS-25 childhood retrospective" onclick="fuToggle(this)">WURS</button>
+          <button type="button" class="pill" data-fu="req" data-val="BAARS-IV (self + informant if available)" onclick="fuToggle(this)">BAARS</button>
           <button type="button" class="pill" data-fu="req" data-val="Sleep diary (2 weeks)" onclick="fuToggle(this)">Sleep diary</button>
           <button type="button" class="pill" data-fu="req" data-val="Mood / symptom diary" onclick="fuToggle(this)">Mood diary</button>
+          <button type="button" class="pill" data-fu="req" data-val="Side-effect / response log since last review" onclick="fuToggle(this)">Side-effect log</button>
           <button type="button" class="pill" data-fu="req" data-val="Written list of any questions or concerns" onclick="fuToggle(this)">Written questions</button>
-          <button type="button" class="pill" data-fu="req" data-val="Previous psychology / paediatric / psychiatric letters" onclick="fuToggle(this)">Prior letters</button>
+          <button type="button" class="pill" data-fu="req" data-val="Photos / scans of any documents to bring" onclick="fuToggle(this)">Scan-and-bring docs</button>
+          <button type="button" class="pill" data-fu="req" data-val="Driving safety review (insurance / demerit / near-misses)" onclick="fuToggle(this)">Driving safety</button>
+          <button type="button" class="pill" data-fu="req" data-val="Workplace / study accommodations request" onclick="fuToggle(this)">Workplace / study letter</button>
         </div>
       </div>
 
@@ -2683,42 +2699,22 @@ USEFUL RESOURCES
 
 const TRT_GP = `GP MANAGEMENT PLAN
 
-1. PSYCHOLOGY REFERRAL
-   • Refer to an ADHD-aware psychologist for CBT-ADHD, ACT, or DBT skills training.
-   • Prioritise DBT skills modules where emotional dysregulation or rejection sensitivity is prominent.
-
-2. ALLIED HEALTH REFERRALS (as clinically indicated)
-   • ADHD coaching — directories: aadpa.com.au, adhdaustralia.org.au, coachingfederation.org.
-   • Occupational therapy — workspace, sensory and routine strategies; NDIS-fundable where eligible.
-   • Dietitian — if appetite or weight concerns during titration.
-   • Sleep psychologist or CBT-I program (e.g. This Way Up) for persistent insomnia.
-
-3. ROUTINE MONITORING (every GP review on stimulant treatment)
-   • Therapeutic response, adherence, side effects, mental state, substance use, cardiovascular status.
+ROUTINE MONITORING (every GP review on stimulant treatment)
+   • Therapeutic response, adherence, mental state, substance use, cardiovascular status.
    • Resting BP and pulse every review.
    • Weight: monthly during titration; 6-monthly once stable.
    • Specifically ask about sleep, appetite, mood, rebound, headache, anxiety.
 
-4. PATHOLOGY (annual, or sooner if clinically indicated)
-   • FBC, EUC, LFT, TFT, ferritin, iron studies, B12, folate, Vitamin D.
-   • HbA1c and fasting lipids if metabolic risk.
+SIDE-EFFECT MONITORING & MANAGEMENT
+   • Reduced appetite / weight loss — substantial breakfast before dosing; high-calorie evening meal once medication wears off; protein-rich snacks; consider weekend medication holidays.
+   • Headache — usually transient; hydration, regular meals; review dose; check BP; consider bruxism.
+   • Dry mouth / nausea — take with food; usually settles.
+   • Rebound irritability / mood lability — review dose timing; reduce inter-dose gap; consider formulation change; refer if persistent.
+   • Increased anxiety / jitteriness — usually dose too high — reduce; treat anxiety separately if pre-existing.
+   • Elevated BP / HR — reduce dose; ECG if symptomatic; cardiology if persistent.
+   • Emotional blunting / "zombie" — DOSE TOO HIGH; reduce, do not tolerate.
 
-5. ECG
-   • As clinically indicated: cardiac history, exertional symptoms, syncope, palpitations, significant family history of arrhythmia or sudden death, age >40 with cardiovascular risk factors.
-   • Repeat if new cardiac symptoms.
-
-6. RTPM / SAFESCRIPT
-   • Mandatory check before every controlled-substance prescription in most jurisdictions.
-
-7. ADJUNCTIVE PRESCRIBING — SLEEP & HYPERAROUSAL (GP can initiate)
-   • Melatonin 0.5–4mg taken 3–4 hours BEFORE desired bedtime (used as a chronobiotic — not at bedtime).
-   • Clonidine 50–200mcg nocte — for hyperarousal, agitation, sleep onset.
-   • Doxylamine 12.5–25mg nocte — short-term only.
-   • Mirtazapine 15mg nocte — option if comorbid low mood / anxiety; monitor weight.
-   • Avoid benzodiazepines for chronic insomnia.
-   • Do NOT initiate stimulants, atomoxetine, or guanfacine — refer back to the psychiatrist for any ADHD-specific pharmacotherapy adjustment.
-
-8. WHEN TO REFER BACK TO PSYCHIATRY
+WHEN TO REFER BACK TO PSYCHIATRY
    • Inadequate treatment response or need for dose change.
    • Significant or persistent side effects.
    • Cardiovascular concerns (persistent BP ≥140/90, HR persistently >100).
