@@ -536,42 +536,60 @@ function refresh(){
   pv.innerHTML=html;
 }
 
+/* Add inline styles to table cells in item body HTML so they work in Word and off-DOM contexts */
+function styleBody(s){
+  return s
+    .replace(/<table/g,'<table style="border-collapse:collapse;width:100%;font-size:9pt;margin:5px 0 9px"')
+    .replace(/<th>/g,'<th style="padding:4px 7px;border:1px solid #ccc;background:#f0f0f0;font-weight:bold;text-align:left">')
+    .replace(/<th /g,'<th style="padding:4px 7px;border:1px solid #ccc;background:#f0f0f0;font-weight:bold;text-align:left" ')
+    .replace(/<td>/g,'<td style="padding:3px 7px;border:1px solid #ccc;vertical-align:top">')
+    .replace(/<td /g,'<td style="padding:3px 7px;border:1px solid #ccc;vertical-align:top" ');
+}
+
+/* Build Word-compatible HTML directly — no div backgrounds, table-per-topic for reliable spacing */
 function buildDocxHtml(){
-  var html=buildHandout(); if(!html) return null;
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+  var bgMap={adhd:'#1e3a5f',asd:'#134e4a',ocd:'#4c1d95',ins:'#78350f',ptsd:'#881337',an:'#831843',aud:'#14532d',bp1:'#701a75'};
+  var hasAny=false;
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+    if(!SHOW[cond]) return;
+    var c=CONDITIONS[cond];
+    c.groups.forEach(function(g){g.items.forEach(function(item){if(c.sel[item.id])hasAny=true;});});
+  });
+  if(!hasAny) return null;
+  var h='';
+  h+='<p style="font-size:17pt;font-weight:bold;color:#0f172a;margin:0 0 3pt">Psychoeducation Handout</p>';
+  h+='<p style="font-size:9pt;color:#555;margin:0 0 14pt">Patient: <b>'+esc(name)+'</b>';
+  if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
+  h+=' &nbsp;|&nbsp; Clinician: <b>'+esc(dr)+'</b></p>';
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+    if(!SHOW[cond]) return;
+    var c=CONDITIONS[cond],meta=CONDITION_META[cond];
+    var selItems=getSelectedItems(c.groups,c.sel);
+    if(!selItems.length) return;
+    var bg=bgMap[cond]||'#1e3a5f';
+    h+='<p style="font-size:14pt;font-weight:bold;color:#fff;background:'+bg+';padding:7pt 10pt;margin:18pt 0 10pt">'+esc(meta.label)+'</p>';
+    var curGroup=null;
+    c.groups.forEach(function(g){
+      g.items.forEach(function(item){
+        if(!c.sel[item.id]) return;
+        if(g.label&&g.label!==curGroup){
+          curGroup=g.label;
+          h+='<p style="font-size:8pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:12pt 0 5pt">'+esc(g.label)+'</p>';
+        }
+        h+='<table width="100%" cellspacing="0" cellpadding="0" style="border:1pt solid #d1d5db;border-collapse:collapse;margin-bottom:14pt">';
+        h+='<tr><td style="padding:9pt 11pt;font-family:Arial,sans-serif;font-size:10pt;line-height:1.55;color:#222">';
+        h+='<p style="font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 6pt;padding-bottom:5pt;border-bottom:1pt solid #e0e0e0">'+esc(item.title)+'</p>';
+        h+=styleBody(item.body);
+        h+='</td></tr></table>';
+      });
+    });
+  });
+  h+='<p style="margin-top:18pt;padding-top:9pt;border-top:1pt solid #e5e7eb;font-size:8pt;color:#9ca3af;font-style:italic">This handout was prepared specifically for '+esc(name)+(ds?' following a psychiatric appointment on '+esc(ds):'')+'. It is not a substitute for clinical advice.</p>';
   return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
-    '<head><meta charset="UTF-8"><style>'+
-    '@page{margin:2cm 2.5cm;}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#111;}'+
-    '.ho-header{margin-bottom:14pt;padding-bottom:10pt;border-bottom:1pt solid #e5e7eb;}'+
-    '.ho-pt{font-size:17pt;font-weight:bold;color:#0f172a;margin-bottom:3pt;}'+
-    '.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:10pt;}'+
-    '.ho-notice{font-size:9.5pt;background:#f0f9ff;border-left:3pt solid #0e7490;padding:8pt 10pt;color:#0c4a6e;}'+
-    '.ho-condition-title{font-size:14pt;font-weight:bold;padding:7pt 10pt;margin:18pt 0 9pt;color:#fff;}'+
-    '.ho-condition-title.adhd-t{background:#1e3a5f;}'+
-    '.ho-condition-title.asd-t{background:#134e4a;}'+
-    '.ho-condition-title.ocd-t{background:#4c1d95;}'+
-    '.ho-condition-title.ins-t{background:#78350f;}'+
-    '.ho-condition-title.ptsd-t{background:#881337;}'+
-    '.ho-condition-title.an-t{background:#831843;}'+
-    '.ho-condition-title.aud-t{background:#14532d;}'+
-    '.ho-condition-title.bp1-t{background:#701a75;}'+
-    '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:11pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
-    '.ho-group-label.adhd-g-general{color:#1e3a5f;}.ho-group-label.adhd-g-med{color:#0e7490;}.ho-group-label.adhd-g-nonpharm{color:#7c3aed;}.ho-group-label.adhd-g-products{color:#065f46;}'+
-    '.ho-group-label.asd-g{color:#134e4a;}'+
-    '.ho-group-label.ocd-g-core{color:#4c1d95;}.ho-group-label.ocd-g-treatment{color:#1e3a5f;}.ho-group-label.ocd-g-strategies{color:#0e7490;}.ho-group-label.ocd-g-resources{color:#065f46;}'+
-    '.ho-group-label.ins-g-core{color:#78350f;}.ho-group-label.ins-g-treatment{color:#1e3a5f;}.ho-group-label.ins-g-strategies{color:#0e7490;}.ho-group-label.ins-g-resources{color:#065f46;}'+
-    '.ho-group-label.ptsd-g-core{color:#881337;}.ho-group-label.ptsd-g-treatment{color:#1e3a5f;}.ho-group-label.ptsd-g-strategies{color:#0e7490;}.ho-group-label.ptsd-g-resources{color:#065f46;}'+
-    '.ho-group-label.an-g-core{color:#831843;}.ho-group-label.an-g-treatment{color:#1e3a5f;}.ho-group-label.an-g-recovery{color:#0e7490;}.ho-group-label.an-g-resources{color:#065f46;}'+
-    '.ho-group-label.aud-g-core{color:#14532d;}.ho-group-label.aud-g-treatment{color:#1e3a5f;}.ho-group-label.aud-g-medications{color:#6d28d9;}.ho-group-label.aud-g-recovery{color:#0e7490;}'+
-    '.ho-group-label.bp1-g-core{color:#701a75;}.ho-group-label.bp1-g-treatment{color:#1e3a5f;}.ho-group-label.bp1-g-medications{color:#4c1d95;}.ho-group-label.bp1-g-living{color:#0e7490;}'+
-    '.ho-topic{margin-bottom:20pt;padding:10pt 13pt;border:1pt solid #e5e7eb;background:#fafbff;}'+
-    '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
-    '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
-    '.ho-topic-body p{margin:0 0 5pt;}.ho-topic-body ul{margin:3pt 0 6pt 14pt;}.ho-topic-body li{margin-bottom:3pt;}'+
-    '.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9pt;margin:5pt 0 8pt;}'+
-    '.ho-topic-body th{background:#f1f5f9;padding:4pt 6pt;text-align:left;border:1pt solid #d1d5db;font-size:8.5pt;}'+
-    '.ho-topic-body td{padding:3pt 6pt;border:1pt solid #d1d5db;vertical-align:top;}'+
-    '.ho-footer{margin-top:20pt;padding-top:10pt;border-top:1pt solid #e5e7eb;font-size:8pt;color:#9ca3af;font-style:italic;}'+
-    '</style></head><body>'+html+'</body></html>';
+    '<head><meta charset="UTF-8"><style>@page{margin:2cm 2.5cm;}body{font-family:Arial,sans-serif;font-size:10pt;line-height:1.5;color:#111;}p{margin:0 0 4pt;}ul{margin:3pt 0 6pt 14pt;}li{margin-bottom:3pt;}</style></head><body>'+h+'</body></html>';
 }
 
 function dlDocx(){
@@ -584,21 +602,110 @@ function dlDocx(){
   setTimeout(function(){URL.revokeObjectURL(url);},2000);
   flash($('btn-docx'),'Downloaded!');
 }
-function copyPlain(btn){
-  var pv=$('preview');
-  if(!buildHandout()){alert('No topics selected — please tick some topics first.');return;}
-  navigator.clipboard.writeText(pv.innerText||pv.textContent).then(function(){flash(btn,'Copied!');}).catch(function(){});
-}
-function copyFormatted(btn){
-  var docx=buildDocxHtml(); if(!docx){alert('No topics selected — please tick some topics first.');return;}
-  if(window.ClipboardItem){
-    var blob=new Blob([docx],{type:'text/html'});
-    navigator.clipboard.write([new ClipboardItem({'text/html':blob})]).then(function(){flash(btn,'Copied!');}).catch(function(){
-      navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied (plain)!');});
+
+/* Build plain text from data — not from DOM innerText which collapses whitespace */
+function buildPlainText(){
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+  var lines=['PSYCHOEDUCATION HANDOUT','Patient: '+name+(ds?' | '+ds:'')+(dr?' | Clinician: '+dr:'')];
+  var hasAny=false;
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+    if(!SHOW[cond]) return;
+    var c=CONDITIONS[cond],meta=CONDITION_META[cond];
+    var selItems=getSelectedItems(c.groups,c.sel);
+    if(!selItems.length) return;
+    hasAny=true;
+    lines.push('','═══════════════════════════════════',meta.label.toUpperCase(),'═══════════════════════════════════');
+    var curGroup=null;
+    c.groups.forEach(function(g){
+      g.items.forEach(function(item){
+        if(!c.sel[item.id]) return;
+        if(g.label&&g.label!==curGroup){curGroup=g.label;lines.push('','— '+g.label.toUpperCase()+' —');}
+        lines.push('','■ '+item.title);
+        var tmp=document.createElement('div');
+        tmp.innerHTML=item.body;
+        lines.push((tmp.innerText||tmp.textContent).trim().replace(/\n{3,}/g,'\n\n'));
+      });
     });
-  } else {
-    navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied!');});
-  }
+  });
+  if(!hasAny) return null;
+  lines.push('','──────────────────────────────────────','This handout was prepared for '+name+(ds?' on '+ds:'')+'.');
+  return lines.join('\n');
+}
+
+function copyPlain(btn){
+  var txt=buildPlainText();
+  if(!txt){alert('No topics selected — please tick some topics first.');return;}
+  navigator.clipboard.writeText(txt).then(function(){flash(btn,'Copied!');}).catch(function(){alert('Copy failed — try Download .doc instead.');});
+}
+
+/* Build inline-styled HTML for paste into clinical software */
+function buildPasteHtml(){
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+  var bgMap={adhd:'#1e3a5f',asd:'#134e4a',ocd:'#4c1d95',ins:'#78350f',ptsd:'#881337',an:'#831843',aud:'#14532d',bp1:'#701a75'};
+  var hasAny=false;
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+    if(!SHOW[cond]) return;
+    var c=CONDITIONS[cond];
+    c.groups.forEach(function(g){g.items.forEach(function(item){if(c.sel[item.id])hasAny=true;});});
+  });
+  if(!hasAny) return null;
+  var h='<div style="font-family:Arial,sans-serif;font-size:10pt;line-height:1.55;color:#111;max-width:780px">';
+  h+='<p style="font-size:16pt;font-weight:bold;margin:0 0 4px">Psychoeducation Handout</p>';
+  h+='<p style="font-size:9pt;color:#555;margin:0 0 14px">Patient: <b>'+esc(name)+'</b>';
+  if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
+  h+=' &nbsp;|&nbsp; Clinician: <b>'+esc(dr)+'</b></p>';
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+    if(!SHOW[cond]) return;
+    var c=CONDITIONS[cond],meta=CONDITION_META[cond];
+    var selItems=getSelectedItems(c.groups,c.sel);
+    if(!selItems.length) return;
+    var bg=bgMap[cond]||'#1e3a5f';
+    h+='<p style="font-size:13pt;font-weight:bold;color:#fff;background:'+bg+';padding:5px 9px;margin:16px 0 8px">'+esc(meta.label)+'</p>';
+    var curGroup=null;
+    c.groups.forEach(function(g){
+      g.items.forEach(function(item){
+        if(!c.sel[item.id]) return;
+        if(g.label&&g.label!==curGroup){
+          curGroup=g.label;
+          h+='<p style="font-size:8pt;font-weight:bold;text-transform:uppercase;margin:10px 0 4px;color:#444">'+esc(g.label)+'</p>';
+        }
+        h+='<div style="margin:0 0 14px;border:1px solid #ddd;padding:8px 11px">';
+        h+='<p style="font-weight:bold;font-size:11pt;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb">'+esc(item.title)+'</p>';
+        h+='<div style="font-size:10pt;line-height:1.6">'+styleBody(item.body)+'</div>';
+        h+='</div>';
+      });
+    });
+  });
+  h+='</div>';
+  return h;
+}
+
+/* Uses execCommand copy on live DOM element — works on file:// and HTTPS, pastes rich text into any app */
+function copyFormatted(btn){
+  var content=buildPasteHtml();
+  if(!content){alert('No topics selected — please tick some topics first.');return;}
+  var el=document.createElement('div');
+  el.style.cssText='position:fixed;left:-9999px;top:0;width:780px;background:#fff;overflow:hidden';
+  el.innerHTML=content;
+  document.body.appendChild(el);
+  var range=document.createRange();
+  range.selectNodeContents(el);
+  var sel=window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  var ok=false;
+  try{ok=document.execCommand('copy');}catch(ex){}
+  sel.removeAllRanges();
+  document.body.removeChild(el);
+  if(ok){flash(btn,'Copied!');}
+  else if(window.ClipboardItem){
+    var blob=new Blob([content],{type:'text/html'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':blob})]).then(function(){flash(btn,'Copied!');}).catch(function(){copyPlain(btn);});
+  } else {copyPlain(btn);}
 }
 function flash(btn,msg){
   if(!btn)return;
