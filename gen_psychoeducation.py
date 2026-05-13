@@ -172,6 +172,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ho-group-label.adhd-g-med{color:#0e7490;border-bottom-color:#0e7490}
 .ho-group-label.adhd-g-nonpharm{color:#7c3aed;border-bottom-color:#7c3aed}
 .ho-group-label.adhd-g-products{color:#065f46;border-bottom-color:#065f46}
+.ho-group-label.adhd-g-comm{color:#0369a1;border-bottom-color:#0369a1}
 /* ASD group label colours */
 .ho-group-label.asd-g{color:var(--asd-dark);border-bottom-color:var(--asd-dark)}
 /* OCD group label colours */
@@ -435,7 +436,7 @@ function clearAll(cond){
   renderTopics(); refresh();
 }
 
-var ADHD_GROUP_COLORS={'null':'adhd-g-general','Medication Information':'adhd-g-med','Non-pharmacological Strategies':'adhd-g-nonpharm','Products and Resources':'adhd-g-products'};
+var ADHD_GROUP_COLORS={'null':'adhd-g-general','Medication Information':'adhd-g-med','Non-pharmacological Strategies':'adhd-g-nonpharm','Products and Resources':'adhd-g-products','Communication':'adhd-g-comm'};
 var ASD_GROUP_COLORS={'null':'asd-g','Products and Resources':'asd-g','Additional Topics':'asd-g'};
 var OCD_GROUP_COLORS={'null':'ocd-g-core','Treatment':'ocd-g-treatment','Strategies and Self-Help':'ocd-g-strategies','Products and Resources':'ocd-g-resources'};
 var INS_GROUP_COLORS={'null':'ins-g-core','Treatment':'ins-g-treatment','Practical Strategies':'ins-g-strategies','Products and Resources':'ins-g-resources'};
