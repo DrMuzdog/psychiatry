@@ -423,7 +423,7 @@ function renderTopics(){
     });
   });
   el.innerHTML=html;
-  el.addEventListener('click',function(e){
+  el.onclick=function(e){
     var sec=e.target.closest('[data-id]'); if(!sec) return;
     var id=sec.getAttribute('data-id');
     if(e.target.classList.contains('pe-tick-btn')){
@@ -435,7 +435,7 @@ function renderTopics(){
     } else {
       var hdr=e.target.closest('.pe-header'); if(hdr) sec.classList.toggle('pe-open');
     }
-  });
+  };
 }
 function selectAll(){PTSD_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){sel[item.id]=true;});});renderTopics();refresh();}
 function clearAll(){Object.keys(sel).forEach(function(k){sel[k]=false;});renderTopics();refresh();}
