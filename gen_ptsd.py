@@ -352,7 +352,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ho-group-label.ptsd-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
 .ho-group-label.ptsd-g-strategies{color:#0e7490;border-bottom-color:#0e7490}
 .ho-group-label.ptsd-g-resources{color:#065f46;border-bottom-color:#065f46}
-.ho-topic{margin-bottom:7px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:7px;background:#fffafa}
+.ho-topic{margin-bottom:20px;padding:11px 14px;border:1px solid #e5e7eb;border-radius:7px;background:#fffafa}
 .ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
 .ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
 .ho-topic-body p{margin:0 0 6px}
@@ -452,7 +452,7 @@ function buildHandout(){
   h+='<div class="ho-meta">Patient: <strong>'+esc(name)+'</strong>';
   if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
   h+=' &nbsp;|&nbsp; Clinician: <strong>'+esc(dr)+'</strong></div>';
-  h+='<div class="ho-notice">The following information was discussed or provided as educational material during your appointment. It is a reference guide only — all treatment decisions should be made in consultation with your treating clinician.</div></div>';
+  h+='</div>';
   PTSD_PE_GROUPS.forEach(function(g){
     var gItems=g.items.filter(function(item){return sel[item.id];});
     if(!gItems.length) return;
@@ -484,7 +484,7 @@ function buildDocxHtml(){
     '.ho-notice{font-size:9.5pt;background:#fff1f2;border-left:3pt solid #be123c;padding:8pt 10pt;color:#881337;}'+
     '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:12pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
     '.ho-group-label.ptsd-g-core{color:#881337;}.ho-group-label.ptsd-g-treatment{color:#1e3a5f;}.ho-group-label.ptsd-g-strategies{color:#0e7490;}.ho-group-label.ptsd-g-resources{color:#065f46;}'+
-    '.ho-topic{margin-bottom:7pt;padding:8pt 11pt;border:1pt solid #e5e7eb;background:#fffafa;}'+
+    '.ho-topic{margin-bottom:20pt;padding:10pt 13pt;border:1pt solid #e5e7eb;background:#fffafa;}'+
     '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
     '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
     '.ho-topic-body p{margin:0 0 5pt;}.ho-topic-body ul{margin:3pt 0 6pt 14pt;}.ho-topic-body li{margin-bottom:3pt;}'+
