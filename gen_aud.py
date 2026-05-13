@@ -356,42 +356,59 @@ groups = [
             },
             {
                 "id": "med_glp1",
-                "title": "GLP-1 receptor agonists — semaglutide and liraglutide (emerging evidence)",
-                "body": """<p><strong>Class:</strong> Glucagon-like peptide-1 (GLP-1) receptor agonists. <strong>TGA-approved indications:</strong> Type 2 diabetes mellitus; obesity (BMI ≥30, or ≥27 with weight-related comorbidity). <strong>AUD indication:</strong> Off-label; not approved. <strong>PBS:</strong> Listed for T2DM and obesity — prescribable for AUD patients who also meet these criteria.</p>
-<p><strong>Agents:</strong></p>
+                "title": "GLP-1/GIP agonists — semaglutide, Mounjaro (tirzepatide), liraglutide (emerging evidence)",
+                "body": """<p><strong>Class:</strong> Incretin-based agents. GLP-1 receptor agonists (semaglutide, liraglutide, exenatide) and the dual GLP-1/GIP co-agonist tirzepatide (Mounjaro). <strong>TGA-approved indications:</strong> Type 2 diabetes mellitus; obesity (BMI ≥30, or ≥27 with weight-related comorbidity). <strong>AUD indication:</strong> Off-label for all agents. <strong>PBS (Australia):</strong> Varies by agent and indication — see table.</p>
+<p><strong>Agents available in Australia:</strong></p>
 <table>
-<tr><th>Agent</th><th>Brand(s)</th><th>Route</th><th>Frequency</th></tr>
-<tr><td>Semaglutide</td><td>Ozempic (diabetes), Wegovy (obesity)</td><td>Subcutaneous injection</td><td>Weekly</td></tr>
-<tr><td>Oral semaglutide</td><td>Rybelsus</td><td>Oral tablet</td><td>Daily (fasting)</td></tr>
-<tr><td>Liraglutide</td><td>Victoza (diabetes), Saxenda (obesity)</td><td>Subcutaneous injection</td><td>Daily</td></tr>
-<tr><td>Exenatide</td><td>Byetta, Bydureon</td><td>SC injection</td><td>BD or weekly (ER)</td></tr>
+<tr><th>Agent</th><th>Brand(s)</th><th>Route</th><th>Frequency</th><th>PBS (AU)</th></tr>
+<tr><td>Semaglutide SC</td><td>Ozempic (T2DM), Wegovy (obesity)</td><td>SC injection</td><td>Weekly</td><td>Yes — T2DM (General); Wegovy PBS for obesity (BMI ≥30 or ≥27+comorbidity)</td></tr>
+<tr><td>Oral semaglutide</td><td>Rybelsus</td><td>Oral tablet</td><td>Daily (fasting)</td><td>Yes — T2DM</td></tr>
+<tr><td>Tirzepatide</td><td>Mounjaro</td><td>SC injection</td><td>Weekly</td><td>Yes — T2DM (Authority, listed Feb 2024); not yet PBS for obesity in AU (as of 2025)</td></tr>
+<tr><td>Liraglutide</td><td>Victoza (T2DM), Saxenda (obesity)</td><td>SC injection</td><td>Daily</td><td>Yes — T2DM; Saxenda PBS for obesity</td></tr>
+<tr><td>Exenatide</td><td>Byetta, Bydureon</td><td>SC injection</td><td>BD or weekly (ER)</td><td>Yes — T2DM</td></tr>
 </table>
-<p><strong>Mechanism in AUD:</strong> GLP-1 receptors are expressed throughout the mesolimbic dopamine system — specifically the VTA and nucleus accumbens. Preclinical and emerging clinical evidence suggests GLP-1 receptor activation reduces dopamine release in response to alcohol cues, reduces the rewarding properties of alcohol, reduces impulsivity, and improves prefrontal inhibitory control. The mechanism is distinct from all other approved AUD medications.</p>
-<p><strong>Standard dosing (semaglutide SC — most evidence):</strong></p>
+<p><strong>Mechanism in AUD:</strong> GLP-1 receptors are expressed throughout the mesolimbic dopamine system — specifically the VTA and nucleus accumbens. GLP-1 receptor activation reduces dopamine release in response to alcohol cues, reduces the rewarding properties of alcohol, reduces impulsivity, and improves prefrontal inhibitory control. The mechanism is entirely distinct from all other approved AUD medications.</p>
+<p><strong>Mounjaro (tirzepatide) — the dual agonist:</strong> Tirzepatide acts on both GLP-1 and GIP (glucose-dependent insulinotropic polypeptide) receptors simultaneously. GIP receptors are also expressed in limbic and reward circuitry. The dual-agonist mechanism produces substantially greater weight loss than GLP-1 agonists alone (average 15–20% body weight in obesity trials vs 10–15% for semaglutide). Emerging preclinical data suggest the GIP component may have additive effects on reward suppression, though this is less established than the GLP-1 pathway. Clinically, Mounjaro may be particularly relevant in AUD patients with comorbid obesity, metabolic syndrome, or T2DM.</p>
+<p><strong>Mounjaro dosing (tirzepatide SC weekly):</strong></p>
 <table>
 <tr><th>Period</th><th>Dose</th><th>Notes</th></tr>
-<tr><td>Weeks 1–4</td><td>0.25mg SC weekly</td><td>Starting dose — not therapeutic for weight/diabetes; titration only</td></tr>
+<tr><td>Weeks 1–4</td><td>2.5mg SC weekly</td><td>Initiation dose — titration only, not therapeutic target</td></tr>
+<tr><td>Weeks 5–8</td><td>5mg SC weekly</td><td>First maintenance dose; many patients achieve good effect here</td></tr>
+<tr><td>Weeks 9–12</td><td>7.5mg SC weekly</td><td>Titrate if tolerated and further benefit needed</td></tr>
+<tr><td>Weeks 13–16</td><td>10mg SC weekly</td><td>Standard effective dose for T2DM</td></tr>
+<tr><td>Weeks 17+</td><td>12.5mg or 15mg SC weekly</td><td>Maximum doses; greatest weight loss efficacy observed at 15mg</td></tr>
+</table>
+<p><strong>Standard semaglutide dosing (SC — most AUD evidence):</strong></p>
+<table>
+<tr><th>Period</th><th>Dose</th><th>Notes</th></tr>
+<tr><td>Weeks 1–4</td><td>0.25mg SC weekly</td><td>Starting dose — not therapeutic; titration only</td></tr>
 <tr><td>Weeks 5–8</td><td>0.5mg SC weekly</td><td>First maintenance dose</td></tr>
 <tr><td>Weeks 9–12</td><td>1mg SC weekly</td><td>Standard effective dose</td></tr>
 <tr><td>Onwards (if needed)</td><td>2mg SC weekly</td><td>Maximum approved dose; higher doses in trials</td></tr>
 </table>
+<p><strong>Australia-specific PBS guide:</strong></p>
+<ul>
+<li><strong>T2DM patients:</strong> Ozempic (semaglutide), Rybelsus, Mounjaro, Bydureon/Byetta (exenatide) — all accessible at PBS cost (Authority required for Mounjaro)</li>
+<li><strong>Obesity patients (BMI ≥30 or ≥27+comorbidity):</strong> Wegovy (semaglutide 2.4mg weekly) is PBS listed in AU. Saxenda (liraglutide) is PBS listed. <strong>Mounjaro is NOT yet PBS listed for obesity in Australia as of 2025</strong> — only for T2DM</li>
+<li><strong>Private cost (approximate):</strong> Ozempic ~$130–200/month; Mounjaro ~$200–300/month; Wegovy ~$130–180/month (PBS price); Saxenda ~$300–400/month privately</li>
+<li><strong>Practical implication:</strong> For AUD patients with T2DM, Mounjaro at PBS cost is an option. For obesity-only, Wegovy (semaglutide) is more cost-accessible than Mounjaro in Australia currently</li>
+</ul>
 <p><strong>Current evidence base for AUD:</strong></p>
 <ul>
 <li><strong>Preclinical (animal models):</strong> Robust, consistent reduction in alcohol self-administration across multiple rodent and primate models for multiple GLP-1 agonists</li>
 <li><strong>Klausen et al (2022, Biological Psychiatry):</strong> Semaglutide significantly reduced alcohol consumption in a rat model of AUD; effects comparable to established medications</li>
-<li><strong>Danish register study (Becker et al, 2024):</strong> Population-level observational data showing patients with AUD on GLP-1 agonists (for diabetes/obesity) had significantly lower rates of AUD-related hospitalisation over 12 months</li>
-<li><strong>Clinical anecdote:</strong> Large numbers of patients on semaglutide for obesity/diabetes are spontaneously reporting dramatic reductions in alcohol desire — appearing widely in patient forums, medical social media, and clinician observations globally</li>
+<li><strong>Danish register study (Becker et al, 2024):</strong> Population-level observational data — patients with AUD on GLP-1 agonists (for diabetes/obesity) had significantly lower rates of AUD-related hospitalisation over 12 months</li>
+<li><strong>Clinical anecdote:</strong> Large numbers of patients on semaglutide and tirzepatide for obesity/diabetes are spontaneously reporting dramatic reductions in alcohol desire — appearing widely in patient forums, medical social media, and clinician observations globally</li>
 <li><strong>RCTs:</strong> Multiple trials currently underway (NIAAA-funded; European investigator-initiated). Results expected 2025–2027.</li>
 <li><strong>Leggio et al (2023, Cell Metabolism):</strong> Comprehensive review concluding GLP-1 system is a promising therapeutic target for AUD and other addictions</li>
 </ul>
 <p><strong>Contraindications:</strong></p>
 <ul>
 <li><strong>Absolute:</strong> Personal or family history of medullary thyroid carcinoma; Multiple Endocrine Neoplasia type 2 (MEN2)</li>
-<li><strong>Relative:</strong> History of pancreatitis (risk of recurrence); severe gastroparesis; severe renal impairment (limited data); active eating disorder where further appetite suppression is contraindicated</li>
+<li><strong>Relative:</strong> History of pancreatitis; severe gastroparesis; severe renal impairment; active eating disorder where further appetite suppression is contraindicated</li>
 </ul>
-<p><strong>Side effects:</strong> Nausea (most common — typically front-loaded, improves after 4–8 weeks; manage by slow titration and advising smaller meals); vomiting; diarrhoea or constipation; decreased appetite; pancreatitis (rare — stop immediately if persistent upper abdominal pain); gallstone formation with rapid weight loss; injection site reactions; mild tachycardia.</p>
-<p><strong>Clinical considerations for AUD:</strong> The PBS listing for obesity (BMI ≥30, or ≥27 with comorbidity) and T2DM means that many patients with AUD who are overweight or diabetic can access these medications at PBS cost. For the subset where AUD is the only indication, cost is the primary barrier (Ozempic approximately $150–400/month privately).</p>
-<p><strong>Bottom line:</strong> GLP-1 agonists represent a potentially transformative development in AUD pharmacotherapy — targeting the reward circuitry through a mechanism entirely distinct from existing medications. The preclinical and emerging clinical data are compelling. This is the medication to watch, and it is already clinically deployable in patients who meet the existing PBS criteria for diabetes or obesity.</p>"""
+<p><strong>Side effects:</strong> Nausea (most common — typically front-loaded, improves after 4–8 weeks; slow titration helps); vomiting; diarrhoea or constipation; decreased appetite; pancreatitis (rare — stop if persistent upper abdominal pain); gallstone formation with rapid weight loss; injection site reactions; mild tachycardia.</p>
+<p><strong>Bottom line:</strong> GLP-1/GIP agonists represent a potentially transformative development in AUD pharmacotherapy — targeting reward circuitry through a mechanism entirely distinct from existing medications. Mounjaro's dual mechanism may offer additive benefit, and its T2DM PBS listing makes it accessible for many AUD patients. These medications are already clinically deployable in patients who meet existing PBS criteria. The evidence base is growing rapidly.</p>"""
             }
         ]
     },
