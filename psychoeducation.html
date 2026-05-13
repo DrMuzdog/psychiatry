@@ -483,7 +483,7 @@ function renderTopicList(containerId, groups, sel, condKey, doneClass){
     });
   });
   el.innerHTML=html;
-  el.addEventListener('click',function(e){
+  el.onclick=function(e){
     var sec=e.target.closest('[data-id]'); if(!sec) return;
     var id=sec.getAttribute('data-id'), cn=sec.getAttribute('data-cond');
     var isTick=e.target.classList.contains('pe-tick-btn');
@@ -497,7 +497,7 @@ function renderTopicList(containerId, groups, sel, condKey, doneClass){
     } else {
       var hdr=e.target.closest('.pe-header'); if(hdr) sec.classList.toggle('pe-open');
     }
-  });
+  };
 }
 
 function selectAll(cond){
