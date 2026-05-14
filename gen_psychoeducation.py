@@ -39,6 +39,7 @@ ptsd  = read(os.path.join(BASE, 'ptsd-psychoeducation.html'))
 an    = read(os.path.join(BASE, 'an-psychoeducation.html'))
 aud   = read(os.path.join(BASE, 'aud-psychoeducation.html'))
 bp1   = read(os.path.join(BASE, 'bp1-psychoeducation.html'))
+anx   = read(os.path.join(BASE, 'anxiety-psychoeducation.html'))
 
 ADHD_JS     = extract_js_var(neuro, 'ADHD_PE_GROUPS')
 ASD_JS      = extract_js_var(neuro, 'ASD_PE_GROUPS')
@@ -48,6 +49,7 @@ PTSD_JS     = extract_js_var(ptsd,  'PTSD_PE_GROUPS')
 AN_JS       = extract_js_var(an,    'AN_PE_GROUPS')
 AUD_JS      = extract_js_var(aud,   'AUD_PE_GROUPS')
 BP1_JS      = extract_js_var(bp1,   'BP1_PE_GROUPS')
+ANX_JS      = extract_js_var(anx,   'ANX_PE_GROUPS')
 
 # Insomnia gets amber colour scheme (distinct from ASD teal)
 # so we patch the ins-done class references in INSOMNIA_JS to keep them as-is
@@ -70,6 +72,7 @@ html = r"""<!DOCTYPE html>
   --an:#9d174d;--an-bg:#fdf2f8;--an-dark:#831843;--an-mid:#be185d;
   --aud:#15803d;--aud-bg:#dcfce7;--aud-dark:#14532d;--aud-mid:#166534;
   --bp1:#a21caf;--bp1-bg:#fdf4ff;--bp1-dark:#701a75;--bp1-mid:#c026d3;
+  --anx:#4f46e5;--anx-bg:#eef2ff;--anx-dark:#312e81;--anx-mid:#4338ca;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -92,6 +95,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .dis-btn.active-an{background:var(--an-dark);border-color:var(--an-dark);color:#fff}
 .dis-btn.active-aud{background:var(--aud-dark);border-color:var(--aud-dark);color:#fff}
 .dis-btn.active-bp1{background:var(--bp1-dark);border-color:var(--bp1-dark);color:#fff}
+.dis-btn.active-anx{background:var(--anx-dark);border-color:var(--anx-dark);color:#fff}
 .condition-block{margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
 .condition-header{padding:10px 14px;font:700 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px}
 .condition-header.adhd-h{background:var(--adhd-dark)}
@@ -102,6 +106,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .condition-header.an-h{background:var(--an-dark)}
 .condition-header.aud-h{background:var(--aud-dark)}
 .condition-header.bp1-h{background:var(--bp1-dark)}
+.condition-header.anx-h{background:var(--anx-dark)}
 .cond-sel-btns{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
 .cond-sel-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font:600 11px var(--sans);padding:3px 10px;border-radius:5px;cursor:pointer;transition:background .1s}
 .cond-sel-btn:hover{background:rgba(255,255,255,.3)}
@@ -141,6 +146,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .pe-section.aud-done .pe-tick-btn{color:var(--aud)}
 .pe-section.bp1-done{background:#fdf4ff}
 .pe-section.bp1-done .pe-tick-btn{color:var(--bp1)}
+.pe-section.anx-done{background:#eef2ff}
+.pe-section.anx-done .pe-tick-btn{color:var(--anx)}
 .pe-section.pe-optional{opacity:.88}
 .export-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .export-row .ex-label{font:700 12px var(--sans);color:var(--muted);flex-shrink:0;white-space:nowrap}
@@ -166,6 +173,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ho-condition-title.an-t{background:var(--an-dark)}
 .ho-condition-title.aud-t{background:var(--aud-dark)}
 .ho-condition-title.bp1-t{background:var(--bp1-dark)}
+.ho-condition-title.anx-t{background:var(--anx-dark)}
 .ho-group-label{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px;padding-bottom:3px;border-bottom-width:2px;border-bottom-style:solid}
 /* ADHD group label colours */
 .ho-group-label.adhd-g-general{color:var(--adhd-dark);border-bottom-color:var(--adhd-dark)}
@@ -205,6 +213,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 .ho-group-label.bp1-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
 .ho-group-label.bp1-g-medications{color:#4c1d95;border-bottom-color:#4c1d95}
 .ho-group-label.bp1-g-living{color:#0e7490;border-bottom-color:#0e7490}
+/* Anxiety group label colours */
+.ho-group-label.anx-g-core{color:#312e81;border-bottom-color:#312e81}
+.ho-group-label.anx-g-social{color:#0369a1;border-bottom-color:#0369a1}
+.ho-group-label.anx-g-panic{color:#c2410c;border-bottom-color:#c2410c}
+.ho-group-label.anx-g-gad{color:#6d28d9;border-bottom-color:#6d28d9}
+.ho-group-label.anx-g-ago{color:#0f766e;border-bottom-color:#0f766e}
+.ho-group-label.anx-g-health{color:#be185d;border-bottom-color:#be185d}
+.ho-group-label.anx-g-trait{color:#4d7c0f;border-bottom-color:#4d7c0f}
+.ho-group-label.anx-g-meds{color:#92400e;border-bottom-color:#92400e}
 .ho-topic{margin-bottom:20px;padding:11px 14px;border:1px solid #e5e7eb;border-radius:7px;background:#fafbff}
 .ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
 .ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
@@ -240,6 +257,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
     <button class="dis-btn" id="dis-an" onclick="toggleCondition('an')">Anorexia Nervosa</button>
     <button class="dis-btn" id="dis-aud" onclick="toggleCondition('aud')">Alcohol Use Disorder</button>
     <button class="dis-btn" id="dis-bp1" onclick="toggleCondition('bp1')">Bipolar 1</button>
+    <button class="dis-btn" id="dis-anx" onclick="toggleCondition('anx')">Anxiety</button>
   </div>
 
   <div id="block-adhd" class="condition-block" style="display:none;margin-top:14px">
@@ -330,6 +348,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
     <div class="topic-list" id="bp1-topic-list"></div>
   </div>
 
+  <div id="block-anx" class="condition-block" style="display:none">
+    <div class="condition-header anx-h">
+      Anxiety Disorders — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll('anx')">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll('anx')">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="anx-topic-list"></div>
+  </div>
+
   <div class="export-row">
     <span class="ex-label">Export</span>
     <button class="abtn" id="btn-docx" onclick="dlDocx()">Download .docx</button>
@@ -350,9 +379,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15
 </div>
 
 <script>
-""" + ADHD_JS + "\n\n" + ASD_JS + "\n\n" + OCD_JS + "\n\n" + INSOMNIA_JS + "\n\n" + PTSD_JS + "\n\n" + AN_JS + "\n\n" + AUD_JS + "\n\n" + BP1_JS + r"""
+""" + ADHD_JS + "\n\n" + ASD_JS + "\n\n" + OCD_JS + "\n\n" + INSOMNIA_JS + "\n\n" + PTSD_JS + "\n\n" + AN_JS + "\n\n" + AUD_JS + "\n\n" + BP1_JS + "\n\n" + ANX_JS + r"""
 
-var adhdSel={}, asdSel={}, ocdSel={}, insSel={}, ptsdSel={}, anSel={}, audSel={}, bp1Sel={};
+var adhdSel={}, asdSel={}, ocdSel={}, insSel={}, ptsdSel={}, anSel={}, audSel={}, bp1Sel={}, anxSel={};
 
 var CONDITIONS={
   adhd:{groups:ADHD_PE_GROUPS, sel:adhdSel, done:'adhd-done', listId:'adhd-topic-list', blockId:'block-adhd', btnId:'dis-adhd', cls:'active-adhd'},
@@ -362,10 +391,11 @@ var CONDITIONS={
   ptsd:{groups:PTSD_PE_GROUPS, sel:ptsdSel, done:'ptsd-done', listId:'ptsd-topic-list', blockId:'block-ptsd', btnId:'dis-ptsd', cls:'active-ptsd'},
   an:  {groups:AN_PE_GROUPS,   sel:anSel,   done:'an-done',   listId:'an-topic-list',   blockId:'block-an',   btnId:'dis-an',   cls:'active-an'},
   aud: {groups:AUD_PE_GROUPS,  sel:audSel,  done:'aud-done',  listId:'aud-topic-list',  blockId:'block-aud',  btnId:'dis-aud',  cls:'active-aud'},
-  bp1: {groups:BP1_PE_GROUPS,  sel:bp1Sel,  done:'bp1-done',  listId:'bp1-topic-list',  blockId:'block-bp1',  btnId:'dis-bp1',  cls:'active-bp1'}
+  bp1: {groups:BP1_PE_GROUPS,  sel:bp1Sel,  done:'bp1-done',  listId:'bp1-topic-list',  blockId:'block-bp1',  btnId:'dis-bp1',  cls:'active-bp1'},
+  anx: {groups:ANX_PE_GROUPS,  sel:anxSel,  done:'anx-done',  listId:'anx-topic-list',  blockId:'block-anx',  btnId:'dis-anx',  cls:'active-anx'}
 };
 
-var SHOW={adhd:false,asd:false,ocd:false,ins:false,ptsd:false,an:false,aud:false,bp1:false};
+var SHOW={adhd:false,asd:false,ocd:false,ins:false,ptsd:false,an:false,aud:false,bp1:false,anx:false};
 var activeCond=null;
 
 function $(id){return document.getElementById(id);}
@@ -444,6 +474,7 @@ var PTSD_GROUP_COLORS={'null':'ptsd-g-core','Treatment':'ptsd-g-treatment','Stra
 var AN_GROUP_COLORS={'null':'an-g-core','Treatment':'an-g-treatment','Recovery and Psychology':'an-g-recovery','Products and Resources':'an-g-resources'};
 var AUD_GROUP_COLORS={'null':'aud-g-core','Treatment':'aud-g-treatment','Medications':'aud-g-medications','Recovery and Support':'aud-g-recovery'};
 var BP1_GROUP_COLORS={'null':'bp1-g-core','Treatment':'bp1-g-treatment','Medications':'bp1-g-medications','Living Well with Bipolar 1':'bp1-g-living'};
+var ANX_GROUP_COLORS={'null':'anx-g-core','Social Anxiety':'anx-g-social','Panic Disorder':'anx-g-panic','Generalised Anxiety Disorder':'anx-g-gad','Agoraphobia':'anx-g-ago','Health Anxiety':'anx-g-health','Trait Anxiety':'anx-g-trait','Medications':'anx-g-meds'};
 
 var CONDITION_META={
   adhd:{titleCls:'adhd-t',label:'Attention Deficit Hyperactivity Disorder (ADHD)',groupColors:ADHD_GROUP_COLORS,defaultGroupCls:'adhd-g-general'},
@@ -453,7 +484,8 @@ var CONDITION_META={
   ptsd:{titleCls:'ptsd-t',label:'Post-Traumatic Stress Disorder (PTSD)', groupColors:PTSD_GROUP_COLORS,defaultGroupCls:'ptsd-g-core'},
   an:  {titleCls:'an-t',  label:'Anorexia Nervosa', groupColors:AN_GROUP_COLORS, defaultGroupCls:'an-g-core'},
   aud: {titleCls:'aud-t', label:'Alcohol Use Disorder', groupColors:AUD_GROUP_COLORS, defaultGroupCls:'aud-g-core'},
-  bp1: {titleCls:'bp1-t', label:'Bipolar 1 Disorder', groupColors:BP1_GROUP_COLORS, defaultGroupCls:'bp1-g-core'}
+  bp1: {titleCls:'bp1-t', label:'Bipolar 1 Disorder', groupColors:BP1_GROUP_COLORS, defaultGroupCls:'bp1-g-core'},
+  anx: {titleCls:'anx-t', label:'Anxiety Disorders', groupColors:ANX_GROUP_COLORS, defaultGroupCls:'anx-g-core'}
 };
 
 function buildHandout(){
@@ -462,7 +494,7 @@ function buildHandout(){
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
 
   var hasAny=false;
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond];
     c.groups.forEach(function(g){g.items.forEach(function(item){if(c.sel[item.id])hasAny=true;});});
@@ -477,7 +509,7 @@ function buildHandout(){
   h+=' &nbsp;|&nbsp; Clinician: <strong>'+esc(dr)+'</strong></div>';
   h+='</div>';
 
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond];
     var meta=CONDITION_META[cond];
@@ -552,9 +584,9 @@ function buildDocxHtml(){
   var name=f('ptName')||'Patient';
   var dr=f('drName')||'Your clinician';
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
-  var bgMap={adhd:'#1e3a5f',asd:'#134e4a',ocd:'#4c1d95',ins:'#78350f',ptsd:'#881337',an:'#831843',aud:'#14532d',bp1:'#701a75'};
+  var bgMap={adhd:'#1e3a5f',asd:'#134e4a',ocd:'#4c1d95',ins:'#78350f',ptsd:'#881337',an:'#831843',aud:'#14532d',bp1:'#701a75',anx:'#312e81'};
   var hasAny=false;
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond];
     c.groups.forEach(function(g){g.items.forEach(function(item){if(c.sel[item.id])hasAny=true;});});
@@ -565,7 +597,7 @@ function buildDocxHtml(){
   h+='<p style="font-size:9pt;color:#555;margin:0 0 14pt">Patient: <b>'+esc(name)+'</b>';
   if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
   h+=' &nbsp;|&nbsp; Clinician: <b>'+esc(dr)+'</b></p>';
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond],meta=CONDITION_META[cond];
     var selItems=getSelectedItems(c.groups,c.sel);
@@ -611,7 +643,7 @@ function buildPlainText(){
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
   var lines=['PSYCHOEDUCATION HANDOUT','Patient: '+name+(ds?' | '+ds:'')+(dr?' | Clinician: '+dr:'')];
   var hasAny=false;
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond],meta=CONDITION_META[cond];
     var selItems=getSelectedItems(c.groups,c.sel);
@@ -646,9 +678,9 @@ function buildPasteHtml(){
   var name=f('ptName')||'Patient';
   var dr=f('drName')||'Your clinician';
   var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
-  var bgMap={adhd:'#1e3a5f',asd:'#134e4a',ocd:'#4c1d95',ins:'#78350f',ptsd:'#881337',an:'#831843',aud:'#14532d',bp1:'#701a75'};
+  var bgMap={adhd:'#1e3a5f',asd:'#134e4a',ocd:'#4c1d95',ins:'#78350f',ptsd:'#881337',an:'#831843',aud:'#14532d',bp1:'#701a75',anx:'#312e81'};
   var hasAny=false;
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond];
     c.groups.forEach(function(g){g.items.forEach(function(item){if(c.sel[item.id])hasAny=true;});});
@@ -659,7 +691,7 @@ function buildPasteHtml(){
   h+='<p style="font-size:9pt;color:#555;margin:0 0 14px">Patient: <b>'+esc(name)+'</b>';
   if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
   h+=' &nbsp;|&nbsp; Clinician: <b>'+esc(dr)+'</b></p>';
-  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1'].forEach(function(cond){
+  ['adhd','asd','ocd','ins','ptsd','an','aud','bp1','anx'].forEach(function(cond){
     if(!SHOW[cond]) return;
     var c=CONDITIONS[cond],meta=CONDITION_META[cond];
     var selItems=getSelectedItems(c.groups,c.sel);
