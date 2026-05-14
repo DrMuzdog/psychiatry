@@ -69,6 +69,20 @@
   .med-class-pill{display:inline-block;padding:2px 8px;border-radius:999px;font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;margin-left:6px}
   .med-class-pill.stimulant{background:var(--amber-bg);color:#b45309}
   .med-class-pill.nonstim{background:#dbeafe;color:#1e40af}
+  .med-class-pill.antidepressant{background:#dbeafe;color:#1e40af}
+  .med-class-pill.mood_stabiliser{background:#ede9fe;color:#5b21b6}
+  .med-class-pill.antipsychotic_oral{background:#fce7f3;color:#9d174d}
+  .med-class-pill.antipsychotic_lai{background:#fce7f3;color:#9d174d}
+  .med-class-pill.anxiolytic{background:#fef3c7;color:#92400e}
+  .med-class-pill.gabapentinoid{background:#fef3c7;color:#92400e}
+  .med-class-pill.anticholinergic{background:#f1f5f9;color:#475569}
+  .med-class-pill.cognitive{background:#dcfce7;color:#166534}
+  .med-class-pill.aud{background:#fee2e2;color:#991b1b}
+  .med-class-pill.oud{background:#fee2e2;color:#991b1b}
+  .med-class-pill.metabolic{background:#dcfce7;color:#166534}
+  .med-class-pill.anticonvulsant{background:#ede9fe;color:#5b21b6}
+  .med-class-pill.parkinson{background:#e0e7ff;color:#3730a3}
+  .med-class-pill.analgesic{background:#ffedd5;color:#9a3412}
   .med-class-pill.other{background:#f1f5f9;color:#475569}
 
   .auth-line{font:400 11.5px/1.4 var(--sans);color:#475569;background:#fff7ed;border:1px solid #fde68a;padding:6px 10px;border-radius:6px;margin:6px 0}
@@ -161,9 +175,23 @@
         <div class="picker-row">
           <select id="medClassFilter">
             <option value="all">All classes</option>
-            <option value="stimulant">Stimulants</option>
-            <option value="nonstim">Non-stimulants</option>
-            <option value="other">Other</option>
+            <option value="antidepressant">Antidepressants</option>
+            <option value="mood_stabiliser">Mood stabilisers</option>
+            <option value="antipsychotic_oral">Antipsychotics — oral</option>
+            <option value="antipsychotic_lai">Antipsychotics — LAI</option>
+            <option value="anxiolytic">Anxiolytics / hypnotics</option>
+            <option value="gabapentinoid">Gabapentinoids</option>
+            <option value="anticholinergic">Anticholinergics</option>
+            <option value="stimulant">Stimulants (ADHD)</option>
+            <option value="nonstim">Non-stimulants (ADHD)</option>
+            <option value="cognitive">Dementia / cognitive</option>
+            <option value="aud">Alcohol use disorder</option>
+            <option value="oud">Opioid use disorder</option>
+            <option value="metabolic">Metabolic / weight</option>
+            <option value="anticonvulsant">Anticonvulsants</option>
+            <option value="parkinson">Parkinson's</option>
+            <option value="analgesic">Analgesics</option>
+            <option value="other">Other (esketamine, cannabis)</option>
           </select>
           <select id="medPicker">
             <option value="">Choose a medication…</option>
@@ -228,7 +256,7 @@ const MED_CATALOG = {
   dex_ir: {
     name:'Dexamphetamine IR',
     generic:'Dexamphetamine sulfate',
-    class:'stimulant', schedule:'S8',
+    class:'stimulant', subclass:'Stimulant', schedule:'S8',
     form:'tablet', strengths:[5], unit:'mg',
     authority:'S8 stimulant authority required. Add CA2023 (NSW). 20-day prescription interval.',
     mitte:'200 tablets', repeats:5, intervalRule:'20-day',
@@ -242,7 +270,7 @@ const MED_CATALOG = {
   ritalin_ir: {
     name:'Ritalin IR',
     generic:'Methylphenidate hydrochloride',
-    class:'stimulant', schedule:'S8',
+    class:'stimulant', subclass:'Stimulant', schedule:'S8',
     form:'tablet', strengths:[10], unit:'mg',
     authority:'S8 stimulant authority required. Add CA2023 (NSW). 20-day prescription interval.',
     mitte:'100 tablets', repeats:5, intervalRule:'20-day',
@@ -256,7 +284,7 @@ const MED_CATALOG = {
   ritalin_la: {
     name:'Ritalin LA',
     generic:'Methylphenidate (modified-release)',
-    class:'stimulant', schedule:'S8',
+    class:'stimulant', subclass:'Stimulant', schedule:'S8',
     form:'capsule', strengths:[10,20,30,40,60], unit:'mg',
     authority:'S8 stimulant authority required. Add CA2023 (NSW). Once daily. Capsule can be sprinkled on soft food.',
     mitte:'30 capsules', repeats:5, intervalRule:'20-day',
@@ -270,7 +298,7 @@ const MED_CATALOG = {
   concerta: {
     name:'Concerta',
     generic:'Methylphenidate OROS',
-    class:'stimulant', schedule:'S8',
+    class:'stimulant', subclass:'Stimulant', schedule:'S8',
     form:'tablet', strengths:[18,27,36,54], unit:'mg',
     authority:'S8 stimulant authority required. PBS Authority — diagnosis must have been made before age 18. Add CA2023 (NSW). Swallow whole — do NOT crush.',
     mitte:'30 tablets', repeats:5, intervalRule:'20-day',
@@ -284,7 +312,7 @@ const MED_CATALOG = {
   vyvanse: {
     name:'Vyvanse',
     generic:'Lisdexamfetamine dimesilate',
-    class:'stimulant', schedule:'S8',
+    class:'stimulant', subclass:'Stimulant', schedule:'S8',
     form:'capsule', strengths:[20,30,40,50,60,70], unit:'mg',
     authority:'S8 stimulant authority required. Add CA2023 (NSW). Take on waking. Capsule can be opened and dissolved in water.',
     mitte:'30 capsules', repeats:5, intervalRule:'20-day',
@@ -297,7 +325,7 @@ const MED_CATALOG = {
   atomoxetine: {
     name:'Atomoxetine (Strattera)',
     generic:'Atomoxetine hydrochloride',
-    class:'nonstim', schedule:'S4',
+    class:'nonstim', subclass:'Non-stimulant ADHD', schedule:'S4',
     form:'capsule', strengths:[10,18,25,40,60,80,100], unit:'mg',
     authority:'PBS Streamlined Authority code 7876 (initiation) / 7890 (continuation). Not a controlled substance. Full effect at 4–12 weeks.',
     mitte:'28 capsules', repeats:5, intervalRule:'',
@@ -311,7 +339,7 @@ const MED_CATALOG = {
   guanfacine_xr: {
     name:'Guanfacine XR (Intuniv)',
     generic:'Guanfacine hydrochloride (extended release)',
-    class:'nonstim', schedule:'S4',
+    class:'nonstim', subclass:'Non-stimulant ADHD', schedule:'S4',
     form:'tablet', strengths:[1,2,3,4], unit:'mg',
     authority:'Private prescription unless PBS criteria met (childhood diagnosis). Not a controlled substance. Do not crush or chew. Taper if ceasing.',
     mitte:'28 tablets', repeats:5, intervalRule:'',
@@ -325,7 +353,7 @@ const MED_CATALOG = {
   clonidine: {
     name:'Clonidine (Catapres)',
     generic:'Clonidine hydrochloride',
-    class:'nonstim', schedule:'S4',
+    class:'nonstim', subclass:'Non-stimulant ADHD', schedule:'S4',
     form:'tablet', strengths:[100,150], unit:'mcg',
     authority:'Private prescription. Off-label use for ADHD-related hyperarousal and sleep. Taper if ceasing — do NOT stop abruptly (rebound hypertension).',
     mitte:'100 tablets', repeats:5, intervalRule:'',
@@ -335,7 +363,183 @@ const MED_CATALOG = {
       {label:'Week 3',  dur:'7 days', sig:'1 tab (100 mcg) BD',               totalDose:'200 mcg/day', notes:''},
       {label:'Ongoing', dur:'ongoing',sig:'1½ tabs (150 mcg) BD',             totalDose:'300 mcg/day', notes:'Titrate to lowest effective dose.'}
     ]
-  }
+  },
+
+  /* ── Antidepressants ─ SSRIs ─────────────────────────────────────────── */
+  sertraline:    {name:'Sertraline',     generic:'Sertraline',     class:'antidepressant', subclass:'SSRI', schedule:'S4', form:'tablet (scored)', strengths:[50,100], unit:'mg', authority:'', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  escitalopram:  {name:'Escitalopram',   generic:'Escitalopram',   class:'antidepressant', subclass:'SSRI', schedule:'S4', form:'tablet (scored)', strengths:[10,20], unit:'mg', authority:'', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  citalopram:    {name:'Citalopram',     generic:'Citalopram',     class:'antidepressant', subclass:'SSRI', schedule:'S4', form:'tablet', strengths:[10,20,40], unit:'mg', authority:'Caution >20 mg/day in patients >65 (QT prolongation).', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  fluoxetine:    {name:'Fluoxetine',     generic:'Fluoxetine',     class:'antidepressant', subclass:'SSRI', schedule:'S4', form:'capsule / tablet', strengths:[20], unit:'mg', authority:'Long half-life. Allow extended washout before MAOI.', mitte:'28 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  paroxetine:    {name:'Paroxetine',     generic:'Paroxetine',     class:'antidepressant', subclass:'SSRI', schedule:'S4', form:'tablet (scored)', strengths:[20], unit:'mg', authority:'High discontinuation syndrome risk — taper slowly.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  fluvoxamine:   {name:'Fluvoxamine',    generic:'Fluvoxamine',    class:'antidepressant', subclass:'SSRI', schedule:'S4', form:'tablet', strengths:[50,100], unit:'mg', authority:'', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Antidepressants ─ SNRIs ─────────────────────────────────────────── */
+  venlafaxine_ir:{name:'Venlafaxine IR', generic:'Venlafaxine',    class:'antidepressant', subclass:'SNRI', schedule:'S4', form:'tablet', strengths:[37.5,50,75,100], unit:'mg', authority:'', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  venlafaxine_mr:{name:'Venlafaxine MR', generic:'Venlafaxine (modified-release)', class:'antidepressant', subclass:'SNRI', schedule:'S4', form:'capsule MR', strengths:[75,150,225], unit:'mg', authority:'', mitte:'28 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  desvenlafaxine:{name:'Desvenlafaxine', generic:'Desvenlafaxine', class:'antidepressant', subclass:'SNRI', schedule:'S4', form:'tablet ER', strengths:[50,100], unit:'mg', authority:'', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  duloxetine:    {name:'Duloxetine',     generic:'Duloxetine',     class:'antidepressant', subclass:'SNRI', schedule:'S4', form:'capsule', strengths:[30,60], unit:'mg', authority:'', mitte:'28 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Antidepressants ─ NDRI / NaSSA / NRI / MAOI / Multimodal ────────── */
+  bupropion:     {name:'Bupropion SR',   generic:'Bupropion',      class:'antidepressant', subclass:'NDRI / Other', schedule:'S4', form:'tablet SR', strengths:[150], unit:'mg', authority:'Caution: seizure-threshold lowering. Avoid in eating disorders.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  mirtazapine:   {name:'Mirtazapine',    generic:'Mirtazapine',    class:'antidepressant', subclass:'NaSSA', schedule:'S4', form:'tablet (scored)', strengths:[15,30,45], unit:'mg', authority:'', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  mianserin:     {name:'Mianserin',      generic:'Mianserin',      class:'antidepressant', subclass:'NaSSA', schedule:'S4', form:'tablet', strengths:[10,20,30], unit:'mg', authority:'', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  reboxetine:    {name:'Reboxetine',     generic:'Reboxetine',     class:'antidepressant', subclass:'NRI / MAOI', schedule:'S4', form:'tablet', strengths:[4], unit:'mg', authority:'', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  moclobemide:   {name:'Moclobemide',    generic:'Moclobemide',    class:'antidepressant', subclass:'NRI / MAOI', schedule:'S4', form:'tablet (scored)', strengths:[150,300], unit:'mg', authority:'Reversible MAO-A inhibitor. Fewer dietary restrictions than non-selective MAOIs.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  phenelzine:    {name:'Phenelzine',     generic:'Phenelzine',     class:'antidepressant', subclass:'NRI / MAOI', schedule:'S4', form:'tablet', strengths:[15], unit:'mg', authority:'Non-selective irreversible MAOI. Strict tyramine-restricted diet. Drug interaction screening mandatory.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  tranylcypromine:{name:'Tranylcypromine',generic:'Tranylcypromine',class:'antidepressant', subclass:'NRI / MAOI', schedule:'S4', form:'tablet', strengths:[10], unit:'mg', authority:'Non-selective irreversible MAOI. Strict tyramine-restricted diet. Drug interaction screening mandatory.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  agomelatine:   {name:'Agomelatine',    generic:'Agomelatine',    class:'antidepressant', subclass:'Melatonergic / multimodal', schedule:'S4', form:'tablet', strengths:[25], unit:'mg', authority:'Baseline + serial LFTs (3, 6, 12, 24 weeks) due to hepatotoxicity risk.', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  vortioxetine:  {name:'Vortioxetine',   generic:'Vortioxetine',   class:'antidepressant', subclass:'Melatonergic / multimodal', schedule:'S4', form:'tablet', strengths:[5,10,15,20], unit:'mg', authority:'', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Antidepressants ─ TCAs ──────────────────────────────────────────── */
+  amitriptyline: {name:'Amitriptyline',  generic:'Amitriptyline',  class:'antidepressant', subclass:'TCA', schedule:'S4', form:'tablet', strengths:[10,25,50], unit:'mg', authority:'TCA — ECG before initiation if cardiac risk. Lethal in overdose.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  nortriptyline: {name:'Nortriptyline',  generic:'Nortriptyline',  class:'antidepressant', subclass:'TCA', schedule:'S4', form:'tablet', strengths:[10,25], unit:'mg', authority:'TCA — ECG before initiation if cardiac risk.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  clomipramine:  {name:'Clomipramine',   generic:'Clomipramine',   class:'antidepressant', subclass:'TCA', schedule:'S4', form:'tablet', strengths:[10,25,50], unit:'mg', authority:'TCA — ECG before initiation if cardiac risk.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  imipramine:    {name:'Imipramine',     generic:'Imipramine',     class:'antidepressant', subclass:'TCA', schedule:'S4', form:'tablet', strengths:[10,25], unit:'mg', authority:'TCA — ECG before initiation if cardiac risk.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  dosulepin:     {name:'Dosulepin',      generic:'Dosulepin',      class:'antidepressant', subclass:'TCA', schedule:'S4', form:'tablet', strengths:[75], unit:'mg', authority:'TCA — ECG before initiation if cardiac risk.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  doxepin:       {name:'Doxepin',        generic:'Doxepin',        class:'antidepressant', subclass:'TCA', schedule:'S4', form:'capsule', strengths:[10,25], unit:'mg', authority:'TCA — ECG before initiation if cardiac risk.', mitte:'50 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Mood stabilisers ────────────────────────────────────────────────── */
+  lithium_carb:  {name:'Lithium carbonate', generic:'Lithium carbonate', class:'mood_stabiliser', subclass:'Mood stabiliser', schedule:'S4', form:'tablet (scored)', strengths:[250], unit:'mg', authority:'Therapeutic monitoring: level 5–7 days after any dose change, then 3–6 monthly. Baseline UEC, TFT, calcium, eGFR; repeat 6-monthly.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Aim for trough level 0.6–0.8 mmol/L (acute mania up to 1.0).'}]},
+  lithium_sr:    {name:'Lithium SR',     generic:'Lithium carbonate (slow-release)', class:'mood_stabiliser', subclass:'Mood stabiliser', schedule:'S4', form:'tablet SR (scored)', strengths:[450], unit:'mg', authority:'Therapeutic monitoring: level 5–7 days after any dose change, then 3–6 monthly. Baseline UEC, TFT, calcium, eGFR; repeat 6-monthly.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Aim for trough level 0.6–0.8 mmol/L.'}]},
+  valproate_cr:  {name:'Sodium valproate CR', generic:'Sodium valproate (controlled-release)', class:'mood_stabiliser', subclass:'Mood stabiliser', schedule:'S4', form:'tablet CR / EC', strengths:[200,500], unit:'mg', authority:'Contraindicated in pregnancy. Pregnancy prevention programme for those of childbearing potential. Baseline LFTs.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  valproate_ir:  {name:'Sodium valproate IR', generic:'Sodium valproate (crushable)', class:'mood_stabiliser', subclass:'Mood stabiliser', schedule:'S4', form:'tablet (crushable, scored)', strengths:[100], unit:'mg', authority:'Contraindicated in pregnancy.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  lamotrigine:   {name:'Lamotrigine',    generic:'Lamotrigine',    class:'mood_stabiliser', subclass:'Mood stabiliser', schedule:'S4', form:'tablet (dispersible)', strengths:[5,25,50,100,200], unit:'mg', authority:'Slow titration mandatory — rash / Stevens-Johnson risk. Counsel patient about rash and ED presentation.', mitte:'56 tablets', repeats:5, intervalRule:'', steps:[
+    {label:'Weeks 1–2', dur:'14 days', sig:'25 mg each night', totalDose:'25 mg/day', notes:'Slow titration to reduce SJS risk.'},
+    {label:'Weeks 3–4', dur:'14 days', sig:'50 mg each night', totalDose:'50 mg/day', notes:''},
+    {label:'Week 5',    dur:'7 days',  sig:'100 mg each night', totalDose:'100 mg/day', notes:''},
+    {label:'Ongoing',   dur:'ongoing', sig:'200 mg each night', totalDose:'200 mg/day', notes:'Target maintenance dose. Stop immediately and seek review if rash develops.'}
+  ]},
+  carbamazepine: {name:'Carbamazepine',  generic:'Carbamazepine',  class:'mood_stabiliser', subclass:'Mood stabiliser', schedule:'S4', form:'tablet / tablet CR', strengths:[100,200,400], unit:'mg', authority:'HLA-B*1502 screening in at-risk ethnicities. Auto-inducer — many drug interactions. Baseline LFT, FBC, U&E.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Antipsychotics — oral typical ───────────────────────────────────── */
+  chlorpromazine:{name:'Chlorpromazine', generic:'Chlorpromazine', class:'antipsychotic_oral', subclass:'Typical', schedule:'S4', form:'tablet', strengths:[25,50,100], unit:'mg', authority:'Monitor BP, sedation, EPS. Photosensitivity.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  haloperidol:   {name:'Haloperidol',    generic:'Haloperidol',    class:'antipsychotic_oral', subclass:'Typical', schedule:'S4', form:'tablet', strengths:[0.5,1.5,5], unit:'mg', authority:'High EPS risk. Avoid in dementia (mortality risk).', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  pericyazine:   {name:'Pericyazine',    generic:'Pericyazine',    class:'antipsychotic_oral', subclass:'Typical', schedule:'S4', form:'tablet', strengths:[2.5,10], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  trifluoperazine:{name:'Trifluoperazine',generic:'Trifluoperazine',class:'antipsychotic_oral', subclass:'Typical', schedule:'S4', form:'tablet', strengths:[1,5], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  zuclopenthixol:{name:'Zuclopenthixol', generic:'Zuclopenthixol', class:'antipsychotic_oral', subclass:'Typical', schedule:'S4', form:'tablet', strengths:[10,25], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  flupentixol:   {name:'Flupentixol',    generic:'Flupentixol',    class:'antipsychotic_oral', subclass:'Typical', schedule:'S4', form:'tablet', strengths:[0.5,1], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Antipsychotics — oral atypical ──────────────────────────────────── */
+  olanzapine:    {name:'Olanzapine',     generic:'Olanzapine',     class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet / wafer ODT', strengths:[2.5,5,7.5,10,15,20], unit:'mg', authority:'Baseline + 3-monthly metabolic monitoring (weight, BMI, lipids, HbA1c).', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  quetiapine_ir: {name:'Quetiapine IR',  generic:'Quetiapine',     class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet IR', strengths:[25,100,200,300], unit:'mg', authority:'Metabolic monitoring as for olanzapine.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  quetiapine_xr: {name:'Quetiapine XR',  generic:'Quetiapine (extended-release)', class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet XR', strengths:[50,150,200,300,400], unit:'mg', authority:'Metabolic monitoring as for olanzapine.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  risperidone:   {name:'Risperidone',    generic:'Risperidone',    class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet / ODT', strengths:[0.5,1,2,3,4], unit:'mg', authority:'EPS risk dose-dependent. Hyperprolactinaemia.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  aripiprazole:  {name:'Aripiprazole',   generic:'Aripiprazole',   class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet', strengths:[5,10,15,20,30], unit:'mg', authority:'Akathisia common. Lower metabolic risk than olanzapine / quetiapine.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  paliperidone:  {name:'Paliperidone',   generic:'Paliperidone',   class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet MR', strengths:[3,6,9,12], unit:'mg', authority:'Active metabolite of risperidone.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  asenapine:     {name:'Asenapine',      generic:'Asenapine',      class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'wafer SL', strengths:[5,10], unit:'mg', authority:'Sublingual — no food/drink 10 min before/after.', mitte:'60 wafers', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  ziprasidone:   {name:'Ziprasidone',    generic:'Ziprasidone',    class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'capsule', strengths:[20,40,60,80], unit:'mg', authority:'Take with food (≥500 kcal). QT prolongation — baseline ECG.', mitte:'60 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  lurasidone:    {name:'Lurasidone',     generic:'Lurasidone',     class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet', strengths:[40,80,120], unit:'mg', authority:'Take with food (≥350 kcal) to ensure absorption.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  brexpiprazole: {name:'Brexpiprazole',  generic:'Brexpiprazole',  class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet', strengths:[1,2,3,4], unit:'mg', authority:'', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  clozapine:     {name:'Clozapine',      generic:'Clozapine',      class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet (scored)', strengths:[25,100], unit:'mg', authority:'Restricted use — patient and prescriber registration with monitoring service (CPMS/ClopineConnect). Mandatory FBC + ECG monitoring. Initiate as inpatient or under close supervision.', mitte:'28 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Slow titration mandatory. Monitor for myocarditis, agranulocytosis, hypersalivation, constipation, sedation.'}]},
+  amisulpride:   {name:'Amisulpride',    generic:'Amisulpride',    class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'tablet', strengths:[100,200,400], unit:'mg', authority:'Renally cleared — adjust in renal impairment.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+  cariprazine:   {name:'Cariprazine',    generic:'Cariprazine',    class:'antipsychotic_oral', subclass:'Atypical', schedule:'S4', form:'capsule', strengths:[1.5,3,4.5,6], unit:'mg', authority:'', mitte:'28 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose and titration per clinical context.'}]},
+
+  /* ── Antipsychotics — long-acting injectables ────────────────────────── */
+  haloperidol_dep:   {name:'Haloperidol decanoate', generic:'Haloperidol decanoate', class:'antipsychotic_lai', subclass:'First-gen depot', schedule:'S4', form:'injection', strengths:[50,150], unit:'mg', authority:'Monthly IM. First-generation depot.', mitte:'1 ampoule', repeats:0, intervalRule:'monthly', steps:[{label:'Ongoing',dur:'monthly',sig:'',totalDose:'',notes:'Customise dose. Typical 50–200 mg every 4 weeks.'}]},
+  flupentixol_dep:   {name:'Flupentixol decanoate', generic:'Flupentixol decanoate', class:'antipsychotic_lai', subclass:'First-gen depot', schedule:'S4', form:'injection', strengths:[20,100], unit:'mg/mL', authority:'2–4 weekly IM. First-generation depot.', mitte:'1 ampoule', repeats:0, intervalRule:'2–4 weekly', steps:[{label:'Ongoing',dur:'2–4 weekly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  zuclopenthixol_dep:{name:'Zuclopenthixol decanoate', generic:'Zuclopenthixol decanoate', class:'antipsychotic_lai', subclass:'First-gen depot', schedule:'S4', form:'injection', strengths:[200], unit:'mg/mL', authority:'2–4 weekly IM. First-generation depot.', mitte:'1 ampoule', repeats:0, intervalRule:'2–4 weekly', steps:[{label:'Ongoing',dur:'2–4 weekly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  risperidone_lai:   {name:'Risperidone LAI', generic:'Risperidone (Consta)', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'injection (vial)', strengths:[12.5,25,37.5,50], unit:'mg', authority:'IM gluteal/deltoid every 2 weeks. Requires 3 weeks oral overlap initially.', mitte:'1 vial', repeats:0, intervalRule:'2-weekly', steps:[{label:'Ongoing',dur:'2-weekly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  pp_1mo:            {name:'Paliperidone palmitate (1-monthly)', generic:'Paliperidone palmitate (Invega Sustenna)', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'prefilled syringe', strengths:[50,75,100,150], unit:'mg', authority:'Loading doses 150 mg day 1, 100 mg day 8 (deltoid). Maintenance monthly.', mitte:'1 syringe', repeats:0, intervalRule:'monthly', steps:[{label:'Ongoing',dur:'monthly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  pp_3mo:            {name:'Paliperidone palmitate (3-monthly)', generic:'Paliperidone palmitate (Invega Trinza)', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'prefilled syringe', strengths:[175,263,350,525], unit:'mg', authority:'Only after ≥4 months on 1-monthly paliperidone palmitate.', mitte:'1 syringe', repeats:0, intervalRule:'3-monthly', steps:[{label:'Ongoing',dur:'3-monthly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  pp_6mo:            {name:'Paliperidone palmitate (6-monthly)', generic:'Paliperidone palmitate (Invega Hafyera)', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'prefilled syringe', strengths:[700,1000], unit:'mg', authority:'Only after ≥4 months on 1-monthly or one 3-monthly cycle of paliperidone palmitate.', mitte:'1 syringe', repeats:0, intervalRule:'6-monthly', steps:[{label:'Ongoing',dur:'6-monthly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  aripiprazole_lai:  {name:'Aripiprazole LAI (Maintena)', generic:'Aripiprazole monohydrate', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'prefilled syringe', strengths:[300,400], unit:'mg', authority:'Monthly IM. 2 weeks oral overlap at initiation.', mitte:'1 syringe', repeats:0, intervalRule:'monthly', steps:[{label:'Ongoing',dur:'monthly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  aripiprazole_2mo:  {name:'Aripiprazole LAI (Asimtufii)', generic:'Aripiprazole monohydrate (2-monthly)', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'prefilled syringe', strengths:[720,960], unit:'mg', authority:'2-monthly IM. Initiate after stabilisation on oral aripiprazole.', mitte:'1 syringe', repeats:0, intervalRule:'2-monthly', steps:[{label:'Ongoing',dur:'2-monthly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  olanzapine_lai:    {name:'Olanzapine pamoate', generic:'Olanzapine pamoate (Zyprexa Relprevv)', class:'antipsychotic_lai', subclass:'Second-gen LAI', schedule:'S4', form:'injection (vial)', strengths:[210,300,405], unit:'mg', authority:'2–4 weekly IM. Post-injection delirium / sedation syndrome — 3-hour observation required after each dose.', mitte:'1 vial', repeats:0, intervalRule:'2–4 weekly', steps:[{label:'Ongoing',dur:'2–4 weekly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Anxiolytics / hypnotics / sedatives ─────────────────────────────── */
+  alprazolam:    {name:'Alprazolam',     generic:'Alprazolam',     class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S8', form:'tablet', strengths:[0.25,0.5,1], unit:'mg', authority:'S8 in Australia. Avoid where possible due to abuse potential.', mitte:'50 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use only.'}]},
+  clonazepam:    {name:'Clonazepam',     generic:'Clonazepam',     class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S4', form:'tablet', strengths:[0.5,2], unit:'mg', authority:'', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use preferred.'}]},
+  diazepam:      {name:'Diazepam',       generic:'Diazepam',       class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S4', form:'tablet (scored)', strengths:[2,5], unit:'mg', authority:'', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use preferred.'}]},
+  lorazepam:     {name:'Lorazepam',      generic:'Lorazepam',      class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S4', form:'tablet (scored)', strengths:[1,2.5], unit:'mg', authority:'', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use preferred.'}]},
+  oxazepam:      {name:'Oxazepam',       generic:'Oxazepam',       class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S4', form:'tablet', strengths:[10,15,30], unit:'mg', authority:'', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use preferred.'}]},
+  temazepam:     {name:'Temazepam',      generic:'Temazepam',      class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S4', form:'tablet', strengths:[10], unit:'mg', authority:'', mitte:'25 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term hypnotic use.'}]},
+  nitrazepam:    {name:'Nitrazepam',     generic:'Nitrazepam',     class:'anxiolytic', subclass:'Benzodiazepine', schedule:'S4', form:'tablet', strengths:[5,10], unit:'mg', authority:'', mitte:'25 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term hypnotic use.'}]},
+  zolpidem_ir:   {name:'Zolpidem IR',    generic:'Zolpidem',       class:'anxiolytic', subclass:'Z-drug', schedule:'S4', form:'tablet IR', strengths:[5,10], unit:'mg', authority:'Short-term hypnotic use only.', mitte:'10 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use.'}]},
+  zolpidem_cr:   {name:'Zolpidem CR',    generic:'Zolpidem (controlled-release)', class:'anxiolytic', subclass:'Z-drug', schedule:'S4', form:'tablet CR', strengths:[6.25,12.5], unit:'mg', authority:'Short-term hypnotic use only.', mitte:'10 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use.'}]},
+  zopiclone:     {name:'Zopiclone',      generic:'Zopiclone',      class:'anxiolytic', subclass:'Z-drug', schedule:'S4', form:'tablet (scored)', strengths:[7.5], unit:'mg', authority:'Short-term hypnotic use only.', mitte:'10 tablets', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Short-term use.'}]},
+  lemborexant:   {name:'Lemborexant',    generic:'Lemborexant',    class:'anxiolytic', subclass:'DORA', schedule:'S4', form:'tablet', strengths:[5,10], unit:'mg', authority:'Dual orexin receptor antagonist. Take 30 min before bed; ≥7 hr to wake.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  suvorexant:    {name:'Suvorexant',     generic:'Suvorexant',     class:'anxiolytic', subclass:'DORA', schedule:'S4', form:'tablet', strengths:[15,20], unit:'mg', authority:'Dual orexin receptor antagonist. Take 30 min before bed; ≥7 hr to wake.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  promethazine:  {name:'Promethazine',   generic:'Promethazine',   class:'anxiolytic', subclass:'Other sedative', schedule:'S3', form:'tablet (scored)', strengths:[10,25,50], unit:'mg', authority:'Anticholinergic. Caution elderly.', mitte:'25 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  melatonin_pr:  {name:'Melatonin PR',   generic:'Melatonin (prolonged-release)', class:'anxiolytic', subclass:'Melatonin', schedule:'S4', form:'tablet PR', strengths:[2], unit:'mg', authority:'PBS for sleep-onset insomnia ≥55 yo. Otherwise private. Take 1–2 hr before desired bedtime.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Gabapentinoids ──────────────────────────────────────────────────── */
+  gabapentin:    {name:'Gabapentin',     generic:'Gabapentin',     class:'gabapentinoid', subclass:'Gabapentinoid', schedule:'S4', form:'capsule', strengths:[100,300,400], unit:'mg', authority:'Increasingly recognised abuse / diversion potential. Renal clearance.', mitte:'100 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  pregabalin:    {name:'Pregabalin',     generic:'Pregabalin',     class:'gabapentinoid', subclass:'Gabapentinoid', schedule:'S4', form:'capsule', strengths:[25,75,150,300,450], unit:'mg', authority:'Misuse and diversion risk. Renal clearance.', mitte:'60 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Anticholinergics (EPS) ──────────────────────────────────────────── */
+  benztropine:   {name:'Benztropine',    generic:'Benztropine',    class:'anticholinergic', subclass:'Anticholinergic', schedule:'S4', form:'tablet', strengths:[0.5,2], unit:'mg', authority:'For drug-induced EPS. Avoid in elderly where possible (anticholinergic burden).', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  biperiden:     {name:'Biperiden',      generic:'Biperiden',      class:'anticholinergic', subclass:'Anticholinergic', schedule:'S4', form:'tablet', strengths:[2], unit:'mg', authority:'For drug-induced EPS.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  procyclidine:  {name:'Procyclidine',   generic:'Procyclidine',   class:'anticholinergic', subclass:'Anticholinergic', schedule:'S4', form:'tablet', strengths:[5], unit:'mg', authority:'For drug-induced EPS.', mitte:'50 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Dementia / cognitive enhancers ──────────────────────────────────── */
+  donepezil:     {name:'Donepezil',      generic:'Donepezil',      class:'cognitive', subclass:'Cholinesterase inhibitor', schedule:'S4', form:'tablet', strengths:[5,10], unit:'mg', authority:'PBS Authority for mild-moderate Alzheimer dementia.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  galantamine:   {name:'Galantamine MR', generic:'Galantamine (modified-release)', class:'cognitive', subclass:'Cholinesterase inhibitor', schedule:'S4', form:'capsule MR', strengths:[8,16,24], unit:'mg', authority:'PBS Authority for mild-moderate Alzheimer dementia.', mitte:'28 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  rivastigmine:  {name:'Rivastigmine',   generic:'Rivastigmine',   class:'cognitive', subclass:'Cholinesterase inhibitor', schedule:'S4', form:'capsule', strengths:[1.5,3,4.5,6], unit:'mg', authority:'PBS Authority. Patch formulation also available.', mitte:'56 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  memantine:     {name:'Memantine',      generic:'Memantine',      class:'cognitive', subclass:'NMDA antagonist', schedule:'S4', form:'tablet', strengths:[10], unit:'mg', authority:'PBS Authority for moderate-severe Alzheimer dementia.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Alcohol use disorder pharmacotherapy ────────────────────────────── */
+  naltrexone:    {name:'Naltrexone',     generic:'Naltrexone',     class:'aud', subclass:'AUD pharmacotherapy', schedule:'S4', form:'tablet', strengths:[50], unit:'mg', authority:'Confirm no opioid use (would precipitate withdrawal). Baseline LFTs.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  acamprosate:   {name:'Acamprosate',    generic:'Acamprosate',    class:'aud', subclass:'AUD pharmacotherapy', schedule:'S4', form:'tablet EC', strengths:[333], unit:'mg', authority:'TDS dosing. Renal clearance.', mitte:'168 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  disulfiram:    {name:'Disulfiram',     generic:'Disulfiram',     class:'aud', subclass:'AUD pharmacotherapy', schedule:'S4', form:'tablet', strengths:[200], unit:'mg', authority:'Aversive — alcohol reaction. Patient must fully understand and agree. Baseline LFTs.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Opioid use disorder pharmacotherapy ─────────────────────────────── */
+  buprenorphine_sl:{name:'Buprenorphine SL', generic:'Buprenorphine', class:'oud', subclass:'OUD pharmacotherapy', schedule:'S8', form:'sublingual tablet', strengths:[0.4,2,8], unit:'mg', authority:'S8. State OAT prescriber permit required. Supervised dosing typical.', mitte:'as per OAT script', repeats:0, intervalRule:'OAT', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise per OAT plan.'}]},
+  bup_nal_film:  {name:'Buprenorphine/naloxone film', generic:'Buprenorphine/naloxone (Suboxone)', class:'oud', subclass:'OUD pharmacotherapy', schedule:'S8', form:'sublingual film', strengths:['2/0.5','4/1','8/2','12/3'], unit:'mg', authority:'S8. State OAT prescriber permit required. Supervised dosing typical.', mitte:'as per OAT script', repeats:0, intervalRule:'OAT', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise per OAT plan.'}]},
+  bup_sl_micro:  {name:'Buprenorphine SL (micro)', generic:'Buprenorphine 200 microgram', class:'oud', subclass:'OUD pharmacotherapy', schedule:'S8', form:'sublingual tablet', strengths:[0.2], unit:'mg', authority:'For micro-induction. S8. State OAT prescriber permit required.', mitte:'as per OAT script', repeats:0, intervalRule:'OAT', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise per micro-induction protocol.'}]},
+  methadone_liq: {name:'Methadone oral liquid', generic:'Methadone hydrochloride', class:'oud', subclass:'OUD pharmacotherapy', schedule:'S8', form:'oral liquid', strengths:[5], unit:'mg/mL', authority:'S8. State OAT prescriber permit and supervised dosing required. Slow induction — risk of accumulation.', mitte:'as per OAT script', repeats:0, intervalRule:'OAT', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise per OAT plan. Various strengths available.'}]},
+  naloxone_nasal:{name:'Naloxone nasal spray', generic:'Naloxone', class:'oud', subclass:'Overdose reversal', schedule:'S3', form:'nasal spray', strengths:[1.8], unit:'mg/device', authority:'Available without prescription via Take Home Naloxone programme.', mitte:'2 devices', repeats:0, intervalRule:'', steps:[{label:'As needed',dur:'as needed',sig:'1 spray into one nostril; repeat in other nostril after 2–3 minutes if no response.',totalDose:'',notes:'Call 000 first. Resuscitation may still be required.'}]},
+
+  /* ── Metabolic / diabetes / weight ───────────────────────────────────── */
+  metformin_ir:  {name:'Metformin IR',   generic:'Metformin',      class:'metabolic', subclass:'Metabolic', schedule:'S4', form:'tablet IR', strengths:[500,850,1000], unit:'mg', authority:'eGFR monitoring. Hold around contrast / acute illness.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  metformin_xr:  {name:'Metformin XR',   generic:'Metformin (extended-release)', class:'metabolic', subclass:'Metabolic', schedule:'S4', form:'tablet XR', strengths:[500,1000], unit:'mg', authority:'eGFR monitoring.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  semaglutide_oral:{name:'Semaglutide (oral)', generic:'Semaglutide', class:'metabolic', subclass:'Metabolic', schedule:'S4', form:'tablet', strengths:[3,7,14], unit:'mg', authority:'Take fasting with sip of water; no food/drink for 30 min after.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  tirzepatide:   {name:'Tirzepatide (Mounjaro)', generic:'Tirzepatide', class:'metabolic', subclass:'Metabolic', schedule:'S4', form:'KwikPen injection', strengths:[2.5,5,7.5,10,12.5,15], unit:'mg', authority:'Weekly subcutaneous. Slow titration to limit GI side effects.', mitte:'1 pen', repeats:5, intervalRule:'weekly', steps:[{label:'Ongoing',dur:'weekly',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Anticonvulsants (excluding those above) ─────────────────────────── */
+  topiramate:    {name:'Topiramate',     generic:'Topiramate',     class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[25,50,100,200], unit:'mg', authority:'Cognitive slowing common. Renal clearance.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  levetiracetam: {name:'Levetiracetam',  generic:'Levetiracetam',  class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[250,500,750,1000], unit:'mg', authority:'Behavioural / mood side effects in some.', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  oxcarbazepine: {name:'Oxcarbazepine',  generic:'Oxcarbazepine',  class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[150,300,600], unit:'mg', authority:'Monitor sodium (hyponatraemia).', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  phenytoin:     {name:'Phenytoin',      generic:'Phenytoin',      class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'capsule / tablet', strengths:[50,100], unit:'mg', authority:'Narrow therapeutic index. Therapeutic monitoring.', mitte:'100 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  phenobarbitone:{name:'Phenobarbitone', generic:'Phenobarbitone', class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[15,30], unit:'mg', authority:'Sedating. Enzyme inducer.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  primidone:     {name:'Primidone',      generic:'Primidone',      class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[250], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  ethosuximide:  {name:'Ethosuximide',   generic:'Ethosuximide',   class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'capsule', strengths:[250], unit:'mg', authority:'Absence seizures.', mitte:'100 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  clobazam:      {name:'Clobazam',       generic:'Clobazam',       class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[10], unit:'mg', authority:'Long-acting benzodiazepine — adjunctive for epilepsy.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  perampanel:    {name:'Perampanel',     generic:'Perampanel',     class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[2,4,6,8,10,12], unit:'mg', authority:'Behavioural / psychiatric side effects — warn.', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  lacosamide:    {name:'Lacosamide',     generic:'Lacosamide',     class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[50,100,150,200], unit:'mg', authority:'Monitor PR interval.', mitte:'56 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  zonisamide:    {name:'Zonisamide',     generic:'Zonisamide',     class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'capsule', strengths:[25,50,100], unit:'mg', authority:'', mitte:'60 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  tiagabine:     {name:'Tiagabine',      generic:'Tiagabine',      class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[5,10,15], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  vigabatrin:    {name:'Vigabatrin',     generic:'Vigabatrin',     class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[500], unit:'mg', authority:'Visual field defects — baseline + periodic perimetry.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  rufinamide:    {name:'Rufinamide',     generic:'Rufinamide',     class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[100,200,400], unit:'mg', authority:'', mitte:'60 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  stiripentol:   {name:'Stiripentol',    generic:'Stiripentol',    class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'capsule', strengths:[250,500], unit:'mg', authority:'Dravet syndrome (adjunctive).', mitte:'60 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  sulthiame:     {name:'Sulthiame',      generic:'Sulthiame',      class:'anticonvulsant', subclass:'Anticonvulsant', schedule:'S4', form:'tablet', strengths:[50,200], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Parkinson's / movement-disorder meds (oral) ─────────────────────── */
+  ldopa_bens:    {name:'Levodopa/benserazide', generic:'Levodopa/benserazide', class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet', strengths:['100/25','200/50'], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  ldopa_carb_ir: {name:'Levodopa/carbidopa IR', generic:'Levodopa/carbidopa', class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet IR', strengths:['100/25','250/25'], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  ldopa_carb_cr: {name:'Levodopa/carbidopa CR', generic:'Levodopa/carbidopa (controlled-release)', class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet CR', strengths:['100/25','200/50'], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  ldopa_carb_ent:{name:'Levodopa/carbidopa/entacapone', generic:'Levodopa/carbidopa/entacapone', class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet', strengths:['50/12.5/200','75/18.75/200','100/25/200','125/31.25/200','150/37.5/200','200/50/200'], unit:'mg', authority:'', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  pramipexole_ir:{name:'Pramipexole IR', generic:'Pramipexole',    class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet IR', strengths:[0.125,0.25,1], unit:'mg', authority:'Impulse control disorders — warn and screen.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  pramipexole_mr:{name:'Pramipexole MR', generic:'Pramipexole (modified-release)', class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet MR', strengths:[0.375,0.75,1.5,2.25,3,3.75,4.5], unit:'mg', authority:'Impulse control disorders — warn and screen.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  ropinirole_ir: {name:'Ropinirole IR',  generic:'Ropinirole',     class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet IR', strengths:[0.25,0.5,1,2,5], unit:'mg', authority:'Impulse control disorders — warn and screen.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  ropinirole_mr: {name:'Ropinirole MR',  generic:'Ropinirole (modified-release)', class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet MR', strengths:[2,4,8], unit:'mg', authority:'Impulse control disorders — warn and screen.', mitte:'28 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  rasagiline:    {name:'Rasagiline',     generic:'Rasagiline',     class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet', strengths:[1], unit:'mg', authority:'MAO-B inhibitor.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  safinamide:    {name:'Safinamide',     generic:'Safinamide',     class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet', strengths:[50,100], unit:'mg', authority:'MAO-B inhibitor.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  selegiline:    {name:'Selegiline',     generic:'Selegiline',     class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet', strengths:[5], unit:'mg', authority:'MAO-B inhibitor.', mitte:'30 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  entacapone:    {name:'Entacapone',     generic:'Entacapone',     class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'tablet', strengths:[200], unit:'mg', authority:'COMT inhibitor — adjunct to levodopa.', mitte:'100 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  amantadine:    {name:'Amantadine',     generic:'Amantadine',     class:'parkinson', subclass:"Parkinson's", schedule:'S4', form:'capsule', strengths:[100], unit:'mg', authority:'', mitte:'100 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Analgesic with psych relevance ──────────────────────────────────── */
+  tramadol_ir:   {name:'Tramadol IR',    generic:'Tramadol',       class:'analgesic', subclass:'Analgesic', schedule:'S4', form:'tablet / capsule IR', strengths:[50], unit:'mg', authority:'Serotonergic — caution with SSRIs / SNRIs / MAOIs. Seizure threshold.', mitte:'20 capsules', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+  tramadol_sr:   {name:'Tramadol SR',    generic:'Tramadol (slow-release)', class:'analgesic', subclass:'Analgesic', schedule:'S4', form:'tablet SR', strengths:[100,150,200], unit:'mg', authority:'Serotonergic — caution with SSRIs / SNRIs / MAOIs. Seizure threshold.', mitte:'20 tablets', repeats:5, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose.'}]},
+
+  /* ── Non-oral psychotropics ──────────────────────────────────────────── */
+  esketamine:    {name:'Esketamine nasal', generic:'Esketamine', class:'other', subclass:'Esketamine', schedule:'S8', form:'nasal spray', strengths:[28], unit:'mg/device', authority:'Restricted: specialist supervised in REMS-style monitored setting. 2-hour post-dose observation. Driving restriction.', mitte:'as per protocol', repeats:0, intervalRule:'weekly / 2-weekly', steps:[{label:'Ongoing',dur:'as protocol',sig:'',totalDose:'',notes:'Customise per protocol.'}]},
+  cannabis_cbd:  {name:'Medicinal cannabis — CBD-dominant oil', generic:'Cannabidiol-dominant oil (e.g. CBD:THC 20:1, 50:1)', class:'other', subclass:'Medicinal cannabis', schedule:'S4', form:'oil', strengths:[], unit:'mg/mL', authority:'TGA SAS Cat B or Authorised Prescriber. Patient advised re driving with any THC.', mitte:'1 bottle', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose — start low (e.g. 0.1 mL nocte) and titrate.'}]},
+  cannabis_bal:  {name:'Medicinal cannabis — Balanced oil', generic:'Balanced CBD:THC oil (~1:1 to 4:1)', class:'other', subclass:'Medicinal cannabis', schedule:'S8', form:'oil', strengths:[], unit:'mg/mL', authority:'S8 if THC component. TGA SAS Cat B or Authorised Prescriber. Driving restriction applies with any THC.', mitte:'1 bottle', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose — start low and titrate slowly.'}]},
+  cannabis_thc:  {name:'Medicinal cannabis — THC-dominant oil', generic:'THC-dominant oil (≤1:2 CBD:THC, or THC-only)', class:'other', subclass:'Medicinal cannabis', schedule:'S8', form:'oil', strengths:[], unit:'mg/mL', authority:'S8. TGA SAS Cat B or Authorised Prescriber. Driving restriction applies.', mitte:'1 bottle', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose — start low (e.g. 0.05 mL nocte) and titrate.'}]},
+  cannabis_flow_hi:{name:'Cannabis flower — high THC, low CBD', generic:'Dried cannabis flower (high THC)', class:'other', subclass:'Medicinal cannabis', schedule:'S8', form:'dried flower', strengths:[], unit:'%', authority:'S8. TGA SAS Cat B or Authorised Prescriber. Vaporiser advised over smoking. Driving restriction applies.', mitte:'as per script', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose / chemovar.'}]},
+  cannabis_flow_bal:{name:'Cannabis flower — balanced', generic:'Dried cannabis flower (balanced THC:CBD)', class:'other', subclass:'Medicinal cannabis', schedule:'S8', form:'dried flower', strengths:[], unit:'%', authority:'S8. TGA SAS Cat B or Authorised Prescriber. Vaporiser advised over smoking.', mitte:'as per script', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose / chemovar.'}]},
+  cannabis_flow_cbd:{name:'Cannabis flower — high CBD, low THC', generic:'Dried cannabis flower (high CBD)', class:'other', subclass:'Medicinal cannabis', schedule:'S4', form:'dried flower', strengths:[], unit:'%', authority:'TGA SAS Cat B or Authorised Prescriber.', mitte:'as per script', repeats:0, intervalRule:'', steps:[{label:'Ongoing',dur:'ongoing',sig:'',totalDose:'',notes:'Customise dose / chemovar.'}]}
 };
 
 /* ─────────────────────────── STATE ─────────────────────────────────────── */
@@ -371,11 +575,24 @@ function populatePicker(){
   const cls=$('medClassFilter').value;
   const picker=$('medPicker');
   picker.innerHTML='<option value="">Choose a medication…</option>';
+  // Bucket meds by subclass (preserves catalogue order within group).
+  const groups={};
+  const groupOrder=[];
   Object.entries(MED_CATALOG).forEach(([key,m])=>{
     if(cls!=='all'&&m.class!==cls)return;
-    const opt=document.createElement('option');
-    opt.value=key;opt.textContent=m.name;
-    picker.appendChild(opt);
+    const sub=m.subclass||'Other';
+    if(!groups[sub]){groups[sub]=[];groupOrder.push(sub);}
+    groups[sub].push([key,m]);
+  });
+  groupOrder.forEach(sub=>{
+    const og=document.createElement('optgroup');
+    og.label=sub;
+    groups[sub].sort((a,b)=>a[1].name.localeCompare(b[1].name)).forEach(([key,m])=>{
+      const opt=document.createElement('option');
+      opt.value=key;opt.textContent=m.name;
+      og.appendChild(opt);
+    });
+    picker.appendChild(og);
   });
 }
 
@@ -465,9 +682,17 @@ function renderMedList(){
   const empty=$('medEmpty');
   if(!S.meds.length){wrap.innerHTML='';empty.style.display='';return;}
   empty.style.display='none';
+  const CLASS_LBL={
+    stimulant:'Stimulant', nonstim:'Non-stimulant', antidepressant:'Antidepressant',
+    mood_stabiliser:'Mood stabiliser', antipsychotic_oral:'Antipsychotic',
+    antipsychotic_lai:'LAI', anxiolytic:'Anxiolytic', gabapentinoid:'Gabapentinoid',
+    anticholinergic:'Anticholinergic', cognitive:'Cognitive', aud:'AUD', oud:'OUD',
+    metabolic:'Metabolic', anticonvulsant:'Anticonvulsant', parkinson:"Parkinson's",
+    analgesic:'Analgesic', other:'Other'
+  };
   wrap.innerHTML=S.meds.map((m,i)=>{
-    const classLbl=m.class==='stimulant'?'Stimulant':m.class==='nonstim'?'Non-stimulant':'Other';
-    const classCls=m.class==='stimulant'?'stimulant':m.class==='nonstim'?'nonstim':'other';
+    const classLbl=(m.subclass||CLASS_LBL[m.class]||'Other');
+    const classCls=m.class||'other';
     const rows=m.steps.map((st,si)=>`
       <tr>
         <td style="width:18%"><input value="${esc(st.label)}" oninput="setStepField(${i},${si},'label',this.value)"></td>
