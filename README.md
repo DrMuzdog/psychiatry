@@ -6,7 +6,10 @@ All tools run entirely in your browser — no data is sent anywhere, nothing is 
 
 ---
 
-## ADHD Assessment Generators
+## ADHD Assessment
+
+### [ADHD Assessment Follow Along Guide](adhd6.html)
+A guide to follow along with during an ADHD assessment.
 
 ### [Ben's Amazing ADHD Assessment Generator](adhd5.html)
 This has everything you need — suitable for both initial assessments and follow-up reviews:
@@ -21,22 +24,18 @@ This has everything you need — suitable for both initial assessments and follo
 
 Perfect for beginners and experienced psychiatrists alike.
 
-### [ADHD Telehealth Reference Guide](adhd-telehealth-guide.html)
-A reference guide for conducting ADHD assessments and reviews via telehealth.
-
-### [Old ADHD Assessment Generator](adhd3.html)
-The first one I made. Subtle differences and not as good — kept here for reference.
-
----
-
-## ASD Assessment
-
 ### [ASD Assessment v2](asd.html)
 A structured assessment tool for autism spectrum disorder.
 
 ---
 
 ## Patient Education
+
+### [Psychoeducation](psychoeducation.html)
+General psychoeducation resource.
+
+### [Neurodevelopmental Psychoeducation](neuro-psychoeducation.html)
+Psychoeducation focused on neurodevelopmental conditions.
 
 ### [ADHD Handout Generator](ADHD-Patient-Guide-Generator-30.html)
 A web app to deliver psychoeducation and create a titration schedule for your patient. Generates a nice handout to print or send, plus the plain text for your eScript. You can choose how much info to include — some patients need more, some less. Includes non-pharmacological options. Most of this is already built into the assessment generator above.
@@ -51,3 +50,14 @@ A different psychoeducation delivery style.
 - [YBOCS](ybocs_scale.html) — Yale-Brown Obsessive Compulsive Scale
 - [Depression Rating Scales](depression-scales.html)
 - [DIVA and ASRS in full](diva_asrs.html)
+
+---
+
+<sub>
+
+#### Other
+
+- [ADHD Telehealth Reference Guide](adhd-telehealth-guide.html)
+- [Old ADHD Assessment Generator](adhd3.html)
+
+</sub>

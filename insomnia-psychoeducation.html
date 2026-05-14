@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Insomnia Psychoeducation Handout Generator — Dr Benjamin Murrie</title>
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--border:#e2e6ed;--text:#1a1d23;--muted:#6b7280;--ins:#0d9488;--ins-bg:#ccfbf1;--ins-dark:#134e4a;--ins-mid:#0f766e;--navy:#0f172a;--green:#16a34a;--green-bg:#dcfce7;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.topbar{background:var(--navy);padding:10px 14px;border-bottom:3px solid var(--ins);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topbar-title{font-size:13px;font-weight:800;color:#99f6e4;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.ti{background:#1e293b;border:1px solid #334155;color:#f1f5f9;padding:5px 9px;border-radius:7px;font:inherit;font-size:13px;min-width:0}
+.ti::placeholder{color:#64748b}
+.ti:focus{outline:1px solid var(--ins);background:#243349}
+.content{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
+.section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:7px;margin-top:16px}
+.condition-block{margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.condition-header{padding:10px 14px;font:700 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px;background:var(--ins-dark)}
+.cond-sel-btns{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+.cond-sel-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font:600 11px var(--sans);padding:3px 10px;border-radius:5px;cursor:pointer;transition:background .1s}
+.cond-sel-btn:hover{background:rgba(255,255,255,.3)}
+.topic-list{background:#fff}
+.pe-group-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:10px 14px 5px;background:#f8fafc;border-top:1px solid #f0f2f5}
+.pe-section{border-top:1px solid #f4f5f8}
+.pe-section:first-child{border-top:none}
+.pe-header{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pe-header:hover{background:#f9fafb}
+.pe-tick-btn{font-size:1rem;color:var(--muted);flex-shrink:0;min-width:20px;text-align:center;line-height:1;padding:2px;border-radius:4px;transition:color .1s}
+.pe-title{font-weight:600;font-size:13px;color:var(--text);flex:1;line-height:1.35}
+.pe-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .15s;margin-left:auto}
+.pe-section.pe-open .pe-arrow{transform:rotate(90deg)}
+.pe-body{display:none;padding:8px 14px 14px 43px;font-size:12.5px;line-height:1.65;color:#374151;border-top:1px solid #f4f5f8}
+.pe-section.pe-open .pe-body{display:block}
+.pe-body p{margin:0 0 7px}
+.pe-body p:last-child{margin:0}
+.pe-body ul{margin:4px 0 8px 16px}
+.pe-body li{margin-bottom:4px}
+.pe-body table{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 10px}
+.pe-body th{background:#f0fdfa;padding:5px 8px;text-align:left;border:1px solid var(--border);font-size:11px}
+.pe-body td{padding:4px 8px;border:1px solid var(--border);vertical-align:top}
+.pe-body a{color:var(--ins-mid)}
+.pe-section.ins-done{background:#f0fdfa}
+.pe-section.ins-done .pe-tick-btn{color:var(--ins)}
+.pe-section.pe-optional{opacity:.88}
+.export-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.export-row .ex-label{font:700 12px var(--sans);color:var(--muted);flex-shrink:0;white-space:nowrap}
+.abtn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);font:600 12px var(--sans);cursor:pointer;transition:background .1s,border-color .1s}
+.abtn:hover{background:#f3f4f6;border-color:#94a3b8}
+.abtn.copied{background:#ccfbf1;border-color:#5eead4;color:#134e4a}
+.preview-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.preview-head{background:#f8fafc;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.preview-head-title{font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.preview-body{padding:22px 26px;font-family:Arial,sans-serif;font-size:10pt;line-height:1.55;color:#111;min-height:100px}
+.preview-body .empty-msg{color:var(--muted);font-style:italic;text-align:center;padding:36px 20px;font-size:11pt}
+.ho-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e5e7eb}
+.ho-pt{font-size:17pt;font-weight:800;color:#0f172a;margin-bottom:2px}
+.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:12px}
+.ho-notice{font-size:9.5pt;background:#f0fdfa;border-left:3px solid #0d9488;padding:9px 12px;line-height:1.5;color:#134e4a}
+.ho-group-label{font-size:9pt;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px;padding-bottom:3px;border-bottom:2px solid currentColor}
+.ho-group-label.ins-g-core{color:#134e4a;border-bottom-color:#134e4a}
+.ho-group-label.ins-g-treatment{color:#1e3a5f;border-bottom-color:#1e3a5f}
+.ho-group-label.ins-g-strategies{color:#713f12;border-bottom-color:#713f12}
+.ho-group-label.ins-g-resources{color:#065f46;border-bottom-color:#065f46}
+.ho-topic{margin-bottom:20px;padding:11px 14px;border:1px solid #e5e7eb;border-radius:7px;background:#fafffe}
+.ho-topic-title{font-weight:700;font-size:11pt;color:#0f172a;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb}
+.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151}
+.ho-topic-body p{margin:0 0 6px}
+.ho-topic-body p:last-child{margin:0}
+.ho-topic-body ul{margin:3px 0 7px 16px}
+.ho-topic-body li{margin-bottom:3px}
+.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:5px 0 8px}
+.ho-topic-body th{background:#f0fdfa;padding:4px 7px;text-align:left;border:1px solid #d1d5db;font-size:9pt}
+.ho-topic-body td{padding:3pt 7pt;border:1px solid #d1d5db;vertical-align:top}
+.ho-topic-body a{color:#0f766e}
+.ho-footer{margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:8.5pt;color:#9ca3af;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">Insomnia Psychoeducation</span>
+  <input class="ti" id="ptName" placeholder="Patient name..." style="flex:1;min-width:130px;max-width:210px" oninput="refresh()">
+  <input class="ti" id="ptDate" type="date" style="flex:0 0 128px" oninput="refresh()">
+  <input class="ti" id="drName" placeholder="Clinician name..." style="flex:1;min-width:130px;max-width:200px" oninput="refresh()">
+</div>
+
+<div class="content">
+
+  <div class="condition-block" style="margin-top:12px">
+    <div class="condition-header">
+      Insomnia — Topics
+      <div class="cond-sel-btns">
+        <button class="cond-sel-btn" onclick="selectAll()">Select all</button>
+        <button class="cond-sel-btn" onclick="clearAll()">Clear all</button>
+      </div>
+    </div>
+    <div class="topic-list" id="ins-topic-list"></div>
+  </div>
+
+  <div class="export-row">
+    <span class="ex-label">Export</span>
+    <button class="abtn" id="btn-docx" onclick="dlDocx()">Download .docx</button>
+    <button class="abtn" id="btn-plain" onclick="copyPlain(this)">Copy plain text</button>
+    <button class="abtn" id="btn-fmt" onclick="copyFormatted(this)">Copy formatted</button>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="preview-head">
+      <span class="preview-head-title">Handout Preview</span>
+      <button class="abtn" onclick="refresh()" style="padding:4px 11px;font-size:11px">Refresh</button>
+    </div>
+    <div class="preview-body" id="preview">
+      <div class="empty-msg">Tick topics above to generate the handout.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var sel = {};
+
+function $(id){return document.getElementById(id);}
+function f(id){var el=$(id);return el?el.value.trim():'';}
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+var INSOMNIA_PE_GROUPS=[
+  {label:null,optional:false,items:[
+    {id:'what_insomnia_is',title:'What insomnia actually is',body:'<p><strong>Beyond "not enough sleep":</strong> Insomnia is a disorder of hyperarousal — not simply a sleep deficiency. This distinction matters. The defining feature of insomnia is not that you sleep too little; it is that your nervous system has become chronically over-activated around sleep. The problem is not a broken sleep system — it is a system that has learned to treat bedtime as a threat.</p> <p><strong>Diagnostic criteria (chronic insomnia):</strong></p> <ul> <li>Difficulty initiating or maintaining sleep, or early morning waking with inability to return to sleep</li> <li>Despite adequate opportunity and environment for sleep</li> <li>Associated with daytime impairment (fatigue, mood, cognition, performance)</li> <li>Occurs at least 3 nights per week</li> <li>Has persisted for at least 3 months</li> </ul> <p><strong>Prevalence:</strong> Approximately 10–15% of adults meet criteria for chronic insomnia disorder. A further 25–35% report clinically significant insomnia symptoms. It is the most common sleep complaint in clinical practice and frequently co-occurs with depression, anxiety, chronic pain, and cardiovascular conditions.</p> <p><strong>Why it is more than "bad sleep habits":</strong> Chronic insomnia represents a learned dysregulation of the sleep system — shaped by biological vulnerability, perpetuating behaviours, and cognitive patterns — that is self-sustaining long after the original trigger has resolved. A stressful event might start insomnia; what keeps it going is a different problem entirely.</p> <p><strong>Prognosis:</strong> Chronic insomnia does not resolve reliably on its own. Without targeted intervention, it tends to persist and worsen. With evidence-based treatment (CBT-I), 70–80% of people achieve clinically meaningful improvement, and effects are durable — unlike medication, which typically only works while being taken.</p>'},
+    {id:'two_process_model',title:'The two-process model of sleep — why it matters for insomnia',body:'<p>Sleep is regulated by two independent biological processes that work together to produce a normal night\'s sleep. Understanding both is essential for understanding insomnia — and why the most effective treatments for it are counterintuitive.</p> <p><strong>Process S — Sleep Pressure (adenosine):</strong> From the moment you wake up, a chemical called adenosine accumulates in the brain. The longer you are awake, the more adenosine builds up, creating increasing "sleep pressure." When sleep pressure is high enough, you sleep — and during sleep, adenosine is cleared. Napping, spending excess time in bed, and sleeping in all reduce the adenosine load available at your next bedtime. This is why sleep restriction works.</p> <p><strong>Process C — Circadian Drive (the body clock):</strong> An internal 24-hour biological clock regulates alerting signals that rise through the day and fall in the evening. The clock is anchored primarily by light — particularly morning light. It promotes wakefulness during the day and permits sleep at night by withdrawing the alerting signal. Irregular sleep timing, insufficient morning light, bright light at night, and shift work all disrupt Process C.</p> <p><strong>How the two processes interact:</strong> Optimal sleep occurs when both processes align — high sleep pressure (from adequate time awake) combines with the circadian sleep window (body clock permitting sleep). Insomnia typically involves disruption of one or both: low sleep pressure from excessive time in bed, or circadian disruption from irregular timing.</p> <p><strong>Caffeine\'s mechanism:</strong> Caffeine blocks adenosine receptors — it does not remove adenosine, it temporarily masks the sleep pressure signal. When caffeine wears off, the accumulated adenosine binds rapidly, producing the "crash." Caffeine consumed after 2pm significantly impairs Process S at normal bedtimes in most people, even if sleep onset feels unaffected.</p> <p><strong>Why this model makes sleep restriction logical:</strong> By restricting time in bed, you allow adenosine to accumulate to a level that overrides the hyperarousal of insomnia. You are not "forcing" sleep — you are restoring the biological drive that hyperarousal has been suppressing.</p>'},
+    {id:'hyperarousal_model',title:'The hyperarousal model — why trying harder makes insomnia worse',body:'<p><strong>The central paradox of insomnia:</strong> The harder you try to sleep, the less you sleep. This is not a platitude — it is a direct consequence of how the arousal system works. Sleep cannot be forced. It is a passive process that occurs when arousal is sufficiently low. Any effort to produce sleep increases arousal and actively prevents it.</p> <p><strong>What hyperarousal looks like:</strong></p> <ul> <li>Physiological: elevated heart rate and core body temperature at night, elevated cortisol, increased high-frequency EEG activity (even during sleep stages)</li> <li>Cognitive: racing thoughts, anticipatory worry about sleep, monitoring of time and arousal state</li> <li>Behavioural: clock-watching, trying to force sleep, spending extra time in bed, napping to compensate, avoiding activities for fear of worsening sleep</li> </ul> <p><strong>The insomnia maintenance loop:</strong></p> <p style="background:#f0fdfa;border-left:3px solid #0d9488;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12pt">Poor night → daytime worry about sleep → hypervigilance at bedtime → increased arousal → poor night → loop continues</p> <p><strong>The conditioned arousal problem:</strong> Over weeks to months of insomnia, the bed itself becomes a conditioned cue for wakefulness and anxiety. This is Pavlovian conditioning: previously neutral stimuli (the bedroom, the act of lying down, seeing the time approach 10pm) become reliably associated with frustration, worry, and alertness. This is why stimulus control is a core component of CBT-I.</p> <p><strong>Why sleep monitoring makes it worse:</strong> Checking the clock during the night, tracking sleep with apps, counting hours — all of these direct attention toward the sleep process and increase arousal. People who monitor their sleep closely typically overestimate sleep latency and underestimate sleep duration. The monitoring itself becomes part of the problem.</p> <p><strong>The "trying not to think about it" trap:</strong> Thought suppression ("I must not think about sleep") paradoxically increases thought frequency — the same mechanism that operates in OCD. Acceptance-based approaches (not fighting the wakefulness, not trying to force sleep) are more effective than suppression or effort.</p>'},
+    {id:'three_p_model',title:'The 3P model — predisposing, precipitating, perpetuating factors',body:'<p><strong>Why the 3P model matters:</strong> Understanding what started your insomnia (precipitant) is less clinically useful than understanding what is keeping it going (perpetuating factors). CBT-I targets the perpetuating factors — which is why it works long after the original trigger is gone.</p> <p><strong>Predisposing factors — biological and psychological vulnerability:</strong></p> <ul> <li>High trait anxiety or tendency toward hyperarousal</li> <li>Genetic predisposition (insomnia runs in families, heritability ~30–40%)</li> <li>Female sex (two-fold higher prevalence)</li> <li>History of depression or anxiety disorders</li> <li>High reactivity to stress</li> </ul> <p>Having predisposing factors does not mean insomnia is inevitable — but it lowers the threshold for development when a trigger occurs.</p> <p><strong>Precipitating factors — what started it:</strong></p> <ul> <li>Acute stressors: illness, bereavement, relationship breakdown, work pressure</li> <li>Medical events: pain, hospitalisation, surgery, pregnancy</li> <li>Environmental changes: shift work, jet lag, new environment</li> <li>Psychiatric episodes: depression, anxiety, trauma</li> <li>Medications or substances: corticosteroids, stimulants, alcohol withdrawal</li> </ul> <p>Critically: the precipitant often resolves, but the insomnia continues. This is the 3P model\'s key insight.</p> <p><strong>Perpetuating factors — what keeps it going:</strong></p> <ul> <li>Extending time in bed to "recover" lost sleep (reduces sleep pressure)</li> <li>Napping to compensate (further reduces sleep pressure)</li> <li>Irregular sleep timing (disrupts Process C)</li> <li>Clock-watching and sleep monitoring (increases arousal)</li> <li>Catastrophising about the consequences of poor sleep</li> <li>Avoidance of daytime activities due to fatigue</li> <li>Conditioned arousal in the bedroom environment</li> </ul> <p>Treatment targets the perpetuating factors. Removing the precipitant is often insufficient. The good news: perpetuating factors are modifiable.</p>'},
+    {id:'sleep_state_misperception',title:'Sleep state misperception — sleeping more than you think',body:'<p><strong>A well-established phenomenon:</strong> Many people with insomnia significantly underestimate how much they are sleeping. This is not self-deception — it reflects a genuine and replicable mismatch between subjective experience and objective measurement. In polysomnography studies, people with insomnia consistently report fewer hours of sleep than EEG recording confirms. Some report being awake for hours during periods of confirmed stage 2 NREM sleep.</p> <p><strong>Why this happens:</strong></p> <ul> <li>The hyperaroused insomnia brain maintains partial awareness even during light sleep. The boundary between wakefulness and sleep is less distinct than in normal sleepers.</li> <li>Sleep onset is intrinsically difficult to detect subjectively — most people underestimate their sleep latency when falling asleep normally, but people with insomnia are in a state of anxious monitoring that preserves some awareness during early sleep stages.</li> <li>Frequent brief arousals during the night are tagged as "awake" when they are actually short-duration wakings from light NREM sleep.</li> </ul> <p><strong>Clinical relevance:</strong></p> <ul> <li>People with insomnia often report daytime fatigue and cognitive impairment despite sleeping more than they believe. This is real and not imagined — hyperarousal has direct daytime consequences regardless of objective sleep duration.</li> <li>The perception of "no sleep at all" — which some people report — is almost never accurate. Complete sleep deprivation is extraordinarily rare outside of extreme circumstances.</li> <li>This does not mean the distress is invalid. The subjective experience of insomnia is genuinely distressing and functionally impairing regardless of what the EEG shows.</li> </ul> <p><strong>What to do with this information:</strong> It is not a reason to dismiss the problem. It is a reason to approach sleep monitoring with some skepticism and to avoid the trap of using subjective nightly sleep estimates as a constant measure of success or failure. Functional improvement — better daytime energy, mood, performance — is a more reliable outcome measure than reported hours asleep.</p>'}
+  ]},
+  {label:'Treatment',optional:false,items:[
+    {id:'cbti_overview',title:'CBT-I — the most effective treatment for insomnia',body:'<p><strong>CBT-I is the recommended first-line treatment for chronic insomnia.</strong> Multiple meta-analyses, systematic reviews, and clinical guidelines — including from the American College of Physicians, the American Academy of Sleep Medicine, and the NHS — rate CBT-I above medication for long-term outcomes. Its effects are durable; medication\'s effects are typically not.</p> <p><strong>What CBT-I actually involves:</strong> It is not relaxation therapy, sleep hygiene education, or advice to "wind down before bed." CBT-I is a structured, time-limited treatment that directly targets the perpetuating mechanisms of insomnia — particularly the behaviours and cognitions that maintain hyperarousal and conditioned wakefulness.</p> <p><strong>The core components:</strong></p> <ul> <li><strong>Sleep restriction therapy:</strong> Compressing time in bed to consolidate sleep and restore sleep pressure. Counterintuitive and temporarily uncomfortable, but the most powerful single component. See dedicated topic.</li> <li><strong>Stimulus control:</strong> Reconditioning the bed as a cue for sleep rather than wakefulness. See dedicated topic.</li> <li><strong>Cognitive restructuring:</strong> Identifying and modifying unhelpful beliefs about sleep (catastrophising, misconceptions about sleep requirements). See dedicated topic.</li> <li><strong>Sleep hygiene education:</strong> The least effective component of CBT-I — alone, it rarely produces clinically meaningful change. It is most useful as adjunctive support for the other components, not as a standalone intervention.</li> <li><strong>Relaxation training:</strong> Progressive muscle relaxation, slow breathing, or body scan to reduce somatic arousal. Useful as an adjunct, particularly for physiological hyperarousal.</li> </ul> <p><strong>Duration and format:</strong> A standard course is 6–8 weekly sessions. Digital CBT-I (Sleepio, Somryst) delivers the same components in automated format and has comparable efficacy to therapist-delivered CBT-I in randomised trials.</p> <p><strong>Who it works for:</strong> CBT-I is effective regardless of the original cause of insomnia — including insomnia comorbid with depression, anxiety, chronic pain, cancer, and other medical conditions. Comorbidity is not a contraindication.</p>'},
+    {id:'sleep_restriction',title:'Sleep restriction — the most powerful (and counterintuitive) component',body:'<p><strong>The counterintuitive core:</strong> Sleep restriction involves spending less time in bed, not more. For someone exhausted by insomnia, this is deeply counterintuitive. It is also the most evidence-based, rapidly effective component of CBT-I. Understanding the mechanism makes it less frightening and more adherent.</p> <p><strong>The mechanism — sleep pressure restoration:</strong> Chronic insomnia involves low adenosine build-up at bedtime because people spend too long in bed. By restricting time in bed to closely match actual sleep time, adenosine accumulates to a level that overrides the conditioned arousal — producing faster sleep onset, fewer awakenings, and more consolidated sleep within a week or two.</p> <p><strong>How to implement:</strong></p> <ul> <li>Calculate your current average total sleep time (use a sleep diary for a week — not apps).</li> <li>Set a time-in-bed window equal to your average total sleep time plus 30 minutes. Minimum 5.5 hours regardless of reported sleep time.</li> <li>Fix a consistent wake time first — this is non-negotiable. Build the window backward from there.</li> <li>Stick to this window 7 days a week, including weekends, for at least two weeks.</li> <li>Once sleep efficiency exceeds 85–90% (time asleep divided by time in bed), extend the window by 15–30 minutes. Continue until you reach your desired amount of restorative sleep.</li> </ul> <p><strong>Expected experience:</strong> The first 3–5 days are typically harder. You will be sleepier. This is the treatment working — not failing. The sleepiness is sleep pressure building. Adherence in the first two weeks is what determines outcomes.</p> <p><strong>Contraindications:</strong> Discuss with your clinician before starting if you have bipolar disorder (sleep restriction can precipitate mania), a history of seizures, or an occupation where sleepiness creates safety risks (driving long distances, operating machinery). Sleep restriction should be supervised when contraindications may apply.</p> <p><strong>What it is not:</strong> Sleep restriction is not sleep deprivation. You are redirecting the sleep you are already capable of into a consolidated window, not eliminating it. The goal is efficiency, not exhaustion.</p>'},
+    {id:'stimulus_control',title:'Stimulus control — retraining the bed-sleep association',body:'<p><strong>The problem it targets:</strong> After months or years of insomnia, the bedroom has become a conditioned cue for wakefulness, frustration, and anxiety. Lying in bed triggers the same arousal that makes it impossible to sleep — a Pavlovian association built through repeated pairing of "bed" with "awake and anxious." Stimulus control aims to break this association and rebuild bed as a reliable cue for sleep.</p> <p><strong>The rules of stimulus control:</strong></p> <ul> <li><strong>Only go to bed when sleepy</strong> (not just tired or at a designated bedtime). Sleepiness — heavy eyes, drooping head — not fatigue.</li> <li><strong>Get out of bed if you cannot sleep.</strong> If you have been awake for approximately 20 minutes (without clock-watching) and are not falling asleep, get up. Go to a different room. Do something quiet and non-stimulating until sleepy again, then return.</li> <li><strong>Use the bed only for sleep and sex.</strong> No reading, screens, working, eating, or worrying in bed. The bed must become reliably associated with sleep-relevant states only.</li> <li><strong>Maintain a consistent wake time</strong> regardless of how you slept. Do not compensate with lie-ins.</li> <li><strong>Avoid napping</strong> (or keep naps to under 20 minutes before 3pm if essential).</li> </ul> <p><strong>Why getting out of bed feels wrong but works:</strong> Staying in bed while unable to sleep reinforces the association between bed and wakefulness. Getting up breaks this pairing and, over time, restores the conditioned association between bed and sleep. Most people resist this initially — and most who implement it consistently notice improvement within 1–2 weeks.</p> <p><strong>What to do when out of bed:</strong> Keep lighting dim, avoid screens, keep temperature cool. Reading a physical book, gentle stretching, listening to calm audio, or quiet creative activities are appropriate. The goal is not stimulating engagement — it is reducing arousal while waiting for the sleep pressure to reassert itself.</p>'},
+    {id:'cognitive_therapy_insomnia',title:'Cognitive therapy for insomnia — challenging unhelpful sleep beliefs',body:'<p><strong>Unhelpful beliefs about sleep maintain insomnia.</strong> Cognitive therapy for insomnia identifies and challenges specific thought patterns that increase arousal, perpetuate monitoring, and make it harder to disengage from wakefulness at night.</p> <p><strong>Common unhelpful sleep beliefs and the evidence against them:</strong></p> <ul> <li><strong>"I need 8 hours every night."</strong> Sleep need is highly individual, ranging from 6–9 hours in adults. The idea that 8 hours is universal comes from population averages, not biological requirements. Functioning on less than you "expect" does not mean you are sleep-deprived.</li> <li><strong>"I haven\'t slept at all."</strong> Almost universally inaccurate in chronic insomnia. See sleep state misperception. The subjective experience of wakefulness during light NREM sleep is real but does not mean no sleep occurred.</li> <li><strong>"Tomorrow will be ruined if I don\'t sleep well tonight."</strong> People consistently overestimate sleep\'s impact on next-day performance. Humans are remarkably resilient to one bad night. The anticipatory anxiety about a bad night creates more impairment than the poor sleep itself.</li> <li><strong>"I can\'t function without fixing my sleep first."</strong> This is an avoidance belief. Behavioural engagement (exercise, social contact, meaningful activity) improves both daytime function and sleep — not the other way around.</li> <li><strong>"Lying in bed resting is better than nothing."</strong> Lying in bed awake is not neutral. It actively reinforces conditioned arousal and reduces sleep pressure. It is not restorative.</li> </ul> <p><strong>Unhelpful safety behaviours:</strong></p> <ul> <li>Going to bed very early to "give sleep a chance" (increases time awake in bed)</li> <li>Cancelling commitments the day after a poor night (reinforces avoidance and the belief that function requires perfect sleep)</li> <li>Clock-watching (maintains monitoring and increases arousal)</li> <li>Excessive planning to manage fatigue (hypervigilance to sleep state)</li> </ul> <p><strong>The goal of cognitive therapy:</strong> Not positive thinking — but flexible, accurate thinking. Reducing the catastrophic interpretation of poor nights and the "performance pressure" that surrounds the sleep process.</p>'},
+    {id:'medication_review',title:'Medications for insomnia — an honest review',body:'<p><strong>The core tension:</strong> Medications for insomnia work short-term. Most are not suitable for chronic insomnia — the condition most people actually present with. Understanding what each class does (and does not do) allows informed shared decision-making.</p> <table> <thead><tr><th>Class / Drug</th><th>Evidence / Role</th><th>Considerations</th></tr></thead> <tbody> <tr><td><strong>Z-drugs</strong><br>(zopiclone, zolpidem)</td><td>Good short-term efficacy for sleep onset and duration. Not superior to benzodiazepines despite marketing. Recommend 2–4 weeks maximum.</td><td>Tolerance, dependence, next-day sedation, impaired driving, rebound insomnia on stopping. Not effective long-term. Falls risk in older adults.</td></tr> <tr><td><strong>Benzodiazepines</strong><br>(temazepam, nitrazepam)</td><td>Effective short-term. Not recommended for chronic insomnia by any current guideline. Still widely prescribed.</td><td>Tolerance within days to weeks. Dependence. Withdrawal insomnia. Rebound worse than baseline. Significant harm in older adults.</td></tr> <tr><td><strong>Melatonin</strong><br>(Circadin, Slenyto)</td><td>Most useful for circadian disruption (delayed sleep phase, jet lag) and older adults (>55). Effect size for sleep-onset insomnia is modest at best. Does not address hyperarousal.</td><td>Safest available option. Low dependence risk. Timing matters — most effective 1–2h before desired sleep time. Prescription melatonin (Circadin) superior to OTC in most studies.</td></tr> <tr><td><strong>Orexin antagonists</strong><br>(suvorexant — Belsomra)</td><td>Novel mechanism — blocks wake-promoting orexin/hypocretin. Reduces wake time and improves sleep maintenance. Modest effect sizes but better safety profile than Z-drugs long-term.</td><td>Expensive. Some residual sleepiness. Contraindicated in narcolepsy. Growing evidence base. TGA-approved in Australia.</td></tr> <tr><td><strong>Sedating antihistamines</strong><br>(doxylamine, diphenhydramine)</td><td>Rapid tolerance (often within 3–5 days). No meaningful efficacy evidence for chronic insomnia despite widespread OTC availability.</td><td>Significant next-day sedation, anticholinergic side effects, falls risk. Not recommended by any sleep guideline.</td></tr> <tr><td><strong>Low-dose doxepin</strong><br>(Silenor 3–6mg)</td><td>The one tricyclic with strong evidence for insomnia specifically. Licensed in US, not in AU. Works on histamine H1 receptors at low doses. Good for sleep maintenance, not sedating the next day.</td><td>Not widely available in Australia but used off-label. Different mechanism and profile to antidepressant doses. Not suitable if anticholinergic burden is a concern.</td></tr> <tr><td><strong>Quetiapine (off-label)</strong><br>(Seroquel at 25–50mg)</td><td>Widely used off-label for insomnia. Minimal evidence for primary insomnia. Sedation due to H1 antagonism. NOT a first, second, or third-line insomnia treatment.</td><td>Metabolic effects, QTc prolongation, akathisia risk, extrapyramidal effects, and antipsychotic stigma — significant risks for a non-psychiatric indication. Should be used rarely and thoughtfully.</td></tr> <tr><td><strong>Mirtazapine</strong><br>(off-label)</td><td>Sedating antidepressant with H1 antagonism. Used in insomnia comorbid with depression or appetite suppression. No strong evidence for primary insomnia.</td><td>Weight gain, next-day sedation, constipation. Reasonable choice when depression and insomnia coexist.</td></tr> </tbody> </table> <p><strong>The evidence-based position:</strong> For chronic primary insomnia, CBT-I outperforms all medications in long-term outcomes. Medication may have a role in short-term management, during CBT-I initiation, or in specific populations (hospitalised patients, acute situational insomnia). Chronic medication should prompt a shared decision-making conversation about whether long-term use aligns with goals.</p>'}
+  ]},
+  {label:'Practical Strategies',optional:true,items:[
+    {id:'fixed_wake_time',title:'The fixed wake time — the single most important anchor',body:'<p><strong>If you do only one thing:</strong> Set a fixed wake time and protect it 7 days a week. This is the most reliably evidence-backed behavioural change for insomnia that does not involve the discomfort of sleep restriction. It anchors Process C (your circadian clock) and creates the conditions under which sleep pressure can build reliably.</p> <p><strong>Why it matters more than bedtime:</strong> Bedtime is determined by sleepiness — which fluctuates based on sleep pressure and arousal. Wake time determines when the adenosine clock resets. Consistent wake time → consistent sleep pressure build-up → more reliable sleepiness at an appropriate bedtime over days to weeks.</p> <p><strong>Practical implementation:</strong></p> <ul> <li>Choose a wake time you can maintain on weekends as well as weekdays — within 30 minutes is the target.</li> <li>On mornings after poor nights, the pull to stay in bed is strong. This is exactly when getting up matters most — sleep pressure accumulates from the moment you get up, not from when you "should" have woken.</li> <li>Get bright light within 30 minutes of waking. Morning light is the most potent circadian anchor available. Outside is best; a light therapy lamp (10,000 lux, 20–30 minutes) is effective when outdoor light is unavailable.</li> </ul> <p><strong>What to do if you had no sleep or near-no sleep:</strong> Still get up at the fixed wake time. The temptation to compensate is understandable and counterproductive. One extra hour in bed reduces sleep pressure by roughly one hour — making the next night harder. The fixed wake time should be non-negotiable during active CBT-I.</p> <p><strong>Social jetlag:</strong> The chronic mismatch between weekday and weekend sleep timing experienced by most people who "catch up on sleep" on weekends. Social jetlag impairs circadian regulation in a manner similar to shift work and is a significant perpetuating factor for insomnia. Consistency across all 7 days is not optional.</p>'},
+    {id:'busy_mind_at_night',title:'Managing a busy mind at night — what actually works',body:'<p><strong>The standard advice that does not work:</strong> "Clear your mind." "Stop thinking." "Relax." These instructions are not only unhelpful — they increase arousal by adding a performance task ("I must not think") to bedtime, which is the opposite of what is needed.</p> <p><strong>Constructive worry time:</strong> Schedule 15–20 minutes earlier in the evening (not within 2 hours of bed) specifically for cognitive engagement with worries. Write down concerns and, where possible, brief action plans. The goal is to "offload" from working memory so the brain does not treat bedtime as its first opportunity to process unresolved material. This is evidence-based and underused.</p> <p><strong>Cognitive shuffle (a novel evidence-informed approach):</strong> Deliberately generate a sequence of unrelated, mildly absurd imagery — a spoon, a lighthouse, a purple elephant on roller skates. This disrupts coherent verbal thought (the "busy mind") and mimics the hypnagogic (pre-sleep) imagery pattern. It gives the mind something to "do" that does not maintain arousal in the way that problem-solving or rumination does.</p> <p><strong>Paradoxical intention:</strong> Lie in the dark with eyes open and try to stay awake — passively, without straining. This removes the performance pressure of "trying to sleep" and paradoxically reduces arousal. Evidence supports its effectiveness particularly for sleep-onset insomnia.</p> <p><strong>Acceptance rather than suppression:</strong> "I am awake. This is uncomfortable. I can tolerate being awake." Accepting wakefulness — not welcoming it, but not fighting it — reduces arousal more effectively than any cognitive attempt to force sleep. Defusion from distressing thoughts about wakefulness ("this is terrible, I\'ll be destroyed tomorrow") has more impact than suppression.</p> <p><strong>What about reading, podcasts, and white noise?</strong> Low-stimulation audio (slow-paced podcasts, ambient sound) can reduce cognitive arousal if they distract from rumination without being engaging enough to delay sleep. For some people they help; for others they maintain arousal through attentional engagement. Trial and observe your own response.</p>'},
+    {id:'alcohol_caffeine_cannabis',title:'What alcohol, caffeine, and cannabis actually do to sleep',body:'<p><strong>Alcohol — the most misunderstood sleep substance:</strong></p> <ul> <li>Alcohol accelerates sleep onset — this is real, and why so many people use it as a sleep aid.</li> <li>It simultaneously suppresses REM sleep and disrupts sleep architecture in the second half of the night. As alcohol is metabolised (typically 3–5 hours after drinking), rebound arousal causes fragmented, lighter sleep.</li> <li>Regular alcohol use before bed produces tolerance to the sleep-onset effect within days to weeks, while the sleep-disrupting rebound effect persists.</li> <li>Alcohol worsens sleep apnoea by relaxing upper airway musculature.</li> <li>The next-day "alcohol sleep" effect — feeling unrested despite long sleep — reflects the suppression of restorative slow-wave and REM sleep.</li> <li>A single drink\'s effect on sleep architecture is detectable via PSG. There is no "small amount" that is neutral.</li> </ul> <p><strong>Caffeine — the duration is what catches people:</strong></p> <ul> <li>Caffeine\'s half-life in most adults is 5–7 hours. A 200mg cup of coffee at 3pm leaves 100mg active at 8–10pm.</li> <li>Individual variation is large — genetic differences in CYP1A2 enzyme activity produce slow metabolisers who are significantly more sensitive than fast metabolisers.</li> <li>Caffeine blocks adenosine receptors — it does not remove adenosine. When it clears, the accumulated adenosine binds suddenly (the "afternoon crash").</li> <li>The practical cutoff for most people with insomnia: no caffeine after 12–1pm. For slow metabolisers, earlier.</li> <li>Don\'t forget: tea (especially black tea), cola drinks, energy drinks, pre-workout supplements, and some medications contain meaningful caffeine.</li> </ul> <p><strong>Cannabis — a more complicated picture:</strong></p> <ul> <li>THC reduces sleep onset and suppresses REM sleep. Short-term, it can appear to improve sleep by reducing the time to sleep and increasing slow-wave sleep.</li> <li>Tolerance to both effects develops rapidly. Within weeks, users often sleep no better than before use began — but now have a dependency.</li> <li>Cannabis withdrawal prominently features insomnia, vivid dreams, and sleep disruption — which drives many people to re-use, creating a maintenance cycle.</li> <li>CBD has minimal evidence as a standalone sleep aid. Most commercial CBD products are underdosed for any potential effect.</li> <li>Cannabis use complicates insomnia treatment and is worth raising honestly in clinical discussion.</li> </ul>'},
+    {id:'napping_nuances',title:'Napping — when it helps and when it does not',body:'<p><strong>The default CBT-I position:</strong> Avoid napping during active sleep restriction. Napping reduces adenosine build-up and lowers sleep pressure at the target bedtime, undermining the primary mechanism of sleep restriction.</p> <p><strong>When napping is appropriate:</strong></p> <ul> <li>Occupational safety: if you must drive or operate machinery and are severely sleep-deprived, a brief nap is a safety necessity, not a behavioural failure.</li> <li>After the consolidation phase of CBT-I: once sleep is stable and efficient, a brief strategic nap has less impact.</li> <li>Older adults: napping has different characteristics in older adults and the evidence for strict nap restriction in this group is weaker.</li> </ul> <p><strong>The optimal nap (if napping is unavoidable):</strong></p> <ul> <li>Duration: 10–20 minutes. This captures the benefits of stage 1–2 NREM (reduced fatigue, improved alertness) without entering slow-wave sleep — which causes "sleep inertia" (post-nap grogginess) and the deepest disruption of nighttime sleep pressure.</li> <li>Timing: before 3pm. Later naps directly impair Process C alignment with the nighttime sleep window.</li> <li>The coffee nap: drinking a coffee immediately before a 20-minute nap produces better post-nap alertness than either coffee or nap alone. Caffeine takes approximately 20 minutes to absorb — you wake at peak effect. Useful for acute performance demands.</li> </ul> <p><strong>Delaying sleep phase vs insomnia:</strong> Some people who report insomnia actually have delayed sleep phase syndrome — a circadian clock disorder where the sleep window is simply shifted later (e.g. naturally falling asleep at 2am and waking at 10am, sleeping well within that window). This is biologically distinct from insomnia and requires different treatment (chronotherapy, timed bright light, melatonin in specific timing protocols). The distinction is clinically important and worth discussing if your difficulty is specifically sleep-onset at a conventional time while overall sleep quality is good.</p>'},
+    {id:'tapping_hypnosis',title:'Complementary approaches — tapping and clinical hypnosis',body:'<p><strong>EFT tapping (Emotional Freedom Technique):</strong></p> <p>EFT involves tapping on specific acupressure points on the face and body while verbally acknowledging a problem and affirming self-acceptance. It has been studied for anxiety and stress, with a modest but growing evidence base. Its direct evidence for chronic insomnia disorder is limited, but mechanistically it may reduce hyperarousal at bedtime through:</p> <ul> <li>Activation of the parasympathetic nervous system via facial acupressure points (particularly around the eye and chin — areas rich in vagal nerve branches)</li> <li>Exposure and desensitisation to distressing thoughts through the verbal acknowledgement component</li> <li>Focused attention that interrupts cognitive rumination loops</li> </ul> <p><strong>How to use it for sleep:</strong> A brief 5–10 minute tapping sequence as part of a wind-down routine — targeting the specific worry or physical tension most present. The Tapping Solution app provides guided sequences and is one of the more clinically structured platforms available. EFT is best used as an adjunct to CBT-I, not a standalone replacement.</p> <p><strong>Clinical hypnosis for insomnia:</strong></p> <p>Clinical hypnosis (distinct from stage hypnosis — it is a focused state of relaxed attention with increased receptivity to suggestion) has a reasonable evidence base for insomnia. A 2014 study in Sleep found that hypnotic suggestion significantly increased slow-wave sleep (the most physically restorative stage) compared to relaxation controls. Other studies show reductions in sleep onset latency and waking after sleep onset.</p> <p><strong>What it involves:</strong> A trained clinical hypnotherapist induces a relaxed, focused state and uses suggestion to reduce hyperarousal, reframe catastrophic sleep beliefs, and anchor relaxation to bedtime cues. Audio recordings can be used independently after initial sessions.</p> <p><strong>What hypnosis is not:</strong> You are not unconscious, you cannot be made to do things against your will, and you will not lose awareness. It is a state of focused relaxation — not unlike the threshold between waking and sleep. This is why it is useful for insomnia specifically.</p> <p><strong>Finding a practitioner:</strong> Look for an Australian Hypnotherapy Association (AHA) or Australian Society of Clinical Hypnotherapists (ASCH) registered practitioner with experience in sleep disorders. Audio recordings from licensed clinical hypnotherapists (e.g. Andrew Johnson\'s Sleep app, Hypnosis for Sleep by Max Kirsten) are a lower-cost starting point.</p>'}
+  ]},
+  {label:'Products and Resources',optional:true,items:[
+    {id:'insomnia_books',title:'Recommended books',body:'<p><strong>Say Good Night to Insomnia</strong> — Gregg Jacobs. Written by one of the original CBT-I researchers. Structured 6-week programme. Evidence-based, practical, and one of the best self-help books available for someone wanting to implement CBT-I independently without a therapist.</p> <p><strong>The Sleep Solution</strong> — W. Chris Winter. Arguably the most readable and entertaining book on sleep science written for a lay audience. Winter is a neurologist and sleep specialist. Explains the two-process model, circadian biology, and CBT-I in plain language. Particularly good at dismantling the myths and anxieties people have built up around sleep.</p> <p><strong>Why We Sleep</strong> — Matthew Walker. The most widely read popular sleep book. Excellent on the importance of sleep and the science of sleep stages. <em>Note:</em> Several specific claims have been criticised by sleep researchers for overstating evidence — read critically. Still worth reading for the breadth of sleep science, with awareness of this caveat.</p> <p><strong>Overcoming Insomnia</strong> — Jack Edinger &amp; Colleen Carney. Therapist-guide companion also available as a workbook. More clinical in tone than Jacobs or Winter. Best suited to those who want structured worksheets and a therapy-mirroring format.</p> <p><strong>The Effortless Sleep Method</strong> — Sasha Stephens. Written by someone with lived experience of severe insomnia. More acceptance-focused, less technical. Useful for those who have tried behavioural approaches and found them too mechanistic — reframes the relationship with sleep from a different angle.</p>'},
+    {id:'insomnia_apps_resources',title:'Apps and digital programmes',body:'<p><strong>Sleepio</strong> — Digital CBT-I programme with the strongest evidence base of any sleep app. Developed by Oxford researchers, multiple randomised controlled trials demonstrating efficacy comparable to face-to-face CBT-I. 6-week interactive programme with animated sessions, sleep diary, and personalised weekly programme. Available via Big Health. <a href="https://www.sleepio.com" target="_blank">sleepio.com</a></p> <p><strong>Somryst</strong> — FDA-cleared prescription digital therapeutic for chronic insomnia in the US. Delivers CBT-I components with clinical-grade evidence. Not available as a prescription digital therapeutic in Australia, but accessible as a self-pay app. Rigorous content. <a href="https://www.somryst.com" target="_blank">somryst.com</a></p> <p><strong>Insomnia Coach</strong> — Free app developed by the US Department of Veterans Affairs. Delivers a structured CBT-I programme based on treatment developed at Stanford. Sleep diary, weekly sleep data, psychoeducation, and guidance. No paywall. <a href="https://mobile.va.gov/app/insomnia-coach" target="_blank">mobile.va.gov/app/insomnia-coach</a></p> <p><strong>Sleep Foundation</strong> — Research-reviewed sleep information resource. Good for checking evidence on specific sleep topics without the commercial bias of many sleep websites. <a href="https://www.sleepfoundation.org" target="_blank">sleepfoundation.org</a></p> <p><strong>Sleep Health Foundation (Australia)</strong> — Australian sleep medicine organisation with patient information resources, fact sheets, and clinician directory. <a href="https://www.sleephealthfoundation.org.au" target="_blank">sleephealthfoundation.org.au</a></p> <p><strong>Headspace / Calm</strong> — Both offer sleep-specific content (sleep meditations, sleepcasts, body scans). Not CBT-I and not evidence-based for insomnia disorder specifically — but can be useful adjuncts for reducing somatic arousal in people who find mindfulness or meditation helpful. Not a substitute for CBT-I.</p>'},
+    {id:'insomnia_sleep_tools',title:'Sleep aids and tools',body:'<p><strong>Re-Timer 3 (light therapy glasses)</strong> — Light therapy glasses worn for 30–60 minutes each morning. Advance the circadian rhythm, improve morning alertness, and are particularly effective for delayed sleep phase and seasonal mood changes. Worn while doing normal morning activities. Use code <strong>BMURRIE</strong> for 20% off at <a href="https://www.retimer.com.au/retimer-3/" target="_blank">retimer.com.au/retimer-3</a></p> <p><strong>Manta Sleep SOUND Mask</strong> — Blackout sleep mask with integrated flat speakers for audio at night. The contoured eye cups apply zero pressure on eyelids (important for people who find contact-pressure alerting). Useful for people who need audio (white noise, sleep hypnosis recordings, ambient sound) but find earbuds uncomfortable. Use code <strong>SLEEPBETTER_15</strong> for 15% off at <a href="https://mantasleep.com.au" target="_blank">mantasleep.com.au</a></p> <p><strong>Loop Earplugs — Dream or Quiet</strong> — High-quality reusable earplugs with meaningful noise attenuation without completely sealing the ear. The Dream model (25dB reduction) and Quiet model are designed specifically for sleep. Better than disposable foam for people who find total silence alerting — they reduce volume without eliminating ambient sound entirely. <a href="https://au.loopearplugs.com" target="_blank">au.loopearplugs.com</a></p> <p><strong>White noise / pink noise machines</strong> — Dedicated devices (e.g. LectroFan, Marpac Dohm) provide consistent masking sound. Pink noise (deeper, like rain) has some evidence for improving slow-wave sleep quality in older adults. More effective than phone speakers for consistent sound level. Useful when environmental noise is a major trigger for arousals.</p> <p><strong>Weighted blankets</strong> — Deep pressure stimulation from weighted blankets (ideally 7–12% of body weight) activates the parasympathetic nervous system and reduces physiological arousal. Reasonable adjunct for people with anxiety-driven insomnia or sensory sensitivities. Neptune Blanket offers good quality with regular discounts at <a href="https://neptuneblanket.com.au" target="_blank">neptuneblanket.com.au</a></p>'}
+  ]}
+]
+
+function renderTopics(){
+  var el=$('ins-topic-list'); if(!el) return;
+  var html='';
+  INSOMNIA_PE_GROUPS.forEach(function(g){
+    if(g.label) html+='<div class="pe-group-label">'+(g.optional?'<span style="font-size:9px;opacity:.6;font-weight:600;margin-right:4px">OPTIONAL</span>':'')+esc(g.label)+'</div>';
+    g.items.forEach(function(item){
+      var done=!!sel[item.id];
+      html+='<div class="pe-section'+(done?' ins-done':'')+' '+(!g.optional?'':'pe-optional')+'" data-id="'+item.id+'">';
+      html+='<div class="pe-header">';
+      html+='<span class="pe-tick-btn">'+(done?'&#9745;':'&#9744;')+'</span>';
+      html+='<span class="pe-title">'+esc(item.title)+'</span>';
+      html+='<span class="pe-arrow">&#9658;</span>';
+      html+='</div>';
+      html+='<div class="pe-body">'+item.body+'</div>';
+      html+='</div>';
+    });
+  });
+  el.innerHTML=html;
+  el.onclick=function(e){
+    var sec=e.target.closest('[data-id]'); if(!sec) return;
+    var id=sec.getAttribute('data-id');
+    var isTick=e.target.classList.contains('pe-tick-btn');
+    if(isTick){
+      e.stopPropagation();
+      sel[id]=!sel[id];
+      sec.classList.toggle('ins-done',!!sel[id]);
+      sec.querySelector('.pe-tick-btn').innerHTML=sel[id]?'&#9745;':'&#9744;';
+      refresh();
+    } else {
+      var hdr=e.target.closest('.pe-header'); if(hdr) sec.classList.toggle('pe-open');
+    }
+  };
+}
+
+function selectAll(){
+  INSOMNIA_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){sel[item.id]=true;});});
+  renderTopics(); refresh();
+}
+function clearAll(){
+  Object.keys(sel).forEach(function(k){sel[k]=false;});
+  renderTopics(); refresh();
+}
+
+var GROUP_COLOR_CLASS={'null':'ins-g-core','Treatment':'ins-g-treatment','Practical Strategies':'ins-g-strategies','Products and Resources':'ins-g-resources'};
+
+function buildHandout(){
+  var name=f('ptName')||'Patient';
+  var dr=f('drName')||'Your clinician';
+  var dv=f('ptDate'),ds=dv?new Date(dv+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  var hasAny=false;
+  INSOMNIA_PE_GROUPS.forEach(function(g){g.items.forEach(function(item){if(sel[item.id])hasAny=true;});});
+  if(!hasAny) return null;
+
+  var h='';
+  h+='<div class="ho-header">';
+  h+='<div class="ho-pt">Insomnia — Psychoeducation Handout</div>';
+  h+='<div class="ho-meta">Patient: <strong>'+esc(name)+'</strong>';
+  if(ds) h+=' &nbsp;|&nbsp; '+esc(ds);
+  h+=' &nbsp;|&nbsp; Clinician: <strong>'+esc(dr)+'</strong></div>';
+  h+='</div>';
+
+  INSOMNIA_PE_GROUPS.forEach(function(g){
+    var gItems=g.items.filter(function(item){return sel[item.id];});
+    if(!gItems.length) return;
+    var gKey=g.label||'null';
+    var cls=GROUP_COLOR_CLASS[gKey]||'ins-g-core';
+    if(g.label) h+='<div class="ho-group-label '+cls+'">'+esc(g.label)+'</div>';
+    gItems.forEach(function(item){
+      h+='<div class="ho-topic">';
+      h+='<div class="ho-topic-title">'+esc(item.title)+'</div>';
+      h+='<div class="ho-topic-body">'+item.body+'</div>';
+      h+='</div>';
+    });
+  });
+
+  h+='<div class="ho-footer">This handout was prepared specifically for '+esc(name)+(ds?' following a psychiatric appointment on '+esc(ds):'')+'. It is not a substitute for clinical advice.</div>';
+  return h;
+}
+
+function refresh(){
+  var html=buildHandout();
+  var pv=$('preview');
+  if(!html){pv.innerHTML='<div class="empty-msg">Tick topics above to generate the handout.</div>';return;}
+  pv.innerHTML=html;
+}
+
+function buildDocxHtml(){
+  var html=buildHandout(); if(!html) return null;
+  return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+    '<head><meta charset="UTF-8"><style>'+
+    '@page{margin:2cm 2.5cm;}body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.5;color:#111;}'+
+    '.ho-header{margin-bottom:14pt;padding-bottom:10pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-pt{font-size:17pt;font-weight:bold;color:#0f172a;margin-bottom:3pt;}'+
+    '.ho-meta{font-size:9pt;color:#6b7280;margin-bottom:10pt;}'+
+    '.ho-notice{font-size:9.5pt;background:#f0fdfa;border-left:3pt solid #0d9488;padding:8pt 10pt;color:#134e4a;}'+
+    '.ho-group-label{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;margin:12pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid currentColor;}'+
+    '.ho-group-label.ins-g-core{color:#134e4a;}'+
+    '.ho-group-label.ins-g-treatment{color:#1e3a5f;}'+
+    '.ho-group-label.ins-g-strategies{color:#713f12;}'+
+    '.ho-group-label.ins-g-resources{color:#065f46;}'+
+    '.ho-topic{margin-bottom:20pt;padding:10pt 13pt;border:1pt solid #e5e7eb;border-radius:5pt;background:#fafffe;}'+
+    '.ho-topic-title{font-weight:bold;font-size:11pt;color:#0f172a;margin:0 0 5pt;padding-bottom:4pt;border-bottom:1pt solid #e5e7eb;}'+
+    '.ho-topic-body{font-size:10pt;line-height:1.65;color:#374151;}'+
+    '.ho-topic-body p{margin:0 0 5pt;}.ho-topic-body ul{margin:3pt 0 6pt 14pt;}.ho-topic-body li{margin-bottom:3pt;}'+
+    '.ho-topic-body table{width:100%;border-collapse:collapse;font-size:9pt;margin:5pt 0 8pt;}'+
+    '.ho-topic-body th{background:#f0fdfa;padding:4pt 6pt;text-align:left;border:1pt solid #d1d5db;font-size:8.5pt;}'+
+    '.ho-topic-body td{padding:3pt 6pt;border:1pt solid #d1d5db;vertical-align:top;}'+
+    '.ho-footer{margin-top:20pt;padding-top:10pt;border-top:1pt solid #e5e7eb;font-size:8pt;color:#9ca3af;font-style:italic;}'+
+    '</style></head><body>'+html+'</body></html>';
+}
+
+function dlDocx(){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected.');return;}
+  var name=(f('ptName')||'Patient').replace(/[^a-zA-Z0-9]/g,'_');
+  var blob=new Blob(['\ufeff'+docx],{type:'application/msword;charset=utf-8'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='Insomnia_Handout_'+name+'.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  flash($('btn-docx'),'Downloaded!');
+}
+function copyPlain(btn){
+  var pv=$('preview');
+  if(!buildHandout()){alert('No topics selected.');return;}
+  navigator.clipboard.writeText(pv.innerText||pv.textContent).then(function(){flash(btn,'Copied!');}).catch(function(){});
+}
+function copyFormatted(btn){
+  var docx=buildDocxHtml(); if(!docx){alert('No topics selected.');return;}
+  if(window.ClipboardItem){
+    var blob=new Blob([docx],{type:'text/html'});
+    navigator.clipboard.write([new ClipboardItem({'text/html':blob})]).then(function(){flash(btn,'Copied!');}).catch(function(){
+      navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied (plain)!');});
+    });
+  } else {
+    navigator.clipboard.writeText($('preview').innerText||'').then(function(){flash(btn,'Copied!');});
+  }
+}
+function flash(btn,msg){
+  if(!btn)return;
+  var orig=btn.textContent;btn.textContent=msg;btn.classList.add('copied');
+  setTimeout(function(){btn.textContent=orig;btn.classList.remove('copied');},2000);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var td=new Date().toISOString().slice(0,10);
+  var dtEl=$('ptDate'); if(dtEl&&!dtEl.value) dtEl.value=td;
+  renderTopics();
+  refresh();
+});
+</script>
+</body>
+</html>
