@@ -32,6 +32,13 @@ Build a medication titration plan. Generates a printable plan for the patient.
 
 ---
 
+## Prescribing Guides
+
+### [GLP-1 Agonists for Psychiatrists](glp1agonists-for-psychiatrists.html)
+A clinical guide to GLP-1 agonists relevant to psychiatric practice.
+
+---
+
 ## Patient Education
 
 ### [Psychoeducation](psychoeducation.html)
