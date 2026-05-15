@@ -41,8 +41,9 @@
   .reset-btn:hover{background:#7f1d1d}
 
   /* ── LAYOUT ─────────────────────────────────────────────────────────── */
-  main{max-width:1400px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(340px,1fr) minmax(420px,1.4fr);gap:20px;align-items:start}
-  @media (max-width:980px){main{grid-template-columns:1fr}}
+  main{max-width:1400px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(380px,1fr) minmax(440px,1.3fr);gap:20px;align-items:start}
+  @media (max-width:1100px){main{grid-template-columns:1fr;padding:14px}}
+  @media (max-width:560px){main{padding:10px;gap:12px}}
 
   /* ── CARDS ──────────────────────────────────────────────────────────── */
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
@@ -87,26 +88,44 @@
 
   .auth-line{font:400 11.5px/1.4 var(--sans);color:#475569;background:#fff7ed;border:1px solid #fde68a;padding:6px 10px;border-radius:6px;margin:6px 0}
 
-  /* Step list */
-  .step-table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12.5px}
-  .step-table thead th{background:#f1f5f9;color:#475569;font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;padding:6px 8px;text-align:left;border-bottom:1px solid var(--border)}
-  .step-table tbody td{padding:6px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
-  .step-table tbody tr:last-child td{border-bottom:none}
-  .step-table input,.step-table textarea{width:100%;border:1px solid transparent;background:transparent;font:13px var(--sans);padding:3px 4px;border-radius:4px;resize:none}
-  .step-table input:hover,.step-table textarea:hover{background:#fff;border-color:#e2e8f0}
-  .step-table input:focus,.step-table textarea:focus{outline:none;background:#fff;border-color:var(--primary)}
-  .step-table textarea{min-height:24px;line-height:1.4}
-  .step-actions{display:flex;gap:4px;justify-content:flex-end}
-  .icon-btn{background:transparent;border:1px solid var(--border);border-radius:5px;width:24px;height:24px;cursor:pointer;color:var(--muted);font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0}
+  /* Form / strengths summary line under the med name */
+  .form-line{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px;align-items:center}
+  .form-pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font:600 11px var(--sans);background:#eef2f7;color:#334155;border:1px solid #dbe2ec}
+  .form-pill.form{background:#e7eef9;color:var(--primary);border-color:#c7d6ec}
+  .form-pill.strength{background:#fff;color:#475569;border-color:#dbe2ec}
+
+  /* Section sub-heading inside a med card */
+  .med-sub-h{font:700 10px var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:10px 0 6px}
+
+  /* Step cards (stacked, mobile-friendly) */
+  .step-cards{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .step-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+  .step-card-head{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+  .step-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--primary-bg);color:var(--primary);font:700 12px var(--sans);display:inline-flex;align-items:center;justify-content:center;margin-top:18px}
+  .step-inputs{flex:1;display:grid;grid-template-columns:1.4fr 1fr;gap:8px;min-width:0}
+  @media (max-width:560px){.step-inputs{grid-template-columns:1fr}}
+  .step-card-actions{display:flex;gap:4px;margin-top:18px}
+
+  .step-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  @media (max-width:560px){.step-grid{grid-template-columns:1fr}}
+
+  .step-fld{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .step-fld.full{margin-top:8px}
+  .step-fld label{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .step-fld input,.step-fld textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:7px 9px;font:13px var(--sans);background:#fafbff}
+  .step-fld input:focus,.step-fld textarea:focus{outline:none;border-color:var(--primary);background:#fff}
+  .step-fld textarea{resize:vertical;min-height:36px;line-height:1.4}
+
+  .icon-btn{background:transparent;border:1px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;color:var(--muted);font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0}
   .icon-btn:hover{background:#fff;color:var(--text);border-color:var(--muted)}
   .icon-btn.danger:hover{color:var(--red);border-color:var(--red)}
-  .step-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .step-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:6px}
   .step-foot .left{display:flex;gap:6px;flex-wrap:wrap}
 
   /* Script controls */
-  .script-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:8px;padding:8px 10px;background:#fff;border:1px solid var(--border);border-radius:7px}
-  .script-controls label{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:3px}
-  .script-controls input,.script-controls select{width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 7px;font:13px var(--sans);background:#fafbfc}
+  .script-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px;padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:8px}
+  .script-controls label{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:4px}
+  .script-controls input,.script-controls select{width:100%;border:1px solid var(--border);border-radius:6px;padding:6px 9px;font:13px var(--sans);background:#fafbff}
   .script-controls input:focus,.script-controls select:focus{outline:none;border-color:var(--primary);background:#fff}
 
   /* ── OUTPUT TABS ────────────────────────────────────────────────────── */
@@ -128,7 +147,8 @@
   .letter p{margin:0 0 10px 0}
 
   /* Table output */
-  .out-pane .schedule{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid var(--border);border-radius:7px;overflow:hidden}
+  .out-pane{overflow-x:auto}
+  .out-pane .schedule{width:100%;min-width:520px;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid var(--border);border-radius:7px;overflow:hidden}
   .schedule thead th{background:var(--primary);color:#fff;padding:8px 10px;text-align:left;font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.04em}
   .schedule tbody td{padding:9px 10px;border-bottom:1px solid #eef2f7;vertical-align:top}
   .schedule tbody tr:last-child td{border-bottom:none}
@@ -693,19 +713,37 @@ function renderMedList(){
   wrap.innerHTML=S.meds.map((m,i)=>{
     const classLbl=(m.subclass||CLASS_LBL[m.class]||'Other');
     const classCls=m.class||'other';
-    const rows=m.steps.map((st,si)=>`
-      <tr>
-        <td style="width:18%"><input value="${esc(st.label)}" oninput="setStepField(${i},${si},'label',this.value)"></td>
-        <td style="width:14%"><input value="${esc(st.dur)}" oninput="setStepField(${i},${si},'dur',this.value)"></td>
-        <td style="width:30%"><input value="${esc(st.sig)}" oninput="setStepField(${i},${si},'sig',this.value)" placeholder="dose & frequency"></td>
-        <td style="width:14%"><input value="${esc(st.totalDose||'')}" oninput="setStepField(${i},${si},'totalDose',this.value)" placeholder="total daily"></td>
-        <td><textarea oninput="setStepField(${i},${si},'notes',this.value)" rows="1" placeholder="Optional note">${esc(st.notes||'')}</textarea></td>
-        <td style="width:80px"><div class="step-actions">
-          <button class="icon-btn" onclick="moveStep(${i},${si},-1)" title="Move up">↑</button>
-          <button class="icon-btn" onclick="moveStep(${i},${si},1)" title="Move down">↓</button>
-          <button class="icon-btn danger" onclick="removeStep(${i},${si})" title="Remove step">×</button>
-        </div></td>
-      </tr>`).join('');
+    const def=MED_CATALOG[m.key]||{};
+    const form=m.form||def.form||'';
+    const strengths=def.strengths||[];
+    const unit=m.unit||def.unit||'mg';
+    const formPill=form?`<span class="form-pill form">${esc(form)}</span>`:'';
+    const strengthPills=strengths.length
+      ? strengths.map(s=>`<span class="form-pill strength">${esc(String(s))} ${esc(unit)}</span>`).join('')
+      : '';
+    const formLine=(formPill||strengthPills)
+      ? `<div class="form-line">${formPill}${strengthPills}</div>`
+      : '';
+    const stepCards=m.steps.map((st,si)=>`
+      <div class="step-card">
+        <div class="step-card-head">
+          <div class="step-num">${si+1}</div>
+          <div class="step-inputs">
+            <div class="step-fld"><label>Step name</label><input value="${esc(st.label)}" oninput="setStepField(${i},${si},'label',this.value)" placeholder="e.g. Week 1"></div>
+            <div class="step-fld"><label>Duration</label><input value="${esc(st.dur)}" oninput="setStepField(${i},${si},'dur',this.value)" placeholder="e.g. 7 days"></div>
+          </div>
+          <div class="step-card-actions">
+            <button class="icon-btn" onclick="moveStep(${i},${si},-1)" title="Move up">↑</button>
+            <button class="icon-btn" onclick="moveStep(${i},${si},1)" title="Move down">↓</button>
+            <button class="icon-btn danger" onclick="removeStep(${i},${si})" title="Remove step">×</button>
+          </div>
+        </div>
+        <div class="step-fld full"><label>Dose &amp; instructions</label><input value="${esc(st.sig)}" oninput="setStepField(${i},${si},'sig',this.value)" placeholder="e.g. 1 tablet (10 mg) on waking and at midday"></div>
+        <div class="step-grid">
+          <div class="step-fld"><label>Total daily dose</label><input value="${esc(st.totalDose||'')}" oninput="setStepField(${i},${si},'totalDose',this.value)" placeholder="e.g. 20 mg/day"></div>
+          <div class="step-fld"><label>Notes (optional)</label><input value="${esc(st.notes||'')}" oninput="setStepField(${i},${si},'notes',this.value)" placeholder="e.g. take with food"></div>
+        </div>
+      </div>`).join('');
     return `
       <div class="med-card">
         <div class="med-card-head">
@@ -719,20 +757,20 @@ function renderMedList(){
             <button class="btn sm danger" onclick="removeMed(${i})">Remove</button>
           </div>
         </div>
+        ${formLine}
         <div class="auth-line"><strong>Authority / notes:</strong>
           <input value="${esc(m.authority||'')}" oninput="setMedField(${i},'authority',this.value)" style="border:none;background:transparent;width:100%;font:13px var(--sans);color:#475569;padding:2px 0;margin-top:2px">
         </div>
-        <table class="step-table">
-          <thead><tr><th>Label</th><th>Duration</th><th>Dose / sig</th><th>Total daily</th><th>Notes</th><th></th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div class="med-sub-h">Titration steps</div>
+        <div class="step-cards">${stepCards}</div>
         <div class="step-foot">
           <div class="left"><button class="btn sm ghost" onclick="addStep(${i})">+ Add step</button></div>
         </div>
+        <div class="med-sub-h">Prescription details</div>
         <div class="script-controls">
-          <div><label>Mitte (quantity)</label><input value="${esc(m.mitte||'')}" oninput="setMedField(${i},'mitte',this.value)" placeholder="e.g. 30 caps"></div>
+          <div><label>Quantity to dispense</label><input value="${esc(m.mitte||'')}" oninput="setMedField(${i},'mitte',this.value)" placeholder="e.g. 30 tablets"></div>
           <div><label>Repeats</label><input type="number" min="0" max="11" value="${esc(m.repeats==null?'':m.repeats)}" oninput="setMedField(${i},'repeats',this.value)"></div>
-          <div><label>Interval rule</label><input value="${esc(m.intervalRule||'')}" oninput="setMedField(${i},'intervalRule',this.value)" placeholder="e.g. 20-day"></div>
+          <div><label>Min. interval between scripts</label><input value="${esc(m.intervalRule||'')}" oninput="setMedField(${i},'intervalRule',this.value)" placeholder="e.g. 20 days"></div>
         </div>
       </div>`;
   }).join('');
@@ -762,14 +800,18 @@ function buildEscript(){
   out+='─────────────────────────────────────────────\n\n';
   S.meds.forEach((m,i)=>{
     const fin=finalStep(m);
+    const def=MED_CATALOG[m.key]||{};
+    const form=m.form||def.form||'';
+    const strengths=(def.strengths||[]).map(s=>s+' '+(m.unit||def.unit||'mg')).join(', ');
     out+=(i+1)+'. '+(m.customName||m.name).toUpperCase()+'\n';
     if(m.generic)out+='   '+m.generic+'\n';
-    out+='   Sig:     '+(fin.sig||'(no dose set)')+'\n';
-    if(fin.totalDose)out+='   Total:   '+fin.totalDose+'\n';
-    if(m.mitte)out+='   Mitte:   '+m.mitte+'\n';
-    if(m.repeats!==''&&m.repeats!=null)out+='   Repeats: '+m.repeats+'\n';
-    if(m.intervalRule)out+='   Interval: '+m.intervalRule+'\n';
-    if(m.authority)out+='   Notes:   '+m.authority+'\n';
+    if(form||strengths)out+='   Form:        '+[strengths,form].filter(Boolean).join(' — ')+'\n';
+    out+='   Dose:        '+(fin.sig||'(no dose set)')+'\n';
+    if(fin.totalDose)out+='   Total daily: '+fin.totalDose+'\n';
+    if(m.mitte)out+='   Quantity:    '+m.mitte+'\n';
+    if(m.repeats!==''&&m.repeats!=null)out+='   Repeats:     '+m.repeats+'\n';
+    if(m.intervalRule)out+='   Interval:    '+m.intervalRule+'\n';
+    if(m.authority)out+='   Authority:   '+m.authority+'\n';
     out+='\n';
   });
   return out.trimEnd();
@@ -783,8 +825,13 @@ function buildLetter(){
     '<p>The following titration plan has been arranged for <strong>'+esc(h.name)+'</strong>'+(h.dob?' (DOB '+esc(h.dob)+')':'')+'.</p>';
   const meds=S.meds.map((m,i)=>{
     const name=(m.customName||m.name);
-    const intro='<p><strong>'+esc(name)+'</strong>'+(m.generic?' ('+esc(m.generic)+')':'')+' is to be commenced and titrated as follows.</p>';
-    // Compose narrative — each step as a sentence connected naturally
+    const def=MED_CATALOG[m.key]||{};
+    const form=m.form||def.form||'';
+    const strengths=(def.strengths||[]).map(s=>s+' '+(m.unit||def.unit||'mg')).join(', ');
+    const formStr=[strengths,form].filter(Boolean).join(' ');
+    const intro='<p><strong>'+esc(name)+'</strong>'+(m.generic?' ('+esc(m.generic)+')':'')+
+      (formStr?', available as '+esc(formStr):'')+
+      ' will be commenced and titrated as follows.</p>';
     const stepLines=m.steps.map((st,si)=>{
       const lead=si===0?'For the first phase ('+esc(st.label)+', '+esc(st.dur)+'),':
                  si===m.steps.length-1?'For ongoing maintenance ('+esc(st.label)+'),':
@@ -794,11 +841,10 @@ function buildLetter(){
       const note=st.notes?'. '+esc(st.notes).replace(/\.\s*$/,'')+'.':'.';
       return '<p>'+lead+sig+total+(note==='.'?'.':note)+'</p>';
     }).join('');
-    // Authority / mitte
     const scriptBits=[];
-    if(m.mitte)scriptBits.push('mitte '+esc(m.mitte));
+    if(m.mitte)scriptBits.push('a quantity of '+esc(m.mitte));
     if(m.repeats!==''&&m.repeats!=null)scriptBits.push(esc(m.repeats)+' repeats');
-    if(m.intervalRule)scriptBits.push(esc(m.intervalRule)+' interval');
+    if(m.intervalRule)scriptBits.push('a minimum interval of '+esc(m.intervalRule)+' between scripts');
     const scriptLine=scriptBits.length?'<p>The prescription will be written for '+scriptBits.join(', ')+'.</p>':'';
     const auth=m.authority?'<p><em>'+esc(m.authority)+'</em></p>':'';
     return intro+stepLines+scriptLine+auth;
@@ -814,6 +860,10 @@ function buildTable(){
   const h=patientHeaderText();
   let out='<div style="font:600 13px var(--sans);color:var(--primary);margin-bottom:10px"><span>'+esc(h.name)+'</span>'+(h.dob?' &nbsp;·&nbsp; DOB '+esc(h.dob):'')+' &nbsp;·&nbsp; '+esc(h.date)+(S.clinician?' &nbsp;·&nbsp; '+esc(S.clinician):'')+'</div>';
   out+=S.meds.map((m,i)=>{
+    const def=MED_CATALOG[m.key]||{};
+    const form=m.form||def.form||'';
+    const strengths=(def.strengths||[]).map(s=>s+' '+(m.unit||def.unit||'mg')).join(' / ');
+    const formLine=(strengths||form)?'<div style="font:12px var(--sans);color:var(--muted);margin:0 0 6px">'+esc([strengths,form].filter(Boolean).join(' · '))+'</div>':'';
     const rows=m.steps.map(st=>`
       <tr>
         <td><strong>${esc(st.label||'')}</strong></td>
@@ -823,15 +873,16 @@ function buildTable(){
         <td>${esc(st.notes||'')}</td>
       </tr>`).join('');
     const scriptBits=[];
-    if(m.mitte)scriptBits.push('Mitte '+esc(m.mitte));
+    if(m.mitte)scriptBits.push('Quantity '+esc(m.mitte));
     if(m.repeats!==''&&m.repeats!=null)scriptBits.push(esc(m.repeats)+' repeats');
-    if(m.intervalRule)scriptBits.push(esc(m.intervalRule));
+    if(m.intervalRule)scriptBits.push('min. interval '+esc(m.intervalRule));
     return `
       <div style="margin-bottom:18px">
         <div style="font:700 14px var(--sans);color:var(--primary);margin-bottom:4px">${esc(m.customName||m.name)} ${m.generic?'<span style=\"font-weight:400;color:var(--muted);font-size:12px\">— '+esc(m.generic)+'</span>':''}</div>
+        ${formLine}
         ${m.authority?'<div style="font:11.5px var(--sans);color:#475569;background:#fff7ed;border:1px solid #fde68a;padding:6px 10px;border-radius:6px;margin:4px 0 8px">'+esc(m.authority)+'</div>':''}
         <table class="schedule">
-          <thead><tr><th style="width:18%">Step</th><th style="width:14%">Duration</th><th style="width:28%">Dose / sig</th><th style="width:14%">Total daily</th><th>Notes</th></tr></thead>
+          <thead><tr><th style="width:18%">Step</th><th style="width:14%">Duration</th><th style="width:30%">Dose &amp; instructions</th><th style="width:14%">Total daily</th><th>Notes</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
         ${scriptBits.length?'<div style="font:12px var(--sans);color:var(--muted);margin-top:6px">Prescription: '+scriptBits.join(' · ')+'</div>':''}
