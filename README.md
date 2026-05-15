@@ -27,15 +27,24 @@ Perfect for beginners and experienced psychiatrists alike.
 ### [ASD Assessment v2](asd.html)
 A structured assessment tool for autism spectrum disorder.
 
+### [Titration Builder](titration.html)
+Build a medication titration plan. Generates a printable plan for the patient.
+
 ---
 
 ## Patient Education
 
 ### [Psychoeducation](psychoeducation.html)
-General psychoeducation resource.
-
-### [Neurodevelopmental Psychoeducation](neuro-psychoeducation.html)
-Psychoeducation focused on neurodevelopmental conditions.
+Browse psychoeducation topics across conditions. Covers:
+- ADHD
+- ASD
+- OCD
+- Insomnia
+- PTSD
+- Anorexia Nervosa
+- Alcohol Use Disorder
+- Bipolar 1
+- Anxiety
 
 ### [ADHD Handout Generator](ADHD-Patient-Guide-Generator-30.html)
 A web app to deliver psychoeducation and create a titration schedule for your patient. Generates a nice handout to print or send, plus the plain text for your eScript. You can choose how much info to include — some patients need more, some less. Includes non-pharmacological options. Most of this is already built into the assessment generator above.
